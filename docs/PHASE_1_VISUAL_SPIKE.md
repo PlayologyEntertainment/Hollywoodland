@@ -6,7 +6,7 @@ This milestone turns the foundation scene into a reviewable Hollywood Boulevard 
 
 ## Included proof
 
-- 5,600-pixel-wide layered Boulevard with seven distinctive period storefronts, distant Hollywood hills, traffic, street lighting, palms, and depth staging.
+- High-fidelity 2,592-pixel-wide Boulevard review level built from the approved ChatGPT Images concept, with richly rendered period architecture, Hollywood hills, traffic, street lighting, palms, and cinematic depth.
 - Generated eight-frame traditional walk-cycle reference, loaded as a Phaser sprite sheet.
 - Camera follow, movement, interaction proximity, and one semantic DOM story encounter at the casting office.
 - Switchable black-and-white living-film treatment with grain, exposure movement, and reduced-motion/effects alternatives.
@@ -18,6 +18,14 @@ This milestone turns the foundation scene into a reviewable Hollywood Boulevard 
 The protagonist sprite is a pipeline-feasibility reference, not an approved final hero or Character Creator option. Storefront names and the casting-office dialogue are working review copy. Bulk character, environment, and narrative production remain blocked until owner visual approval.
 
 ## Asset record
+
+`public/assets/environments/hollywood-boulevard-concept-v1.webp`
+
+- Source: owner-supplied Hollywoodland concept created with ChatGPT Images.
+- Purpose: authoritative high-fidelity Hollywood Boulevard environment layer.
+- Source dimensions: 1,942 × 809 pixels; displayed at 2,592 × 1,080 for the 1920 × 1080 game canvas.
+- Integration: WebP delivery conversion, aligned sidewalk baseline, casting-office hotspot, subtle entrance glow, atmospheric motes, vignette, and living-film compatibility.
+- Visual invariants: original composition, palette, period detail, and authored `HOLLYWOODLAND` hillside sign preserved.
 
 `public/assets/characters/aspiring-actor-walk.webp`
 
