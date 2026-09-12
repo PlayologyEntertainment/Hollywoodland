@@ -1,5 +1,4 @@
 export type InputAction = 'moveLeft' | 'moveRight' | 'interact' | 'journal' | 'pause';
-
 export type InputBindings = Readonly<Record<InputAction, readonly string[]>>;
 
 export const DEFAULT_BINDINGS: InputBindings = Object.freeze({
@@ -14,6 +13,7 @@ const PREVENT_DEFAULT_ACTIONS = new Set<InputAction>(['moveLeft', 'moveRight', '
 
 export class InputController {
   private readonly pressed = new Set<string>();
+  private readonly justPressed = new Set<string>();
   private gameplayActive = false;
 
   public constructor(
@@ -26,26 +26,34 @@ export class InputController {
 
   public setGameplayActive(active: boolean): void {
     this.gameplayActive = active;
-    if (!active) this.pressed.clear();
-  }
-
-  public setBindings(bindings: InputBindings): void {
-    this.bindings = bindings;
-    this.pressed.clear();
+    if (!active) {
+      this.pressed.clear();
+      this.justPressed.clear();
+    }
   }
 
   public isDown(action: InputAction): boolean {
     return this.gameplayActive && this.bindings[action].some((code) => this.pressed.has(code));
   }
 
+  public consumePress(action: InputAction): boolean {
+    if (!this.gameplayActive) return false;
+    const code = this.bindings[action].find((candidate) => this.justPressed.has(candidate));
+    if (code === undefined) return false;
+    this.justPressed.delete(code);
+    return true;
+  }
+
   public destroy(): void {
     this.eventTarget.removeEventListener('keydown', this.onKeyDown as EventListener);
     this.eventTarget.removeEventListener('keyup', this.onKeyUp as EventListener);
     this.pressed.clear();
+    this.justPressed.clear();
   }
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
     if (!this.gameplayActive) return;
+    if (!event.repeat) this.justPressed.add(event.code);
     this.pressed.add(event.code);
     const action = this.actionForCode(event.code);
     if (action !== undefined && PREVENT_DEFAULT_ACTIONS.has(action)) event.preventDefault();
@@ -53,6 +61,7 @@ export class InputController {
 
   private readonly onKeyUp = (event: KeyboardEvent): void => {
     this.pressed.delete(event.code);
+    this.justPressed.delete(event.code);
   };
 
   private actionForCode(code: string): InputAction | undefined {

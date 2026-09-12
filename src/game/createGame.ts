@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 import type { InputController } from '../input/InputController';
 import type { GameSettings } from '../settings/Settings';
-import { BoulevardFoundationScene } from './scenes/BoulevardFoundationScene';
+import { BoulevardSpikeScene } from './scenes/BoulevardSpikeScene';
 
 interface CreateGameOptions {
   readonly input: InputController;
@@ -15,17 +15,12 @@ export function createGame(options: CreateGameOptions): Phaser.Game {
     parent: 'game-root',
     width: 1920,
     height: 1080,
-    backgroundColor: '#1a1210',
-    transparent: false,
+    backgroundColor: '#160f16',
     antialias: true,
     roundPixels: true,
-    scale: {
-      mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
-    },
-    scene: [BoulevardFoundationScene],
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: [BoulevardSpikeScene],
   });
-
   game.registry.set('inputController', options.input);
   game.registry.set('settings', options.settings);
   return game;

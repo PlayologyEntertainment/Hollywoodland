@@ -4,25 +4,19 @@ import { parseSave, SAVE_SCHEMA_VERSION, serializeSave, type SaveEnvelope } from
 
 const validSave: SaveEnvelope = {
   schemaVersion: SAVE_SCHEMA_VERSION,
-  contentVersion: 'foundation',
+  contentVersion: 'phase-1-visual-spike',
   saveId: 'test-save',
   label: 'Hollywood Boulevard',
   savedAt: '2026-09-12T00:00:00.000Z',
   playtimeSeconds: 90,
-  state: { district: 'hollywood-boulevard' },
+  state: { playerX: 620, discoveredCastingOffice: false },
 };
 
 describe('save envelope', () => {
-  it('round-trips valid data', () => {
-    expect(parseSave(serializeSave(validSave))).toEqual(validSave);
+  it('round-trips valid data', () => { expect(parseSave(serializeSave(validSave))).toEqual(validSave); });
+  it('rejects unsupported schemas', () => {
+    expect(() => parseSave(JSON.stringify({ ...validSave, schemaVersion: 99 }))).toThrow('Unsupported save version');
   });
-
-  it('rejects unsupported schema versions', () => {
-    expect(() => parseSave(JSON.stringify({ ...validSave, schemaVersion: 99 }))).toThrow(
-      'Unsupported save version',
-    );
-  });
-
   it('rejects oversized imports before parsing', () => {
     expect(() => parseSave(JSON.stringify(validSave), 10)).toThrow('exceeds the permitted size');
   });

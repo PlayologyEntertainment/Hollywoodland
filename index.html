@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#11100f" />
-    <meta
-      name="description"
-      content="Hollywoodland — build a film career in a romanticized 1935 Hollywood."
-    />
+    <meta name="description" content="Hollywoodland — build a film career in a romanticized 1935 Hollywood." />
     <title>Hollywoodland</title>
   </head>
   <body>
@@ -15,12 +12,16 @@
     <main id="app" class="app-shell">
       <section id="game-frame" class="game-frame" aria-label="Hollywoodland game view">
         <div id="game-root" aria-hidden="true"></div>
+        <div class="film-grain" aria-hidden="true"></div>
 
         <header class="status-bar" aria-label="Career status">
           <span><b>1935</b> · Hollywood Boulevard</span>
-          <button id="status-button" class="text-button" type="button" aria-expanded="false">
-            Status
-          </button>
+          <div class="status-actions">
+            <output id="fps-output" class="fps-output" aria-label="Frame rate">-- FPS</output>
+            <button id="film-mode" class="text-button" type="button" aria-pressed="false">Film Look</button>
+            <button id="fullscreen" class="text-button" type="button">Fullscreen</button>
+            <button id="status-button" class="text-button" type="button" aria-expanded="false">Status</button>
+          </div>
         </header>
 
         <section id="title-panel" class="title-panel" aria-labelledby="game-title">
@@ -28,59 +29,70 @@
           <h1 id="game-title">Hollywoodland</h1>
           <p class="tagline">Everybody comes here to be somebody.</p>
           <nav id="main-menu" class="menu" aria-label="Main menu">
-            <button id="new-career" class="primary-button" type="button">New Career</button>
+            <button id="new-career" class="primary-button" type="button">Enter Hollywood</button>
             <button id="continue-career" type="button" disabled>Continue</button>
+            <button id="import-save" type="button">Import Save</button>
             <button id="open-settings" type="button">Settings &amp; Accessibility</button>
           </nav>
-          <p class="build-label">Phase 1 foundation · No story content loaded</p>
+          <p class="build-label">Phase 1 · Visual gameplay spike</p>
         </section>
 
         <section id="play-hud" class="play-hud" aria-label="Gameplay controls" hidden>
-          <p><kbd>A</kbd>/<kbd>←</kbd> and <kbd>D</kbd>/<kbd>→</kbd> to move</p>
-          <button id="return-menu" class="text-button" type="button">Return to menu</button>
+          <div class="objective-card">
+            <span class="eyebrow">First objective</span>
+            <strong>Find the casting office</strong>
+            <small><kbd>A</kbd>/<kbd>D</kbd> Move · <kbd>E</kbd> Interact</small>
+          </div>
+          <div class="hud-actions">
+            <button id="manual-save" type="button">Save</button>
+            <button id="export-save" type="button">Export</button>
+            <button id="return-menu" class="text-button" type="button">Menu</button>
+          </div>
         </section>
+
+        <div id="interaction-prompt" class="interaction-prompt" hidden>
+          <kbd>E</kbd> <span>Enter casting office</span>
+        </div>
 
         <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
           <div class="drawer-heading">
-            <h2 id="status-title">Career status</h2>
+            <div><p class="eyebrow">Nobody — yet</p><h2 id="status-title">Your Career</h2></div>
             <button id="close-status" type="button" aria-label="Close career status">×</button>
           </div>
           <dl>
             <div><dt>Money</dt><dd>$12</dd></div>
             <div><dt>Energy</dt><dd>Rested</dd></div>
             <div><dt>Reputation</dt><dd>Unknown</dd></div>
+            <div><dt>Dream</dt><dd>Leading Player</dd></div>
           </dl>
-          <p>This panel proves the accessible DOM-over-canvas architecture. Values are placeholders.</p>
+          <p class="flavor-copy">One suitcase. One good shirt. One impossible address scribbled on the back of a bus ticket.</p>
         </aside>
+
+        <dialog id="interaction-dialog" aria-labelledby="interaction-title">
+          <article class="story-card">
+            <p class="eyebrow">Sunset Casting Exchange</p>
+            <h2 id="interaction-title">The first door</h2>
+            <p>A hundred hopefuls crowd the lobby. The clerk peers over a tower of headshots.</p>
+            <blockquote>“Appointment, photograph, or miracle?”</blockquote>
+            <button class="primary-button" value="close">I’ll start with a miracle.</button>
+          </article>
+        </dialog>
 
         <dialog id="settings-dialog" aria-labelledby="settings-title">
           <form method="dialog" class="settings-form">
-            <div class="drawer-heading">
-              <h2 id="settings-title">Settings &amp; Accessibility</h2>
-              <button value="cancel" aria-label="Close settings">×</button>
-            </div>
-            <label>
-              Text size
-              <input id="text-scale" type="range" min="100" max="150" step="10" value="100" />
-              <output id="text-scale-output" for="text-scale">100%</output>
-            </label>
-            <label class="check-row">
-              <input id="high-contrast" type="checkbox" />
-              High contrast
-            </label>
-            <label class="check-row">
-              <input id="reduced-motion" type="checkbox" />
-              Reduce motion and parallax
-            </label>
-            <label class="check-row">
-              <input id="analytics-enabled" type="checkbox" checked />
-              Share anonymous performance and progress analytics
-            </label>
+            <div class="drawer-heading"><h2 id="settings-title">Settings &amp; Accessibility</h2><button value="cancel" aria-label="Close settings">×</button></div>
+            <label>Text size<input id="text-scale" type="range" min="100" max="150" step="10" value="100" /><output id="text-scale-output" for="text-scale">100%</output></label>
+            <label class="check-row"><input id="high-contrast" type="checkbox" /> High contrast</label>
+            <label class="check-row"><input id="reduced-motion" type="checkbox" /> Reduce motion and parallax</label>
+            <label class="check-row"><input id="film-effects" type="checkbox" checked /> Film grain and exposure movement</label>
+            <label class="check-row"><input id="analytics-enabled" type="checkbox" checked /> Share anonymous performance analytics</label>
             <p class="privacy-note">No player name, dialogue text, or save data is collected.</p>
             <button class="primary-button" value="confirm">Save settings</button>
           </form>
         </dialog>
 
+        <input id="save-file-input" type="file" accept="application/json,.json" hidden />
+        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
         <div id="announcer" class="sr-only" aria-live="polite"></div>
       </section>
     </main>
