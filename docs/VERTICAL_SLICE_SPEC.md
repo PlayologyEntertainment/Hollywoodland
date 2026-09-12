@@ -1,6 +1,6 @@
 # Hollywoodland — Vertical Slice Specification
 
-Status: **Proposed for owner approval**  
+Status: **Owner approved September 12, 2026**  
 Target playtime: **45–90 minutes**  
 Purpose: Prove the fantasy, presentation, core loop, and production pipeline at shippable quality before expanding content.
 
@@ -140,4 +140,3 @@ The slice is approval-ready when:
 - Final screen-test genre and scene premise.
 - Exact dialogue tone and romance boundaries.
 - Representative art-size and animation-frame budgets after a pipeline test.
-

@@ -1,6 +1,6 @@
 # Hollywoodland — Production Roadmap
 
-Status: **Proposed; no implementation authorized**
+Status: **Owner approved September 12, 2026; Phase 1 foundation in progress**
 
 ## 1. Delivery strategy
 
@@ -148,4 +148,3 @@ The owner should approve or revise:
 ## 7. Definition of vertical-slice done
 
 “Done” means a player can create a character and complete a polished, coherent, accessible, replayable arrival-to-screen-test story in current Chrome and Safari; every result preserves agency; the build meets its performance, save, privacy, and presentation acceptance criteria; and the repository contains the source, tests, provenance records, deployment artifact recipe, and known-issues report.
-

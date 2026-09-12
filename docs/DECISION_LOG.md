@@ -1,6 +1,6 @@
 # Hollywoodland — Decision Log
 
-Status: Interview decisions consolidated for owner approval.
+Status: Owner approved September 12, 2026.
 
 | Area | Decision |
 |---|---|

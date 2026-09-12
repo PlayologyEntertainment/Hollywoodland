@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#11100f" />
+    <meta
+      name="description"
+      content="Hollywoodland — build a film career in a romanticized 1935 Hollywood."
+    />
+    <title>Hollywoodland</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-menu">Skip to menu</a>
+    <main id="app" class="app-shell">
+      <section id="game-frame" class="game-frame" aria-label="Hollywoodland game view">
+        <div id="game-root" aria-hidden="true"></div>
+
+        <header class="status-bar" aria-label="Career status">
+          <span><b>1935</b> · Hollywood Boulevard</span>
+          <button id="status-button" class="text-button" type="button" aria-expanded="false">
+            Status
+          </button>
+        </header>
+
+        <section id="title-panel" class="title-panel" aria-labelledby="game-title">
+          <p class="eyebrow">Playology Entertainment presents</p>
+          <h1 id="game-title">Hollywoodland</h1>
+          <p class="tagline">Everybody comes here to be somebody.</p>
+          <nav id="main-menu" class="menu" aria-label="Main menu">
+            <button id="new-career" class="primary-button" type="button">New Career</button>
+            <button id="continue-career" type="button" disabled>Continue</button>
+            <button id="open-settings" type="button">Settings &amp; Accessibility</button>
+          </nav>
+          <p class="build-label">Phase 1 foundation · No story content loaded</p>
+        </section>
+
+        <section id="play-hud" class="play-hud" aria-label="Gameplay controls" hidden>
+          <p><kbd>A</kbd>/<kbd>←</kbd> and <kbd>D</kbd>/<kbd>→</kbd> to move</p>
+          <button id="return-menu" class="text-button" type="button">Return to menu</button>
+        </section>
+
+        <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
+          <div class="drawer-heading">
+            <h2 id="status-title">Career status</h2>
+            <button id="close-status" type="button" aria-label="Close career status">×</button>
+          </div>
+          <dl>
+            <div><dt>Money</dt><dd>$12</dd></div>
+            <div><dt>Energy</dt><dd>Rested</dd></div>
+            <div><dt>Reputation</dt><dd>Unknown</dd></div>
+          </dl>
+          <p>This panel proves the accessible DOM-over-canvas architecture. Values are placeholders.</p>
+        </aside>
+
+        <dialog id="settings-dialog" aria-labelledby="settings-title">
+          <form method="dialog" class="settings-form">
+            <div class="drawer-heading">
+              <h2 id="settings-title">Settings &amp; Accessibility</h2>
+              <button value="cancel" aria-label="Close settings">×</button>
+            </div>
+            <label>
+              Text size
+              <input id="text-scale" type="range" min="100" max="150" step="10" value="100" />
+              <output id="text-scale-output" for="text-scale">100%</output>
+            </label>
+            <label class="check-row">
+              <input id="high-contrast" type="checkbox" />
+              High contrast
+            </label>
+            <label class="check-row">
+              <input id="reduced-motion" type="checkbox" />
+              Reduce motion and parallax
+            </label>
+            <label class="check-row">
+              <input id="analytics-enabled" type="checkbox" checked />
+              Share anonymous performance and progress analytics
+            </label>
+            <p class="privacy-note">No player name, dialogue text, or save data is collected.</p>
+            <button class="primary-button" value="confirm">Save settings</button>
+          </form>
+        </dialog>
+
+        <div id="announcer" class="sr-only" aria-live="polite"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

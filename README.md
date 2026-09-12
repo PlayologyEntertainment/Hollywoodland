@@ -2,7 +2,7 @@
 
 Hollywoodland is a free, single-player, side-scrolling web RPG about arriving in 1935 Hollywood with almost nothing and building a career as a film star. The player creates an original performer, navigates a romanticized Golden Age dream factory, takes survival jobs, builds relationships, auditions for roles, manages money and energy, and shapes a branching career with multiple endings.
 
-This repository is currently in **design approval**. The files under [`docs/`](docs/) define the approved product direction and the proposed implementation. They do not authorize game implementation.
+The design package was approved by the owner on September 12, 2026. Phase 1 foundation work is now authorized under the gates in [`docs/PRODUCTION_ROADMAP.md`](docs/PRODUCTION_ROADMAP.md).
 
 ## Approval package
 
@@ -13,9 +13,26 @@ This repository is currently in **design approval**. The files under [`docs/`](d
 5. [`PRODUCTION_ROADMAP.md`](docs/PRODUCTION_ROADMAP.md) — gated delivery sequence, review checkpoints, risks, and definition of done.
 6. [`DECISION_LOG.md`](docs/DECISION_LOG.md) — concise record of interview decisions and working assumptions.
 
-## Approval gate
+## Development gate
 
-Implementation must not begin until the owner approves this package. Approval should explicitly resolve every item marked **Owner approval required** in the documents. Once approved, the first implementation change should establish the project skeleton and automated checks only; it should not silently expand the vertical-slice scope.
+The first implementation change establishes the project skeleton and automated checks only. Story production and bulk asset creation remain blocked until the Phase 1 technical and art spikes are reviewed. Scope must not expand beyond the approved vertical slice without explicit owner approval.
+
+## Local development
+
+Requires Node.js 24 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+Quality checks:
+
+```bash
+npm run typecheck
+npm test
+npm run build
+```
 
 ## Product constraints
 
@@ -27,4 +44,3 @@ Implementation must not begin until the owner approves this package. Approval sh
 - No runtime generative AI, advertisements, or purchases.
 - Traditional frame-by-frame sprite animation.
 - All dialogue is authored and text-based; music and sound carry the audio presentation.
-

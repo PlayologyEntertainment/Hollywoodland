@@ -1,6 +1,6 @@
 # Hollywoodland — Content and Asset Pipeline
 
-Status: **Proposed for owner approval**
+Status: **Owner approved September 12, 2026**
 
 ## 1. Pipeline principles
 
@@ -127,4 +127,3 @@ Before bulk production, approve:
 7. One adaptive music scene and one dense ambient mix.
 
 Bulk asset generation begins only after these representative assets work at target resolution and performance.
-

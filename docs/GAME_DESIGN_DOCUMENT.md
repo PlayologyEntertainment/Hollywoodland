@@ -1,6 +1,6 @@
 # Hollywoodland — Game Design Document
 
-Status: **Proposed for owner approval**  
+Status: **Owner approved September 12, 2026**  
 Setting: Hollywood, California, 1935  
 Genre: Single-player side-scrolling career RPG  
 Platform: Desktop web browser  
@@ -183,4 +183,3 @@ Hollywoodland is free, with no advertisements or purchases. Sponsorship or volun
 - Conventional combat system.
 - Mobile/touch-first support or native app-store packaging.
 - Monetization, ads, purchases, or live-service events.
-
