@@ -30,6 +30,18 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       'hollywood-boulevard',
       `${import.meta.env.BASE_URL}assets/environments/hollywood-boulevard-concept-v1.webp`,
     );
+    this.load.image(
+      'hollywood-palm',
+      `${import.meta.env.BASE_URL}assets/environments/foreground/hollywood-palm-v1.png`,
+    );
+    this.load.image(
+      'hollywood-streetlamp',
+      `${import.meta.env.BASE_URL}assets/environments/foreground/hollywood-streetlamp-v1.png`,
+    );
+    this.load.image(
+      'hollywood-sedan',
+      `${import.meta.env.BASE_URL}assets/environments/foreground/hollywood-sedan-v1.png`,
+    );
     this.load.spritesheet(
       'aspiring-actor',
       `${import.meta.env.BASE_URL}assets/characters/aspiring-actor-walk.webp`,
@@ -102,6 +114,36 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       .setOrigin(0)
       .setDisplaySize(WORLD_WIDTH, 1080)
       .setDepth(0);
+
+    this.add
+      .image(90, 902, 'hollywood-palm')
+      .setOrigin(0.5, 1)
+      .setScale(0.8)
+      .setDepth(8);
+    this.add
+      .image(WORLD_WIDTH - 95, 902, 'hollywood-palm')
+      .setOrigin(0.5, 1)
+      .setScale(0.9)
+      .setFlipX(true)
+      .setDepth(8);
+
+    this.add
+      .image(935, 918, 'hollywood-streetlamp')
+      .setOrigin(0.5, 1)
+      .setScale(0.74)
+      .setDepth(14);
+    this.add
+      .image(2035, 918, 'hollywood-streetlamp')
+      .setOrigin(0.5, 1)
+      .setScale(0.74)
+      .setFlipX(true)
+      .setDepth(14);
+
+    this.add
+      .image(685, 928, 'hollywood-sedan')
+      .setOrigin(0.5, 1)
+      .setScale(0.5)
+      .setDepth(24);
 
     const castingGlow = this.add
       .ellipse(CASTING_OFFICE_X, 698, 170, 245, 0xffc95f, 0.07)
