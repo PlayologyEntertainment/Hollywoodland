@@ -2,7 +2,7 @@
 
 Hollywoodland is a free, single-player, side-scrolling web RPG about arriving in 1935 Hollywood with almost nothing and building a career as a film star. The player creates an original performer, navigates a romanticized Golden Age dream factory, takes survival jobs, builds relationships, auditions for roles, manages money and energy, and shapes a branching career with multiple endings.
 
-The design package was approved by the owner on September 12, 2026. The current build is the **Phase 1 visual gameplay spike**: an animated protagonist can explore a layered Hollywood Boulevard, discover the casting office, trigger a semantic story encounter, switch into the living-film treatment, and save/export/import progress.
+The design package was approved by the owner on September 12, 2026. The current build is the **Phase 1 visual gameplay spike**: an animated protagonist can explore a registered five-plane Hollywood Boulevard, discover the casting office, trigger a semantic story encounter, switch into the living-film treatment, and save/export/import progress.
 
 ## Approval package
 
@@ -23,8 +23,10 @@ Requires Node.js 24 or newer.
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
+
+`npm start` launches the Vite development server and opens the game in the default browser. Do not open the repository's root `index.html` directly: it contains TypeScript module entry points that Vite must compile and serve. For a production-style local check, run `npm run build` followed by `npm run preview`.
 
 Quality checks:
 
