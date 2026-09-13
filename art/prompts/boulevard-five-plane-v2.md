@@ -1,11 +1,11 @@
 # Boulevard five-plane render brief
 
-Status: **Ready for generation; render blocked on API credits September 13, 2026**
+Status: **Native-alpha runtime integration complete; pending owner visual review September 13, 2026**
 
 ## Delivery contract
 
-- Final canvas: **3,240 × 1,080 pixels** for every plane, registered to the same origin.
-- Render source: `gpt-image-2`, high quality, at 3,248 × 1,088; crop four pixels from every edge after generation. This preserves the requested final dimensions while satisfying the model's 16-pixel size increments.
+- Runtime source canvas: **2,172 × 724 pixels** for every plane, registered to the same origin and displayed at **3,240 × 1,080** in Phaser without changing the 3:1 aspect ratio.
+- Chroma masters remain untouched in `art/assets/`. The received Plane 4 master is 2,169 × 725; only its derived runtime copy is normalized to 2,172 × 724 before alpha extraction.
 - Style references: `art/Hollywoodland_Concept_Boulevard.png` and `public/assets/environments/hollywood-boulevard-concept-v1.webp`. Preserve their vivid, romanticized, hand-painted 1935 Hollywood storybook style, warm sunlight, crisp silhouettes, architectural ornament, subtle fisheye, and lateral side-scrolling viewpoint.
 - Plane 1 is an opaque RGB/RGBA PNG with every pixel filled.
 - Planes 2–5 are first rendered by `gpt-image-2` against perfectly flat `#ff00ff`, then passed to `gpt-image-1.5` only to remove that flat color and emit native-alpha PNGs. The extraction pass must not redraw, recolor, resize, move, crop, or add content.
@@ -91,8 +91,8 @@ Constraints: no new shadows, haze, scenery, objects, text, border, or watermark.
 
 ## Validation gates
 
-1. Crop each 3,248 × 1,088 source symmetrically to exactly 3,240 × 1,080 without resampling.
-2. Confirm all five files share exactly 3,240 × 1,080 dimensions and registration.
+1. Preserve the received chroma masters unchanged. Normalize runtime derivatives to exactly 2,172 × 724; Plane 4 is the only source requiring resampling.
+2. Confirm all five runtime files share exactly 2,172 × 724 dimensions and registration, then display them at 3,240 × 1,080 without changing aspect ratio.
 3. Confirm Plane 1 has no transparent pixels.
 4. Confirm Planes 2–5 are RGBA and contain both alpha 0 and alpha 255 pixels.
 5. Confirm all four corners of each alpha plane are transparent unless the approved silhouette intentionally reaches a corner.
@@ -102,17 +102,25 @@ Constraints: no new shadows, haze, scenery, objects, text, border, or watermark.
 9. Confirm excluded freestanding objects and their shadows are absent.
 10. Review the composite in motion at target parallax factors before replacing the current runtime plate.
 
+## Implemented extraction
+
+The received PNG chroma fields contain small RGB variations around `#ff00ff`, so the runtime derivatives were extracted deterministically with the ImageGen skill's `remove_chroma_key.py` helper rather than passed through a generative edit. The matte uses a soft `#ff00ff` boundary with despill, preserving source dimensions and registration. Plane 4 was normalized to the shared runtime resolution before extraction. The original files in `art/assets/` remain unchanged.
+
+Runtime alignment note: Plane 5 is offset downward by 430 display pixels in Phaser so the player foot baseline meets the architectural doorway bases rather than the lower façade. The player baseline and freestanding street props use the same offset.
+
+Plane 4 is offset upward by 117 display pixels so the bottom edge of its doorways meets Plane 5's measured alpha boundary at approximately display Y=963. The casting-office overlay uses the same architecture offset.
+
 ## Provenance
 
 ```text
 asset_id: boulevard_five_plane_v2
 asset_type: registered parallax environment set
 reference_asset_ids: Hollywoodland_Concept_Boulevard, hollywood-boulevard-concept-v1
-generation_tools: gpt-image-2 high-quality source render; gpt-image-1.5 native-alpha extraction only
-generation_date: pending
-raw_source_location: output/imagegen/boulevard-v2/
-human_edits: symmetric crop from 3248x1088 to 3240x1080; visual QA and any approved edge cleanup
-review_status: prompt approved; generation pending API credits and owner visual review
+generation_tools: gpt-image-2 high-quality source render; deterministic local native-alpha extraction with remove_chroma_key.py
+generation_date: 2026-09-13
+raw_source_location: art/assets/plane1.png through plane5.png
+human_edits: chroma masters preserved; Plane 4 runtime derivative normalized from 2169x725 to 2172x724; native-alpha extraction and visual QA
+review_status: source renders approved for integration; runtime composite pending owner visual review
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
 runtime_files: public/assets/environments/boulevard-v2/01-sky.png through 05-sidewalk-street.png
 ```

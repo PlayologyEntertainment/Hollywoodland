@@ -4,12 +4,14 @@ import type { PlayState } from '../../app/AppShell';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 
-const WORLD_WIDTH = 2592;
+const WORLD_WIDTH = 3240;
 const LEGACY_WORLD_WIDTH = 5600;
-const GROUND_Y = 884;
+const MAIN_ARCHITECTURE_OFFSET_Y = -117;
+const GROUND_PLANE_OFFSET_Y = 430;
+const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
 const PLAYER_START_X = 420;
-const CASTING_OFFICE_X = 1440;
+const CASTING_OFFICE_X = 1675;
 
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
@@ -27,8 +29,24 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   public preload(): void {
     this.load.image(
-      'hollywood-boulevard',
-      `${import.meta.env.BASE_URL}assets/environments/hollywood-boulevard-concept-v1.webp`,
+      'boulevard-sky',
+      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/01-sky.png`,
+    );
+    this.load.image(
+      'boulevard-hills',
+      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/02-hills-landmark.png`,
+    );
+    this.load.image(
+      'boulevard-distant-buildings',
+      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/03-distant-buildings.png`,
+    );
+    this.load.image(
+      'boulevard-main-architecture',
+      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/04-main-architecture.png`,
+    );
+    this.load.image(
+      'boulevard-sidewalk-street',
+      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/05-sidewalk-street.png`,
     );
     this.load.image(
       'hollywood-palm',
@@ -110,45 +128,79 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   private createRenderedEnvironment(): void {
     this.add
-      .image(0, 0, 'hollywood-boulevard')
+      .image(0, 0, 'boulevard-sky')
       .setOrigin(0)
       .setDisplaySize(WORLD_WIDTH, 1080)
+      .setScrollFactor(0)
       .setDepth(0);
 
     this.add
-      .image(90, 902, 'hollywood-palm')
+      .image(0, 0, 'boulevard-hills')
+      .setOrigin(0)
+      .setDisplaySize(WORLD_WIDTH, 1080)
+      .setScrollFactor(0.18)
+      .setDepth(1);
+
+    this.add
+      .image(0, 0, 'boulevard-distant-buildings')
+      .setOrigin(0)
+      .setDisplaySize(WORLD_WIDTH, 1080)
+      .setScrollFactor(0.42)
+      .setDepth(2);
+
+    this.add
+      .image(0, MAIN_ARCHITECTURE_OFFSET_Y, 'boulevard-main-architecture')
+      .setOrigin(0)
+      .setDisplaySize(WORLD_WIDTH, 1080)
+      .setDepth(3);
+
+    this.add
+      .image(0, GROUND_PLANE_OFFSET_Y, 'boulevard-sidewalk-street')
+      .setOrigin(0)
+      .setDisplaySize(WORLD_WIDTH, 1080)
+      .setDepth(10);
+
+    this.add
+      .image(90, 650 + GROUND_PLANE_OFFSET_Y, 'hollywood-palm')
       .setOrigin(0.5, 1)
       .setScale(0.8)
       .setDepth(8);
     this.add
-      .image(WORLD_WIDTH - 95, 902, 'hollywood-palm')
+      .image(WORLD_WIDTH - 95, 650 + GROUND_PLANE_OFFSET_Y, 'hollywood-palm')
       .setOrigin(0.5, 1)
       .setScale(0.9)
       .setFlipX(true)
       .setDepth(8);
 
     this.add
-      .image(935, 918, 'hollywood-streetlamp')
+      .image(935, 654 + GROUND_PLANE_OFFSET_Y, 'hollywood-streetlamp')
       .setOrigin(0.5, 1)
       .setScale(0.74)
       .setDepth(14);
     this.add
-      .image(2035, 918, 'hollywood-streetlamp')
+      .image(2035, 654 + GROUND_PLANE_OFFSET_Y, 'hollywood-streetlamp')
       .setOrigin(0.5, 1)
       .setScale(0.74)
       .setFlipX(true)
       .setDepth(14);
 
     this.add
-      .image(685, 928, 'hollywood-sedan')
+      .image(685, 862 + GROUND_PLANE_OFFSET_Y, 'hollywood-sedan')
       .setOrigin(0.5, 1)
       .setScale(0.5)
       .setDepth(24);
 
     const castingGlow = this.add
-      .ellipse(CASTING_OFFICE_X, 698, 170, 245, 0xffc95f, 0.07)
+      .ellipse(
+        CASTING_OFFICE_X,
+        430 + MAIN_ARCHITECTURE_OFFSET_Y,
+        170,
+        245,
+        0xffc95f,
+        0.07,
+      )
       .setBlendMode(Phaser.BlendModes.ADD)
-      .setDepth(2);
+      .setDepth(4);
     this.atmosphericTweens.push(
       this.tweens.add({
         targets: castingGlow,
@@ -162,7 +214,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     );
 
     this.add
-      .text(CASTING_OFFICE_X, 577, 'SUNSET CASTING EXCHANGE', {
+      .text(CASTING_OFFICE_X, 425 + MAIN_ARCHITECTURE_OFFSET_Y, 'SUNSET CASTING EXCHANGE', {
         color: '#67452b',
         fontFamily: 'Georgia, serif',
         fontSize: '20px',
@@ -172,7 +224,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         strokeThickness: 2,
       })
       .setOrigin(0.5)
-      .setDepth(3);
+      .setDepth(5);
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add
