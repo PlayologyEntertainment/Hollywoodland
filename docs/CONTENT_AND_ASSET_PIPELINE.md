@@ -59,6 +59,13 @@ Each district scene is delivered as registered layers:
 
 Create clean plates without characters, baked UI, or gameplay text. Doors, breakable/altered props, signs with quest states, and time-of-day changes must be separate assets. Generated perspective is corrected to the shared district guide before approval.
 
+The production brief for the 3,240 × 1,080 Boulevard redesign is recorded in
+`art/prompts/boulevard-five-plane-v2.md`. It defines the five registered planes,
+generous lower overlap, removable flat-color source renders, native-alpha extraction,
+object exclusions, blank-signage policy, and technical validation gates. Keep that
+brief with the generated sources so the render can be reproduced without relying on
+chat history.
+
 ## 5. UI assets
 
 Use code-rendered semantic text over scalable nine-slice frames and tokenized CSS. Required source categories:
