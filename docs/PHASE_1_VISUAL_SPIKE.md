@@ -6,7 +6,7 @@ This milestone turns the foundation scene into a reviewable Hollywood Boulevard 
 
 ## Included proof
 
-- High-fidelity 2,592-pixel-wide Boulevard review level built from the approved ChatGPT Images concept, with richly rendered period architecture, Hollywood hills, traffic, street lighting, palms, and cinematic depth.
+- High-fidelity 3,240-pixel-wide Boulevard review level built from five registered 2,172 × 724 source planes, with independent sky, landmark hills, distant architecture, main architecture, and sidewalk/street depth.
 - True-alpha foreground palm, streetlamp, and period sedan assets generated as independently placeable depth layers.
 - Generated eight-frame traditional walk-cycle reference, loaded as a Phaser sprite sheet.
 - Camera follow, movement, interaction proximity, and one semantic DOM story encounter at the casting office.
@@ -20,13 +20,18 @@ The protagonist sprite is a pipeline-feasibility reference, not an approved fina
 
 ## Asset record
 
-`public/assets/environments/hollywood-boulevard-concept-v1.webp`
+`public/assets/environments/boulevard-v2/`
 
-- Source: owner-supplied Hollywoodland concept created with ChatGPT Images.
-- Purpose: authoritative high-fidelity Hollywood Boulevard environment layer.
-- Source dimensions: 1,942 × 809 pixels; displayed at 2,592 × 1,080 for the 1920 × 1080 game canvas.
-- Integration: WebP delivery conversion, aligned sidewalk baseline, casting-office hotspot, subtle entrance glow, atmospheric motes, vignette, and living-film compatibility.
-- Visual invariants: original composition, palette, period detail, and authored `HOLLYWOODLAND` hillside sign preserved.
+- Source: owner-supplied five-plane Hollywoodland artwork processed through the approved native-alpha extraction workflow.
+- Purpose: registered high-fidelity Hollywood Boulevard parallax environment.
+- Source registration: all five planes are 2,172 × 724 pixels and share one coordinate system; the game displays them across a 3,240 × 1,080 world.
+- Plane 1: opaque sky plate.
+- Plane 2: landmark hills with native alpha and artwork extended to the bottom of the registered frame.
+- Plane 3: distant architecture and trees with native alpha and artwork extended to the bottom of the registered frame.
+- Plane 4: main storefront architecture with native alpha; vertically aligned so doorway thresholds meet the walk surface.
+- Plane 5: sidewalk, curb, gutters, rails, and street with native alpha; aligned to the storefront thresholds and player walk plane.
+- Integration: independent parallax factors, aligned sidewalk baseline, casting-office hotspot, subtle entrance glow, atmospheric motes, vignette, and living-film compatibility.
+- Visual invariants: source resolution, composition, palette, period detail, and authored `HOLLYWOODLAND` hillside sign preserved.
 
 `public/assets/characters/aspiring-actor-walk.webp`
 
