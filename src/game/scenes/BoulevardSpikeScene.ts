@@ -14,7 +14,8 @@ const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
 const PLAYER_START_X = 420;
 const CASTING_OFFICE_X = 1675;
-const CASTING_SIGN_Y = 640;
+const CASTING_SIGN_X = 1805;
+const CASTING_SIGN_Y = 707;
 
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
@@ -197,7 +198,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
     const signCenterY = CASTING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
     const castingGlow = this.add
-      .ellipse(CASTING_OFFICE_X, signCenterY, 170, 175, 0xffc95f, 0.07)
+      .ellipse(CASTING_SIGN_X, signCenterY, 170, 175, 0xffc95f, 0.07)
       .setBlendMode(Phaser.BlendModes.ADD)
       .setDepth(4);
     this.atmosphericTweens.push(
@@ -212,7 +213,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       }),
     );
 
-    this.createCastingOfficeSign(CASTING_OFFICE_X, signCenterY);
+    this.createCastingOfficeSign(CASTING_SIGN_X, signCenterY);
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add
