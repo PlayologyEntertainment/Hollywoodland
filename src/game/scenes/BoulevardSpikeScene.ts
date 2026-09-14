@@ -6,6 +6,8 @@ import type { GameSettings } from '../../settings/Settings';
 
 const WORLD_WIDTH = 3240;
 const LEGACY_WORLD_WIDTH = 5600;
+const HILLS_OFFSET_X = -330;
+const HILLS_OFFSET_Y = -230;
 const MAIN_ARCHITECTURE_OFFSET_Y = -117;
 const GROUND_PLANE_OFFSET_Y = 430;
 const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
@@ -85,7 +87,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.game.events.off('restore-play-state', this.restoreState, this);
     });
     this.applyMotionSettings();
-    this.emitState();
+    const initialState = this.registry.get('initialPlayState') as PlayState | undefined;
+    if (initialState !== undefined) this.restoreState(initialState);
+    else this.emitState();
   }
 
   public override update(_time: number, delta: number): void {
@@ -135,7 +139,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       .setDepth(0);
 
     this.add
-      .image(0, 0, 'boulevard-hills')
+      .image(HILLS_OFFSET_X, HILLS_OFFSET_Y, 'boulevard-hills')
       .setOrigin(0)
       .setDisplaySize(WORLD_WIDTH, 1080)
       .setScrollFactor(0.18)
@@ -193,7 +197,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const castingGlow = this.add
       .ellipse(
         CASTING_OFFICE_X,
-        430 + MAIN_ARCHITECTURE_OFFSET_Y,
+        555 + MAIN_ARCHITECTURE_OFFSET_Y,
         170,
         245,
         0xffc95f,
@@ -214,14 +218,16 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     );
 
     this.add
-      .text(CASTING_OFFICE_X, 425 + MAIN_ARCHITECTURE_OFFSET_Y, 'SUNSET CASTING EXCHANGE', {
-        color: '#67452b',
+      .text(CASTING_OFFICE_X, 550 + MAIN_ARCHITECTURE_OFFSET_Y, 'SUNSET\nCASTING\nEXCHANGE', {
+        color: '#5c3b22',
         fontFamily: 'Georgia, serif',
-        fontSize: '20px',
+        fontSize: '19px',
         fontStyle: 'bold',
         letterSpacing: 2,
-        stroke: '#f6ddb2',
-        strokeThickness: 2,
+        align: 'center',
+        lineSpacing: 4,
+        stroke: '#f8e4bb',
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setDepth(5);

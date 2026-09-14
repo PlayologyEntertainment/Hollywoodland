@@ -1,6 +1,7 @@
 import './styles.css';
 
 import { AppShell, type PlayState } from './app/AppShell';
+import { SplashScreen } from './app/SplashScreen';
 import { createGame } from './game/createGame';
 import { InputController } from './input/InputController';
 import { IndexedDbSaveRepository } from './save/IndexedDbSaveRepository';
@@ -9,13 +10,25 @@ import { BrowserSettingsRepository } from './settings/SettingsRepository';
 
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
 const saveRepository = new IndexedDbSaveRepository();
-const settings = settingsRepository.load();
+let settings = settingsRepository.load();
 const input = new InputController(window);
-const game = createGame({ input, settings });
+let game: ReturnType<typeof createGame> | undefined;
 let latestState: PlayState = { playerX: 620, discoveredCastingOffice: false };
 let startedAt = performance.now();
 
-game.events.on('play-state', (state: PlayState) => { latestState = state; });
+/** Creates the Phaser game on first call — deferred until the player enters
+ * play so the Main Menu shows the static concept art instead of live
+ * gameplay — and reuses it on every later call (e.g. returning to the menu
+ * and starting again). A state to restore is only meaningful on the first
+ * call: it seeds the scene's initial create() directly, since there is no
+ * already-booted scene yet to safely target with an event. */
+function ensureGame(initialState?: PlayState): ReturnType<typeof createGame> {
+  if (game === undefined) {
+    game = createGame({ input, settings, ...(initialState !== undefined ? { initialState } : {}) });
+    game.events.on('play-state', (state: PlayState) => { latestState = state; });
+  }
+  return game;
+}
 
 const makeSave = (): SaveEnvelope<PlayState> => ({
   schemaVersion: SAVE_SCHEMA_VERSION,
@@ -29,16 +42,21 @@ const makeSave = (): SaveEnvelope<PlayState> => ({
 
 const shell = new AppShell({
   settings,
-  game,
   onSettingsChanged: (nextSettings) => {
+    settings = nextSettings;
     settingsRepository.save(nextSettings);
-    game.registry.set('settings', nextSettings);
-    game.events.emit('settings-changed', nextSettings);
+    if (game !== undefined) {
+      game.registry.set('settings', nextSettings);
+      game.events.emit('settings-changed', nextSettings);
+    }
   },
   onStart: (state) => {
+    const isFirstStart = game === undefined;
+    const activeGame = ensureGame(state);
     startedAt = performance.now();
     input.setGameplayActive(true);
-    if (state !== undefined) game.events.emit('restore-play-state', state);
+    if (state !== undefined && !isFirstStart) activeGame.events.emit('restore-play-state', state);
+    return activeGame;
   },
   onStop: () => input.setGameplayActive(false),
   onSave: async () => { await saveRepository.put(makeSave()); },
@@ -56,8 +74,9 @@ const shell = new AppShell({
 
 shell.mount();
 void shell.refreshContinue();
+new SplashScreen().mount();
 
 window.addEventListener('beforeunload', () => {
   input.destroy();
-  game.destroy(true);
+  game?.destroy(true);
 });

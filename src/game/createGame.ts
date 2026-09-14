@@ -1,12 +1,17 @@
 import Phaser from 'phaser';
 
 import type { InputController } from '../input/InputController';
+import type { PlayState } from '../app/AppShell';
 import type { GameSettings } from '../settings/Settings';
 import { BoulevardSpikeScene } from './scenes/BoulevardSpikeScene';
 
 interface CreateGameOptions {
   readonly input: InputController;
   readonly settings: GameSettings;
+  /** Applied directly during the scene's create() — since the game is
+   * created lazily on first entry, there is no already-booted scene to
+   * safely target with the 'restore-play-state' event yet. */
+  readonly initialState?: PlayState;
 }
 
 export function createGame(options: CreateGameOptions): Phaser.Game {
@@ -23,5 +28,6 @@ export function createGame(options: CreateGameOptions): Phaser.Game {
   });
   game.registry.set('inputController', options.input);
   game.registry.set('settings', options.settings);
+  if (options.initialState !== undefined) game.registry.set('initialPlayState', options.initialState);
   return game;
 }

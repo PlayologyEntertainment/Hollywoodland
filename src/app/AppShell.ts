@@ -10,9 +10,10 @@ export interface PlayState {
 
 interface AppShellOptions {
   readonly settings: GameSettings;
-  readonly game: Phaser.Game;
   readonly onSettingsChanged: (settings: GameSettings) => void;
-  readonly onStart: (state?: PlayState) => void;
+  /** Creates the Phaser game on first call (deferred until the player
+   * actually enters play) and reuses it on subsequent calls. */
+  readonly onStart: (state?: PlayState) => Phaser.Game;
   readonly onStop: () => void;
   readonly onSave: () => Promise<void>;
   readonly onLoad: () => Promise<PlayState | undefined>;
@@ -23,6 +24,7 @@ interface AppShellOptions {
 export class AppShell {
   private settings: GameSettings;
   private fpsTimer = 0;
+  private game: Phaser.Game | undefined;
 
   public constructor(private readonly options: AppShellOptions) {
     this.settings = options.settings;
@@ -32,6 +34,7 @@ export class AppShell {
     this.applySettings(this.settings);
     const titlePanel = assertElement('#title-panel', HTMLElement);
     const playHud = assertElement('#play-hud', HTMLElement);
+    const menuBackdrop = assertElement('#menu-backdrop', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
     const settingsDialog = assertElement('#settings-dialog', HTMLDialogElement);
@@ -39,15 +42,16 @@ export class AppShell {
     const statusPanel = assertElement('#status-panel', HTMLElement);
     const fileInput = assertElement('#save-file-input', HTMLInputElement);
 
-    newCareer.addEventListener('click', () => this.startGame(titlePanel, playHud));
+    newCareer.addEventListener('click', () => this.startGame(titlePanel, playHud, menuBackdrop));
     continueCareer.addEventListener('click', async () => {
       const state = await this.options.onLoad();
-      this.startGame(titlePanel, playHud, state);
+      this.startGame(titlePanel, playHud, menuBackdrop, state);
       this.toast('Career restored');
     });
     assertElement('#return-menu', HTMLButtonElement).addEventListener('click', () => {
       playHud.hidden = true;
       titlePanel.hidden = false;
+      menuBackdrop.hidden = false;
       this.options.onStop();
       newCareer.focus();
     });
@@ -75,16 +79,7 @@ export class AppShell {
     assertElement('#manual-save', HTMLButtonElement).addEventListener('click', () => void this.save());
     assertElement('#export-save', HTMLButtonElement).addEventListener('click', () => this.exportSave());
     assertElement('#import-save', HTMLButtonElement).addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => void this.importSave(fileInput, titlePanel, playHud));
-
-    this.options.game.events.on('interaction-proximity', (visible: boolean) => {
-      assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
-    });
-    this.options.game.events.on('casting-office-entered', () => {
-      assertElement('#interaction-dialog', HTMLDialogElement).showModal();
-      this.announce('You entered the Sunset Casting Exchange.');
-    });
-    this.startFpsMeter();
+    fileInput.addEventListener('change', () => void this.importSave(fileInput, titlePanel, playHud, menuBackdrop));
   }
 
   public async refreshContinue(): Promise<void> {
@@ -95,11 +90,25 @@ export class AppShell {
     }
   }
 
-  private startGame(titlePanel: HTMLElement, playHud: HTMLElement, state?: PlayState): void {
+  private startGame(titlePanel: HTMLElement, playHud: HTMLElement, menuBackdrop: HTMLElement, state?: PlayState): void {
     titlePanel.hidden = true;
     playHud.hidden = false;
-    this.options.onStart(state);
+    menuBackdrop.hidden = true;
+    const isFirstStart = this.game === undefined;
+    this.game = this.options.onStart(state);
+    if (isFirstStart) this.bindGameEvents(this.game);
     this.announce('Hollywood Boulevard. Use A and D or arrow keys to move. Press E near the casting office.');
+  }
+
+  private bindGameEvents(game: Phaser.Game): void {
+    game.events.on('interaction-proximity', (visible: boolean) => {
+      assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
+    });
+    game.events.on('casting-office-entered', () => {
+      assertElement('#interaction-dialog', HTMLDialogElement).showModal();
+      this.announce('You entered the Sunset Casting Exchange.');
+    });
+    this.startFpsMeter(game);
   }
 
   private async save(): Promise<void> {
@@ -123,13 +132,18 @@ export class AppShell {
     this.toast('Save exported');
   }
 
-  private async importSave(fileInput: HTMLInputElement, titlePanel: HTMLElement, playHud: HTMLElement): Promise<void> {
+  private async importSave(
+    fileInput: HTMLInputElement,
+    titlePanel: HTMLElement,
+    playHud: HTMLElement,
+    menuBackdrop: HTMLElement,
+  ): Promise<void> {
     const file = fileInput.files?.[0];
     if (file === undefined) return;
     try {
       const state = await this.options.onImport(await file.text());
       await this.refreshContinue();
-      this.startGame(titlePanel, playHud, state);
+      this.startGame(titlePanel, playHud, menuBackdrop, state);
       this.toast('Save imported and verified');
     } catch (error) {
       this.toast(error instanceof Error ? error.message : 'Save import failed');
@@ -155,9 +169,9 @@ export class AppShell {
     }
   }
 
-  private startFpsMeter(): void {
+  private startFpsMeter(game: Phaser.Game): void {
     window.setInterval(() => {
-      const fps = Math.round(this.options.game.loop.actualFps);
+      const fps = Math.round(game.loop.actualFps);
       assertElement('#fps-output', HTMLOutputElement).value = `${Number.isFinite(fps) ? fps : '--'} FPS`;
     }, 500);
   }
