@@ -1,13 +1,5 @@
+import { ORIGINS, BASE_ATTRIBUTE_VALUE, MAX_ATTRIBUTE_VALUE, type AttributeKey, type Origin } from '../domain/Origins';
 import { assertElement } from '../shared/assert';
-
-type AttributeKey = 'presence' | 'craft' | 'wit' | 'nerve' | 'grit';
-
-interface Origin {
-  readonly id: string;
-  readonly name: string;
-  readonly blurb: string;
-  readonly deltas: Partial<Record<AttributeKey, number>>;
-}
 
 export interface CharacterChoices {
   readonly name: string;
@@ -23,18 +15,6 @@ const ATTRIBUTE_LABELS: Record<AttributeKey, string> = {
   nerve: 'Nerve',
   grit: 'Grit',
 };
-const BASE_ATTRIBUTE_VALUE = 5;
-const MAX_ATTRIBUTE_VALUE = 10;
-
-/** Deltas sourced from docs/DRAFT_TRACK_B_CANON_PROPOSAL.md §3 — keep in
- * sync if that document's origin list changes. */
-const ORIGINS: readonly Origin[] = [
-  { id: 'small-town-hopeful', name: 'Small-Town Hopeful', blurb: 'Left a Midwest county for the first time.', deltas: { grit: 1, wit: -1 } },
-  { id: 'vaudeville-trouper', name: 'Vaudeville Trouper', blurb: 'Grew up in a touring stage family.', deltas: { craft: 1, grit: -1 } },
-  { id: 'runaway-society-name', name: 'Runaway Society Name', blurb: 'Walked out on a wealthy, controlling family.', deltas: { presence: 1 } },
-  { id: 'immigrant-striver', name: 'Immigrant Striver', blurb: 'Arrived by ship and rail, still finding footing.', deltas: { grit: 1, presence: -1 } },
-  { id: 'studio-lot-hand-me-down', name: 'Studio-Lot Hand-Me-Down', blurb: 'Mending costumes on the lot, finally auditioning.', deltas: { wit: 1, nerve: -1 } },
-];
 
 const SKIN_TONES: readonly string[] = ['#f5d3ab', '#e0b28c', '#c48a5e', '#8f5a34', '#5b3a22'];
 

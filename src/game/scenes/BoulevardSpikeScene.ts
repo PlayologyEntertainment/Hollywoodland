@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 
-import type { PlayState } from '../../app/AppShell';
+import { enterCastingOffice, advanceTime } from '../../domain/CareerActions';
+import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
+import type { DomainEventBus } from '../../domain/DomainEventBus';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 
@@ -12,7 +14,6 @@ const MAIN_ARCHITECTURE_OFFSET_Y = -117;
 const GROUND_PLANE_OFFSET_Y = 430;
 const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
-const PLAYER_START_X = 420;
 const CASTING_OFFICE_X = 1675;
 const CASTING_SIGN_X = 1805;
 const CASTING_SIGN_Y = 707;
@@ -20,11 +21,13 @@ const CASTING_SIGN_Y = 707;
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
   private settings!: GameSettings;
+  private domainEvents!: DomainEventBus;
+  private careerState!: CareerState;
   private player!: Phaser.GameObjects.Sprite;
   private playerShadow!: Phaser.GameObjects.Ellipse;
   private atmosphericTweens: Phaser.Tweens.Tween[] = [];
   private promptVisible = false;
-  private discoveredCastingOffice = false;
+  private unsubscribers: Array<() => void> = [];
   private stateClock = 0;
 
   public constructor() {
@@ -74,6 +77,8 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   public create(): void {
     this.inputController = this.registry.get('inputController') as InputController;
     this.settings = this.registry.get('settings') as GameSettings;
+    this.domainEvents = this.registry.get('domainEvents') as DomainEventBus;
+    this.careerState = createDefaultCareerState();
     this.cameras.main.setBackgroundColor('#68b9ef');
     this.createRenderedEnvironment();
     this.createPlayer();
@@ -82,14 +87,17 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
     this.cameras.main.setDeadzone(520, 290);
 
-    this.game.events.on('settings-changed', this.onSettingsChanged, this);
-    this.game.events.on('restore-play-state', this.restoreState, this);
+    this.unsubscribers = [
+      this.domainEvents.on('settings-changed', this.onSettingsChanged),
+      this.domainEvents.on('restore-career-state', this.restoreState),
+      this.domainEvents.on('advance-time-requested', this.onAdvanceTimeRequested),
+    ];
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.game.events.off('settings-changed', this.onSettingsChanged, this);
-      this.game.events.off('restore-play-state', this.restoreState, this);
+      for (const unsubscribe of this.unsubscribers) unsubscribe();
+      this.unsubscribers = [];
     });
     this.applyMotionSettings();
-    const initialState = this.registry.get('initialPlayState') as PlayState | undefined;
+    const initialState = this.registry.get('initialCareerState') as CareerState | undefined;
     if (initialState !== undefined) this.restoreState(initialState);
     else this.emitState();
   }
@@ -117,11 +125,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const nearCasting = Math.abs(this.player.x - CASTING_OFFICE_X) < 205;
     if (nearCasting !== this.promptVisible) {
       this.promptVisible = nearCasting;
-      this.game.events.emit('interaction-proximity', nearCasting);
+      this.domainEvents.emit('interaction-proximity-changed', nearCasting);
     }
     if (nearCasting && this.inputController.consumePress('interact')) {
-      this.discoveredCastingOffice = true;
-      this.game.events.emit('casting-office-entered');
+      this.careerState = enterCastingOffice(this.careerState);
+      this.domainEvents.emit('casting-office-entered', undefined);
       this.emitState();
     }
 
@@ -298,35 +306,32 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       repeat: -1,
     });
     this.playerShadow = this.add
-      .ellipse(PLAYER_START_X, GROUND_Y + 18, 112, 22, 0x160f0c, 0.27)
+      .ellipse(DEFAULT_PLAYER_X, GROUND_Y + 18, 112, 22, 0x160f0c, 0.27)
       .setDepth(28);
     this.player = this.add
-      .sprite(PLAYER_START_X, GROUND_Y + 22, 'aspiring-actor', 0)
+      .sprite(DEFAULT_PLAYER_X, GROUND_Y + 22, 'aspiring-actor', 0)
       .setOrigin(0.5, 1)
       .setScale(0.42)
       .setDepth(30);
   }
 
   private emitState(): void {
-    const state: PlayState = {
-      playerX: Math.round(this.player.x),
-      discoveredCastingOffice: this.discoveredCastingOffice,
-    };
-    this.game.events.emit('play-state', state);
+    this.careerState = { ...this.careerState, playerX: Math.round(this.player.x) };
+    this.domainEvents.emit('career-state-changed', this.careerState);
   }
 
   private applyMotionSettings(): void {
     for (const tween of this.atmosphericTweens) tween.paused = this.settings.reducedMotion;
   }
 
-  private readonly restoreState = (state: PlayState): void => {
+  private readonly restoreState = (state: CareerState): void => {
     const migratedX =
       state.playerX > WORLD_WIDTH
         ? Math.round((state.playerX / LEGACY_WORLD_WIDTH) * WORLD_WIDTH)
         : state.playerX;
     this.player.x = Phaser.Math.Clamp(migratedX, 110, WORLD_WIDTH - 110);
     this.playerShadow.x = this.player.x;
-    this.discoveredCastingOffice = state.discoveredCastingOffice;
+    this.careerState = state;
     this.cameras.main.centerOn(this.player.x, this.player.y);
     this.emitState();
   };
@@ -334,5 +339,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private readonly onSettingsChanged = (settings: GameSettings): void => {
     this.settings = settings;
     this.applyMotionSettings();
+  };
+
+  private readonly onAdvanceTimeRequested = (): void => {
+    this.careerState = advanceTime(this.careerState);
+    this.emitState();
   };
 }
