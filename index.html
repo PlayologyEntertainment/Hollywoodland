@@ -12,7 +12,17 @@
     <main id="app" class="app-shell">
       <section id="game-frame" class="game-frame" aria-label="Hollywoodland game view">
         <div id="game-root" aria-hidden="true"></div>
+        <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true" style="background-image: url('%BASE_URL%assets/ui/hollywoodland-concept-boulevard.webp')"></div>
         <div class="film-grain" aria-hidden="true"></div>
+
+        <div id="splash-screen" class="splash-screen">
+          <div class="splash-content">
+            <img class="splash-medallion" src="/assets/ui/playology-logo.svg" alt="" aria-hidden="true" />
+            <p class="splash-presents">Playology Entertainment<br />Presents</p>
+            <img class="splash-art" src="/assets/ui/hollywoodland-splash.webp" alt="Hollywoodland" />
+            <button id="splash-enter" class="primary-button splash-enter" type="button">Enter</button>
+          </div>
+        </div>
 
         <header class="status-bar" aria-label="Career status">
           <span><b>1935</b> · Hollywood Boulevard</span>
@@ -46,7 +56,7 @@
           <div class="hud-actions">
             <button id="manual-save" type="button">Save</button>
             <button id="export-save" type="button">Export</button>
-            <button id="return-menu" class="text-button" type="button">Menu</button>
+            <button id="return-menu" type="button">Menu</button>
           </div>
         </section>
 
