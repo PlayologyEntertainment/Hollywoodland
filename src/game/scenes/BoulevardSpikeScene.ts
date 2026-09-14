@@ -14,6 +14,8 @@ const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
 const PLAYER_START_X = 420;
 const CASTING_OFFICE_X = 1675;
+const CASTING_SIGN_X = 1805;
+const CASTING_SIGN_Y = 707;
 
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
@@ -194,15 +196,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       .setScale(0.5)
       .setDepth(24);
 
+    const signCenterY = CASTING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
     const castingGlow = this.add
-      .ellipse(
-        CASTING_OFFICE_X,
-        555 + MAIN_ARCHITECTURE_OFFSET_Y,
-        170,
-        245,
-        0xffc95f,
-        0.07,
-      )
+      .ellipse(CASTING_SIGN_X, signCenterY, 170, 175, 0xffc95f, 0.07)
       .setBlendMode(Phaser.BlendModes.ADD)
       .setDepth(4);
     this.atmosphericTweens.push(
@@ -217,20 +213,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       }),
     );
 
-    this.add
-      .text(CASTING_OFFICE_X, 550 + MAIN_ARCHITECTURE_OFFSET_Y, 'SUNSET\nCASTING\nEXCHANGE', {
-        color: '#5c3b22',
-        fontFamily: 'Georgia, serif',
-        fontSize: '19px',
-        fontStyle: 'bold',
-        letterSpacing: 2,
-        align: 'center',
-        lineSpacing: 4,
-        stroke: '#f8e4bb',
-        strokeThickness: 3,
-      })
-      .setOrigin(0.5)
-      .setDepth(5);
+    this.createCastingOfficeSign(CASTING_SIGN_X, signCenterY);
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add
@@ -253,6 +236,58 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
     const vignette = this.add.graphics().setScrollFactor(0).setDepth(50);
     vignette.lineStyle(100, 0x261713, 0.12).strokeRect(-32, -32, 1984, 1144);
+  }
+
+  /** A hand-drawn hanging sign board — frame, inset panel, and corner
+   * rivets — mounted directly above the casting office door. */
+  private createCastingOfficeSign(x: number, y: number): void {
+    const width = 210;
+    const height = 130;
+    const left = x - width / 2;
+    const top = y - height / 2;
+    const inset = 9;
+
+    const frame = this.add.graphics().setDepth(4.5);
+    frame.fillStyle(0x120c08, 0.35);
+    frame.fillRoundedRect(left + 4, top + 6, width, height, 8);
+    frame.fillStyle(0x241609, 1);
+    frame.fillRoundedRect(left, top, width, height, 8);
+    frame.fillStyle(0x40270f, 1);
+    frame.fillRoundedRect(left + inset, top + inset, width - inset * 2, height - inset * 2, 5);
+    frame.lineStyle(2, 0xd8ad58, 0.85);
+    frame.strokeRoundedRect(left + inset, top + inset, width - inset * 2, height - inset * 2, 5);
+    frame.lineStyle(3, 0x120c08, 0.7);
+    frame.strokeRoundedRect(left, top, width, height, 8);
+
+    const rivetOffset = 15;
+    const rivetCorners: ReadonlyArray<readonly [number, number]> = [
+      [left + rivetOffset, top + rivetOffset],
+      [left + width - rivetOffset, top + rivetOffset],
+      [left + rivetOffset, top + height - rivetOffset],
+      [left + width - rivetOffset, top + height - rivetOffset],
+    ];
+    for (const [rx, ry] of rivetCorners) {
+      frame.fillStyle(0x0f0906, 0.8);
+      frame.fillCircle(rx + 0.6, ry + 0.6, 4);
+      frame.fillStyle(0xb98a45, 1);
+      frame.fillCircle(rx, ry, 3.6);
+      frame.fillStyle(0xf3d99a, 0.85);
+      frame.fillCircle(rx - 1, ry - 1, 1.2);
+    }
+
+    this.add
+      .text(x, y, 'SUNSET\nCASTING\nEXCHANGE', {
+        color: '#f3dfab',
+        fontFamily: 'Georgia, serif',
+        fontSize: '19px',
+        fontStyle: 'bold',
+        letterSpacing: 2,
+        align: 'center',
+        lineSpacing: 4,
+        shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 2, fill: true },
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
   }
 
   private createPlayer(): void {
