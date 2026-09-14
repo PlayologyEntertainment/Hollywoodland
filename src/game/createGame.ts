@@ -1,17 +1,19 @@
 import Phaser from 'phaser';
 
+import type { CareerState } from '../domain/CareerState';
+import type { DomainEventBus } from '../domain/DomainEventBus';
 import type { InputController } from '../input/InputController';
-import type { PlayState } from '../app/AppShell';
 import type { GameSettings } from '../settings/Settings';
 import { BoulevardSpikeScene } from './scenes/BoulevardSpikeScene';
 
 interface CreateGameOptions {
   readonly input: InputController;
   readonly settings: GameSettings;
+  readonly domainEvents: DomainEventBus;
   /** Applied directly during the scene's create() — since the game is
    * created lazily on first entry, there is no already-booted scene to
-   * safely target with the 'restore-play-state' event yet. */
-  readonly initialState?: PlayState;
+   * safely target with the 'restore-career-state' event yet. */
+  readonly initialState?: CareerState;
 }
 
 export function createGame(options: CreateGameOptions): Phaser.Game {
@@ -28,6 +30,7 @@ export function createGame(options: CreateGameOptions): Phaser.Game {
   });
   game.registry.set('inputController', options.input);
   game.registry.set('settings', options.settings);
-  if (options.initialState !== undefined) game.registry.set('initialPlayState', options.initialState);
+  game.registry.set('domainEvents', options.domainEvents);
+  if (options.initialState !== undefined) game.registry.set('initialCareerState', options.initialState);
   return game;
 }

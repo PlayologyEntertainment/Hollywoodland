@@ -1,13 +1,11 @@
 import type Phaser from 'phaser';
 
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
+import { createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
+import type { DomainEventBus } from '../domain/DomainEventBus';
+import { deriveAttributes } from '../domain/Origins';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
-
-export interface PlayState {
-  readonly playerX: number;
-  readonly discoveredCastingOffice: boolean;
-}
 
 interface MenuScreens {
   readonly titlePanel: HTMLElement;
@@ -18,16 +16,23 @@ interface MenuScreens {
 
 interface AppShellOptions {
   readonly settings: GameSettings;
+  readonly domainEvents: DomainEventBus;
   readonly onSettingsChanged: (settings: GameSettings) => void;
   /** Creates the Phaser game on first call (deferred until the player
    * actually enters play) and reuses it on subsequent calls. */
-  readonly onStart: (state?: PlayState) => Phaser.Game;
+  readonly onStart: (state?: CareerState) => Phaser.Game;
   readonly onStop: () => void;
   readonly onSave: () => Promise<void>;
-  readonly onLoad: () => Promise<PlayState | undefined>;
+  readonly onLoad: () => Promise<CareerState | undefined>;
   readonly onExport: () => string;
-  readonly onImport: (raw: string) => Promise<PlayState>;
+  readonly onImport: (raw: string) => Promise<CareerState>;
 }
+
+const TIME_SLOT_LABELS: Record<CareerState['time']['slot'], string> = {
+  morning: 'Morning',
+  afternoon: 'Afternoon',
+  evening: 'Evening',
+};
 
 export class AppShell {
   private settings: GameSettings;
@@ -54,6 +59,15 @@ export class AppShell {
     const statusPanel = assertElement('#status-panel', HTMLElement);
     const fileInput = assertElement('#save-file-input', HTMLInputElement);
 
+    this.options.domainEvents.on('interaction-proximity-changed', (visible) => {
+      assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
+    });
+    this.options.domainEvents.on('casting-office-entered', () => {
+      assertElement('#interaction-dialog', HTMLDialogElement).showModal();
+      this.announce('You entered the Sunset Casting Exchange.');
+    });
+    this.options.domainEvents.on('career-state-changed', (state) => this.renderCareerState(state));
+
     newCareer.addEventListener('click', () => {
       screens.titlePanel.hidden = true;
       screens.menuBackdrop.hidden = true;
@@ -62,8 +76,9 @@ export class AppShell {
     new CharacterCreator().mount(
       (choices) => {
         characterCreator.hidden = true;
-        this.applyCharacterChoices(choices);
-        this.startGame(screens);
+        const state = this.buildInitialState(choices);
+        this.renderCareerState(state);
+        this.startGame(screens, state);
       },
       () => {
         characterCreator.hidden = true;
@@ -73,6 +88,7 @@ export class AppShell {
     );
     continueCareer.addEventListener('click', async () => {
       const state = await this.options.onLoad();
+      if (state !== undefined) this.renderCareerState(state);
       this.startGame(screens, state);
       this.toast('Career restored');
     });
@@ -105,6 +121,7 @@ export class AppShell {
     assertElement('#close-status', HTMLButtonElement).addEventListener('click', () => this.closeStatus(statusPanel, statusButton));
     assertElement('#film-mode', HTMLButtonElement).addEventListener('click', (event) => this.toggleFilmMode(event.currentTarget as HTMLButtonElement));
     assertElement('#fullscreen', HTMLButtonElement).addEventListener('click', () => void this.toggleFullscreen());
+    assertElement('#advance-time', HTMLButtonElement).addEventListener('click', () => this.options.domainEvents.emit('advance-time-requested', undefined));
     assertElement('#manual-save', HTMLButtonElement).addEventListener('click', () => void this.save());
     assertElement('#export-save', HTMLButtonElement).addEventListener('click', () => this.exportSave());
     assertElement('#import-save', HTMLButtonElement).addEventListener('click', () => fileInput.click());
@@ -119,30 +136,36 @@ export class AppShell {
     }
   }
 
-  private startGame(screens: MenuScreens, state?: PlayState): void {
+  private startGame(screens: MenuScreens, state?: CareerState): void {
     screens.titlePanel.hidden = true;
     screens.playHud.hidden = false;
     screens.menuBackdrop.hidden = true;
     screens.statusBar.hidden = false;
     const isFirstStart = this.game === undefined;
     this.game = this.options.onStart(state);
-    if (isFirstStart) this.bindGameEvents(this.game);
+    if (isFirstStart) this.startFpsMeter(this.game);
     this.announce('Hollywood Boulevard. Use A and D or arrow keys to move. Press E near the casting office.');
   }
 
-  private applyCharacterChoices(choices: CharacterChoices): void {
-    assertElement('#status-name', HTMLElement).textContent = choices.name.length > 0 ? choices.name : 'Nobody — yet';
+  private buildInitialState(choices: CharacterChoices): CareerState {
+    const identity: IdentityState = {
+      name: choices.name,
+      originId: choices.originId,
+      skinToneIndex: choices.skinToneIndex,
+      appearance: choices.appearance,
+    };
+    return createInitialCareerState(identity, deriveAttributes(choices.originId));
   }
 
-  private bindGameEvents(game: Phaser.Game): void {
-    game.events.on('interaction-proximity', (visible: boolean) => {
-      assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
-    });
-    game.events.on('casting-office-entered', () => {
-      assertElement('#interaction-dialog', HTMLDialogElement).showModal();
-      this.announce('You entered the Sunset Casting Exchange.');
-    });
-    this.startFpsMeter(game);
+  private renderCareerState(state: CareerState): void {
+    assertElement('#status-name', HTMLElement).textContent = state.identity.name.length > 0 ? state.identity.name : 'Nobody — yet';
+    const timeLabel = `Day ${state.time.day} · ${TIME_SLOT_LABELS[state.time.slot]}`;
+    assertElement('#status-time', HTMLElement).textContent = timeLabel;
+    assertElement('#status-money', HTMLElement).textContent = `$${state.resources.money}`;
+    assertElement('#status-energy', HTMLElement).textContent = `${state.resources.energy}/100`;
+    assertElement('#status-reputation', HTMLElement).textContent = `${state.resources.reputation}/100`;
+    assertElement('#hud-quickstats', HTMLOutputElement).value =
+      `${timeLabel} · $${state.resources.money} · Energy ${state.resources.energy}/100 · Rep ${state.resources.reputation}/100`;
   }
 
   private async save(): Promise<void> {
@@ -160,7 +183,7 @@ export class AppShell {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'hollywoodland-phase-1-save.json';
+    anchor.download = 'hollywoodland-phase-2-save.json';
     anchor.click();
     URL.revokeObjectURL(url);
     this.toast('Save exported');
@@ -172,6 +195,7 @@ export class AppShell {
     try {
       const state = await this.options.onImport(await file.text());
       await this.refreshContinue();
+      this.renderCareerState(state);
       this.startGame(screens, state);
       this.toast('Save imported and verified');
     } catch (error) {
