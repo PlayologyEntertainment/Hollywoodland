@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <header class="status-bar" aria-label="Career status">
+        <header id="status-bar" class="status-bar" aria-label="Career status" hidden>
           <span><b>1935</b> · Hollywood Boulevard</span>
           <div class="status-actions">
             <output id="fps-output" class="fps-output" aria-label="Frame rate">-- FPS</output>
@@ -47,6 +47,107 @@
           <p class="build-label">Phase 1 · Visual gameplay spike</p>
         </section>
 
+        <section id="character-creator" class="creator" aria-labelledby="creator-title" hidden>
+          <header class="creator-header">
+            <p class="eyebrow">Hollywoodland</p>
+            <h2 id="creator-title">Character Creator</h2>
+          </header>
+
+          <div class="creator-body">
+            <div class="creator-panel creator-form">
+              <label class="creator-field">
+                <span>Name</span>
+                <input id="creator-name" type="text" maxlength="40" placeholder="Your name" autocomplete="off" />
+              </label>
+
+              <div class="creator-field">
+                <span>Skin Tone</span>
+                <div id="creator-skin-tones" class="swatch-row" role="radiogroup" aria-label="Skin tone"></div>
+              </div>
+
+              <div class="creator-cycler" data-cycler="face">
+                <span>Face</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous face">‹</button>
+                  <output class="cycler-value">Face 1</output>
+                  <button type="button" class="cycler-next" aria-label="Next face">›</button>
+                </div>
+              </div>
+              <div class="creator-cycler" data-cycler="hair">
+                <span>Hair</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous hair">‹</button>
+                  <output class="cycler-value">Hair 1</output>
+                  <button type="button" class="cycler-next" aria-label="Next hair">›</button>
+                </div>
+              </div>
+              <div class="creator-cycler" data-cycler="eyes">
+                <span>Eyes</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous eyes">‹</button>
+                  <output class="cycler-value">Eyes 1</output>
+                  <button type="button" class="cycler-next" aria-label="Next eyes">›</button>
+                </div>
+              </div>
+              <div class="creator-cycler" data-cycler="outfit">
+                <span>Outfit</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous outfit">‹</button>
+                  <output class="cycler-value">Outfit 1</output>
+                  <button type="button" class="cycler-next" aria-label="Next outfit">›</button>
+                </div>
+              </div>
+              <div class="creator-cycler" data-cycler="hat">
+                <span>Hat</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous hat">‹</button>
+                  <output class="cycler-value">None</output>
+                  <button type="button" class="cycler-next" aria-label="Next hat">›</button>
+                </div>
+              </div>
+              <div class="creator-cycler" data-cycler="accessory">
+                <span>Accessories</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous accessory">‹</button>
+                  <output class="cycler-value">None</output>
+                  <button type="button" class="cycler-next" aria-label="Next accessory">›</button>
+                </div>
+              </div>
+              <div class="creator-cycler" data-cycler="voice">
+                <span>Voice</span>
+                <div class="cycler-control">
+                  <button type="button" class="cycler-prev" aria-label="Previous voice">‹</button>
+                  <output class="cycler-value">Voice 1</output>
+                  <button type="button" class="cycler-next" aria-label="Next voice">›</button>
+                </div>
+              </div>
+
+              <button id="creator-randomize" type="button" class="creator-randomize">🎲 Randomize</button>
+            </div>
+
+            <div class="creator-panel creator-preview">
+              <div class="creator-pedestal">
+                <div id="creator-portrait" class="creator-portrait" aria-hidden="true"></div>
+              </div>
+              <p class="creator-plaque">Dream · Audition · Belong</p>
+              <p class="creator-preview-note">Full character art arrives with the next asset pass — today's choices are saved for then.</p>
+            </div>
+
+            <div class="creator-panel creator-origin">
+              <h3>Choose an Origin</h3>
+              <div id="creator-origins" class="origin-grid" role="radiogroup" aria-label="Origin"></div>
+
+              <h3>Attributes</h3>
+              <dl id="creator-attributes" class="attribute-list"></dl>
+            </div>
+          </div>
+
+          <footer class="creator-footer">
+            <button id="creator-back" type="button">Back</button>
+            <button id="creator-start" type="button" class="primary-button">Start Career</button>
+          </footer>
+        </section>
+
         <section id="play-hud" class="play-hud" aria-label="Gameplay controls" hidden>
           <div class="objective-card">
             <span class="eyebrow">First objective</span>
@@ -66,7 +167,7 @@
 
         <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
           <div class="drawer-heading">
-            <div><p class="eyebrow">Nobody — yet</p><h2 id="status-title">Your Career</h2></div>
+            <div><p id="status-name" class="eyebrow">Nobody — yet</p><h2 id="status-title">Your Career</h2></div>
             <button id="close-status" type="button" aria-label="Close career status">×</button>
           </div>
           <dl>

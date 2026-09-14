@@ -1,11 +1,19 @@
 import type Phaser from 'phaser';
 
+import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
 
 export interface PlayState {
   readonly playerX: number;
   readonly discoveredCastingOffice: boolean;
+}
+
+interface MenuScreens {
+  readonly titlePanel: HTMLElement;
+  readonly playHud: HTMLElement;
+  readonly menuBackdrop: HTMLElement;
+  readonly statusBar: HTMLElement;
 }
 
 interface AppShellOptions {
@@ -32,9 +40,13 @@ export class AppShell {
 
   public mount(): void {
     this.applySettings(this.settings);
-    const titlePanel = assertElement('#title-panel', HTMLElement);
-    const playHud = assertElement('#play-hud', HTMLElement);
-    const menuBackdrop = assertElement('#menu-backdrop', HTMLElement);
+    const screens: MenuScreens = {
+      titlePanel: assertElement('#title-panel', HTMLElement),
+      playHud: assertElement('#play-hud', HTMLElement),
+      menuBackdrop: assertElement('#menu-backdrop', HTMLElement),
+      statusBar: assertElement('#status-bar', HTMLElement),
+    };
+    const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
     const settingsDialog = assertElement('#settings-dialog', HTMLDialogElement);
@@ -42,16 +54,33 @@ export class AppShell {
     const statusPanel = assertElement('#status-panel', HTMLElement);
     const fileInput = assertElement('#save-file-input', HTMLInputElement);
 
-    newCareer.addEventListener('click', () => this.startGame(titlePanel, playHud, menuBackdrop));
+    newCareer.addEventListener('click', () => {
+      screens.titlePanel.hidden = true;
+      screens.menuBackdrop.hidden = true;
+      characterCreator.hidden = false;
+    });
+    new CharacterCreator().mount(
+      (choices) => {
+        characterCreator.hidden = true;
+        this.applyCharacterChoices(choices);
+        this.startGame(screens);
+      },
+      () => {
+        characterCreator.hidden = true;
+        screens.titlePanel.hidden = false;
+        screens.menuBackdrop.hidden = false;
+      },
+    );
     continueCareer.addEventListener('click', async () => {
       const state = await this.options.onLoad();
-      this.startGame(titlePanel, playHud, menuBackdrop, state);
+      this.startGame(screens, state);
       this.toast('Career restored');
     });
     assertElement('#return-menu', HTMLButtonElement).addEventListener('click', () => {
-      playHud.hidden = true;
-      titlePanel.hidden = false;
-      menuBackdrop.hidden = false;
+      screens.playHud.hidden = true;
+      screens.titlePanel.hidden = false;
+      screens.menuBackdrop.hidden = false;
+      screens.statusBar.hidden = true;
       this.options.onStop();
       newCareer.focus();
     });
@@ -79,7 +108,7 @@ export class AppShell {
     assertElement('#manual-save', HTMLButtonElement).addEventListener('click', () => void this.save());
     assertElement('#export-save', HTMLButtonElement).addEventListener('click', () => this.exportSave());
     assertElement('#import-save', HTMLButtonElement).addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => void this.importSave(fileInput, titlePanel, playHud, menuBackdrop));
+    fileInput.addEventListener('change', () => void this.importSave(fileInput, screens));
   }
 
   public async refreshContinue(): Promise<void> {
@@ -90,14 +119,19 @@ export class AppShell {
     }
   }
 
-  private startGame(titlePanel: HTMLElement, playHud: HTMLElement, menuBackdrop: HTMLElement, state?: PlayState): void {
-    titlePanel.hidden = true;
-    playHud.hidden = false;
-    menuBackdrop.hidden = true;
+  private startGame(screens: MenuScreens, state?: PlayState): void {
+    screens.titlePanel.hidden = true;
+    screens.playHud.hidden = false;
+    screens.menuBackdrop.hidden = true;
+    screens.statusBar.hidden = false;
     const isFirstStart = this.game === undefined;
     this.game = this.options.onStart(state);
     if (isFirstStart) this.bindGameEvents(this.game);
     this.announce('Hollywood Boulevard. Use A and D or arrow keys to move. Press E near the casting office.');
+  }
+
+  private applyCharacterChoices(choices: CharacterChoices): void {
+    assertElement('#status-name', HTMLElement).textContent = choices.name.length > 0 ? choices.name : 'Nobody — yet';
   }
 
   private bindGameEvents(game: Phaser.Game): void {
@@ -132,18 +166,13 @@ export class AppShell {
     this.toast('Save exported');
   }
 
-  private async importSave(
-    fileInput: HTMLInputElement,
-    titlePanel: HTMLElement,
-    playHud: HTMLElement,
-    menuBackdrop: HTMLElement,
-  ): Promise<void> {
+  private async importSave(fileInput: HTMLInputElement, screens: MenuScreens): Promise<void> {
     const file = fileInput.files?.[0];
     if (file === undefined) return;
     try {
       const state = await this.options.onImport(await file.text());
       await this.refreshContinue();
-      this.startGame(titlePanel, playHud, menuBackdrop, state);
+      this.startGame(screens, state);
       this.toast('Save imported and verified');
     } catch (error) {
       this.toast(error instanceof Error ? error.message : 'Save import failed');
