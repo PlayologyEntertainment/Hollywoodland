@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 
 import { enterCastingOffice, advanceTime } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
+import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
+import { getDialogueGraphById } from '../../domain/DialogueGraphs';
 import type { DomainEventBus } from '../../domain/DomainEventBus';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
@@ -91,6 +93,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('settings-changed', this.onSettingsChanged),
       this.domainEvents.on('restore-career-state', this.restoreState),
       this.domainEvents.on('advance-time-requested', this.onAdvanceTimeRequested),
+      this.domainEvents.on('dialogue-choice-selected', this.onDialogueChoiceSelected),
     ];
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const unsubscribe of this.unsubscribers) unsubscribe();
@@ -343,6 +346,13 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   private readonly onAdvanceTimeRequested = (): void => {
     this.careerState = advanceTime(this.careerState);
+    this.emitState();
+  };
+
+  private readonly onDialogueChoiceSelected = (payload: DialogueChoiceSelectedPayload): void => {
+    const graph = getDialogueGraphById(payload.graphId);
+    if (graph === undefined) return;
+    this.careerState = applyDialogueChoiceById(this.careerState, graph, payload.nodeId, payload.choiceId);
     this.emitState();
   };
 }
