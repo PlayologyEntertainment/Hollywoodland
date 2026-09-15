@@ -1,4 +1,5 @@
 import { applySharedEffect, evaluateSharedCondition, type SharedCondition, type SharedEffect } from './Conditions';
+import { applyProgressionEffect, evaluateProgressionCondition, type ProgressionCondition, type ProgressionEffect } from './Progression';
 import { evaluateRelationshipCondition, type RelationshipCharacter, type RelationshipCondition } from './Relationships';
 import type { CareerState } from './CareerState';
 
@@ -10,7 +11,7 @@ export interface QuestStatusCondition {
   readonly status: QuestStatus;
 }
 
-export type QuestCondition = SharedCondition | QuestStatusCondition | RelationshipCondition;
+export type QuestCondition = SharedCondition | QuestStatusCondition | RelationshipCondition | ProgressionCondition;
 
 export interface QuestActionEffect {
   readonly kind: 'quest-action';
@@ -21,13 +22,15 @@ export interface QuestActionEffect {
 
 export type QuestEffect = SharedEffect | QuestActionEffect;
 
+/** A stage reward may grant XP alongside (or instead of) a fact/resource
+ * delta — but deliberately never `quest-action`, to avoid a stage reward
+ * cascading into another quest's state in this round's scope. */
+export type QuestStageReward = SharedEffect | ProgressionEffect;
+
 export interface QuestStage {
   readonly id: string;
   readonly description: string;
-  /** Reward effects applied the moment this stage is completed. Deliberately
-   * `SharedEffect` only (never `quest-action`) to avoid a stage reward
-   * cascading into another quest's state in this round's scope. */
-  readonly rewards?: readonly SharedEffect[];
+  readonly rewards?: readonly QuestStageReward[];
 }
 
 export interface QuestDef {
@@ -69,6 +72,9 @@ export function evaluateQuestCondition(
   }
   if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
     return evaluateRelationshipCondition(state, condition, roster);
+  }
+  if (condition.kind === 'level-at-least' || condition.kind === 'talent-unlocked') {
+    return evaluateProgressionCondition(state, condition);
   }
   return evaluateSharedCondition(state, condition);
 }
@@ -126,7 +132,12 @@ export function completeQuestStage(state: CareerState, quest: QuestDef, stageId:
     ...state,
     facts: { ...state.facts, [stageCompleteFact(quest.id, stageId)]: true },
   };
-  return (activeStage.rewards ?? []).reduce((current, effect) => applySharedEffect(current, effect), withFact);
+  return (activeStage.rewards ?? []).reduce((current, effect) => applyQuestStageReward(current, effect), withFact);
+}
+
+function applyQuestStageReward(state: CareerState, effect: QuestStageReward): CareerState {
+  if (effect.kind === 'xp-grant') return applyProgressionEffect(state, effect);
+  return applySharedEffect(state, effect);
 }
 
 /** The single defensive entry point the dialogue effect dispatcher calls —

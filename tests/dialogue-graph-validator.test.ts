@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { validateDialogueGraph } from '../src/content/DialogueGraphValidator';
 import { CASTING_OFFICE_DIALOGUE } from '../src/domain/DialogueGraphs';
+import type { TalentDefinition } from '../src/domain/Progression';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
+import { ALL_TALENTS } from '../src/domain/TalentDefinitions';
 import type { DialogueGraph } from '../src/domain/Dialogue';
 import type { QuestDef } from '../src/domain/Quests';
 import type { RelationshipCharacter } from '../src/domain/Relationships';
@@ -18,6 +20,17 @@ const TEST_QUEST: QuestDef = {
 const ROMANCE_CAPABLE: RelationshipCharacter = { id: 'romance-capable', supportsAttraction: true };
 const ROMANCE_INCAPABLE: RelationshipCharacter = { id: 'romance-incapable', supportsAttraction: false };
 const ROSTER: RelationshipCharacter[] = [ROMANCE_CAPABLE, ROMANCE_INCAPABLE];
+
+const TEST_TALENT: TalentDefinition = {
+  id: 'talent-a',
+  branch: 'drama',
+  name: 'Talent A',
+  description: '',
+  attribute: 'craft',
+  attributeBonus: 1,
+  cost: 1,
+  prerequisiteId: null,
+};
 
 describe('validateDialogueGraph', () => {
   it('accepts a small valid graph', () => {
@@ -81,8 +94,10 @@ describe('validateDialogueGraph', () => {
     expect(() => validateDialogueGraph(graph)).toThrow('root node "missing" does not exist');
   });
 
-  it('validates the real casting-office dialogue graph against the real quest and relationship content', () => {
-    expect(() => validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS)).not.toThrow();
+  it('validates the real casting-office dialogue graph against the real quest, relationship, and talent content', () => {
+    expect(() =>
+      validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS),
+    ).not.toThrow();
   });
 
   it('rejects a quest-status condition referencing an unknown quest', () => {
@@ -270,6 +285,63 @@ describe('validateDialogueGraph', () => {
   it('does not require a roster when the graph has no relationship wiring', () => {
     const graph: DialogueGraph = {
       id: 'no-relationships',
+      rootNodeId: 'a',
+      nodes: [{ id: 'a', speaker: 'X', text: '...', choices: [] }],
+    };
+    expect(() => validateDialogueGraph(graph)).not.toThrow();
+  });
+
+  it('rejects a talent-unlocked condition referencing an unknown talent', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-talent-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, conditions: [{ kind: 'talent-unlocked', talentId: 'missing' }] }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], [], [TEST_TALENT])).toThrow('references missing talent "missing"');
+  });
+
+  it('accepts a talent-unlocked condition against a known talent', () => {
+    const graph: DialogueGraph = {
+      id: 'good-talent-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, conditions: [{ kind: 'talent-unlocked', talentId: 'talent-a' }] }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], [], [TEST_TALENT])).not.toThrow();
+  });
+
+  it('accepts a level-at-least condition without needing a talents list', () => {
+    const graph: DialogueGraph = {
+      id: 'level-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, conditions: [{ kind: 'level-at-least', minimum: 2 }] }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph)).not.toThrow();
+  });
+
+  it('does not require a talents list when the graph has no talent wiring', () => {
+    const graph: DialogueGraph = {
+      id: 'no-talents',
       rootNodeId: 'a',
       nodes: [{ id: 'a', speaker: 'X', text: '...', choices: [] }],
     };

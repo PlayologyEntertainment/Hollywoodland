@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  applyProgressionEffect,
   applyXpGain,
   canUnlockTalent,
   DEFAULT_PROGRESSION,
+  evaluateProgressionCondition,
   isTalentUnlocked,
   unlockTalent,
   xpRequiredForNextLevel,
@@ -137,5 +139,27 @@ describe('unlockTalent', () => {
   it('no-ops when the prerequisite is missing', () => {
     const state = careerStateWithProgression({ ...DEFAULT_PROGRESSION, unspentTalentPoints: 5 });
     expect(unlockTalent(state, TIER_2)).toBe(state);
+  });
+});
+
+describe('evaluateProgressionCondition', () => {
+  it('evaluates a level-at-least condition against the current level', () => {
+    const state = careerStateWithProgression({ ...DEFAULT_PROGRESSION, level: 2 });
+    expect(evaluateProgressionCondition(state, { kind: 'level-at-least', minimum: 2 })).toBe(true);
+    expect(evaluateProgressionCondition(state, { kind: 'level-at-least', minimum: 3 })).toBe(false);
+  });
+
+  it('evaluates a talent-unlocked condition against the unlockedTalentIds record', () => {
+    const state = careerStateWithProgression({ ...DEFAULT_PROGRESSION, unlockedTalentIds: { 'tier-1': true } });
+    expect(evaluateProgressionCondition(state, { kind: 'talent-unlocked', talentId: 'tier-1' })).toBe(true);
+    expect(evaluateProgressionCondition(state, { kind: 'talent-unlocked', talentId: 'tier-2' })).toBe(false);
+  });
+});
+
+describe('applyProgressionEffect', () => {
+  it('applies an xp-grant effect through applyXpGain', () => {
+    const state = careerStateWithProgression(DEFAULT_PROGRESSION);
+    const next = applyProgressionEffect(state, { kind: 'xp-grant', amount: 50 });
+    expect(next.progression).toMatchObject({ xp: 10, level: 2, unspentTalentPoints: 1 });
   });
 });

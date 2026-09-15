@@ -1,14 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
 import { validateQuestGraph } from '../src/content/QuestValidator';
+import type { TalentDefinition } from '../src/domain/Progression';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import type { QuestDef } from '../src/domain/Quests';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
 import type { RelationshipCharacter } from '../src/domain/Relationships';
+import { ALL_TALENTS } from '../src/domain/TalentDefinitions';
 
 const ROMANCE_CAPABLE: RelationshipCharacter = { id: 'romance-capable', supportsAttraction: true };
 const ROMANCE_INCAPABLE: RelationshipCharacter = { id: 'romance-incapable', supportsAttraction: false };
 const ROSTER: RelationshipCharacter[] = [ROMANCE_CAPABLE, ROMANCE_INCAPABLE];
+
+const TEST_TALENT: TalentDefinition = {
+  id: 'talent-a',
+  branch: 'drama',
+  name: 'Talent A',
+  description: '',
+  attribute: 'craft',
+  attributeBonus: 1,
+  cost: 1,
+  prerequisiteId: null,
+};
 
 describe('validateQuestGraph', () => {
   it('accepts a valid quest set with a diamond dependency', () => {
@@ -69,8 +82,8 @@ describe('validateQuestGraph', () => {
     expect(() => validateQuestGraph([a, b])).toThrow('dependency cycle');
   });
 
-  it('validates the real quest content against the real relationship roster', () => {
-    expect(() => validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS)).not.toThrow();
+  it('validates the real quest content against the real relationship roster and talent content', () => {
+    expect(() => validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS)).not.toThrow();
   });
 
   it('rejects a relationship prerequisite referencing an unknown character', () => {
@@ -108,6 +121,39 @@ describe('validateQuestGraph', () => {
 
   it('does not require a roster when no quest has relationship prerequisites', () => {
     const quest: QuestDef = { id: 'q', title: 'X', summary: '', stages: [{ id: 's', description: '' }] };
+    expect(() => validateQuestGraph([quest])).not.toThrow();
+  });
+
+  it('rejects a talent-unlocked prerequisite referencing an unknown talent', () => {
+    const quest: QuestDef = {
+      id: 'q',
+      title: 'X',
+      summary: '',
+      prerequisites: [{ kind: 'talent-unlocked', talentId: 'missing' }],
+      stages: [{ id: 's', description: '' }],
+    };
+    expect(() => validateQuestGraph([quest], [], [TEST_TALENT])).toThrow('references missing talent "missing"');
+  });
+
+  it('accepts a talent-unlocked prerequisite against a known talent', () => {
+    const quest: QuestDef = {
+      id: 'q',
+      title: 'X',
+      summary: '',
+      prerequisites: [{ kind: 'talent-unlocked', talentId: 'talent-a' }],
+      stages: [{ id: 's', description: '' }],
+    };
+    expect(() => validateQuestGraph([quest], [], [TEST_TALENT])).not.toThrow();
+  });
+
+  it('accepts a level-at-least prerequisite without needing a talents list', () => {
+    const quest: QuestDef = {
+      id: 'q',
+      title: 'X',
+      summary: '',
+      prerequisites: [{ kind: 'level-at-least', minimum: 2 }],
+      stages: [{ id: 's', description: '' }],
+    };
     expect(() => validateQuestGraph([quest])).not.toThrow();
   });
 });

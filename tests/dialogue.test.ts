@@ -110,6 +110,21 @@ describe('dialogue conditions', () => {
     ).toBe(false);
   });
 
+  it('evaluates a level-at-least condition', () => {
+    const state = { ...createDefaultCareerState(), progression: { ...createDefaultCareerState().progression, level: 2 } };
+    expect(evaluateCondition(state, { kind: 'level-at-least', minimum: 2 }, NO_QUESTS, NO_RELATIONSHIPS)).toBe(true);
+    expect(evaluateCondition(state, { kind: 'level-at-least', minimum: 3 }, NO_QUESTS, NO_RELATIONSHIPS)).toBe(false);
+  });
+
+  it('evaluates a talent-unlocked condition', () => {
+    const state = {
+      ...createDefaultCareerState(),
+      progression: { ...createDefaultCareerState().progression, unlockedTalentIds: { 'tier-1': true } },
+    };
+    expect(evaluateCondition(state, { kind: 'talent-unlocked', talentId: 'tier-1' }, NO_QUESTS, NO_RELATIONSHIPS)).toBe(true);
+    expect(evaluateCondition(state, { kind: 'talent-unlocked', talentId: 'tier-2' }, NO_QUESTS, NO_RELATIONSHIPS)).toBe(false);
+  });
+
   it('requires every condition on a choice to pass (AND)', () => {
     const state = { ...createDefaultCareerState(), facts: { metClerk: true }, resources: { money: 12, energy: 100, reputation: 0 } };
     const choice: DialogueChoice = {
@@ -174,6 +189,11 @@ describe('dialogue effects', () => {
       ROSTER,
     );
     expect(getRelationshipAxes(next.relationships, ROMANCE_CAPABLE).pivotalFlags).toEqual({ metAtDiner: true });
+  });
+
+  it('applies an xp-grant effect by delegating to the progression engine', () => {
+    const next = applyDialogueEffect(createDefaultCareerState(), { kind: 'xp-grant', amount: 50 }, NO_QUESTS, NO_RELATIONSHIPS);
+    expect(next.progression).toMatchObject({ xp: 10, level: 2, unspentTalentPoints: 1 });
   });
 
   it('no-ops a relationship effect referencing an unknown character', () => {
