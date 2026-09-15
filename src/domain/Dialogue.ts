@@ -1,32 +1,27 @@
-import { applyResourceDelta, type ResourceDelta, type ResourcesState } from './EconomySystem';
+import {
+  applySharedEffect,
+  evaluateSharedCondition,
+  type FactCondition,
+  type ResourceAtLeastCondition,
+  type ResourceDeltaEffect,
+  type SetFactEffect,
+  type SharedCondition,
+  type SharedEffect,
+} from './Conditions';
+import {
+  applyQuestActionById,
+  getQuestStatus,
+  type QuestActionEffect,
+  type QuestDef,
+  type QuestStatusCondition,
+} from './Quests';
 import type { CareerState } from './CareerState';
 
-export interface FactCondition {
-  readonly kind: 'fact';
-  readonly fact: string;
-  readonly equals?: boolean;
-}
+export type { FactCondition, ResourceAtLeastCondition, SetFactEffect, ResourceDeltaEffect };
 
-export interface ResourceAtLeastCondition {
-  readonly kind: 'resource-at-least';
-  readonly resource: keyof ResourcesState;
-  readonly minimum: number;
-}
+export type DialogueCondition = SharedCondition | QuestStatusCondition;
 
-export type DialogueCondition = FactCondition | ResourceAtLeastCondition;
-
-export interface SetFactEffect {
-  readonly kind: 'set-fact';
-  readonly fact: string;
-  readonly value?: boolean;
-}
-
-export interface ResourceDeltaEffect {
-  readonly kind: 'resource-delta';
-  readonly delta: ResourceDelta;
-}
-
-export type DialogueEffect = SetFactEffect | ResourceDeltaEffect;
+export type DialogueEffect = SharedEffect | QuestActionEffect;
 
 export interface DialogueChoice {
   readonly id: string;
@@ -56,26 +51,28 @@ export interface DialogueChoiceSelectedPayload {
   readonly choiceId: string;
 }
 
-export function evaluateCondition(state: CareerState, condition: DialogueCondition): boolean {
-  if (condition.kind === 'fact') {
-    return (state.facts[condition.fact] ?? false) === (condition.equals ?? true);
+export function evaluateCondition(state: CareerState, condition: DialogueCondition, quests: readonly QuestDef[]): boolean {
+  if (condition.kind === 'quest-status') {
+    const quest = quests.find((candidate) => candidate.id === condition.questId);
+    if (quest === undefined) return false;
+    return getQuestStatus(state, quest, quests) === condition.status;
   }
-  return state.resources[condition.resource] >= condition.minimum;
+  return evaluateSharedCondition(state, condition);
 }
 
-export function isChoiceAvailable(state: CareerState, choice: DialogueChoice): boolean {
-  return (choice.conditions ?? []).every((condition) => evaluateCondition(state, condition));
+export function isChoiceAvailable(state: CareerState, choice: DialogueChoice, quests: readonly QuestDef[]): boolean {
+  return (choice.conditions ?? []).every((condition) => evaluateCondition(state, condition, quests));
 }
 
-export function applyDialogueEffect(state: CareerState, effect: DialogueEffect): CareerState {
-  if (effect.kind === 'set-fact') {
-    return { ...state, facts: { ...state.facts, [effect.fact]: effect.value ?? true } };
+export function applyDialogueEffect(state: CareerState, effect: DialogueEffect, quests: readonly QuestDef[]): CareerState {
+  if (effect.kind === 'quest-action') {
+    return applyQuestActionById(state, quests, effect.questId, effect.action, effect.stageId);
   }
-  return { ...state, resources: applyResourceDelta(state.resources, effect.delta) };
+  return applySharedEffect(state, effect);
 }
 
-export function applyDialogueChoice(state: CareerState, choice: DialogueChoice): CareerState {
-  return (choice.effects ?? []).reduce((current, effect) => applyDialogueEffect(current, effect), state);
+export function applyDialogueChoice(state: CareerState, choice: DialogueChoice, quests: readonly QuestDef[]): CareerState {
+  return (choice.effects ?? []).reduce((current, effect) => applyDialogueEffect(current, effect, quests), state);
 }
 
 export function getDialogueNode(graph: DialogueGraph, nodeId: string): DialogueNode | undefined {
@@ -92,9 +89,10 @@ export function applyDialogueChoiceById(
   graph: DialogueGraph,
   nodeId: string,
   choiceId: string,
+  quests: readonly QuestDef[],
 ): CareerState {
   const node = getDialogueNode(graph, nodeId);
   const choice = node?.choices.find((candidate) => candidate.id === choiceId);
-  if (choice === undefined || !isChoiceAvailable(state, choice)) return state;
-  return applyDialogueChoice(state, choice);
+  if (choice === undefined || !isChoiceAvailable(state, choice, quests)) return state;
+  return applyDialogueChoice(state, choice, quests);
 }

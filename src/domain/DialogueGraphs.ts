@@ -1,4 +1,5 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
+import { ALL_QUESTS } from './QuestDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
 /** Debug content for the Phase 2 dialogue-tree spike: an unnamed casting-
@@ -32,7 +33,11 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
           id: 'accept-audition',
           label: 'I’ll be there.',
           next: 'farewell-optimistic',
-          effects: [{ kind: 'resource-delta', delta: { reputation: 3 } }],
+          effects: [
+            { kind: 'resource-delta', delta: { reputation: 3 } },
+            { kind: 'quest-action', action: 'start', questId: 'first-audition' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'first-audition', stageId: 'booked' },
+          ],
         },
         {
           id: 'name-drop',
@@ -40,6 +45,13 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
           next: 'farewell-impressed',
           conditions: [{ kind: 'resource-at-least', resource: 'reputation', minimum: 8 }],
           effects: [{ kind: 'resource-delta', delta: { reputation: 2 } }],
+        },
+        {
+          id: 'ask-about-audition',
+          label: 'Any word on the audition?',
+          next: 'farewell-landed',
+          conditions: [{ kind: 'quest-status', questId: 'first-audition', status: 'active' }],
+          effects: [{ kind: 'quest-action', action: 'complete-stage', questId: 'first-audition', stageId: 'callback' }],
         },
         { id: 'decline-audition', label: 'Not this week.', next: 'farewell-neutral' },
       ],
@@ -76,10 +88,16 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
       text: '"Suit yourself. The door’s always open."',
       choices: [{ id: 'leave', label: 'Step outside.', next: null }],
     },
+    {
+      id: 'farewell-landed',
+      speaker: 'Clerk',
+      text: '"You landed it? Good. Keep that up and we’ll talk about the next one."',
+      choices: [{ id: 'leave', label: 'Step outside.', next: null }],
+    },
   ],
 };
 
-validateDialogueGraph(CASTING_OFFICE_DIALOGUE);
+validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS);
 
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
