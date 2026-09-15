@@ -10,12 +10,22 @@ import {
   type DialogueGraph,
 } from '../src/domain/Dialogue';
 import { createDefaultCareerState } from '../src/domain/CareerState';
+import type { InventoryItemDefinition } from '../src/domain/Inventory';
 import { startQuest } from '../src/domain/Quests';
 import type { QuestDef } from '../src/domain/Quests';
 import { getRelationshipAxes, type RelationshipCharacter } from '../src/domain/Relationships';
 
 const NO_QUESTS: QuestDef[] = [];
 const NO_RELATIONSHIPS: RelationshipCharacter[] = [];
+const NO_ITEMS: InventoryItemDefinition[] = [];
+const HEADSHOT: InventoryItemDefinition = {
+  id: 'studio-headshot',
+  category: 'headshot',
+  name: 'Studio Headshot',
+  description: '',
+  unlockSource: 'debug',
+};
+const CATALOG: InventoryItemDefinition[] = [HEADSHOT];
 
 const TEST_QUEST: QuestDef = {
   id: 'quest-a',
@@ -125,6 +135,14 @@ describe('dialogue conditions', () => {
     expect(evaluateCondition(state, { kind: 'talent-unlocked', talentId: 'tier-2' }, NO_QUESTS, NO_RELATIONSHIPS)).toBe(false);
   });
 
+  it('evaluates an item-owned condition', () => {
+    const state = { ...createDefaultCareerState(), inventory: { ownedItemIds: { 'studio-headshot': true } } };
+    expect(evaluateCondition(state, { kind: 'item-owned', itemId: 'studio-headshot' }, NO_QUESTS, NO_RELATIONSHIPS, CATALOG)).toBe(true);
+    expect(
+      evaluateCondition(createDefaultCareerState(), { kind: 'item-owned', itemId: 'studio-headshot' }, NO_QUESTS, NO_RELATIONSHIPS, CATALOG),
+    ).toBe(false);
+  });
+
   it('requires every condition on a choice to pass (AND)', () => {
     const state = { ...createDefaultCareerState(), facts: { metClerk: true }, resources: { money: 12, energy: 100, reputation: 0 } };
     const choice: DialogueChoice = {
@@ -194,6 +212,23 @@ describe('dialogue effects', () => {
   it('applies an xp-grant effect by delegating to the progression engine', () => {
     const next = applyDialogueEffect(createDefaultCareerState(), { kind: 'xp-grant', amount: 50 }, NO_QUESTS, NO_RELATIONSHIPS);
     expect(next.progression).toMatchObject({ xp: 10, level: 2, unspentTalentPoints: 1 });
+  });
+
+  it('applies an item-grant effect by delegating to the inventory engine', () => {
+    const next = applyDialogueEffect(
+      createDefaultCareerState(),
+      { kind: 'item-grant', itemId: 'studio-headshot' },
+      NO_QUESTS,
+      NO_RELATIONSHIPS,
+      CATALOG,
+    );
+    expect(next.inventory.ownedItemIds['studio-headshot']).toBe(true);
+  });
+
+  it('no-ops an item-grant effect referencing an unknown item', () => {
+    const state = createDefaultCareerState();
+    const next = applyDialogueEffect(state, { kind: 'item-grant', itemId: 'missing' }, NO_QUESTS, NO_RELATIONSHIPS, NO_ITEMS);
+    expect(next).toBe(state);
   });
 
   it('no-ops a relationship effect referencing an unknown character', () => {

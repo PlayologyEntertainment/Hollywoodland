@@ -1,4 +1,5 @@
 import type { DialogueChoice, DialogueGraph } from '../domain/Dialogue';
+import type { InventoryItemDefinition } from '../domain/Inventory';
 import type { TalentDefinition } from '../domain/Progression';
 import type { QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
@@ -11,17 +12,19 @@ import { validateContent } from './ContentValidator';
  * dialogue tree, where a node can legitimately be revisited, so this
  * function doesn't check for cycles.
  *
- * `quests`, `roster`, and `talents`, when provided, additionally cross-check
- * any quest/relationship/progression condition or effect in the graph
- * against real quest/stage/character/talent ids (and, for relationships,
- * that an `attraction` reference targets a romance-capable character) —
- * omitting any of them only weakens validation (existing fixtures without
- * that wiring are unaffected), it never changes runtime behavior. */
+ * `quests`, `roster`, `talents`, and `items`, when provided, additionally
+ * cross-check any quest/relationship/progression/inventory condition or
+ * effect in the graph against real quest/stage/character/talent/item ids
+ * (and, for relationships, that an `attraction` reference targets a
+ * romance-capable character) — omitting any of them only weakens validation
+ * (existing fixtures without that wiring are unaffected), it never changes
+ * runtime behavior. */
 export function validateDialogueGraph(
   graph: DialogueGraph,
   quests: readonly QuestDef[] = [],
   roster: readonly RelationshipCharacter[] = [],
   talents: readonly TalentDefinition[] = [],
+  items: readonly InventoryItemDefinition[] = [],
 ): void {
   validateContent(graph.nodes, `Dialogue graph "${graph.id}" nodes`);
   for (const node of graph.nodes) {
@@ -42,6 +45,7 @@ export function validateDialogueGraph(
       validateQuestReferences(graph, node.id, choice, quests);
       validateRelationshipReferences(graph, node.id, choice, roster);
       validateTalentReferences(graph, node.id, choice, talents);
+      validateItemReferences(graph, node.id, choice, items);
     }
   }
 
@@ -148,6 +152,30 @@ function validateTalentReferences(
     if (talents.find((talent) => talent.id === condition.talentId) === undefined) {
       throw new Error(
         `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" references missing talent "${condition.talentId}".`,
+      );
+    }
+  }
+}
+
+function validateItemReferences(
+  graph: DialogueGraph,
+  nodeId: string,
+  choice: DialogueChoice,
+  items: readonly InventoryItemDefinition[],
+): void {
+  for (const condition of choice.conditions ?? []) {
+    if (condition.kind !== 'item-owned') continue;
+    if (items.find((item) => item.id === condition.itemId) === undefined) {
+      throw new Error(
+        `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" references missing item "${condition.itemId}".`,
+      );
+    }
+  }
+  for (const effect of choice.effects ?? []) {
+    if (effect.kind !== 'item-grant') continue;
+    if (items.find((item) => item.id === effect.itemId) === undefined) {
+      throw new Error(
+        `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" references missing item "${effect.itemId}".`,
       );
     }
   }

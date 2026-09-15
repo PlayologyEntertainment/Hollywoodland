@@ -1,4 +1,5 @@
 import { validateQuestGraph } from '../content/QuestValidator';
+import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
@@ -24,6 +25,8 @@ export const FIRST_AUDITION_QUEST: QuestDef = {
       rewards: [
         { kind: 'resource-delta', delta: { money: 25, reputation: 5 } },
         { kind: 'xp-grant', amount: 45 },
+        { kind: 'item-grant', itemId: 'first-callback-slip' },
+        { kind: 'item-grant', itemId: 'studio-headshot' },
       ],
     },
   ],
@@ -45,9 +48,19 @@ export const SCREEN_TEST_QUEST: QuestDef = {
     { kind: 'relationship-at-least', characterId: CASTING_GATEKEEPER.id, axis: 'trust', minimum: 10 },
     { kind: 'level-at-least', minimum: 2 },
   ],
-  stages: [{ id: 'attend', description: 'Attend the screen test.' }],
+  stages: [
+    {
+      id: 'attend',
+      description: 'Attend the screen test.',
+      rewards: [
+        { kind: 'item-grant', itemId: 'audition-dress' },
+        { kind: 'item-grant', itemId: 'lucky-lipstick' },
+        { kind: 'item-grant', itemId: 'boarding-house-photo-frame' },
+      ],
+    },
+  ],
 };
 
 export const ALL_QUESTS: readonly QuestDef[] = [FIRST_AUDITION_QUEST, SCREEN_TEST_QUEST];
 
-validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS);
+validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

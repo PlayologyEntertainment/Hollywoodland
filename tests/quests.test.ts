@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createDefaultCareerState } from '../src/domain/CareerState';
+import type { InventoryItemDefinition } from '../src/domain/Inventory';
 import {
   applyQuestActionById,
   completeQuestStage,
@@ -17,6 +18,15 @@ const NO_RELATIONSHIPS: RelationshipCharacter[] = [];
 const CASTING_GATEKEEPER: RelationshipCharacter = { id: 'casting-gatekeeper', supportsAttraction: false };
 const ROMANCE_INCAPABLE: RelationshipCharacter = { id: 'romance-incapable', supportsAttraction: false };
 const ROSTER: RelationshipCharacter[] = [CASTING_GATEKEEPER, ROMANCE_INCAPABLE];
+
+const HEADSHOT: InventoryItemDefinition = {
+  id: 'studio-headshot',
+  category: 'headshot',
+  name: 'Studio Headshot',
+  description: '',
+  unlockSource: 'debug',
+};
+const CATALOG: InventoryItemDefinition[] = [HEADSHOT];
 
 const SIMPLE_QUEST: QuestDef = {
   id: 'simple',
@@ -51,7 +61,22 @@ const RELATIONSHIP_GATED_QUEST: QuestDef = {
   stages: [{ id: 'only', description: 'The only stage.' }],
 };
 
-const ALL: QuestDef[] = [SIMPLE_QUEST, GATED_QUEST, RELATIONSHIP_GATED_QUEST];
+const ITEM_GATED_QUEST: QuestDef = {
+  id: 'item-gated',
+  title: 'Item Gated Quest',
+  summary: 'Requires the studio headshot.',
+  prerequisites: [{ kind: 'item-owned', itemId: 'studio-headshot' }],
+  stages: [{ id: 'only', description: 'The only stage.' }],
+};
+
+const ITEM_QUEST: QuestDef = {
+  id: 'item-quest',
+  title: 'Item Quest',
+  summary: 'A quest whose reward grants an item.',
+  stages: [{ id: 'only', description: 'The only stage.', rewards: [{ kind: 'item-grant', itemId: 'studio-headshot' }] }],
+};
+
+const ALL: QuestDef[] = [SIMPLE_QUEST, GATED_QUEST, RELATIONSHIP_GATED_QUEST, ITEM_GATED_QUEST];
 
 describe('evaluateQuestCondition', () => {
   it('delegates fact/resource conditions to the shared evaluator', () => {
@@ -108,6 +133,14 @@ describe('evaluateQuestCondition', () => {
       ),
     ).toBe(false);
   });
+
+  it('delegates an item-owned condition to the inventory evaluator', () => {
+    const state = { ...createDefaultCareerState(), inventory: { ownedItemIds: { 'studio-headshot': true } } };
+    expect(evaluateQuestCondition(state, { kind: 'item-owned', itemId: 'studio-headshot' }, ALL, NO_RELATIONSHIPS, CATALOG)).toBe(true);
+    expect(
+      evaluateQuestCondition(createDefaultCareerState(), { kind: 'item-owned', itemId: 'studio-headshot' }, ALL, NO_RELATIONSHIPS, CATALOG),
+    ).toBe(false);
+  });
 });
 
 describe('getQuestStatus', () => {
@@ -145,6 +178,12 @@ describe('getQuestStatus', () => {
       relationships: applyRelationshipDelta(DEFAULT_RELATIONSHIPS, CASTING_GATEKEEPER, { trust: 10 }),
     };
     expect(getQuestStatus(trusted, RELATIONSHIP_GATED_QUEST, ALL, ROSTER)).toBe('available');
+  });
+
+  it('is locked until an item prerequisite is met, then available', () => {
+    expect(getQuestStatus(createDefaultCareerState(), ITEM_GATED_QUEST, ALL, NO_RELATIONSHIPS, CATALOG)).toBe('locked');
+    const owning = { ...createDefaultCareerState(), inventory: { ownedItemIds: { 'studio-headshot': true } } };
+    expect(getQuestStatus(owning, ITEM_GATED_QUEST, ALL, NO_RELATIONSHIPS, CATALOG)).toBe('available');
   });
 });
 
@@ -217,6 +256,12 @@ describe('completeQuestStage', () => {
     let state = startQuest(createDefaultCareerState(), XP_QUEST, [XP_QUEST], NO_RELATIONSHIPS);
     state = completeQuestStage(state, XP_QUEST, 'only');
     expect(state.progression).toMatchObject({ xp: 10, level: 2, unspentTalentPoints: 1 });
+  });
+
+  it('applies an item-grant stage reward through the inventory engine', () => {
+    let state = startQuest(createDefaultCareerState(), ITEM_QUEST, [ITEM_QUEST], NO_RELATIONSHIPS);
+    state = completeQuestStage(state, ITEM_QUEST, 'only', CATALOG);
+    expect(state.inventory.ownedItemIds['studio-headshot']).toBe(true);
   });
 });
 

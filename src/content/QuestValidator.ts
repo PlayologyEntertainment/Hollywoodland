@@ -1,3 +1,4 @@
+import type { InventoryItemDefinition } from '../domain/Inventory';
 import type { TalentDefinition } from '../domain/Progression';
 import type { QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter, RelationshipCondition } from '../domain/Relationships';
@@ -6,26 +7,38 @@ import { validateContent } from './ContentValidator';
 /** Checks a quest set's structural integrity: unique quest ids, unique
  * stage ids within each quest, no quest with zero stages, no dangling
  * quest-status prerequisite reference, no dependency cycle, and (when
- * `roster`/`talents` are provided) no dangling relationship/talent
- * prerequisite reference or an `attraction` check against a character that
- * doesn't support it — the same cross-checks `validateDialogueGraph` runs,
- * since a quest prerequisite and a dialogue choice condition share the same
- * `RelationshipCondition`/`ProgressionCondition` shapes. Unlike dialogue
- * trees (where revisiting a node is legitimate and BFS reachability is
- * enough), quest prerequisites form a real dependency graph that must be
- * acyclic — `getQuestStatus`'s recursive resolution of quest-status
- * prerequisites would infinite-loop on a cycle, so this is validated once
- * at content-load time rather than guarded at runtime. */
+ * `roster`/`talents`/`items` are provided) no dangling relationship/talent/
+ * item prerequisite or stage-reward reference, or an `attraction` check
+ * against a character that doesn't support it — the same cross-checks
+ * `validateDialogueGraph` runs, since a quest prerequisite and a dialogue
+ * choice condition share the same `RelationshipCondition`/
+ * `ProgressionCondition`/`InventoryCondition` shapes. Unlike dialogue trees
+ * (where revisiting a node is legitimate and BFS reachability is enough),
+ * quest prerequisites form a real dependency graph that must be acyclic —
+ * `getQuestStatus`'s recursive resolution of quest-status prerequisites
+ * would infinite-loop on a cycle, so this is validated once at
+ * content-load time rather than guarded at runtime. */
 export function validateQuestGraph(
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[] = [],
   talents: readonly TalentDefinition[] = [],
+  items: readonly InventoryItemDefinition[] = [],
 ): void {
   validateContent(quests, 'Quests');
   for (const quest of quests) {
     validateContent(quest.stages, `Quest "${quest.id}" stages`);
     if (quest.stages.length === 0) {
       throw new Error(`Quest "${quest.id}" has no stages.`);
+    }
+    for (const stage of quest.stages) {
+      for (const reward of stage.rewards ?? []) {
+        if (reward.kind !== 'item-grant') continue;
+        if (items.find((item) => item.id === reward.itemId) === undefined) {
+          throw new Error(
+            `Quest "${quest.id}" stage "${stage.id}" reward references missing item "${reward.itemId}".`,
+          );
+        }
+      }
     }
   }
 
@@ -41,6 +54,12 @@ export function validateQuestGraph(
       if (condition.kind === 'talent-unlocked') {
         if (talents.find((talent) => talent.id === condition.talentId) === undefined) {
           throw new Error(`Quest "${quest.id}" prerequisite references missing talent "${condition.talentId}".`);
+        }
+        continue;
+      }
+      if (condition.kind === 'item-owned') {
+        if (items.find((item) => item.id === condition.itemId) === undefined) {
+          throw new Error(`Quest "${quest.id}" prerequisite references missing item "${condition.itemId}".`);
         }
         continue;
       }

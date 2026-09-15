@@ -5,6 +5,7 @@ import { createDefaultCareerState, createInitialCareerState, type CareerState, t
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
 import { CASTING_OFFICE_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
+import { ALL_ITEMS } from '../domain/InventoryDefinitions';
 import { deriveAttributes } from '../domain/Origins';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { canUnlockTalent, isTalentUnlocked, xpRequiredForNextLevel, type ProgressionState, type TalentDefinition } from '../domain/Progression';
@@ -226,7 +227,7 @@ export class AppShell {
     button.type = 'button';
     button.className = 'dialogue-choice';
     button.textContent = choice.label;
-    const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS);
+    const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
     if (available) button.addEventListener('click', () => this.selectDialogueChoice(node, choice));
@@ -269,7 +270,7 @@ export class AppShell {
   private renderQuests(state: CareerState): void {
     const list = assertElement('#status-quests-list', HTMLUListElement);
     const items = ALL_QUESTS.map((quest) => {
-      const status = getQuestStatus(state, quest, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS);
+      const status = getQuestStatus(state, quest, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
       if (status === 'locked') return undefined;
       const item = document.createElement('li');
       const stage = status === 'active' ? getActiveStage(state, quest) : undefined;

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { validateDialogueGraph } from '../src/content/DialogueGraphValidator';
 import { CASTING_OFFICE_DIALOGUE } from '../src/domain/DialogueGraphs';
+import type { InventoryItemDefinition } from '../src/domain/Inventory';
+import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
 import type { TalentDefinition } from '../src/domain/Progression';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
@@ -94,9 +96,9 @@ describe('validateDialogueGraph', () => {
     expect(() => validateDialogueGraph(graph)).toThrow('root node "missing" does not exist');
   });
 
-  it('validates the real casting-office dialogue graph against the real quest, relationship, and talent content', () => {
+  it('validates the real casting-office dialogue graph against the real quest, relationship, talent, and item content', () => {
     expect(() =>
-      validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS),
+      validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS),
     ).not.toThrow();
   });
 
@@ -342,6 +344,70 @@ describe('validateDialogueGraph', () => {
   it('does not require a talents list when the graph has no talent wiring', () => {
     const graph: DialogueGraph = {
       id: 'no-talents',
+      rootNodeId: 'a',
+      nodes: [{ id: 'a', speaker: 'X', text: '...', choices: [] }],
+    };
+    expect(() => validateDialogueGraph(graph)).not.toThrow();
+  });
+
+  it('rejects an item-owned condition referencing an unknown item', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-item-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, conditions: [{ kind: 'item-owned', itemId: 'missing' }] }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph)).toThrow('references missing item "missing"');
+  });
+
+  it('rejects an item-grant effect referencing an unknown item', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-item-effect',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, effects: [{ kind: 'item-grant', itemId: 'missing' }] }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph)).toThrow('references missing item "missing"');
+  });
+
+  it('accepts an item-owned condition against a known item', () => {
+    const item: InventoryItemDefinition = {
+      id: 'item-a',
+      category: 'prop',
+      name: 'Item A',
+      description: '',
+      unlockSource: 'debug',
+    };
+    const graph: DialogueGraph = {
+      id: 'good-item-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, conditions: [{ kind: 'item-owned', itemId: 'item-a' }] }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], [], [], [item])).not.toThrow();
+  });
+
+  it('does not require an items list when the graph has no item wiring', () => {
+    const graph: DialogueGraph = {
+      id: 'no-items',
       rootNodeId: 'a',
       nodes: [{ id: 'a', speaker: 'X', text: '...', choices: [] }],
     };

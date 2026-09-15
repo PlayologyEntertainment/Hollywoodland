@@ -1,3 +1,5 @@
+import type { CareerState } from './CareerState';
+
 /** The Vertical Slice Spec's (§5) Rewards row — "First credit, headshot/
  * costume/prop or home display" — and the Decision Log's broader reward
  * list, scoped down to the categories not already covered by another
@@ -40,4 +42,52 @@ export function hasItem(inventory: InventoryState, item: InventoryItemDefinition
 export function grantItem(inventory: InventoryState, item: InventoryItemDefinition): InventoryState {
   if (hasItem(inventory, item)) return inventory;
   return { ownedItemIds: { ...inventory.ownedItemIds, [item.id]: true } };
+}
+
+export interface ItemOwnedCondition {
+  readonly kind: 'item-owned';
+  readonly itemId: string;
+}
+
+export type InventoryCondition = ItemOwnedCondition;
+
+export interface ItemGrantEffect {
+  readonly kind: 'item-grant';
+  readonly itemId: string;
+}
+
+export type InventoryEffect = ItemGrantEffect;
+
+function findInventoryItem(
+  items: readonly InventoryItemDefinition[],
+  itemId: string,
+): InventoryItemDefinition | undefined {
+  return items.find((item) => item.id === itemId);
+}
+
+/** A dangling `itemId` (content authored against a catalog this call wasn't
+ * given, or a stale reference) resolves to `false` rather than throwing —
+ * the same defensive posture `evaluateRelationshipCondition` takes toward a
+ * dangling `characterId`. */
+export function evaluateInventoryCondition(
+  state: CareerState,
+  condition: InventoryCondition,
+  items: readonly InventoryItemDefinition[],
+): boolean {
+  const item = findInventoryItem(items, condition.itemId);
+  if (item === undefined) return false;
+  return hasItem(state.inventory, item);
+}
+
+/** No-ops on a dangling `itemId`, mirroring `applyRelationshipEffect`'s
+ * style — the payload crosses content-authoring/dialogue-effect boundaries
+ * where a stale reference is a legitimate defensive case, not a crash. */
+export function applyInventoryEffect(
+  state: CareerState,
+  effect: InventoryEffect,
+  items: readonly InventoryItemDefinition[],
+): CareerState {
+  const item = findInventoryItem(items, effect.itemId);
+  if (item === undefined) return state;
+  return { ...state, inventory: grantItem(state.inventory, item) };
 }
