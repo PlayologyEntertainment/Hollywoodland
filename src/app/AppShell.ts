@@ -1,7 +1,9 @@
 import type Phaser from 'phaser';
 
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
-import { createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
+import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
+import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
+import { CASTING_OFFICE_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import { deriveAttributes } from '../domain/Origins';
 import type { GameSettings } from '../settings/Settings';
@@ -38,6 +40,9 @@ export class AppShell {
   private settings: GameSettings;
   private fpsTimer = 0;
   private game: Phaser.Game | undefined;
+  private careerState: CareerState = createDefaultCareerState();
+  private activeDialogueGraph: DialogueGraph | undefined;
+  private activeDialogueNodeId: string | undefined;
 
   public constructor(private readonly options: AppShellOptions) {
     this.settings = options.settings;
@@ -63,10 +68,17 @@ export class AppShell {
       assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
     });
     this.options.domainEvents.on('casting-office-entered', () => {
-      assertElement('#interaction-dialog', HTMLDialogElement).showModal();
+      this.openDialogue(CASTING_OFFICE_DIALOGUE);
       this.announce('You entered the Sunset Casting Exchange.');
     });
-    this.options.domainEvents.on('career-state-changed', (state) => this.renderCareerState(state));
+    this.options.domainEvents.on('career-state-changed', (state) => {
+      this.careerState = state;
+      this.renderCareerState(state);
+    });
+    assertElement('#interaction-dialog', HTMLDialogElement).addEventListener('close', () => {
+      this.activeDialogueGraph = undefined;
+      this.activeDialogueNodeId = undefined;
+    });
 
     newCareer.addEventListener('click', () => {
       screens.titlePanel.hidden = true;
@@ -155,6 +167,52 @@ export class AppShell {
       appearance: choices.appearance,
     };
     return createInitialCareerState(identity, deriveAttributes(choices.originId));
+  }
+
+  private openDialogue(graph: DialogueGraph): void {
+    this.activeDialogueGraph = graph;
+    this.activeDialogueNodeId = graph.rootNodeId;
+    this.renderDialogueNode();
+    assertElement('#interaction-dialog', HTMLDialogElement).showModal();
+  }
+
+  private renderDialogueNode(): void {
+    if (this.activeDialogueGraph === undefined || this.activeDialogueNodeId === undefined) return;
+    const node = this.activeDialogueGraph.nodes.find((candidate) => candidate.id === this.activeDialogueNodeId);
+    if (node === undefined) return;
+    assertElement('#interaction-title', HTMLElement).textContent = node.speaker;
+    assertElement('#dialogue-line', HTMLElement).textContent = node.text;
+    const list = assertElement('#dialogue-choices', HTMLUListElement);
+    list.replaceChildren(...node.choices.map((choice) => this.buildDialogueChoiceElement(node, choice)));
+  }
+
+  private buildDialogueChoiceElement(node: DialogueNode, choice: DialogueChoice): HTMLLIElement {
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'dialogue-choice';
+    button.textContent = choice.label;
+    const available = isChoiceAvailable(this.careerState, choice);
+    button.disabled = !available;
+    button.setAttribute('aria-disabled', String(!available));
+    if (available) button.addEventListener('click', () => this.selectDialogueChoice(node, choice));
+    item.appendChild(button);
+    return item;
+  }
+
+  private selectDialogueChoice(node: DialogueNode, choice: DialogueChoice): void {
+    const graph = this.activeDialogueGraph;
+    if (graph === undefined) return;
+    // The event bus is synchronous, so this.careerState is already updated
+    // (via the career-state-changed subscription above) by the time emit()
+    // returns — safe today, but a real coupling to synchronous dispatch.
+    this.options.domainEvents.emit('dialogue-choice-selected', { graphId: graph.id, nodeId: node.id, choiceId: choice.id });
+    if (choice.next === null) {
+      assertElement('#interaction-dialog', HTMLDialogElement).close();
+      return;
+    }
+    this.activeDialogueNodeId = choice.next;
+    this.renderDialogueNode();
   }
 
   private renderCareerState(state: CareerState): void {

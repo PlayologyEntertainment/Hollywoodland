@@ -1,4 +1,5 @@
 import type { CareerState } from './CareerState';
+import type { DialogueChoiceSelectedPayload } from './Dialogue';
 import type { GameSettings } from '../settings/Settings';
 
 export interface DomainEventMap {
@@ -8,6 +9,7 @@ export interface DomainEventMap {
   readonly 'interaction-proximity-changed': boolean;
   readonly 'casting-office-entered': undefined;
   readonly 'advance-time-requested': undefined;
+  readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
 }
 
 type DomainEventListener<K extends keyof DomainEventMap> = (payload: DomainEventMap[K]) => void;

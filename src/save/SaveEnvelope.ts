@@ -1,6 +1,12 @@
-import { createDefaultCareerState, isCareerStateShape, type CareerState } from '../domain/CareerState';
+import {
+  createDefaultCareerState,
+  DEFAULT_FACTS,
+  isCareerStateShape,
+  isCareerStateShapeV2,
+  type CareerState,
+} from '../domain/CareerState';
 
-export const SAVE_SCHEMA_VERSION = 2;
+export const SAVE_SCHEMA_VERSION = 3;
 
 export interface SaveEnvelope<TState = unknown> {
   readonly schemaVersion: number;
@@ -25,12 +31,18 @@ function isLegacyV1State(value: unknown): value is LegacyV1State {
   );
 }
 
-function migrateV1StateToV2(legacy: LegacyV1State): CareerState {
+type LegacyV2State = Omit<CareerState, 'facts'>;
+
+function migrateV1StateToV2(legacy: LegacyV1State): LegacyV2State {
   return {
     ...createDefaultCareerState(),
     playerX: legacy.playerX,
     flags: { discoveredCastingOffice: legacy.discoveredCastingOffice },
   };
+}
+
+function migrateV2StateToV3(legacy: LegacyV2State): CareerState {
+  return { ...legacy, facts: DEFAULT_FACTS };
 }
 
 function validateEnvelopeShell(value: unknown): asserts value is Record<string, unknown> {
@@ -53,12 +65,20 @@ export function migrateSaveEnvelope(value: unknown): SaveEnvelope<CareerState> {
     if (!isCareerStateShape(value.state)) throw new Error('Save state does not match the expected shape.');
     return value as unknown as SaveEnvelope<CareerState>;
   }
+  if (value.schemaVersion === 2) {
+    if (!isCareerStateShapeV2(value.state)) throw new Error('Save state does not match the expected shape.');
+    return {
+      ...value,
+      schemaVersion: SAVE_SCHEMA_VERSION,
+      state: migrateV2StateToV3(value.state),
+    } as unknown as SaveEnvelope<CareerState>;
+  }
   if (value.schemaVersion === 1) {
     if (!isLegacyV1State(value.state)) throw new Error('Save state does not match the expected shape.');
     return {
       ...value,
       schemaVersion: SAVE_SCHEMA_VERSION,
-      state: migrateV1StateToV2(value.state),
+      state: migrateV2StateToV3(migrateV1StateToV2(value.state)),
     } as unknown as SaveEnvelope<CareerState>;
   }
   throw new Error('Unsupported save version.');

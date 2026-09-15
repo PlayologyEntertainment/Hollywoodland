@@ -24,6 +24,8 @@ export const DEFAULT_FLAGS: WorldFlagsState = Object.freeze({ discoveredCastingO
 
 export const DEFAULT_PLAYER_X = 420;
 
+export const DEFAULT_FACTS: Readonly<Record<string, boolean>> = Object.freeze({});
+
 export interface CareerState {
   readonly playerX: number;
   readonly identity: IdentityState;
@@ -31,11 +33,14 @@ export interface CareerState {
   readonly time: TimeState;
   readonly resources: ResourcesState;
   readonly flags: WorldFlagsState;
+  /** Open-ended, content-keyed facts remembered by dialogue (and, later,
+   * quest/relationship content) — distinct from the fixed-key WorldFlagsState. */
+  readonly facts: Readonly<Record<string, boolean>>;
 
   // Extension points for future Phase 2 rounds — intentionally unpopulated
   // until those systems are designed:
   // readonly quests: QuestState;               // quest graph progress/flags
-  // readonly relationships: RelationshipState; // per-NPC relationship meters and remembered facts
+  // readonly relationships: RelationshipState; // per-NPC relationship meters
   // readonly inventory: InventoryState;         // items, wardrobe, rewards
   // readonly progression: ProgressionState;     // XP, talents, levels, credits
 }
@@ -48,6 +53,7 @@ export function createInitialCareerState(identity: IdentityState, attributes: At
     time: DEFAULT_TIME,
     resources: DEFAULT_RESOURCES,
     flags: DEFAULT_FLAGS,
+    facts: DEFAULT_FACTS,
   };
 }
 
@@ -97,7 +103,13 @@ function isWorldFlagsState(value: unknown): value is WorldFlagsState {
   return isRecord(value) && typeof value.discoveredCastingOffice === 'boolean';
 }
 
-export function isCareerStateShape(value: unknown): value is CareerState {
+function isFactsState(value: unknown): value is Readonly<Record<string, boolean>> {
+  return isRecord(value) && Object.values(value).every((entry) => typeof entry === 'boolean');
+}
+
+/** The pre-round-2 CareerState shape (no remembered facts). Exported only
+ * for save migration (see SaveEnvelope.ts) — nothing else should use this. */
+export function isCareerStateShapeV2(value: unknown): value is Omit<CareerState, 'facts'> {
   return (
     isRecord(value) &&
     typeof value.playerX === 'number' &&
@@ -107,4 +119,8 @@ export function isCareerStateShape(value: unknown): value is CareerState {
     isResourcesState(value.resources) &&
     isWorldFlagsState(value.flags)
   );
+}
+
+export function isCareerStateShape(value: unknown): value is CareerState {
+  return isCareerStateShapeV2(value) && isFactsState((value as Record<string, unknown>).facts);
 }
