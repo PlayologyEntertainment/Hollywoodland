@@ -15,13 +15,20 @@ import {
   type QuestDef,
   type QuestStatusCondition,
 } from './Quests';
+import {
+  applyRelationshipEffect,
+  evaluateRelationshipCondition,
+  type RelationshipCharacter,
+  type RelationshipCondition,
+  type RelationshipEffect,
+} from './Relationships';
 import type { CareerState } from './CareerState';
 
 export type { FactCondition, ResourceAtLeastCondition, SetFactEffect, ResourceDeltaEffect };
 
-export type DialogueCondition = SharedCondition | QuestStatusCondition;
+export type DialogueCondition = SharedCondition | QuestStatusCondition | RelationshipCondition;
 
-export type DialogueEffect = SharedEffect | QuestActionEffect;
+export type DialogueEffect = SharedEffect | QuestActionEffect | RelationshipEffect;
 
 export interface DialogueChoice {
   readonly id: string;
@@ -51,28 +58,54 @@ export interface DialogueChoiceSelectedPayload {
   readonly choiceId: string;
 }
 
-export function evaluateCondition(state: CareerState, condition: DialogueCondition, quests: readonly QuestDef[]): boolean {
+export function evaluateCondition(
+  state: CareerState,
+  condition: DialogueCondition,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+): boolean {
   if (condition.kind === 'quest-status') {
     const quest = quests.find((candidate) => candidate.id === condition.questId);
     if (quest === undefined) return false;
     return getQuestStatus(state, quest, quests) === condition.status;
   }
+  if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
+    return evaluateRelationshipCondition(state, condition, roster);
+  }
   return evaluateSharedCondition(state, condition);
 }
 
-export function isChoiceAvailable(state: CareerState, choice: DialogueChoice, quests: readonly QuestDef[]): boolean {
-  return (choice.conditions ?? []).every((condition) => evaluateCondition(state, condition, quests));
+export function isChoiceAvailable(
+  state: CareerState,
+  choice: DialogueChoice,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+): boolean {
+  return (choice.conditions ?? []).every((condition) => evaluateCondition(state, condition, quests, roster));
 }
 
-export function applyDialogueEffect(state: CareerState, effect: DialogueEffect, quests: readonly QuestDef[]): CareerState {
+export function applyDialogueEffect(
+  state: CareerState,
+  effect: DialogueEffect,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+): CareerState {
   if (effect.kind === 'quest-action') {
     return applyQuestActionById(state, quests, effect.questId, effect.action, effect.stageId);
+  }
+  if (effect.kind === 'relationship-delta' || effect.kind === 'relationship-pivotal-flag') {
+    return applyRelationshipEffect(state, effect, roster);
   }
   return applySharedEffect(state, effect);
 }
 
-export function applyDialogueChoice(state: CareerState, choice: DialogueChoice, quests: readonly QuestDef[]): CareerState {
-  return (choice.effects ?? []).reduce((current, effect) => applyDialogueEffect(current, effect, quests), state);
+export function applyDialogueChoice(
+  state: CareerState,
+  choice: DialogueChoice,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+): CareerState {
+  return (choice.effects ?? []).reduce((current, effect) => applyDialogueEffect(current, effect, quests, roster), state);
 }
 
 export function getDialogueNode(graph: DialogueGraph, nodeId: string): DialogueNode | undefined {
@@ -90,9 +123,10 @@ export function applyDialogueChoiceById(
   nodeId: string,
   choiceId: string,
   quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
 ): CareerState {
   const node = getDialogueNode(graph, nodeId);
   const choice = node?.choices.find((candidate) => candidate.id === choiceId);
-  if (choice === undefined || !isChoiceAvailable(state, choice, quests)) return state;
-  return applyDialogueChoice(state, choice, quests);
+  if (choice === undefined || !isChoiceAvailable(state, choice, quests, roster)) return state;
+  return applyDialogueChoice(state, choice, quests, roster);
 }
