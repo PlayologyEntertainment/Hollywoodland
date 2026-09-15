@@ -1,5 +1,6 @@
 import type { CareerState } from './CareerState';
 import type { DialogueChoiceSelectedPayload } from './Dialogue';
+import type { TalentUnlockRequestedPayload } from './Progression';
 import type { GameSettings } from '../settings/Settings';
 
 export interface DomainEventMap {
@@ -10,6 +11,7 @@ export interface DomainEventMap {
   readonly 'casting-office-entered': undefined;
   readonly 'advance-time-requested': undefined;
   readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
+  readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;
 }
 
 type DomainEventListener<K extends keyof DomainEventMap> = (payload: DomainEventMap[K]) => void;

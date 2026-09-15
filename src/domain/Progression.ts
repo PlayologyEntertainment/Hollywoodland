@@ -147,3 +147,11 @@ export function evaluateProgressionCondition(state: CareerState, condition: Prog
 export function applyProgressionEffect(state: CareerState, effect: ProgressionEffect): CareerState {
   return { ...state, progression: applyXpGain(state.progression, effect.amount) };
 }
+
+/** Payload for the `talent-unlock-requested` domain event — the player
+ * spending a point through the progression panel, the one player-facing
+ * action `ProgressionEffect` deliberately excludes (see the comment above
+ * `ProgressionEffect`). */
+export interface TalentUnlockRequestedPayload {
+  readonly talentId: string;
+}

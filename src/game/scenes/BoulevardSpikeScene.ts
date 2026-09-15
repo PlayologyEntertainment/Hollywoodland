@@ -5,8 +5,10 @@ import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '..
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
 import type { DomainEventBus } from '../../domain/DomainEventBus';
+import { unlockTalent, type TalentUnlockRequestedPayload } from '../../domain/Progression';
 import { ALL_QUESTS } from '../../domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../../domain/RelationshipDefinitions';
+import { getTalentById } from '../../domain/TalentDefinitions';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 
@@ -96,6 +98,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('restore-career-state', this.restoreState),
       this.domainEvents.on('advance-time-requested', this.onAdvanceTimeRequested),
       this.domainEvents.on('dialogue-choice-selected', this.onDialogueChoiceSelected),
+      this.domainEvents.on('talent-unlock-requested', this.onTalentUnlockRequested),
     ];
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const unsubscribe of this.unsubscribers) unsubscribe();
@@ -362,6 +365,13 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       ALL_QUESTS,
       ALL_RELATIONSHIP_CHARACTERS,
     );
+    this.emitState();
+  };
+
+  private readonly onTalentUnlockRequested = (payload: TalentUnlockRequestedPayload): void => {
+    const talent = getTalentById(payload.talentId);
+    if (talent === undefined) return;
+    this.careerState = unlockTalent(this.careerState, talent);
     this.emitState();
   };
 }
