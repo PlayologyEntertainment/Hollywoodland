@@ -28,6 +28,13 @@ const SIMPLE_QUEST: QuestDef = {
   ],
 };
 
+const XP_QUEST: QuestDef = {
+  id: 'xp-quest',
+  title: 'XP Quest',
+  summary: 'A quest whose reward grants XP.',
+  stages: [{ id: 'only', description: 'The only stage.', rewards: [{ kind: 'xp-grant', amount: 50 }] }],
+};
+
 const GATED_QUEST: QuestDef = {
   id: 'gated',
   title: 'Gated Quest',
@@ -68,6 +75,14 @@ describe('evaluateQuestCondition', () => {
     const state = createDefaultCareerState();
     expect(
       evaluateQuestCondition(state, { kind: 'quest-status', questId: 'missing', status: 'locked' }, ALL, NO_RELATIONSHIPS),
+    ).toBe(false);
+  });
+
+  it('delegates a level-at-least condition to the progression evaluator', () => {
+    const state = { ...createDefaultCareerState(), progression: { ...createDefaultCareerState().progression, level: 2 } };
+    expect(evaluateQuestCondition(state, { kind: 'level-at-least', minimum: 2 }, ALL, NO_RELATIONSHIPS)).toBe(true);
+    expect(
+      evaluateQuestCondition(createDefaultCareerState(), { kind: 'level-at-least', minimum: 2 }, ALL, NO_RELATIONSHIPS),
     ).toBe(false);
   });
 
@@ -196,6 +211,12 @@ describe('completeQuestStage', () => {
     state = completeQuestStage(state, SIMPLE_QUEST, 'first');
     state = completeQuestStage(state, SIMPLE_QUEST, 'second');
     expect(state.resources.money).toBe(22);
+  });
+
+  it('applies an xp-grant stage reward through the progression engine', () => {
+    let state = startQuest(createDefaultCareerState(), XP_QUEST, [XP_QUEST], NO_RELATIONSHIPS);
+    state = completeQuestStage(state, XP_QUEST, 'only');
+    expect(state.progression).toMatchObject({ xp: 10, level: 2, unspentTalentPoints: 1 });
   });
 });
 

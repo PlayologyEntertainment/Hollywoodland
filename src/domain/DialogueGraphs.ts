@@ -1,6 +1,7 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_QUESTS } from './QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipDefinitions';
+import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
 /** Debug content for the Phase 2 dialogue-tree spike: an unnamed casting-
@@ -87,6 +88,13 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
             { kind: 'relationship-pivotal-flag', characterId: CASTING_GATEKEEPER.id, flag: 'calledInFavor' },
           ],
         },
+        {
+          id: 'cite-experience',
+          label: 'Mention you have already been through one callback.',
+          next: 'farewell-impressed',
+          conditions: [{ kind: 'level-at-least', minimum: 2 }],
+          effects: [{ kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { trust: 2 } }],
+        },
       ],
     },
     {
@@ -137,7 +145,7 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
   ],
 };
 
-validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS);
+validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS);
 
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,

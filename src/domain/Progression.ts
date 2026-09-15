@@ -109,3 +109,41 @@ export function unlockTalent(state: CareerState, talent: TalentDefinition): Care
 function applyAttributeBonus(attributes: AttributesState, key: AttributeKey, bonus: number): AttributesState {
   return { ...attributes, [key]: Math.min(MAX_ATTRIBUTE_VALUE, attributes[key] + bonus) };
 }
+
+export interface LevelAtLeastCondition {
+  readonly kind: 'level-at-least';
+  readonly minimum: number;
+}
+
+export interface TalentUnlockedCondition {
+  readonly kind: 'talent-unlocked';
+  readonly talentId: string;
+}
+
+export type ProgressionCondition = LevelAtLeastCondition | TalentUnlockedCondition;
+
+export interface XpGrantEffect {
+  readonly kind: 'xp-grant';
+  readonly amount: number;
+}
+
+/** The sole progression effect this round wires into dialogue/quest
+ * content. Deliberately no `talent-unlock` effect alongside it: per the
+ * GDD, a level grants "a perk/talent choice" — spending a point is the
+ * player's decision, made through a UI this round doesn't build (the same
+ * posture round 7 took toward relationship state before adding a UI for
+ * it), not something dialogue or a quest reward should do on the player's
+ * behalf. `talent-unlocked` below is still a valid *condition* — content
+ * can react to an already-unlocked talent — it just isn't reachable from
+ * any authored content yet, the same way `relationship-label` shipped
+ * fully validated and tested before any content used it. */
+export type ProgressionEffect = XpGrantEffect;
+
+export function evaluateProgressionCondition(state: CareerState, condition: ProgressionCondition): boolean {
+  if (condition.kind === 'level-at-least') return state.progression.level >= condition.minimum;
+  return (state.progression.unlockedTalentIds[condition.talentId] ?? false) === true;
+}
+
+export function applyProgressionEffect(state: CareerState, effect: ProgressionEffect): CareerState {
+  return { ...state, progression: applyXpGain(state.progression, effect.amount) };
+}

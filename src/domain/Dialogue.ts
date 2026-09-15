@@ -16,6 +16,12 @@ import {
   type QuestStatusCondition,
 } from './Quests';
 import {
+  applyProgressionEffect,
+  evaluateProgressionCondition,
+  type ProgressionCondition,
+  type ProgressionEffect,
+} from './Progression';
+import {
   applyRelationshipEffect,
   evaluateRelationshipCondition,
   type RelationshipCharacter,
@@ -26,9 +32,9 @@ import type { CareerState } from './CareerState';
 
 export type { FactCondition, ResourceAtLeastCondition, SetFactEffect, ResourceDeltaEffect };
 
-export type DialogueCondition = SharedCondition | QuestStatusCondition | RelationshipCondition;
+export type DialogueCondition = SharedCondition | QuestStatusCondition | RelationshipCondition | ProgressionCondition;
 
-export type DialogueEffect = SharedEffect | QuestActionEffect | RelationshipEffect;
+export type DialogueEffect = SharedEffect | QuestActionEffect | RelationshipEffect | ProgressionEffect;
 
 export interface DialogueChoice {
   readonly id: string;
@@ -72,6 +78,9 @@ export function evaluateCondition(
   if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
     return evaluateRelationshipCondition(state, condition, roster);
   }
+  if (condition.kind === 'level-at-least' || condition.kind === 'talent-unlocked') {
+    return evaluateProgressionCondition(state, condition);
+  }
   return evaluateSharedCondition(state, condition);
 }
 
@@ -95,6 +104,9 @@ export function applyDialogueEffect(
   }
   if (effect.kind === 'relationship-delta' || effect.kind === 'relationship-pivotal-flag') {
     return applyRelationshipEffect(state, effect, roster);
+  }
+  if (effect.kind === 'xp-grant') {
+    return applyProgressionEffect(state, effect);
   }
   return applySharedEffect(state, effect);
 }
