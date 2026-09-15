@@ -1,5 +1,6 @@
 import { DEFAULT_ATTRIBUTES, type AttributesState } from './Origins';
 import { DEFAULT_RESOURCES, type ResourcesState } from './EconomySystem';
+import { DEFAULT_PROGRESSION, type ProgressionState } from './Progression';
 import { DEFAULT_RELATIONSHIPS, type RelationshipAxes, type RelationshipState } from './Relationships';
 import { DEFAULT_TIME, type TimeState } from './TimeSystem';
 
@@ -43,11 +44,15 @@ export interface CareerState {
    * Relationships.ts's getRelationshipAxes for the default it falls back
    * to — the same lazy-population approach `facts` uses. */
   readonly relationships: RelationshipState;
+  /** XP, level, and unlocked talents (round 8). Unlike `relationships`,
+   * this isn't lazily populated — every career starts at level 1 with
+   * `DEFAULT_PROGRESSION` rather than an absent entry, since there's only
+   * ever one progression track (not one per authored id) to default. */
+  readonly progression: ProgressionState;
 
   // Extension points for future Phase 2 rounds — intentionally unpopulated
   // until those systems are designed:
   // readonly inventory: InventoryState;         // items, wardrobe, rewards
-  // readonly progression: ProgressionState;     // XP, talents, levels, credits
   //
   // Quest graph progress (round 3) deliberately does NOT get its own field
   // here — it's tracked through `facts` (see domain/Quests.ts), the same
@@ -65,6 +70,7 @@ export function createInitialCareerState(identity: IdentityState, attributes: At
     flags: DEFAULT_FLAGS,
     facts: DEFAULT_FACTS,
     relationships: DEFAULT_RELATIONSHIPS,
+    progression: DEFAULT_PROGRESSION,
   };
 }
 
@@ -134,6 +140,17 @@ function isRelationshipState(value: unknown): value is RelationshipState {
   return isRecord(value) && Object.values(value).every((entry) => isRelationshipAxes(entry));
 }
 
+function isProgressionState(value: unknown): value is ProgressionState {
+  return (
+    isRecord(value) &&
+    typeof value.xp === 'number' &&
+    typeof value.level === 'number' &&
+    typeof value.unspentTalentPoints === 'number' &&
+    isRecord(value.unlockedTalentIds) &&
+    Object.values(value.unlockedTalentIds).every((entry) => typeof entry === 'boolean')
+  );
+}
+
 /** The pre-round-2 CareerState shape (no remembered facts). Exported only
  * for save migration (see SaveEnvelope.ts) — nothing else should use this. */
 export function isCareerStateShapeV2(value: unknown): value is Omit<CareerState, 'facts' | 'relationships'> {
@@ -155,6 +172,13 @@ export function isCareerStateShapeV3(value: unknown): value is Omit<CareerState,
   return isCareerStateShapeV2(value) && isFactsState((value as Record<string, unknown>).facts);
 }
 
-export function isCareerStateShape(value: unknown): value is CareerState {
+/** The pre-round-8 CareerState shape (relationship meters, but no
+ * progression). Exported only for save migration (see SaveEnvelope.ts) —
+ * nothing else should use this. */
+export function isCareerStateShapeV4(value: unknown): value is Omit<CareerState, 'progression'> {
   return isCareerStateShapeV3(value) && isRelationshipState((value as Record<string, unknown>).relationships);
+}
+
+export function isCareerStateShape(value: unknown): value is CareerState {
+  return isCareerStateShapeV4(value) && isProgressionState((value as Record<string, unknown>).progression);
 }
