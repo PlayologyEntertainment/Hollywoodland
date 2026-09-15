@@ -6,6 +6,7 @@ import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
 import type { DomainEventBus } from '../../domain/DomainEventBus';
 import { ALL_QUESTS } from '../../domain/QuestDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS } from '../../domain/RelationshipDefinitions';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 
@@ -353,7 +354,14 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private readonly onDialogueChoiceSelected = (payload: DialogueChoiceSelectedPayload): void => {
     const graph = getDialogueGraphById(payload.graphId);
     if (graph === undefined) return;
-    this.careerState = applyDialogueChoiceById(this.careerState, graph, payload.nodeId, payload.choiceId, ALL_QUESTS);
+    this.careerState = applyDialogueChoiceById(
+      this.careerState,
+      graph,
+      payload.nodeId,
+      payload.choiceId,
+      ALL_QUESTS,
+      ALL_RELATIONSHIP_CHARACTERS,
+    );
     this.emitState();
   };
 }

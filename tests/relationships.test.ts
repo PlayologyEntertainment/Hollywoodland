@@ -3,8 +3,11 @@ import { describe, expect, it } from 'vitest';
 import {
   applyRelationshipAxesDelta,
   applyRelationshipDelta,
+  applyRelationshipEffect,
   createDefaultRelationshipAxes,
+  DEFAULT_RELATIONSHIPS,
   deriveRelationshipLabel,
+  evaluateRelationshipCondition,
   getRelationshipAxes,
   getRelationshipLabel,
   setRelationshipPivotalFlag,
@@ -12,9 +15,11 @@ import {
   type RelationshipCharacter,
   type RelationshipState,
 } from '../src/domain/Relationships';
+import { createDefaultCareerState, type CareerState } from '../src/domain/CareerState';
 
 const ROMANCE_CAPABLE: RelationshipCharacter = { id: 'romance-capable', supportsAttraction: true };
 const ROMANCE_INCAPABLE: RelationshipCharacter = { id: 'romance-incapable', supportsAttraction: false };
+const ROSTER: RelationshipCharacter[] = [ROMANCE_CAPABLE, ROMANCE_INCAPABLE];
 
 describe('createDefaultRelationshipAxes', () => {
   it('starts attraction at 0 for a romance-capable character', () => {
@@ -147,5 +152,71 @@ describe('getRelationshipLabel', () => {
     const state = applyRelationshipDelta({}, ROMANCE_CAPABLE, { trust: 75 });
     expect(getRelationshipLabel(state, ROMANCE_CAPABLE)).toBe('friendship');
     expect(getRelationshipLabel({}, ROMANCE_CAPABLE)).toBe('neutral');
+  });
+});
+
+function careerStateWithRelationships(relationships: RelationshipState): CareerState {
+  return { ...createDefaultCareerState(), relationships };
+}
+
+describe('evaluateRelationshipCondition', () => {
+  it('evaluates a relationship-at-least condition against the character axes', () => {
+    const state = careerStateWithRelationships(applyRelationshipDelta(DEFAULT_RELATIONSHIPS, ROMANCE_CAPABLE, { trust: 40 }));
+    expect(
+      evaluateRelationshipCondition(state, { kind: 'relationship-at-least', characterId: 'romance-capable', axis: 'trust', minimum: 40 }, ROSTER),
+    ).toBe(true);
+    expect(
+      evaluateRelationshipCondition(state, { kind: 'relationship-at-least', characterId: 'romance-capable', axis: 'trust', minimum: 41 }, ROSTER),
+    ).toBe(false);
+  });
+
+  it('is never satisfied by an attraction check against a character whose attraction is null', () => {
+    const state = careerStateWithRelationships(DEFAULT_RELATIONSHIPS);
+    expect(
+      evaluateRelationshipCondition(
+        state,
+        { kind: 'relationship-at-least', characterId: 'romance-incapable', axis: 'attraction', minimum: 0 },
+        ROSTER,
+      ),
+    ).toBe(false);
+  });
+
+  it('evaluates a relationship-label condition against the derived label', () => {
+    const state = careerStateWithRelationships(applyRelationshipDelta(DEFAULT_RELATIONSHIPS, ROMANCE_CAPABLE, { trust: 75 }));
+    expect(
+      evaluateRelationshipCondition(state, { kind: 'relationship-label', characterId: 'romance-capable', label: 'friendship' }, ROSTER),
+    ).toBe(true);
+  });
+
+  it('treats a dangling characterId as false rather than throwing', () => {
+    const state = careerStateWithRelationships(DEFAULT_RELATIONSHIPS);
+    expect(
+      evaluateRelationshipCondition(state, { kind: 'relationship-at-least', characterId: 'missing', axis: 'trust', minimum: 0 }, ROSTER),
+    ).toBe(false);
+  });
+});
+
+describe('applyRelationshipEffect', () => {
+  it('applies a relationship-delta effect', () => {
+    const state = careerStateWithRelationships(DEFAULT_RELATIONSHIPS);
+    const next = applyRelationshipEffect(state, { kind: 'relationship-delta', characterId: 'romance-capable', delta: { trust: 12 } }, ROSTER);
+    expect(getRelationshipAxes(next.relationships, ROMANCE_CAPABLE).trust).toBe(12);
+  });
+
+  it('applies a relationship-pivotal-flag effect', () => {
+    const state = careerStateWithRelationships(DEFAULT_RELATIONSHIPS);
+    const next = applyRelationshipEffect(
+      state,
+      { kind: 'relationship-pivotal-flag', characterId: 'romance-capable', flag: 'witnessedBetrayal', value: false },
+      ROSTER,
+    );
+    expect(getRelationshipAxes(next.relationships, ROMANCE_CAPABLE).pivotalFlags).toEqual({ witnessedBetrayal: false });
+  });
+
+  it('no-ops on a dangling characterId rather than throwing', () => {
+    const state = careerStateWithRelationships(DEFAULT_RELATIONSHIPS);
+    expect(applyRelationshipEffect(state, { kind: 'relationship-delta', characterId: 'missing', delta: { trust: 5 } }, ROSTER)).toBe(
+      state,
+    );
   });
 });

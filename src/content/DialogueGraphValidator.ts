@@ -1,5 +1,6 @@
 import type { DialogueChoice, DialogueGraph } from '../domain/Dialogue';
 import type { QuestDef } from '../domain/Quests';
+import type { RelationshipCharacter } from '../domain/Relationships';
 import { validateContent } from './ContentValidator';
 
 /** Checks a dialogue graph's structural integrity: unique node ids, unique
@@ -9,11 +10,17 @@ import { validateContent } from './ContentValidator';
  * dialogue tree, where a node can legitimately be revisited, so this
  * function doesn't check for cycles.
  *
- * `quests`, when provided, additionally cross-checks any quest-action
- * effect or quest-status condition in the graph against real quest/stage
- * ids — omitting it only weakens validation (existing fixtures without
- * quest wiring are unaffected), it never changes runtime behavior. */
-export function validateDialogueGraph(graph: DialogueGraph, quests: readonly QuestDef[] = []): void {
+ * `quests` and `roster`, when provided, additionally cross-check any
+ * quest/relationship condition or effect in the graph against real
+ * quest/stage/character ids (and, for relationships, that an `attraction`
+ * reference targets a romance-capable character) — omitting either only
+ * weakens validation (existing fixtures without that wiring are
+ * unaffected), it never changes runtime behavior. */
+export function validateDialogueGraph(
+  graph: DialogueGraph,
+  quests: readonly QuestDef[] = [],
+  roster: readonly RelationshipCharacter[] = [],
+): void {
   validateContent(graph.nodes, `Dialogue graph "${graph.id}" nodes`);
   for (const node of graph.nodes) {
     validateContent(node.choices, `Dialogue graph "${graph.id}" node "${node.id}" choices`);
@@ -31,6 +38,7 @@ export function validateDialogueGraph(graph: DialogueGraph, quests: readonly Que
         );
       }
       validateQuestReferences(graph, node.id, choice, quests);
+      validateRelationshipReferences(graph, node.id, choice, roster);
     }
   }
 
@@ -79,6 +87,48 @@ function validateQuestReferences(
     if (effect.action === 'complete-stage' && quest.stages.find((stage) => stage.id === effect.stageId) === undefined) {
       throw new Error(
         `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" references missing stage "${String(effect.stageId)}" on quest "${effect.questId}".`,
+      );
+    }
+  }
+}
+
+function findRelationshipCharacter(
+  graph: DialogueGraph,
+  nodeId: string,
+  choice: DialogueChoice,
+  roster: readonly RelationshipCharacter[],
+  characterId: string,
+): RelationshipCharacter {
+  const character = roster.find((candidate) => candidate.id === characterId);
+  if (character === undefined) {
+    throw new Error(
+      `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" references missing relationship character "${characterId}".`,
+    );
+  }
+  return character;
+}
+
+function validateRelationshipReferences(
+  graph: DialogueGraph,
+  nodeId: string,
+  choice: DialogueChoice,
+  roster: readonly RelationshipCharacter[],
+): void {
+  for (const condition of choice.conditions ?? []) {
+    if (condition.kind !== 'relationship-at-least' && condition.kind !== 'relationship-label') continue;
+    const character = findRelationshipCharacter(graph, nodeId, choice, roster, condition.characterId);
+    if (condition.kind === 'relationship-at-least' && condition.axis === 'attraction' && !character.supportsAttraction) {
+      throw new Error(
+        `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" checks attraction against "${condition.characterId}", which does not support it.`,
+      );
+    }
+  }
+  for (const effect of choice.effects ?? []) {
+    if (effect.kind !== 'relationship-delta' && effect.kind !== 'relationship-pivotal-flag') continue;
+    const character = findRelationshipCharacter(graph, nodeId, choice, roster, effect.characterId);
+    if (effect.kind === 'relationship-delta' && effect.delta.attraction !== undefined && !character.supportsAttraction) {
+      throw new Error(
+        `Dialogue graph "${graph.id}" node "${nodeId}" choice "${choice.id}" adjusts attraction on "${effect.characterId}", which does not support it.`,
       );
     }
   }

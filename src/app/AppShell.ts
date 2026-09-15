@@ -8,6 +8,7 @@ import type { DomainEventBus } from '../domain/DomainEventBus';
 import { deriveAttributes } from '../domain/Origins';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { getActiveStage, getQuestStatus } from '../domain/Quests';
+import { ALL_RELATIONSHIP_CHARACTERS } from '../domain/RelationshipDefinitions';
 import { weekdayForDay } from '../domain/TimeSystem';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
@@ -195,7 +196,7 @@ export class AppShell {
     button.type = 'button';
     button.className = 'dialogue-choice';
     button.textContent = choice.label;
-    const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS);
+    const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS);
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
     if (available) button.addEventListener('click', () => this.selectDialogueChoice(node, choice));

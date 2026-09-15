@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { validateDialogueGraph } from '../src/content/DialogueGraphValidator';
 import { CASTING_OFFICE_DIALOGUE } from '../src/domain/DialogueGraphs';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
 import type { DialogueGraph } from '../src/domain/Dialogue';
 import type { QuestDef } from '../src/domain/Quests';
+import type { RelationshipCharacter } from '../src/domain/Relationships';
 
 const TEST_QUEST: QuestDef = {
   id: 'quest-a',
@@ -12,6 +14,10 @@ const TEST_QUEST: QuestDef = {
   summary: '',
   stages: [{ id: 'only', description: '' }],
 };
+
+const ROMANCE_CAPABLE: RelationshipCharacter = { id: 'romance-capable', supportsAttraction: true };
+const ROMANCE_INCAPABLE: RelationshipCharacter = { id: 'romance-incapable', supportsAttraction: false };
+const ROSTER: RelationshipCharacter[] = [ROMANCE_CAPABLE, ROMANCE_INCAPABLE];
 
 describe('validateDialogueGraph', () => {
   it('accepts a small valid graph', () => {
@@ -75,8 +81,8 @@ describe('validateDialogueGraph', () => {
     expect(() => validateDialogueGraph(graph)).toThrow('root node "missing" does not exist');
   });
 
-  it('validates the real casting-office dialogue graph against the real quest content', () => {
-    expect(() => validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS)).not.toThrow();
+  it('validates the real casting-office dialogue graph against the real quest and relationship content', () => {
+    expect(() => validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS)).not.toThrow();
   });
 
   it('rejects a quest-status condition referencing an unknown quest', () => {
@@ -137,6 +143,133 @@ describe('validateDialogueGraph', () => {
   it('does not require a quests list when the graph has no quest wiring', () => {
     const graph: DialogueGraph = {
       id: 'no-quests',
+      rootNodeId: 'a',
+      nodes: [{ id: 'a', speaker: 'X', text: '...', choices: [] }],
+    };
+    expect(() => validateDialogueGraph(graph)).not.toThrow();
+  });
+
+  it('rejects a relationship-at-least condition referencing an unknown character', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-relationship-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [
+            {
+              id: 'go',
+              label: 'Go',
+              next: null,
+              conditions: [{ kind: 'relationship-at-least', characterId: 'missing', axis: 'trust', minimum: 10 }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], ROSTER)).toThrow('references missing relationship character "missing"');
+  });
+
+  it('rejects a relationship-delta effect referencing an unknown character', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-relationship-effect',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [
+            {
+              id: 'go',
+              label: 'Go',
+              next: null,
+              effects: [{ kind: 'relationship-delta', characterId: 'missing', delta: { trust: 5 } }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], ROSTER)).toThrow('references missing relationship character "missing"');
+  });
+
+  it('rejects an attraction condition against a character that does not support it', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-attraction-condition',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [
+            {
+              id: 'go',
+              label: 'Go',
+              next: null,
+              conditions: [
+                { kind: 'relationship-at-least', characterId: 'romance-incapable', axis: 'attraction', minimum: 0 },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], ROSTER)).toThrow('does not support it');
+  });
+
+  it('rejects an attraction delta against a character that does not support it', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-attraction-effect',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [
+            {
+              id: 'go',
+              label: 'Go',
+              next: null,
+              effects: [{ kind: 'relationship-delta', characterId: 'romance-incapable', delta: { attraction: 5 } }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], ROSTER)).toThrow('does not support it');
+  });
+
+  it('accepts a relationship-label condition and a pivotal-flag effect against a known character', () => {
+    const graph: DialogueGraph = {
+      id: 'good-relationship-wiring',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [
+            {
+              id: 'go',
+              label: 'Go',
+              next: null,
+              conditions: [{ kind: 'relationship-label', characterId: 'romance-capable', label: 'friendship' }],
+              effects: [{ kind: 'relationship-pivotal-flag', characterId: 'romance-capable', flag: 'metAtDiner' }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], ROSTER)).not.toThrow();
+  });
+
+  it('does not require a roster when the graph has no relationship wiring', () => {
+    const graph: DialogueGraph = {
+      id: 'no-relationships',
       rootNodeId: 'a',
       nodes: [{ id: 'a', speaker: 'X', text: '...', choices: [] }],
     };

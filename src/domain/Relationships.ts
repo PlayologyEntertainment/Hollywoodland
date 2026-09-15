@@ -1,3 +1,5 @@
+import type { CareerState } from './CareerState';
+
 export type RelationshipLabel = 'neutral' | 'friendship' | 'rivalry' | 'romance' | 'alliance' | 'estrangement';
 
 /** Per the GDD's "full relationship web" (§7): a small authored set of
@@ -13,6 +15,9 @@ export interface RelationshipAxes {
   readonly trust: number;
   readonly tension: number;
   readonly attraction: number | null;
+  /** A signed favor ledger: positive means the character owes the player
+   * (the player did them a favor), negative means the player owes the
+   * character (the player called in a favor from them). */
   readonly obligation: number;
   readonly pivotalFlags: Readonly<Record<string, boolean>>;
 }
@@ -125,4 +130,86 @@ export function deriveRelationshipLabel(axes: RelationshipAxes): RelationshipLab
 
 export function getRelationshipLabel(relationships: RelationshipState, character: RelationshipCharacter): RelationshipLabel {
   return deriveRelationshipLabel(getRelationshipAxes(relationships, character));
+}
+
+/** Numeric axis a `RelationshipAtLeastCondition` can threshold on. Matches
+ * the keys `RelationshipDelta` can adjust. */
+export type RelationshipAxisKey = 'trust' | 'tension' | 'attraction' | 'obligation';
+
+export interface RelationshipAtLeastCondition {
+  readonly kind: 'relationship-at-least';
+  readonly characterId: string;
+  readonly axis: RelationshipAxisKey;
+  readonly minimum: number;
+}
+
+export interface RelationshipLabelCondition {
+  readonly kind: 'relationship-label';
+  readonly characterId: string;
+  readonly label: RelationshipLabel;
+}
+
+export type RelationshipCondition = RelationshipAtLeastCondition | RelationshipLabelCondition;
+
+export interface RelationshipDeltaEffect {
+  readonly kind: 'relationship-delta';
+  readonly characterId: string;
+  readonly delta: RelationshipDelta;
+}
+
+export interface RelationshipPivotalFlagEffect {
+  readonly kind: 'relationship-pivotal-flag';
+  readonly characterId: string;
+  readonly flag: string;
+  readonly value?: boolean;
+}
+
+export type RelationshipEffect = RelationshipDeltaEffect | RelationshipPivotalFlagEffect;
+
+function findRelationshipCharacter(
+  roster: readonly RelationshipCharacter[],
+  characterId: string,
+): RelationshipCharacter | undefined {
+  return roster.find((character) => character.id === characterId);
+}
+
+/** A dangling `characterId` (content authored against a roster this call
+ * wasn't given, or a stale reference) resolves to `false` rather than
+ * throwing — the same defensive posture `evaluateQuestCondition` takes
+ * toward a dangling quest-status target. An `attraction` check against a
+ * character whose axes don't track it (`attraction === null`) is likewise
+ * never satisfied, rather than a type error at runtime. */
+export function evaluateRelationshipCondition(
+  state: CareerState,
+  condition: RelationshipCondition,
+  roster: readonly RelationshipCharacter[],
+): boolean {
+  const character = findRelationshipCharacter(roster, condition.characterId);
+  if (character === undefined) return false;
+  const axes = getRelationshipAxes(state.relationships, character);
+  if (condition.kind === 'relationship-label') {
+    return deriveRelationshipLabel(axes) === condition.label;
+  }
+  const value = axes[condition.axis];
+  return value !== null && value >= condition.minimum;
+}
+
+/** No-ops on a dangling `characterId`, mirroring `applyQuestActionById`'s
+ * style — the payload crosses content-authoring/dialogue-effect
+ * boundaries where a stale reference is a legitimate defensive case, not
+ * a crash. */
+export function applyRelationshipEffect(
+  state: CareerState,
+  effect: RelationshipEffect,
+  roster: readonly RelationshipCharacter[],
+): CareerState {
+  const character = findRelationshipCharacter(roster, effect.characterId);
+  if (character === undefined) return state;
+  if (effect.kind === 'relationship-pivotal-flag') {
+    return {
+      ...state,
+      relationships: setRelationshipPivotalFlag(state.relationships, character, effect.flag, effect.value ?? true),
+    };
+  }
+  return { ...state, relationships: applyRelationshipDelta(state.relationships, character, effect.delta) };
 }
