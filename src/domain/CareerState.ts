@@ -1,5 +1,6 @@
 import { DEFAULT_ATTRIBUTES, type AttributesState } from './Origins';
 import { DEFAULT_RESOURCES, type ResourcesState } from './EconomySystem';
+import { DEFAULT_RELATIONSHIPS, type RelationshipAxes, type RelationshipState } from './Relationships';
 import { DEFAULT_TIME, type TimeState } from './TimeSystem';
 
 export interface IdentityState {
@@ -33,13 +34,18 @@ export interface CareerState {
   readonly time: TimeState;
   readonly resources: ResourcesState;
   readonly flags: WorldFlagsState;
-  /** Open-ended, content-keyed facts remembered by dialogue (and, later,
-   * quest/relationship content) — distinct from the fixed-key WorldFlagsState. */
+  /** Open-ended, content-keyed facts remembered by dialogue and quest
+   * content — distinct from the fixed-key WorldFlagsState. */
   readonly facts: Readonly<Record<string, boolean>>;
+  /** Per-character relationship meters (round 4), keyed by the roster ids
+   * in domain/RelationshipDefinitions.ts. Lazily populated — an id absent
+   * from this record simply hasn't been touched yet; see
+   * Relationships.ts's getRelationshipAxes for the default it falls back
+   * to — the same lazy-population approach `facts` uses. */
+  readonly relationships: RelationshipState;
 
   // Extension points for future Phase 2 rounds — intentionally unpopulated
   // until those systems are designed:
-  // readonly relationships: RelationshipState; // per-NPC relationship meters
   // readonly inventory: InventoryState;         // items, wardrobe, rewards
   // readonly progression: ProgressionState;     // XP, talents, levels, credits
   //
@@ -58,6 +64,7 @@ export function createInitialCareerState(identity: IdentityState, attributes: At
     resources: DEFAULT_RESOURCES,
     flags: DEFAULT_FLAGS,
     facts: DEFAULT_FACTS,
+    relationships: DEFAULT_RELATIONSHIPS,
   };
 }
 
@@ -111,9 +118,25 @@ function isFactsState(value: unknown): value is Readonly<Record<string, boolean>
   return isRecord(value) && Object.values(value).every((entry) => typeof entry === 'boolean');
 }
 
+function isRelationshipAxes(value: unknown): value is RelationshipAxes {
+  return (
+    isRecord(value) &&
+    typeof value.trust === 'number' &&
+    typeof value.tension === 'number' &&
+    (value.attraction === null || typeof value.attraction === 'number') &&
+    typeof value.obligation === 'number' &&
+    isRecord(value.pivotalFlags) &&
+    Object.values(value.pivotalFlags).every((entry) => typeof entry === 'boolean')
+  );
+}
+
+function isRelationshipState(value: unknown): value is RelationshipState {
+  return isRecord(value) && Object.values(value).every((entry) => isRelationshipAxes(entry));
+}
+
 /** The pre-round-2 CareerState shape (no remembered facts). Exported only
  * for save migration (see SaveEnvelope.ts) — nothing else should use this. */
-export function isCareerStateShapeV2(value: unknown): value is Omit<CareerState, 'facts'> {
+export function isCareerStateShapeV2(value: unknown): value is Omit<CareerState, 'facts' | 'relationships'> {
   return (
     isRecord(value) &&
     typeof value.playerX === 'number' &&
@@ -125,6 +148,13 @@ export function isCareerStateShapeV2(value: unknown): value is Omit<CareerState,
   );
 }
 
-export function isCareerStateShape(value: unknown): value is CareerState {
+/** The pre-round-4 CareerState shape (facts, but no relationship meters).
+ * Exported only for save migration (see SaveEnvelope.ts) — nothing else
+ * should use this. */
+export function isCareerStateShapeV3(value: unknown): value is Omit<CareerState, 'relationships'> {
   return isCareerStateShapeV2(value) && isFactsState((value as Record<string, unknown>).facts);
+}
+
+export function isCareerStateShape(value: unknown): value is CareerState {
+  return isCareerStateShapeV3(value) && isRelationshipState((value as Record<string, unknown>).relationships);
 }

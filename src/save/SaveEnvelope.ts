@@ -3,10 +3,12 @@ import {
   DEFAULT_FACTS,
   isCareerStateShape,
   isCareerStateShapeV2,
+  isCareerStateShapeV3,
   type CareerState,
 } from '../domain/CareerState';
+import { DEFAULT_RELATIONSHIPS } from '../domain/Relationships';
 
-export const SAVE_SCHEMA_VERSION = 3;
+export const SAVE_SCHEMA_VERSION = 4;
 
 export interface SaveEnvelope<TState = unknown> {
   readonly schemaVersion: number;
@@ -31,7 +33,8 @@ function isLegacyV1State(value: unknown): value is LegacyV1State {
   );
 }
 
-type LegacyV2State = Omit<CareerState, 'facts'>;
+type LegacyV2State = Omit<CareerState, 'facts' | 'relationships'>;
+type LegacyV3State = Omit<CareerState, 'relationships'>;
 
 function migrateV1StateToV2(legacy: LegacyV1State): LegacyV2State {
   return {
@@ -41,8 +44,12 @@ function migrateV1StateToV2(legacy: LegacyV1State): LegacyV2State {
   };
 }
 
-function migrateV2StateToV3(legacy: LegacyV2State): CareerState {
+function migrateV2StateToV3(legacy: LegacyV2State): LegacyV3State {
   return { ...legacy, facts: DEFAULT_FACTS };
+}
+
+function migrateV3StateToV4(legacy: LegacyV3State): CareerState {
+  return { ...legacy, relationships: DEFAULT_RELATIONSHIPS };
 }
 
 function validateEnvelopeShell(value: unknown): asserts value is Record<string, unknown> {
@@ -65,12 +72,20 @@ export function migrateSaveEnvelope(value: unknown): SaveEnvelope<CareerState> {
     if (!isCareerStateShape(value.state)) throw new Error('Save state does not match the expected shape.');
     return value as unknown as SaveEnvelope<CareerState>;
   }
+  if (value.schemaVersion === 3) {
+    if (!isCareerStateShapeV3(value.state)) throw new Error('Save state does not match the expected shape.');
+    return {
+      ...value,
+      schemaVersion: SAVE_SCHEMA_VERSION,
+      state: migrateV3StateToV4(value.state),
+    } as unknown as SaveEnvelope<CareerState>;
+  }
   if (value.schemaVersion === 2) {
     if (!isCareerStateShapeV2(value.state)) throw new Error('Save state does not match the expected shape.');
     return {
       ...value,
       schemaVersion: SAVE_SCHEMA_VERSION,
-      state: migrateV2StateToV3(value.state),
+      state: migrateV3StateToV4(migrateV2StateToV3(value.state)),
     } as unknown as SaveEnvelope<CareerState>;
   }
   if (value.schemaVersion === 1) {
@@ -78,7 +93,7 @@ export function migrateSaveEnvelope(value: unknown): SaveEnvelope<CareerState> {
     return {
       ...value,
       schemaVersion: SAVE_SCHEMA_VERSION,
-      state: migrateV2StateToV3(migrateV1StateToV2(value.state)),
+      state: migrateV3StateToV4(migrateV2StateToV3(migrateV1StateToV2(value.state))),
     } as unknown as SaveEnvelope<CareerState>;
   }
   throw new Error('Unsupported save version.');

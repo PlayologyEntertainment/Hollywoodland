@@ -45,7 +45,7 @@ describe('save envelope', () => {
   });
 
   it('migrates a legacy v2 save (no remembered facts) into the current shape', () => {
-    const { facts: _facts, ...v2State } = createDefaultCareerState();
+    const { facts: _facts, relationships: _relationships, ...v2State } = createDefaultCareerState();
     const legacy = {
       schemaVersion: 2,
       contentVersion: 'phase-2-core-systems',
@@ -58,7 +58,25 @@ describe('save envelope', () => {
     const migrated = migrateSaveEnvelope(legacy);
     expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
     expect(migrated.state.facts).toEqual({});
+    expect(migrated.state.relationships).toEqual({});
     expect(migrated.state.playerX).toBe(v2State.playerX);
+  });
+
+  it('migrates a legacy v3 save (no relationship meters) into the current shape', () => {
+    const { relationships: _relationships, ...v3State } = createDefaultCareerState();
+    const legacy = {
+      schemaVersion: 3,
+      contentVersion: 'phase-2-core-systems',
+      saveId: 'v3-save',
+      label: 'Hollywood Boulevard',
+      savedAt: '2026-09-15T00:00:00.000Z',
+      playtimeSeconds: 20,
+      state: v3State,
+    };
+    const migrated = migrateSaveEnvelope(legacy);
+    expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
+    expect(migrated.state.relationships).toEqual({});
+    expect(migrated.state.playerX).toBe(v3State.playerX);
   });
 
   it('round-trips a migrated v1 save after re-serializing it', () => {
