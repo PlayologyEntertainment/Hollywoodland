@@ -45,7 +45,7 @@ describe('save envelope', () => {
   });
 
   it('migrates a legacy v2 save (no remembered facts) into the current shape', () => {
-    const { facts: _facts, relationships: _relationships, progression: _progression, ...v2State } = createDefaultCareerState();
+    const { facts: _facts, relationships: _relationships, progression: _progression, inventory: _inventory, ...v2State } = createDefaultCareerState();
     const legacy = {
       schemaVersion: 2,
       contentVersion: 'phase-2-core-systems',
@@ -63,7 +63,7 @@ describe('save envelope', () => {
   });
 
   it('migrates a legacy v3 save (no relationship meters) into the current shape', () => {
-    const { relationships: _relationships, progression: _progression, ...v3State } = createDefaultCareerState();
+    const { relationships: _relationships, progression: _progression, inventory: _inventory, ...v3State } = createDefaultCareerState();
     const legacy = {
       schemaVersion: 3,
       contentVersion: 'phase-2-core-systems',
@@ -81,7 +81,7 @@ describe('save envelope', () => {
   });
 
   it('migrates a legacy v4 save (no progression) into the current shape', () => {
-    const { progression: _progression, ...v4State } = createDefaultCareerState();
+    const { progression: _progression, inventory: _inventory, ...v4State } = createDefaultCareerState();
     const legacy = {
       schemaVersion: 4,
       contentVersion: 'phase-2-core-systems',
@@ -94,7 +94,25 @@ describe('save envelope', () => {
     const migrated = migrateSaveEnvelope(legacy);
     expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
     expect(migrated.state.progression).toEqual(createDefaultCareerState().progression);
+    expect(migrated.state.inventory).toEqual(createDefaultCareerState().inventory);
     expect(migrated.state.playerX).toBe(v4State.playerX);
+  });
+
+  it('migrates a legacy v5 save (no inventory) into the current shape', () => {
+    const { inventory: _inventory, ...v5State } = createDefaultCareerState();
+    const legacy = {
+      schemaVersion: 5,
+      contentVersion: 'phase-2-core-systems',
+      saveId: 'v5-save',
+      label: 'Hollywood Boulevard',
+      savedAt: '2026-09-15T00:00:00.000Z',
+      playtimeSeconds: 40,
+      state: v5State,
+    };
+    const migrated = migrateSaveEnvelope(legacy);
+    expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
+    expect(migrated.state.inventory).toEqual(createDefaultCareerState().inventory);
+    expect(migrated.state.playerX).toBe(v5State.playerX);
   });
 
   it('round-trips a migrated v1 save after re-serializing it', () => {
