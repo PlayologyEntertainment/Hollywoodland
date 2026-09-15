@@ -8,6 +8,7 @@ import type { DomainEventBus } from '../domain/DomainEventBus';
 import { deriveAttributes } from '../domain/Origins';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { getActiveStage, getQuestStatus } from '../domain/Quests';
+import { weekdayForDay } from '../domain/TimeSystem';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
 
@@ -219,7 +220,7 @@ export class AppShell {
 
   private renderCareerState(state: CareerState): void {
     assertElement('#status-name', HTMLElement).textContent = state.identity.name.length > 0 ? state.identity.name : 'Nobody — yet';
-    const timeLabel = `Day ${state.time.day} · ${TIME_SLOT_LABELS[state.time.slot]}`;
+    const timeLabel = `${weekdayForDay(state.time.day)} · ${TIME_SLOT_LABELS[state.time.slot]}`;
     assertElement('#status-time', HTMLElement).textContent = timeLabel;
     assertElement('#status-money', HTMLElement).textContent = `$${state.resources.money}`;
     assertElement('#status-energy', HTMLElement).textContent = `${state.resources.energy}/100`;
