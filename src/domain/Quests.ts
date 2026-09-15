@@ -1,4 +1,5 @@
 import { applySharedEffect, evaluateSharedCondition, type SharedCondition, type SharedEffect } from './Conditions';
+import { evaluateRelationshipCondition, type RelationshipCharacter, type RelationshipCondition } from './Relationships';
 import type { CareerState } from './CareerState';
 
 export type QuestStatus = 'locked' | 'available' | 'active' | 'completed';
@@ -9,7 +10,7 @@ export interface QuestStatusCondition {
   readonly status: QuestStatus;
 }
 
-export type QuestCondition = SharedCondition | QuestStatusCondition;
+export type QuestCondition = SharedCondition | QuestStatusCondition | RelationshipCondition;
 
 export interface QuestActionEffect {
   readonly kind: 'quest-action';
@@ -59,11 +60,15 @@ export function evaluateQuestCondition(
   state: CareerState,
   condition: QuestCondition,
   quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
 ): boolean {
   if (condition.kind === 'quest-status') {
     const quest = getQuestById(quests, condition.questId);
     if (quest === undefined) return false;
-    return getQuestStatus(state, quest, quests) === condition.status;
+    return getQuestStatus(state, quest, quests, roster) === condition.status;
+  }
+  if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
+    return evaluateRelationshipCondition(state, condition, roster);
   }
   return evaluateSharedCondition(state, condition);
 }
@@ -83,17 +88,29 @@ export function getActiveStage(state: CareerState, quest: QuestDef): QuestStage 
   return quest.stages[index];
 }
 
-export function getQuestStatus(state: CareerState, quest: QuestDef, quests: readonly QuestDef[]): QuestStatus {
+export function getQuestStatus(
+  state: CareerState,
+  quest: QuestDef,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+): QuestStatus {
   const stageIndex = getActiveStageIndex(state, quest);
   if (stageIndex === quest.stages.length) return 'completed';
   if (stageIndex >= 0) return 'active';
-  const unlocked = (quest.prerequisites ?? []).every((condition) => evaluateQuestCondition(state, condition, quests));
+  const unlocked = (quest.prerequisites ?? []).every((condition) =>
+    evaluateQuestCondition(state, condition, quests, roster),
+  );
   return unlocked ? 'available' : 'locked';
 }
 
 /** Idempotent: no-ops unless the quest is currently 'available'. */
-export function startQuest(state: CareerState, quest: QuestDef, quests: readonly QuestDef[]): CareerState {
-  if (getQuestStatus(state, quest, quests) !== 'available') return state;
+export function startQuest(
+  state: CareerState,
+  quest: QuestDef,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+): CareerState {
+  if (getQuestStatus(state, quest, quests, roster) !== 'available') return state;
   return { ...state, facts: { ...state.facts, [startedFact(quest.id)]: true } };
 }
 
@@ -119,11 +136,12 @@ export function applyQuestActionById(
   quests: readonly QuestDef[],
   questId: string,
   action: 'start' | 'complete-stage',
-  stageId?: string,
+  stageId: string | undefined,
+  roster: readonly RelationshipCharacter[],
 ): CareerState {
   const quest = getQuestById(quests, questId);
   if (quest === undefined) return state;
-  if (action === 'start') return startQuest(state, quest, quests);
+  if (action === 'start') return startQuest(state, quest, quests, roster);
   if (stageId === undefined) return state;
   return completeQuestStage(state, quest, stageId);
 }

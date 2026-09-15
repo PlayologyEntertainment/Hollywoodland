@@ -1,4 +1,5 @@
 import { validateQuestGraph } from '../content/QuestValidator';
+import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipDefinitions';
 import type { QuestDef } from './Quests';
 
 /** Debug content for the Phase 2 quest-graph spike, wired entirely through
@@ -20,17 +21,24 @@ export const FIRST_AUDITION_QUEST: QuestDef = {
   ],
 };
 
-/** Left uncompletable within this round: its purpose is to demonstrate the
- * locked -> available transition once its prerequisite quest is complete,
- * the same way round 2 left some dialogue branches unexercised. */
+/** Requires both the prerequisite quest and the casting gatekeeper's trust
+ * (see CASTING_OFFICE_DIALOGUE) — completing "First Audition" alone isn't
+ * enough if you got there by name-dropping or stalling rather than earning
+ * her confidence. This exercises round 6's relationship-gated quest
+ * prerequisite alongside the existing quest-status one (both must hold),
+ * the same way round 2 left some dialogue branches unexercised to
+ * demonstrate a locked -> available transition. */
 export const SCREEN_TEST_QUEST: QuestDef = {
   id: 'screen-test',
   title: 'Screen Test',
-  summary: 'A follow-up opportunity that opens up once you land your first callback.',
-  prerequisites: [{ kind: 'quest-status', questId: 'first-audition', status: 'completed' }],
+  summary: 'A follow-up opportunity that opens up once you land your first callback and earn the gatekeeper\'s trust.',
+  prerequisites: [
+    { kind: 'quest-status', questId: 'first-audition', status: 'completed' },
+    { kind: 'relationship-at-least', characterId: CASTING_GATEKEEPER.id, axis: 'trust', minimum: 10 },
+  ],
   stages: [{ id: 'attend', description: 'Attend the screen test.' }],
 };
 
 export const ALL_QUESTS: readonly QuestDef[] = [FIRST_AUDITION_QUEST, SCREEN_TEST_QUEST];
 
-validateQuestGraph(ALL_QUESTS);
+validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS);

@@ -237,7 +237,7 @@ export class AppShell {
   private renderQuests(state: CareerState): void {
     const list = assertElement('#status-quests-list', HTMLUListElement);
     const items = ALL_QUESTS.map((quest) => {
-      const status = getQuestStatus(state, quest, ALL_QUESTS);
+      const status = getQuestStatus(state, quest, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS);
       if (status === 'locked') return undefined;
       const item = document.createElement('li');
       const stage = status === 'active' ? getActiveStage(state, quest) : undefined;
