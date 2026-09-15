@@ -55,7 +55,7 @@ describe('dialogue conditions', () => {
   });
 
   it('evaluates a quest-status condition', () => {
-    const started = startQuest(createDefaultCareerState(), TEST_QUEST, [TEST_QUEST]);
+    const started = startQuest(createDefaultCareerState(), TEST_QUEST, [TEST_QUEST], NO_RELATIONSHIPS);
     expect(
       evaluateCondition(started, { kind: 'quest-status', questId: 'quest-a', status: 'active' }, [TEST_QUEST], NO_RELATIONSHIPS),
     ).toBe(true);

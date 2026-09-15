@@ -67,7 +67,7 @@ export function evaluateCondition(
   if (condition.kind === 'quest-status') {
     const quest = quests.find((candidate) => candidate.id === condition.questId);
     if (quest === undefined) return false;
-    return getQuestStatus(state, quest, quests) === condition.status;
+    return getQuestStatus(state, quest, quests, roster) === condition.status;
   }
   if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
     return evaluateRelationshipCondition(state, condition, roster);
@@ -91,7 +91,7 @@ export function applyDialogueEffect(
   roster: readonly RelationshipCharacter[],
 ): CareerState {
   if (effect.kind === 'quest-action') {
-    return applyQuestActionById(state, quests, effect.questId, effect.action, effect.stageId);
+    return applyQuestActionById(state, quests, effect.questId, effect.action, effect.stageId, roster);
   }
   if (effect.kind === 'relationship-delta' || effect.kind === 'relationship-pivotal-flag') {
     return applyRelationshipEffect(state, effect, roster);
