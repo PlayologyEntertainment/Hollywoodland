@@ -1,5 +1,6 @@
 import { DEFAULT_ATTRIBUTES, type AttributesState } from './Origins';
 import { DEFAULT_RESOURCES, type ResourcesState } from './EconomySystem';
+import { DEFAULT_INVENTORY, type InventoryState } from './Inventory';
 import { DEFAULT_PROGRESSION, type ProgressionState } from './Progression';
 import { DEFAULT_RELATIONSHIPS, type RelationshipAxes, type RelationshipState } from './Relationships';
 import { DEFAULT_TIME, type TimeState } from './TimeSystem';
@@ -49,11 +50,11 @@ export interface CareerState {
    * `DEFAULT_PROGRESSION` rather than an absent entry, since there's only
    * ever one progression track (not one per authored id) to default. */
   readonly progression: ProgressionState;
+  /** Owned reward items (round 11), keyed by the debug roster ids in
+   * domain/InventoryDefinitions.ts. Lazily populated like `relationships` —
+   * an absent id simply hasn't been earned yet. */
+  readonly inventory: InventoryState;
 
-  // Extension points for future Phase 2 rounds — intentionally unpopulated
-  // until those systems are designed:
-  // readonly inventory: InventoryState;         // items, wardrobe, rewards
-  //
   // Quest graph progress (round 3) deliberately does NOT get its own field
   // here — it's tracked through `facts` (see domain/Quests.ts), the same
   // way dialogue memory is. Don't add a dedicated QuestState field; that
@@ -71,6 +72,7 @@ export function createInitialCareerState(identity: IdentityState, attributes: At
     facts: DEFAULT_FACTS,
     relationships: DEFAULT_RELATIONSHIPS,
     progression: DEFAULT_PROGRESSION,
+    inventory: DEFAULT_INVENTORY,
   };
 }
 
@@ -175,10 +177,25 @@ export function isCareerStateShapeV3(value: unknown): value is Omit<CareerState,
 /** The pre-round-8 CareerState shape (relationship meters, but no
  * progression). Exported only for save migration (see SaveEnvelope.ts) —
  * nothing else should use this. */
-export function isCareerStateShapeV4(value: unknown): value is Omit<CareerState, 'progression'> {
+export function isCareerStateShapeV4(value: unknown): value is Omit<CareerState, 'progression' | 'inventory'> {
   return isCareerStateShapeV3(value) && isRelationshipState((value as Record<string, unknown>).relationships);
 }
 
-export function isCareerStateShape(value: unknown): value is CareerState {
+/** The pre-round-11 CareerState shape (progression, but no inventory).
+ * Exported only for save migration (see SaveEnvelope.ts) — nothing else
+ * should use this. */
+export function isCareerStateShapeV5(value: unknown): value is Omit<CareerState, 'inventory'> {
   return isCareerStateShapeV4(value) && isProgressionState((value as Record<string, unknown>).progression);
+}
+
+function isInventoryState(value: unknown): value is InventoryState {
+  return (
+    isRecord(value) &&
+    isRecord(value.ownedItemIds) &&
+    Object.values(value.ownedItemIds).every((entry) => typeof entry === 'boolean')
+  );
+}
+
+export function isCareerStateShape(value: unknown): value is CareerState {
+  return isCareerStateShapeV5(value) && isInventoryState((value as Record<string, unknown>).inventory);
 }
