@@ -1,4 +1,11 @@
 import { applySharedEffect, evaluateSharedCondition, type SharedCondition, type SharedEffect } from './Conditions';
+import {
+  applyInventoryEffect,
+  evaluateInventoryCondition,
+  type InventoryCondition,
+  type InventoryEffect,
+  type InventoryItemDefinition,
+} from './Inventory';
 import { applyProgressionEffect, evaluateProgressionCondition, type ProgressionCondition, type ProgressionEffect } from './Progression';
 import { evaluateRelationshipCondition, type RelationshipCharacter, type RelationshipCondition } from './Relationships';
 import type { CareerState } from './CareerState';
@@ -11,7 +18,12 @@ export interface QuestStatusCondition {
   readonly status: QuestStatus;
 }
 
-export type QuestCondition = SharedCondition | QuestStatusCondition | RelationshipCondition | ProgressionCondition;
+export type QuestCondition =
+  | SharedCondition
+  | QuestStatusCondition
+  | RelationshipCondition
+  | ProgressionCondition
+  | InventoryCondition;
 
 export interface QuestActionEffect {
   readonly kind: 'quest-action';
@@ -22,10 +34,11 @@ export interface QuestActionEffect {
 
 export type QuestEffect = SharedEffect | QuestActionEffect;
 
-/** A stage reward may grant XP alongside (or instead of) a fact/resource
- * delta — but deliberately never `quest-action`, to avoid a stage reward
- * cascading into another quest's state in this round's scope. */
-export type QuestStageReward = SharedEffect | ProgressionEffect;
+/** A stage reward may grant XP or an inventory item alongside (or instead
+ * of) a fact/resource delta — but deliberately never `quest-action`, to
+ * avoid a stage reward cascading into another quest's state in this round's
+ * scope. */
+export type QuestStageReward = SharedEffect | ProgressionEffect | InventoryEffect;
 
 export interface QuestStage {
   readonly id: string;
@@ -64,17 +77,21 @@ export function evaluateQuestCondition(
   condition: QuestCondition,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): boolean {
   if (condition.kind === 'quest-status') {
     const quest = getQuestById(quests, condition.questId);
     if (quest === undefined) return false;
-    return getQuestStatus(state, quest, quests, roster) === condition.status;
+    return getQuestStatus(state, quest, quests, roster, items) === condition.status;
   }
   if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
     return evaluateRelationshipCondition(state, condition, roster);
   }
   if (condition.kind === 'level-at-least' || condition.kind === 'talent-unlocked') {
     return evaluateProgressionCondition(state, condition);
+  }
+  if (condition.kind === 'item-owned') {
+    return evaluateInventoryCondition(state, condition, items);
   }
   return evaluateSharedCondition(state, condition);
 }
@@ -99,12 +116,13 @@ export function getQuestStatus(
   quest: QuestDef,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): QuestStatus {
   const stageIndex = getActiveStageIndex(state, quest);
   if (stageIndex === quest.stages.length) return 'completed';
   if (stageIndex >= 0) return 'active';
   const unlocked = (quest.prerequisites ?? []).every((condition) =>
-    evaluateQuestCondition(state, condition, quests, roster),
+    evaluateQuestCondition(state, condition, quests, roster, items),
   );
   return unlocked ? 'available' : 'locked';
 }
@@ -115,8 +133,9 @@ export function startQuest(
   quest: QuestDef,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): CareerState {
-  if (getQuestStatus(state, quest, quests, roster) !== 'available') return state;
+  if (getQuestStatus(state, quest, quests, roster, items) !== 'available') return state;
   return { ...state, facts: { ...state.facts, [startedFact(quest.id)]: true } };
 }
 
@@ -125,18 +144,31 @@ export function startQuest(
  * node) is a legitimate runtime scenario, not a content bug, so this
  * defends rather than throws (content-authoring mistakes are instead
  * caught at load time by quest/dialogue validation). */
-export function completeQuestStage(state: CareerState, quest: QuestDef, stageId: string): CareerState {
+export function completeQuestStage(
+  state: CareerState,
+  quest: QuestDef,
+  stageId: string,
+  items: readonly InventoryItemDefinition[] = [],
+): CareerState {
   const activeStage = getActiveStage(state, quest);
   if (activeStage === undefined || activeStage.id !== stageId) return state;
   const withFact: CareerState = {
     ...state,
     facts: { ...state.facts, [stageCompleteFact(quest.id, stageId)]: true },
   };
-  return (activeStage.rewards ?? []).reduce((current, effect) => applyQuestStageReward(current, effect), withFact);
+  return (activeStage.rewards ?? []).reduce(
+    (current, effect) => applyQuestStageReward(current, effect, items),
+    withFact,
+  );
 }
 
-function applyQuestStageReward(state: CareerState, effect: QuestStageReward): CareerState {
+function applyQuestStageReward(
+  state: CareerState,
+  effect: QuestStageReward,
+  items: readonly InventoryItemDefinition[],
+): CareerState {
   if (effect.kind === 'xp-grant') return applyProgressionEffect(state, effect);
+  if (effect.kind === 'item-grant') return applyInventoryEffect(state, effect, items);
   return applySharedEffect(state, effect);
 }
 
@@ -149,10 +181,11 @@ export function applyQuestActionById(
   action: 'start' | 'complete-stage',
   stageId: string | undefined,
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): CareerState {
   const quest = getQuestById(quests, questId);
   if (quest === undefined) return state;
-  if (action === 'start') return startQuest(state, quest, quests, roster);
+  if (action === 'start') return startQuest(state, quest, quests, roster, items);
   if (stageId === undefined) return state;
-  return completeQuestStage(state, quest, stageId);
+  return completeQuestStage(state, quest, stageId, items);
 }

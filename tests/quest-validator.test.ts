@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { validateQuestGraph } from '../src/content/QuestValidator';
+import type { InventoryItemDefinition } from '../src/domain/Inventory';
+import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
 import type { TalentDefinition } from '../src/domain/Progression';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import type { QuestDef } from '../src/domain/Quests';
@@ -82,8 +84,8 @@ describe('validateQuestGraph', () => {
     expect(() => validateQuestGraph([a, b])).toThrow('dependency cycle');
   });
 
-  it('validates the real quest content against the real relationship roster and talent content', () => {
-    expect(() => validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS)).not.toThrow();
+  it('validates the real quest content against the real relationship roster, talent, and item content', () => {
+    expect(() => validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS)).not.toThrow();
   });
 
   it('rejects a relationship prerequisite referencing an unknown character', () => {
@@ -155,5 +157,44 @@ describe('validateQuestGraph', () => {
       stages: [{ id: 's', description: '' }],
     };
     expect(() => validateQuestGraph([quest])).not.toThrow();
+  });
+
+  it('rejects an item-owned prerequisite referencing an unknown item', () => {
+    const quest: QuestDef = {
+      id: 'q',
+      title: 'X',
+      summary: '',
+      prerequisites: [{ kind: 'item-owned', itemId: 'missing' }],
+      stages: [{ id: 's', description: '' }],
+    };
+    expect(() => validateQuestGraph([quest])).toThrow('references missing item "missing"');
+  });
+
+  it('rejects a stage reward referencing an unknown item', () => {
+    const quest: QuestDef = {
+      id: 'q',
+      title: 'X',
+      summary: '',
+      stages: [{ id: 's', description: '', rewards: [{ kind: 'item-grant', itemId: 'missing' }] }],
+    };
+    expect(() => validateQuestGraph([quest])).toThrow('stage "s" reward references missing item "missing"');
+  });
+
+  it('accepts an item-owned prerequisite and a stage reward against a known item', () => {
+    const item: InventoryItemDefinition = {
+      id: 'item-a',
+      category: 'prop',
+      name: 'Item A',
+      description: '',
+      unlockSource: 'debug',
+    };
+    const quest: QuestDef = {
+      id: 'q',
+      title: 'X',
+      summary: '',
+      prerequisites: [{ kind: 'item-owned', itemId: 'item-a' }],
+      stages: [{ id: 's', description: '', rewards: [{ kind: 'item-grant', itemId: 'item-a' }] }],
+    };
+    expect(() => validateQuestGraph([quest], [], [], [item])).not.toThrow();
   });
 });

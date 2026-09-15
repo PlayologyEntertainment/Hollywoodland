@@ -5,6 +5,7 @@ import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '..
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
 import type { DomainEventBus } from '../../domain/DomainEventBus';
+import { ALL_ITEMS } from '../../domain/InventoryDefinitions';
 import { unlockTalent, type TalentUnlockRequestedPayload } from '../../domain/Progression';
 import { ALL_QUESTS } from '../../domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../../domain/RelationshipDefinitions';
@@ -364,6 +365,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       payload.choiceId,
       ALL_QUESTS,
       ALL_RELATIONSHIP_CHARACTERS,
+      ALL_ITEMS,
     );
     this.emitState();
   };

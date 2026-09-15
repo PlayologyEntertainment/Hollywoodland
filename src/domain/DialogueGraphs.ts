@@ -1,4 +1,5 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
+import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
@@ -95,6 +96,13 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
           conditions: [{ kind: 'level-at-least', minimum: 2 }],
           effects: [{ kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { trust: 2 } }],
         },
+        {
+          id: 'show-studio-headshot',
+          label: 'Show her the studio headshot from your last callback.',
+          next: 'farewell-impressed',
+          conditions: [{ kind: 'item-owned', itemId: 'studio-headshot' }],
+          effects: [{ kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { trust: 2 } }],
+        },
       ],
     },
     {
@@ -145,7 +153,7 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
   ],
 };
 
-validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS);
+validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,

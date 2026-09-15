@@ -16,6 +16,13 @@ import {
   type QuestStatusCondition,
 } from './Quests';
 import {
+  applyInventoryEffect,
+  evaluateInventoryCondition,
+  type InventoryCondition,
+  type InventoryEffect,
+  type InventoryItemDefinition,
+} from './Inventory';
+import {
   applyProgressionEffect,
   evaluateProgressionCondition,
   type ProgressionCondition,
@@ -32,9 +39,19 @@ import type { CareerState } from './CareerState';
 
 export type { FactCondition, ResourceAtLeastCondition, SetFactEffect, ResourceDeltaEffect };
 
-export type DialogueCondition = SharedCondition | QuestStatusCondition | RelationshipCondition | ProgressionCondition;
+export type DialogueCondition =
+  | SharedCondition
+  | QuestStatusCondition
+  | RelationshipCondition
+  | ProgressionCondition
+  | InventoryCondition;
 
-export type DialogueEffect = SharedEffect | QuestActionEffect | RelationshipEffect | ProgressionEffect;
+export type DialogueEffect =
+  | SharedEffect
+  | QuestActionEffect
+  | RelationshipEffect
+  | ProgressionEffect
+  | InventoryEffect;
 
 export interface DialogueChoice {
   readonly id: string;
@@ -69,17 +86,21 @@ export function evaluateCondition(
   condition: DialogueCondition,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): boolean {
   if (condition.kind === 'quest-status') {
     const quest = quests.find((candidate) => candidate.id === condition.questId);
     if (quest === undefined) return false;
-    return getQuestStatus(state, quest, quests, roster) === condition.status;
+    return getQuestStatus(state, quest, quests, roster, items) === condition.status;
   }
   if (condition.kind === 'relationship-at-least' || condition.kind === 'relationship-label') {
     return evaluateRelationshipCondition(state, condition, roster);
   }
   if (condition.kind === 'level-at-least' || condition.kind === 'talent-unlocked') {
     return evaluateProgressionCondition(state, condition);
+  }
+  if (condition.kind === 'item-owned') {
+    return evaluateInventoryCondition(state, condition, items);
   }
   return evaluateSharedCondition(state, condition);
 }
@@ -89,8 +110,9 @@ export function isChoiceAvailable(
   choice: DialogueChoice,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): boolean {
-  return (choice.conditions ?? []).every((condition) => evaluateCondition(state, condition, quests, roster));
+  return (choice.conditions ?? []).every((condition) => evaluateCondition(state, condition, quests, roster, items));
 }
 
 export function applyDialogueEffect(
@@ -98,15 +120,19 @@ export function applyDialogueEffect(
   effect: DialogueEffect,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): CareerState {
   if (effect.kind === 'quest-action') {
-    return applyQuestActionById(state, quests, effect.questId, effect.action, effect.stageId, roster);
+    return applyQuestActionById(state, quests, effect.questId, effect.action, effect.stageId, roster, items);
   }
   if (effect.kind === 'relationship-delta' || effect.kind === 'relationship-pivotal-flag') {
     return applyRelationshipEffect(state, effect, roster);
   }
   if (effect.kind === 'xp-grant') {
     return applyProgressionEffect(state, effect);
+  }
+  if (effect.kind === 'item-grant') {
+    return applyInventoryEffect(state, effect, items);
   }
   return applySharedEffect(state, effect);
 }
@@ -116,8 +142,12 @@ export function applyDialogueChoice(
   choice: DialogueChoice,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): CareerState {
-  return (choice.effects ?? []).reduce((current, effect) => applyDialogueEffect(current, effect, quests, roster), state);
+  return (choice.effects ?? []).reduce(
+    (current, effect) => applyDialogueEffect(current, effect, quests, roster, items),
+    state,
+  );
 }
 
 export function getDialogueNode(graph: DialogueGraph, nodeId: string): DialogueNode | undefined {
@@ -136,9 +166,10 @@ export function applyDialogueChoiceById(
   choiceId: string,
   quests: readonly QuestDef[],
   roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
 ): CareerState {
   const node = getDialogueNode(graph, nodeId);
   const choice = node?.choices.find((candidate) => candidate.id === choiceId);
-  if (choice === undefined || !isChoiceAvailable(state, choice, quests, roster)) return state;
-  return applyDialogueChoice(state, choice, quests, roster);
+  if (choice === undefined || !isChoiceAvailable(state, choice, quests, roster, items)) return state;
+  return applyDialogueChoice(state, choice, quests, roster, items);
 }
