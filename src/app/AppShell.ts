@@ -7,9 +7,11 @@ import { CASTING_OFFICE_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import { deriveAttributes } from '../domain/Origins';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
+import { canUnlockTalent, isTalentUnlocked, xpRequiredForNextLevel, type ProgressionState, type TalentDefinition } from '../domain/Progression';
 import { getActiveStage, getQuestStatus } from '../domain/Quests';
 import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipLabel } from '../domain/Relationships';
 import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../domain/RelationshipDefinitions';
+import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
 import { weekdayForDay } from '../domain/TimeSystem';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
@@ -50,6 +52,22 @@ function formatRelationshipAxes(axes: RelationshipAxes): string {
   if (axes.attraction !== null) parts.push(`Attraction ${axes.attraction}`);
   if (axes.obligation !== 0) parts.push(`Obligation ${axes.obligation > 0 ? '+' : ''}${axes.obligation}`);
   return parts.join(' · ');
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/** A locked talent names its blocker — a same-branch prerequisite, or
+ * otherwise its point cost — rather than being omitted from the list the
+ * way a locked quest is: a talent tree is the player's own plan for their
+ * character, not narrative content that would spoil by being previewed. */
+function formatTalentRequirement(talent: TalentDefinition): string {
+  if (talent.prerequisiteId !== null) {
+    const prerequisite = getTalentById(talent.prerequisiteId);
+    return `Requires ${prerequisite?.name ?? talent.prerequisiteId}`;
+  }
+  return `${talent.cost} point${talent.cost === 1 ? '' : 's'}`;
 }
 
 export class AppShell {
@@ -242,6 +260,7 @@ export class AppShell {
       `${timeLabel} · $${state.resources.money} · Energy ${state.resources.energy}/100 · Rep ${state.resources.reputation}/100`;
     this.renderQuests(state);
     this.renderRelationships(state);
+    this.renderProgression(state);
   }
 
   /** Locked quests are omitted entirely rather than shown as "???" —
@@ -285,6 +304,55 @@ export class AppShell {
     const detail = document.createElement('small');
     detail.textContent = formatRelationshipAxes(axes);
     item.append(summary, detail);
+    return item;
+  }
+
+  /** Every talent is listed regardless of unlock status (see
+   * `formatTalentRequirement`) — unlike `renderQuests`/`renderRelationships`,
+   * there is nothing here to omit. */
+  private renderProgression(state: CareerState): void {
+    const { progression } = state;
+    const required = xpRequiredForNextLevel(progression.level);
+    const levelLabel =
+      progression.unspentTalentPoints > 0
+        ? `Level ${progression.level} — ${progression.unspentTalentPoints} talent point${progression.unspentTalentPoints === 1 ? '' : 's'} available`
+        : `Level ${progression.level}`;
+    assertElement('#status-level', HTMLElement).textContent = levelLabel;
+    const bar = assertElement('#status-xp-bar', HTMLElement);
+    const percent = Math.min(100, Math.round((progression.xp / required) * 100));
+    bar.setAttribute('aria-valuenow', String(percent));
+    assertElement('#status-xp-fill', HTMLElement).style.width = `${percent}%`;
+    assertElement('#status-xp-label', HTMLElement).textContent = `${progression.xp} / ${required} XP`;
+    const list = assertElement('#status-talents-list', HTMLUListElement);
+    list.replaceChildren(...ALL_TALENTS.map((talent) => this.buildTalentListItem(talent, progression)));
+  }
+
+  private buildTalentListItem(talent: TalentDefinition, progression: ProgressionState): HTMLLIElement {
+    const unlocked = isTalentUnlocked(progression, talent);
+    const item = document.createElement('li');
+    if (unlocked) item.classList.add('talent-unlocked');
+    const summary = document.createElement('div');
+    summary.className = 'talent-summary';
+    const name = document.createElement('span');
+    name.textContent = `${talent.name} (${capitalize(talent.branch)})`;
+    const detail = document.createElement('small');
+    detail.textContent = unlocked ? talent.description : `${talent.description} — ${formatTalentRequirement(talent)}`;
+    summary.append(name, detail);
+    item.appendChild(summary);
+    if (unlocked) return item;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'talent-unlock-button';
+    button.textContent = `Unlock (${talent.cost})`;
+    const available = canUnlockTalent(progression, talent);
+    button.disabled = !available;
+    button.setAttribute('aria-disabled', String(!available));
+    if (available) {
+      button.addEventListener('click', () =>
+        this.options.domainEvents.emit('talent-unlock-requested', { talentId: talent.id }),
+      );
+    }
+    item.appendChild(button);
     return item;
   }
 
