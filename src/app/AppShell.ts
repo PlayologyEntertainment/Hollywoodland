@@ -5,6 +5,7 @@ import { createDefaultCareerState, createInitialCareerState, type CareerState, t
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
 import { CASTING_OFFICE_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
+import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
 import { deriveAttributes } from '../domain/Origins';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
@@ -57,6 +58,10 @@ function formatRelationshipAxes(axes: RelationshipAxes): string {
 
 function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function formatItemCategory(category: InventoryItemDefinition['category']): string {
+  return category.split('-').map(capitalize).join(' ');
 }
 
 /** A locked talent names its blocker — a same-branch prerequisite, or
@@ -262,6 +267,7 @@ export class AppShell {
     this.renderQuests(state);
     this.renderRelationships(state);
     this.renderProgression(state);
+    this.renderInventory(state);
   }
 
   /** Locked quests are omitted entirely rather than shown as "???" —
@@ -355,6 +361,29 @@ export class AppShell {
     }
     item.appendChild(button);
     return item;
+  }
+
+  /** An unowned item is omitted entirely, the same lazy-population
+   * reasoning `renderRelationships` applies: there's no purchase or unlock
+   * action for the player to take on an item the way there is for a
+   * talent, so a reward not yet earned isn't a panel entry worth showing
+   * (let alone one worth spoiling in advance). */
+  private renderInventory(state: CareerState): void {
+    const list = assertElement('#status-inventory-list', HTMLUListElement);
+    const items = ALL_ITEMS.filter((item) => hasItem(state.inventory, item)).map((item) =>
+      this.buildInventoryListItem(item),
+    );
+    list.replaceChildren(...items);
+  }
+
+  private buildInventoryListItem(item: InventoryItemDefinition): HTMLLIElement {
+    const listItem = document.createElement('li');
+    const summary = document.createElement('span');
+    summary.textContent = `${item.name} (${formatItemCategory(item.category)})`;
+    const detail = document.createElement('small');
+    detail.textContent = item.description;
+    listItem.append(summary, detail);
+    return listItem;
   }
 
   private async save(): Promise<void> {
