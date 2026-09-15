@@ -8,7 +8,8 @@ import type { DomainEventBus } from '../domain/DomainEventBus';
 import { deriveAttributes } from '../domain/Origins';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { getActiveStage, getQuestStatus } from '../domain/Quests';
-import { ALL_RELATIONSHIP_CHARACTERS } from '../domain/RelationshipDefinitions';
+import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipLabel } from '../domain/Relationships';
+import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../domain/RelationshipDefinitions';
 import { weekdayForDay } from '../domain/TimeSystem';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
@@ -39,6 +40,17 @@ const TIME_SLOT_LABELS: Record<CareerState['time']['slot'], string> = {
   afternoon: 'Afternoon',
   evening: 'Evening',
 };
+
+function capitalizeRelationshipLabel(label: RelationshipLabel): string {
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function formatRelationshipAxes(axes: RelationshipAxes): string {
+  const parts = [`Trust ${axes.trust}`, `Tension ${axes.tension}`];
+  if (axes.attraction !== null) parts.push(`Attraction ${axes.attraction}`);
+  if (axes.obligation !== 0) parts.push(`Obligation ${axes.obligation > 0 ? '+' : ''}${axes.obligation}`);
+  return parts.join(' · ');
+}
 
 export class AppShell {
   private settings: GameSettings;
@@ -229,6 +241,7 @@ export class AppShell {
     assertElement('#hud-quickstats', HTMLOutputElement).value =
       `${timeLabel} · $${state.resources.money} · Energy ${state.resources.energy}/100 · Rep ${state.resources.reputation}/100`;
     this.renderQuests(state);
+    this.renderRelationships(state);
   }
 
   /** Locked quests are omitted entirely rather than shown as "???" —
@@ -246,6 +259,33 @@ export class AppShell {
       return item;
     }).filter((item): item is HTMLLIElement => item !== undefined);
     list.replaceChildren(...items);
+  }
+
+  /** A character with no relationship-state entry yet is omitted rather
+   * than shown at a default "neutral" — the same lazy-population reasoning
+   * `Relationships.ts` already applies to state, extended to the panel: a
+   * character the player hasn't affected yet isn't a relationship worth
+   * reporting on. */
+  private renderRelationships(state: CareerState): void {
+    const list = assertElement('#status-relationships-list', HTMLUListElement);
+    const items = ALL_RELATIONSHIP_CHARACTERS.map((character) =>
+      this.buildRelationshipListItem(character, state.relationships[character.id]),
+    ).filter((item): item is HTMLLIElement => item !== undefined);
+    list.replaceChildren(...items);
+  }
+
+  private buildRelationshipListItem(
+    character: RelationshipCharacterDef,
+    axes: RelationshipAxes | undefined,
+  ): HTMLLIElement | undefined {
+    if (axes === undefined) return undefined;
+    const item = document.createElement('li');
+    const summary = document.createElement('span');
+    summary.textContent = `${character.role} — ${capitalizeRelationshipLabel(deriveRelationshipLabel(axes))}`;
+    const detail = document.createElement('small');
+    detail.textContent = formatRelationshipAxes(axes);
+    item.append(summary, detail);
+    return item;
   }
 
   private async save(): Promise<void> {
