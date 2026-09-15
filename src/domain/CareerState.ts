@@ -39,10 +39,14 @@ export interface CareerState {
 
   // Extension points for future Phase 2 rounds — intentionally unpopulated
   // until those systems are designed:
-  // readonly quests: QuestState;               // quest graph progress/flags
   // readonly relationships: RelationshipState; // per-NPC relationship meters
   // readonly inventory: InventoryState;         // items, wardrobe, rewards
   // readonly progression: ProgressionState;     // XP, talents, levels, credits
+  //
+  // Quest graph progress (round 3) deliberately does NOT get its own field
+  // here — it's tracked through `facts` (see domain/Quests.ts), the same
+  // way dialogue memory is. Don't add a dedicated QuestState field; that
+  // would duplicate state-tracking machinery `facts` already provides.
 }
 
 export function createInitialCareerState(identity: IdentityState, attributes: AttributesState): CareerState {

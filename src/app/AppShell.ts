@@ -6,6 +6,8 @@ import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type Dialog
 import { CASTING_OFFICE_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import { deriveAttributes } from '../domain/Origins';
+import { ALL_QUESTS } from '../domain/QuestDefinitions';
+import { getActiveStage, getQuestStatus } from '../domain/Quests';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
 
@@ -192,7 +194,7 @@ export class AppShell {
     button.type = 'button';
     button.className = 'dialogue-choice';
     button.textContent = choice.label;
-    const available = isChoiceAvailable(this.careerState, choice);
+    const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS);
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
     if (available) button.addEventListener('click', () => this.selectDialogueChoice(node, choice));
@@ -224,6 +226,24 @@ export class AppShell {
     assertElement('#status-reputation', HTMLElement).textContent = `${state.resources.reputation}/100`;
     assertElement('#hud-quickstats', HTMLOutputElement).value =
       `${timeLabel} · $${state.resources.money} · Energy ${state.resources.energy}/100 · Rep ${state.resources.reputation}/100`;
+    this.renderQuests(state);
+  }
+
+  /** Locked quests are omitted entirely rather than shown as "???" —
+   * consistent with round 2's principle of distinguishing unavailable
+   * choices without revealing every hidden consequence. */
+  private renderQuests(state: CareerState): void {
+    const list = assertElement('#status-quests-list', HTMLUListElement);
+    const items = ALL_QUESTS.map((quest) => {
+      const status = getQuestStatus(state, quest, ALL_QUESTS);
+      if (status === 'locked') return undefined;
+      const item = document.createElement('li');
+      const stage = status === 'active' ? getActiveStage(state, quest) : undefined;
+      const statusLabel = status === 'completed' ? 'Completed' : (stage?.description ?? 'Available');
+      item.textContent = `${quest.title} — ${statusLabel}`;
+      return item;
+    }).filter((item): item is HTMLLIElement => item !== undefined);
+    list.replaceChildren(...items);
   }
 
   private async save(): Promise<void> {

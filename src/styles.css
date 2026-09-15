@@ -133,6 +133,11 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
 dl div { display: flex; justify-content: space-between; padding: .8rem 0; border-bottom: 1px solid rgb(216 173 88 / 24%); }
 .flavor-copy, .privacy-note { color: var(--muted); font-style: italic; line-height: 1.55; }
 
+.status-quests { margin-top: 1.2rem; }
+.status-quests h3 { margin: 0 0 .5rem; color: var(--gold-bright); font-size: 1rem; }
+.status-quests ul { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.status-quests li { padding: .5rem .7rem; border: 1px solid rgb(216 173 88 / 24%); font-size: .92rem; }
+
 dialog { position: relative; width: min(92vw, 39rem); max-height: 90vh; border: 1px solid var(--gold); padding: 0; overflow: auto; background: var(--panel); color: var(--ink); box-shadow: 0 1.5rem 5rem #000; }
 dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .settings-form, .story-card { display: grid; gap: 1.2rem; padding: 1.7rem; }
