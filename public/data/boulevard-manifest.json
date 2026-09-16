@@ -1,5 +1,5 @@
 {
-  "worldWidth": 3790,
+  "worldWidth": 4650,
   "groundY": 1056,
   "referenceSheets": [
     "Hollywoodland_Concept_Boulevard.png"
@@ -192,6 +192,23 @@
         "x": 3730,
         "y": 590,
         "text": "EXTRAS\nCORRAL",
+        "fontSize": 19,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 210,
+        "boardHeight": 130
+      }
+    },
+    {
+      "id": "soundstage",
+      "label": "Soundstage",
+      "x": 4150,
+      "promptLabel": "Rehearse on the soundstage",
+      "radius": 205,
+      "sign": {
+        "x": 4280,
+        "y": 590,
+        "text": "SOUND\nSTAGE",
         "fontSize": 19,
         "textColor": "#f3dfab",
         "boardColor": "#241609",

@@ -4,6 +4,31 @@ import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipD
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
 
+/** Debug content for round 18's sixth Boulevard location (see
+ * DialogueGraphs.ts's `SCENE_PARTNER_DIALOGUE`) — the `scene-partner` roster
+ * entry's first content, past the extras corral at the soundstage. Unlike
+ * the other social hubs, both root choices complete `first-run-through`
+ * regardless of branch (the same "either way advances the stage" shape
+ * `BACKLOT_RIVALRY_QUEST`'s `first-encounter` uses), and `found-the-rhythm`
+ * can be reached through the ungated quest-status path or a `drama-1`-gated
+ * one, mirroring `BACKLOT_RIVALRY_QUEST`/`RIVAL_DIALOGUE`'s ungated-path/
+ * talent-gated-path split but on the opposite axis: here the talent gates a
+ * deeper *trust* choice while the romance-capable `attraction` choice stays
+ * ungated, rather than the other way around. */
+export const SCENE_REHEARSAL_QUEST: QuestDef = {
+  id: 'scene-rehearsal',
+  title: 'Scene Rehearsal',
+  summary: 'Find your footing with your scene partner before the cameras roll.',
+  stages: [
+    { id: 'first-run-through', description: 'Run the scene together for the first time.' },
+    {
+      id: 'found-the-rhythm',
+      description: 'Find your rhythm together.',
+      rewards: [{ kind: 'xp-grant', amount: 10 }],
+    },
+  ],
+};
+
 /** Debug content for round 17's fifth Boulevard location (see
  * DialogueGraphs.ts's `PRODUCTION_COORDINATOR_DIALOGUE`) — the
  * `production-coordinator` roster entry's first content. `cleared-for-call`
@@ -154,6 +179,7 @@ export const ALL_QUESTS: readonly QuestDef[] = [
   MAKING_RENT_QUEST,
   BACKLOT_RIVALRY_QUEST,
   EXTRAS_CALL_QUEST,
+  SCENE_REHEARSAL_QUEST,
 ];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

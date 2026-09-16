@@ -1,7 +1,7 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, PRODUCTION_COORDINATOR, RIVAL } from './RelationshipDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, PRODUCTION_COORDINATOR, RIVAL, SCENE_PARTNER } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
@@ -453,12 +453,97 @@ export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(PRODUCTION_COORDINATOR_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
+/** Round 18's sixth Boulevard location: the `scene-partner` roster entry's
+ * first content, past the extras corral at the soundstage. Both root
+ * choices complete `first-run-through` regardless of branch, the same
+ * "either way advances the stage" shape `RIVAL_DIALOGUE`'s root uses.
+ * `dig-into-motivation` is this codebase's first content use of `drama-1`
+ * (see TalentDefinitions.ts), and — unlike `RIVAL_DIALOGUE`, where the
+ * talent gate sits on the `attraction` choice — it gates a deeper *trust*
+ * path instead, leaving `lean-into-the-chemistry`'s `attraction` branch
+ * ungated: `scene-partner` is a collaborator first, so the game doesn't
+ * require a spent talent point before romance is even on the table,
+ * matching docs/DRAFT_TRACK_B_CANON_PROPOSAL.md's read on Corinne Lake as
+ * reachable for friendship, romance, or rivalry from the start. */
+export const SCENE_PARTNER_DIALOGUE: DialogueGraph = {
+  id: 'soundstage-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Scene Partner',
+      text: '"You\'re covering my mark today?" she asks, flipping through her sides. "Let\'s at least get through it once before they roll film."',
+      choices: [
+        {
+          id: 'run-lines-eagerly',
+          label: 'Offer to run the scene twice before the crew is ready.',
+          next: 'settled-in',
+          effects: [
+            { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'scene-rehearsal' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'first-run-through' },
+          ],
+        },
+        {
+          id: 'match-her-energy',
+          label: 'Play it too big, daring her to match you.',
+          next: 'settled-in',
+          effects: [
+            { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { tension: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'scene-rehearsal' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'first-run-through' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'settled-in',
+      speaker: 'Scene Partner',
+      text: '"Places in five," the assistant director calls from off camera. "You\'ve got until then to find it," she says, script still in hand.',
+      choices: [
+        {
+          id: 'commit-to-the-scene',
+          label: 'Play it exactly as blocked — no surprises.',
+          next: null,
+          conditions: [{ kind: 'quest-status', questId: 'scene-rehearsal', status: 'active' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'found-the-rhythm' },
+            { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 3 } },
+          ],
+        },
+        {
+          id: 'dig-into-motivation',
+          label: 'Dig into what your characters actually want from each other.',
+          next: null,
+          conditions: [{ kind: 'talent-unlocked', talentId: 'drama-1' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'found-the-rhythm' },
+            { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 5 } },
+          ],
+        },
+        {
+          id: 'lean-into-the-chemistry',
+          label: 'Tell her you could get used to rehearsing with her.',
+          next: null,
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'found-the-rhythm' },
+            { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { attraction: 4, trust: 1 } },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+validateDialogueGraph(SCENE_PARTNER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
   [DINER_DIALOGUE.id]: DINER_DIALOGUE,
   [LANDLADY_DIALOGUE.id]: LANDLADY_DIALOGUE,
   [RIVAL_DIALOGUE.id]: RIVAL_DIALOGUE,
   [PRODUCTION_COORDINATOR_DIALOGUE.id]: PRODUCTION_COORDINATOR_DIALOGUE,
+  [SCENE_PARTNER_DIALOGUE.id]: SCENE_PARTNER_DIALOGUE,
 });
 
 export function getDialogueGraphById(id: string): DialogueGraph | undefined {
