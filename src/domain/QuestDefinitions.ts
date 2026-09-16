@@ -4,6 +4,27 @@ import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipD
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
 
+/** Debug content for round 16's fourth Boulevard location (see
+ * DialogueGraphs.ts's `RIVAL_DIALOGUE`) — the `rival` roster entry's first
+ * content. Unlike the other three social hubs, `earned-respect` never
+ * lowers tension no matter which branch is taken: the rivalry is meant to
+ * persist as a rivalry (see `deriveRelationshipLabel`'s tension-based
+ * label), not resolve into friendship the first time the two characters
+ * talk. */
+export const BACKLOT_RIVALRY_QUEST: QuestDef = {
+  id: 'backlot-rivalry',
+  title: 'Backlot Rivalry',
+  summary: 'Figure out where you stand with the other hopeful at the backlot gate.',
+  stages: [
+    { id: 'first-encounter', description: 'Cross paths at the backlot gate.' },
+    {
+      id: 'earned-respect',
+      description: 'Settle where you stand with her.',
+      rewards: [{ kind: 'xp-grant', amount: 10 }],
+    },
+  ],
+};
+
 /** Debug content for round 15's third Boulevard location (see
  * DialogueGraphs.ts's `LANDLADY_DIALOGUE`) — the `landlady` roster entry's
  * first content. The `settled-in` stage is completable two ways: a generic
@@ -109,6 +130,7 @@ export const ALL_QUESTS: readonly QuestDef[] = [
   SCREEN_TEST_QUEST,
   DINER_INTRODUCTIONS_QUEST,
   MAKING_RENT_QUEST,
+  BACKLOT_RIVALRY_QUEST,
 ];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

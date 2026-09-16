@@ -1,7 +1,7 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY } from './RelationshipDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, RIVAL } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
@@ -303,10 +303,84 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(LANDLADY_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
+/** Round 16's fourth Boulevard location: the `rival` roster entry's first
+ * content — the only one of the four so far where `supportsAttraction` is
+ * true, giving `flirt-back` this codebase's first content use of the
+ * `attraction` axis, and its condition on `charm-1` is the second
+ * `talent-unlocked` check in content after round 14's `observation-1`
+ * (see DINER_DIALOGUE above). `wish-her-luck` mirrors LANDLADY_DIALOGUE's
+ * `reassure-generic` narrative path, branching against the content-gated
+ * `flirt-back` the same "narrative OR content-gated" way round 9 and round
+ * 15 split their own second-stage choices. */
+export const RIVAL_DIALOGUE: DialogueGraph = {
+  id: 'backlot-gate-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Rival',
+      text: '"Well, look who else got called back," she says, looking you up and down.',
+      choices: [
+        {
+          id: 'match-her-look',
+          label: 'Look her up and down right back.',
+          next: 'sizing-up',
+          effects: [
+            { kind: 'relationship-delta', characterId: RIVAL.id, delta: { tension: 3 } },
+            { kind: 'quest-action', action: 'start', questId: 'backlot-rivalry' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'backlot-rivalry', stageId: 'first-encounter' },
+          ],
+        },
+        {
+          id: 'offer-common-ground',
+          label: 'Same casting call, huh? Small town.',
+          next: 'sizing-up',
+          effects: [
+            { kind: 'relationship-delta', characterId: RIVAL.id, delta: { trust: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'backlot-rivalry' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'backlot-rivalry', stageId: 'first-encounter' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'sizing-up',
+      speaker: 'Rival',
+      text: '"Let\'s see who\'s still standing after the next round of cuts," she says, but it sounds almost like a dare.',
+      choices: [
+        {
+          id: 'wish-her-luck',
+          label: 'May the best actress win.',
+          next: null,
+          conditions: [{ kind: 'quest-status', questId: 'backlot-rivalry', status: 'active' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'backlot-rivalry', stageId: 'earned-respect' },
+            { kind: 'relationship-delta', characterId: RIVAL.id, delta: { trust: 3 } },
+          ],
+        },
+        {
+          id: 'flirt-back',
+          label: 'Careful — I don\'t lose easily.',
+          next: null,
+          conditions: [{ kind: 'talent-unlocked', talentId: 'charm-1' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'backlot-rivalry', stageId: 'earned-respect' },
+            { kind: 'relationship-delta', characterId: RIVAL.id, delta: { attraction: 4, tension: 1 } },
+          ],
+        },
+        { id: 'stay-cold', label: 'Say nothing and walk away.', next: null },
+      ],
+    },
+  ],
+};
+
+validateDialogueGraph(RIVAL_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
   [DINER_DIALOGUE.id]: DINER_DIALOGUE,
   [LANDLADY_DIALOGUE.id]: LANDLADY_DIALOGUE,
+  [RIVAL_DIALOGUE.id]: RIVAL_DIALOGUE,
 });
 
 export function getDialogueGraphById(id: string): DialogueGraph | undefined {
