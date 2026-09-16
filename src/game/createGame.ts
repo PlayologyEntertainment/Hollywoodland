@@ -4,6 +4,7 @@ import type { CareerState } from '../domain/CareerState';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import type { InputController } from '../input/InputController';
 import type { GameSettings } from '../settings/Settings';
+import { BoulevardBootScene } from './scenes/BoulevardBootScene';
 import { BoulevardSpikeScene } from './scenes/BoulevardSpikeScene';
 
 interface CreateGameOptions {
@@ -26,7 +27,7 @@ export function createGame(options: CreateGameOptions): Phaser.Game {
     antialias: true,
     roundPixels: true,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BoulevardSpikeScene],
+    scene: [BoulevardBootScene, BoulevardSpikeScene],
   });
   game.registry.set('inputController', options.input);
   game.registry.set('settings', options.settings);

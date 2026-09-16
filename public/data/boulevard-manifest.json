@@ -1,0 +1,201 @@
+{
+  "worldWidth": 3790,
+  "groundY": 1056,
+  "referenceSheets": ["Hollywoodland_Concept_Boulevard.png"],
+  "planes": [
+    {
+      "id": "sky",
+      "label": "Plane 1 — Sky",
+      "path": "assets/environments/boulevard-v2/01-sky.png",
+      "offsetX": 0,
+      "offsetY": 0,
+      "scrollFactor": 0,
+      "depth": 0,
+      "source": null
+    },
+    {
+      "id": "hills",
+      "label": "Plane 2 — Hills & landmark",
+      "path": "assets/environments/boulevard-v2/02-hills-landmark.png",
+      "offsetX": -330,
+      "offsetY": -230,
+      "scrollFactor": 0.18,
+      "depth": 1,
+      "source": null
+    },
+    {
+      "id": "distant-buildings",
+      "label": "Plane 3 — Distant buildings",
+      "path": "assets/environments/boulevard-v2/03-distant-buildings.png",
+      "offsetX": 0,
+      "offsetY": 0,
+      "scrollFactor": 0.42,
+      "depth": 2,
+      "source": null
+    },
+    {
+      "id": "main-architecture",
+      "label": "Plane 4 — Main architecture",
+      "path": "assets/environments/boulevard-v2/04-main-architecture.png",
+      "offsetX": 0,
+      "offsetY": -117,
+      "scrollFactor": 1,
+      "depth": 3,
+      "source": null
+    },
+    {
+      "id": "sidewalk-street",
+      "label": "Plane 5 — Sidewalk & street",
+      "path": "assets/environments/boulevard-v2/05-sidewalk-street.png",
+      "offsetX": 0,
+      "offsetY": 430,
+      "scrollFactor": 1,
+      "depth": 10,
+      "source": null
+    }
+  ],
+  "props": [
+    {
+      "id": "palm-left",
+      "label": "Palm (left)",
+      "path": "assets/environments/foreground/hollywood-palm-v1.png",
+      "x": 90,
+      "y": 1080,
+      "scale": 0.8,
+      "flipX": false,
+      "depth": 8,
+      "source": null
+    },
+    {
+      "id": "palm-right",
+      "label": "Palm (right)",
+      "path": "assets/environments/foreground/hollywood-palm-v1.png",
+      "x": 3695,
+      "y": 1080,
+      "scale": 0.9,
+      "flipX": true,
+      "depth": 8,
+      "source": null
+    },
+    {
+      "id": "streetlamp-left",
+      "label": "Streetlamp (left)",
+      "path": "assets/environments/foreground/hollywood-streetlamp-v1.png",
+      "x": 935,
+      "y": 1084,
+      "scale": 0.74,
+      "flipX": false,
+      "depth": 14,
+      "source": null
+    },
+    {
+      "id": "streetlamp-right",
+      "label": "Streetlamp (right)",
+      "path": "assets/environments/foreground/hollywood-streetlamp-v1.png",
+      "x": 2035,
+      "y": 1084,
+      "scale": 0.74,
+      "flipX": true,
+      "depth": 14,
+      "source": null
+    },
+    {
+      "id": "sedan",
+      "label": "Parked sedan",
+      "path": "assets/environments/foreground/hollywood-sedan-v1.png",
+      "x": 685,
+      "y": 1292,
+      "scale": 0.5,
+      "flipX": false,
+      "depth": 24,
+      "source": null
+    }
+  ],
+  "locations": [
+    {
+      "id": "boarding-house",
+      "label": "Boarding house",
+      "x": 1150,
+      "promptLabel": "Enter boarding house",
+      "radius": 205,
+      "sign": {
+        "x": 1280,
+        "y": 590,
+        "text": "BOARDING\nHOUSE",
+        "fontSize": 19,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 210,
+        "boardHeight": 130
+      }
+    },
+    {
+      "id": "casting-office",
+      "label": "Casting office",
+      "x": 1675,
+      "promptLabel": "Enter casting office",
+      "radius": 205,
+      "sign": {
+        "x": 1805,
+        "y": 590,
+        "text": "SUNSET\nCASTING\nEXCHANGE",
+        "fontSize": 19,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 210,
+        "boardHeight": 130
+      }
+    },
+    {
+      "id": "diner",
+      "label": "Sunset Diner",
+      "x": 2500,
+      "promptLabel": "Enter Sunset Diner",
+      "radius": 205,
+      "sign": {
+        "x": 2630,
+        "y": 590,
+        "text": "SUNSET\nDINER",
+        "fontSize": 19,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 210,
+        "boardHeight": 130
+      }
+    },
+    {
+      "id": "backlot-gate",
+      "label": "Backlot gate",
+      "x": 3050,
+      "promptLabel": "Wait at the backlot gate",
+      "radius": 205,
+      "sign": {
+        "x": 3180,
+        "y": 590,
+        "text": "BACKLOT\nGATE",
+        "fontSize": 19,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 210,
+        "boardHeight": 130
+      }
+    },
+    {
+      "id": "extras-corral",
+      "label": "Extras corral",
+      "x": 3600,
+      "promptLabel": "Check in at the extras corral",
+      "radius": 205,
+      "sign": {
+        "x": 3730,
+        "y": 590,
+        "text": "EXTRAS\nCORRAL",
+        "fontSize": 19,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 210,
+        "boardHeight": 130
+      }
+    }
+  ]
+}

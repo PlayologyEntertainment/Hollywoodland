@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hollywoodland — Art Director</title>
+<style>
+  :root {
+    --bg: #16110c; --panel: #201a13; --panel-2: #291f15; --border: #4a3a24;
+    --cream: #f2e6c9; --tan: #d2b48c; --amber: #c9903f; --green: #5f9666;
+    --red: #c9503f; --slate: #8a9092;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--cream); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--border); flex: none; }
+  header h1 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: 0.03em; white-space: nowrap; }
+  .mode-switch { display: flex; gap: 4px; }
+  .mode-switch button.active { background: var(--amber); border-color: var(--amber); color: #241a0e; font-weight: 700; }
+  header .spacer { flex: 1; }
+  header .status { font-size: 12px; color: var(--tan); max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  button, select, input[type="text"], input[type="number"] { font-family: inherit; }
+  button { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--amber); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.primary { background: var(--green); border-color: #3f6b45; color: #fff; font-weight: 600; }
+  button.primary:hover:not(:disabled) { filter: brightness(1.08); }
+  button.danger { background: var(--red); border-color: #7a2f24; color: #fff; }
+  main { flex: 1; display: flex; min-height: 0; }
+  #sidebar { width: 320px; flex: none; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+  #sidebar .filters { padding: 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+  .group-heading { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); padding: 10px 10px 4px; }
+  #slot-list, #location-list { flex: 1; overflow-y: auto; }
+  .slot-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-bottom: 1px solid #2b2114; cursor: pointer; }
+  .slot-row:hover { background: var(--panel-2); }
+  .slot-row.active { background: #3a2c17; }
+  .slot-thumb { width: 36px; height: 36px; flex: none; border-radius: 3px; background: #14100b; border: 1px dashed #55442e; background-size: cover; background-position: center; }
+  .slot-thumb.has-art { border-style: solid; border-color: var(--green); }
+  .slot-meta { min-width: 0; flex: 1; }
+  .slot-label { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .slot-id { font-size: 10px; color: var(--slate); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pill { font-size: 9px; padding: 1px 5px; border-radius: 999px; flex: none; white-space: nowrap; }
+  .pill.customized { background: #2c4a30; color: #b8e0be; }
+  .pill.original { background: #33363c; color: var(--slate); }
+  #add-prop-row { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  #add-prop-row button { width: 100%; }
+  #detail { flex: 1; overflow-y: auto; padding: 18px 22px; min-width: 0; }
+  #empty-state { color: var(--slate); font-size: 13px; padding: 40px; text-align: center; }
+  .detail-header h2 { margin: 0 0 4px; font-size: 18px; }
+  .detail-header .sub { color: var(--tan); font-size: 12px; margin-bottom: 4px; }
+  .hint { background: #33291a; border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; font-size: 12px; color: var(--tan); margin: 10px 0; }
+  .mode-tabs { display: flex; gap: 6px; margin: 12px 0; }
+  .mode-tabs button.active { background: var(--amber); border-color: var(--amber); color: #241a0e; font-weight: 700; }
+  #crop-area { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  #sheet-canvas-wrap { position: relative; border: 1px solid var(--border); background: #000; max-width: 100%; max-height: 60vh; overflow: auto; touch-action: none; flex: 1 1 480px; min-width: 0; }
+  #sheet-canvas { display: block; cursor: crosshair; }
+  .rect-inputs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+  .rect-inputs label { font-size: 11px; color: var(--tan); display: flex; flex-direction: column; gap: 2px; }
+  .rect-inputs input { width: 80px; background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 4px 6px; }
+  .rect-inputs input[type=color] { width: 44px; padding: 2px; height: 28px; }
+  .rect-inputs select { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 4px 6px; width: 100%; }
+  .rect-inputs textarea { width: 100%; min-height: 54px; background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 6px; font-family: inherit; }
+  #sheet-picker-row { margin-bottom: 10px; }
+  #upload-area { border: 2px dashed var(--border); border-radius: 6px; padding: 30px; text-align: center; color: var(--tan); font-size: 13px; }
+  #upload-area.drag { border-color: var(--amber); color: var(--amber); }
+  #outputs { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+  .output-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px; width: 200px; }
+  .output-card canvas, .output-card img { width: 100%; height: 120px; object-fit: contain; background: linear-gradient(45deg,#333 25%,transparent 25%),linear-gradient(-45deg,#333 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#333 75%),linear-gradient(-45deg,transparent 75%,#333 75%); background-size: 10px 10px; background-position: 0 0,0 5px,5px -5px,-5px 0; border-radius: 3px; }
+  .output-card .path { font-size: 9px; color: var(--slate); margin-top: 4px; word-break: break-all; }
+  #actions { display: flex; gap: 8px; margin-top: 16px; align-items: center; flex-wrap: wrap; }
+  #save-status { font-size: 12px; color: var(--green); }
+  .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+  .field-grid label { font-size: 11px; color: var(--tan); display: flex; flex-direction: column; gap: 4px; }
+  .field-grid input { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; }
+  .field-grid input[type=checkbox] { width: 16px; height: 16px; align-self: flex-start; }
+  fieldset { border: 1px solid var(--border); border-radius: 6px; margin: 16px 0; padding: 10px 12px; }
+  legend { font-size: 12px; color: var(--tan); padding: 0 6px; }
+  #pane-divider { width: 6px; flex: none; cursor: col-resize; background: var(--border); }
+  #pane-divider:hover, #pane-divider.dragging { background: var(--amber); }
+  #preview-pane { width: 33.333vw; flex: none; border-left: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; min-height: 0; }
+  #preview-pane .ph { display: flex; gap: 6px; padding: 8px; border-bottom: 1px solid var(--border); }
+  #preview-pane input { flex: 1; background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 5px 7px; font-size: 11px; }
+  #game-frame { flex: 1; border: none; background: #000; }
+  .toast { position: fixed; bottom: 16px; right: 16px; background: #2c4a30; color: #d8f0da; border: 1px solid #3f6b45; border-radius: 6px; padding: 10px 14px; font-size: 12px; z-index: 50; }
+  .toast.error { background: #4a2320; color: #f0d0c8; border-color: #7a3a2c; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 Hollywoodland — Art Director</h1>
+  <div class="mode-switch">
+    <button id="mode-art" class="active" type="button">🖼️ Art</button>
+    <button id="mode-locations" type="button">📍 Locations</button>
+  </div>
+  <span class="status" id="root-status">No project folder open.</span>
+  <div class="spacer"></div>
+  <button id="btn-open-root">Open Project Folder…</button>
+  <button id="btn-reload" disabled>Reload Manifest</button>
+</header>
+<main>
+  <div id="sidebar">
+    <div id="art-sidebar-body" style="display:flex; flex-direction:column; min-height:0; flex:1;">
+      <div class="group-heading">Parallax planes (5, fixed)</div>
+      <div id="slot-list-planes"></div>
+      <div class="group-heading">Foreground props</div>
+      <div id="add-prop-row"><button id="btn-add-prop" type="button" disabled>➕ Add prop</button></div>
+      <div id="slot-list-props" style="flex:1; overflow-y:auto;"></div>
+    </div>
+    <div id="location-sidebar-body" style="display:none; flex-direction:column; min-height:0; flex:1;">
+      <div class="group-heading">Interactable locations (5, fixed)</div>
+      <div id="location-list" style="flex:1; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <div id="detail">
+    <div id="empty-state">
+      Open your Hollywoodland project folder (repo root) to start.<br /><br />
+      Requires Chrome, Edge, or another Chromium browser, served over
+      <code>http://localhost</code> (e.g. <code>npm run dev</code>) — the File
+      System Access API needs a secure context.
+    </div>
+  </div>
+
+  <div id="pane-divider" title="Drag to resize"></div>
+
+  <div id="preview-pane">
+    <div class="ph">
+      <input id="preview-url" type="text" value="http://127.0.0.1:5173/hollywoodland/" />
+      <button id="btn-preview-load">Load</button>
+      <button id="btn-preview-refresh">↻</button>
+    </div>
+    <iframe id="game-frame" title="Game preview"></iframe>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------
+  // Tiny IndexedDB wrapper — persists the picked directory handle.
+  // ---------------------------------------------------------------
+  const DB_NAME = 'hollywoodland-art-director';
+  const STORE = 'handles';
+  function idbOpen() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function idbGet(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(key);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function idbSet(key, val) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(val, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // Filesystem helpers, relative to the picked root directory handle.
+  // ---------------------------------------------------------------
+  async function getDirHandle(root, relPath, opts) {
+    const parts = relPath.split('/').filter(Boolean);
+    let dir = root;
+    for (const part of parts) dir = await dir.getDirectoryHandle(part, opts || {});
+    return dir;
+  }
+  async function getFileHandle(root, relFilePath, opts) {
+    const parts = relFilePath.split('/').filter(Boolean);
+    const fileName = parts.pop();
+    const dir = await getDirHandle(root, parts.join('/'), opts);
+    return dir.getFileHandle(fileName, opts || {});
+  }
+  async function readFile(root, relFilePath) {
+    try {
+      const fh = await getFileHandle(root, relFilePath, {});
+      return await fh.getFile();
+    } catch (e) {
+      if (e.name === 'NotFoundError') return null;
+      throw e;
+    }
+  }
+  async function writeFile(root, relFilePath, blob) {
+    const fh = await getFileHandle(root, relFilePath, { create: true });
+    const writable = await fh.createWritable();
+    await writable.write(blob);
+    await writable.close();
+  }
+  async function removeFile(root, relFilePath) {
+    const parts = relFilePath.split('/').filter(Boolean);
+    const fileName = parts.pop();
+    try {
+      const dir = await getDirHandle(root, parts.join('/'), {});
+      await dir.removeEntry(fileName);
+    } catch (e) {
+      if (e.name === 'NotFoundError') return;
+      throw e;
+    }
+  }
+  async function readJSON(root, relFilePath) {
+    const file = await readFile(root, relFilePath);
+    if (!file) return null;
+    return JSON.parse(await file.text());
+  }
+  async function writeJSON(root, relFilePath, obj) {
+    await writeFile(root, relFilePath, new Blob([JSON.stringify(obj, null, 2) + '\n'], { type: 'application/json' }));
+  }
+
+  const MANIFEST_PATH = 'public/data/boulevard-manifest.json';
+
+  // ---------------------------------------------------------------
+  // App state
+  // ---------------------------------------------------------------
+  let rootHandle = null;
+  let manifest = null;
+  let activeMode = 'art';
+  let activeSlot = null; // { group: 'planes'|'props', id }
+  let activeLocationId = null;
+  const editorState = {}; // keyed by `${group}:${id}`, art-slot editor state
+  const sessionSheets = new Set();
+
+  const el = (id) => document.getElementById(id);
+  const $detail = el('detail');
+  const $rootStatus = el('root-status');
+  const $slotListPlanes = el('slot-list-planes');
+  const $slotListProps = el('slot-list-props');
+  const $locationList = el('location-list');
+
+  function toast(msg, isError) {
+    const t = document.createElement('div');
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), isError ? 5000 : 2600);
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function slugify(s) {
+    return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'prop';
+  }
+
+  // ---------------------------------------------------------------
+  // Root folder open/reconnect
+  // ---------------------------------------------------------------
+  async function verifyPermission(handle, mode) {
+    const opts = { mode };
+    if ((await handle.queryPermission(opts)) === 'granted') return true;
+    if ((await handle.requestPermission(opts)) === 'granted') return true;
+    return false;
+  }
+
+  async function openRoot(handle) {
+    if (!(await verifyPermission(handle, 'readwrite'))) {
+      toast('Read/write permission was not granted for that folder.', true);
+      return;
+    }
+    rootHandle = handle;
+    await idbSet('root', handle);
+    $rootStatus.textContent = 'Project: ' + (handle.name || '(root)');
+    manifest = await readJSON(rootHandle, MANIFEST_PATH);
+    if (!manifest) {
+      toast('Could not find ' + MANIFEST_PATH + ' under that folder — pick the repo root.', true);
+      return;
+    }
+    el('btn-reload').disabled = false;
+    el('btn-add-prop').disabled = false;
+    renderAll();
+  }
+
+  el('btn-open-root').addEventListener('click', async () => {
+    try {
+      const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      await openRoot(handle);
+    } catch (e) {
+      if (e.name !== 'AbortError') toast(String(e.message || e), true);
+    }
+  });
+
+  el('btn-reload').addEventListener('click', async () => {
+    if (!rootHandle) return;
+    manifest = await readJSON(rootHandle, MANIFEST_PATH);
+    thumbCache.clear();
+    renderAll();
+    toast('Manifest reloaded.');
+  });
+
+  (async function tryAutoReconnect() {
+    try {
+      const handle = await idbGet('root');
+      if (handle) {
+        const granted = (await handle.queryPermission({ mode: 'readwrite' })) === 'granted';
+        $rootStatus.textContent = granted
+          ? 'Reconnecting…'
+          : 'Previously opened: ' + (handle.name || '(root)') + ' — click "Open Project Folder…" to reconnect.';
+        if (granted) await openRoot(handle);
+      }
+    } catch (e) {
+      // idb unavailable or handle stale — ignore, user just opens again.
+    }
+  })();
+
+  // ---------------------------------------------------------------
+  // Mode switch
+  // ---------------------------------------------------------------
+  el('mode-art').addEventListener('click', () => setMode('art'));
+  el('mode-locations').addEventListener('click', () => setMode('locations'));
+
+  function setMode(mode) {
+    activeMode = mode;
+    el('mode-art').classList.toggle('active', mode === 'art');
+    el('mode-locations').classList.toggle('active', mode === 'locations');
+    el('art-sidebar-body').style.display = mode === 'art' ? 'flex' : 'none';
+    el('location-sidebar-body').style.display = mode === 'locations' ? 'flex' : 'none';
+    activeSlot = null;
+    activeLocationId = null;
+    if (!manifest) return;
+    if (mode === 'art') {
+      $detail.innerHTML = '<div id="empty-state">Pick a plane or prop from the list.</div>';
+    } else {
+      $detail.innerHTML = '<div id="empty-state">Pick a location from the list.</div>';
+    }
+    renderAll();
+  }
+
+  function renderAll() {
+    renderSlotLists();
+    renderLocationList();
+  }
+
+  // ---------------------------------------------------------------
+  // Art slot lists (planes + props)
+  // ---------------------------------------------------------------
+  function allSlots() {
+    return [
+      ...manifest.planes.map((s) => ({ group: 'planes', slot: s })),
+      ...manifest.props.map((s) => ({ group: 'props', slot: s })),
+    ];
+  }
+  function findSlot(group, id) {
+    return (group === 'planes' ? manifest.planes : manifest.props).find((s) => s.id === id);
+  }
+
+  const thumbCache = new Map();
+  async function thumbUrlFor(slot) {
+    const cacheKey = slot.id + ':' + slot.path;
+    if (thumbCache.has(cacheKey)) return thumbCache.get(cacheKey);
+    const file = await readFile(rootHandle, 'public/' + slot.path);
+    const url = file ? URL.createObjectURL(file) : null;
+    thumbCache.set(cacheKey, url);
+    return url;
+  }
+
+  function slotRowHtml(group, slot) {
+    const customized = !!slot.source;
+    return (
+      '<div class="slot-row' + (activeMode === 'art' && activeSlot && activeSlot.group === group && activeSlot.id === slot.id ? ' active' : '') + '" data-group="' + group + '" data-id="' + escapeHtml(slot.id) + '">' +
+      '<div class="slot-thumb" data-key="' + escapeHtml(slot.id + ':' + slot.path) + '"></div>' +
+      '<div class="slot-meta">' +
+      '<div class="slot-label">' + escapeHtml(slot.label) + '</div>' +
+      '<div class="slot-id">' + escapeHtml(slot.id) + '</div>' +
+      '</div>' +
+      '<span class="pill ' + (customized ? 'customized' : 'original') + '">' + (customized ? 'customized' : 'original') + '</span>' +
+      '</div>'
+    );
+  }
+
+  function renderSlotLists() {
+    if (!manifest) return;
+    $slotListPlanes.innerHTML = manifest.planes.map((s) => slotRowHtml('planes', s)).join('');
+    $slotListProps.innerHTML = manifest.props.map((s) => slotRowHtml('props', s)).join('');
+    for (const wrap of [$slotListPlanes, $slotListProps]) {
+      wrap.querySelectorAll('.slot-row').forEach((row) => {
+        row.addEventListener('click', () => selectSlot(row.dataset.group, row.dataset.id));
+      });
+      wrap.querySelectorAll('.slot-thumb').forEach((thumbEl) => {
+        const [id, path] = [thumbEl.dataset.key.split(':')[0], thumbEl.dataset.key.slice(thumbEl.dataset.key.indexOf(':') + 1)];
+        thumbUrlFor({ id, path }).then((url) => {
+          if (url) {
+            thumbEl.style.backgroundImage = 'url(' + url + ')';
+            thumbEl.classList.add('has-art');
+          }
+        });
+      });
+    }
+  }
+
+  el('btn-add-prop').addEventListener('click', () => {
+    if (!manifest) return;
+    let n = manifest.props.length + 1;
+    let id = 'prop-' + n;
+    while (manifest.props.some((p) => p.id === id)) { n += 1; id = 'prop-' + n; }
+    manifest.props.push({
+      id,
+      label: 'New prop ' + n,
+      path: 'assets/environments/foreground/' + id + '.png',
+      x: Math.round(manifest.worldWidth / 2),
+      y: manifest.groundY + 24,
+      scale: 1,
+      flipX: false,
+      depth: 8,
+      source: null,
+    });
+    renderSlotLists();
+    selectSlot('props', id);
+    toast('Added "' + id + '" — give it art and save.');
+  });
+
+  // ---------------------------------------------------------------
+  // Image / canvas helpers
+  // ---------------------------------------------------------------
+  async function loadBitmap(fileOrBlob) { return createImageBitmap(fileOrBlob); }
+  function canvasFromBitmap(bitmap, sx, sy, sw, sh) {
+    const c = document.createElement('canvas');
+    c.width = sw; c.height = sh;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, sw, sh);
+    return c;
+  }
+  function canvasToBlob(canvas) {
+    return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+  }
+
+  // ---------------------------------------------------------------
+  // Art slot detail view
+  // ---------------------------------------------------------------
+  async function selectSlot(group, id) {
+    const slot = findSlot(group, id);
+    if (!slot) return;
+    activeSlot = { group, id };
+    renderSlotLists();
+    const key = group + ':' + id;
+    const state = (editorState[key] = editorState[key] || {
+      mode: slot.source && slot.source.kind === 'sheet' ? 'crop' : 'upload',
+      sheet: (slot.source && slot.source.kind === 'sheet' && slot.source.sheet) || null,
+      rect: (slot.source && slot.source.kind === 'sheet' && slot.source.rect) ? slot.source.rect.slice() : null,
+      sheetBitmap: null,
+      uploadedBitmap: null,
+      uploadedFile: null,
+      masterCanvas: null,
+      captured: false, // becomes true once a crop/upload has been made this session
+    });
+
+    $detail.innerHTML = buildSlotSkeleton(group, slot);
+    wireSlotControls(group, slot, state);
+
+    if (state.mode === 'crop') await loadSheetForCrop(slot, state);
+    else await refreshUploadPreview(slot, state);
+  }
+
+  function numField(id, label, value, step) {
+    return '<label>' + escapeHtml(label) + '<input type="number" id="' + id + '" value="' + value + '" step="' + (step || 1) + '"></label>';
+  }
+
+  function buildSlotSkeleton(group, slot) {
+    const isPlane = group === 'planes';
+    const fields = isPlane
+      ? [
+          numField('f-offsetX', 'Offset X', slot.offsetX),
+          numField('f-offsetY', 'Offset Y', slot.offsetY),
+          numField('f-scrollFactor', 'Scroll factor', slot.scrollFactor, 0.01),
+          numField('f-depth', 'Depth', slot.depth),
+        ]
+      : [
+          '<label>Label<input type="text" id="f-label" value="' + escapeHtml(slot.label) + '"></label>',
+          numField('f-x', 'X', slot.x),
+          numField('f-y', 'Y', slot.y),
+          numField('f-scale', 'Scale', slot.scale, 0.01),
+          numField('f-depth', 'Depth', slot.depth),
+          '<label style="flex-direction:row;align-items:center;gap:6px;">Flip X<input type="checkbox" id="f-flipX" ' + (slot.flipX ? 'checked' : '') + '></label>',
+        ];
+    const removePropButton = isPlane ? '' : '<button class="danger" id="btn-remove-prop" type="button">Delete this prop</button>';
+    return (
+      '<div class="detail-header">' +
+      '<h2>' + escapeHtml(slot.label) + '</h2>' +
+      '<div class="sub">' + escapeHtml(slot.id) + ' · outputs to public/' + escapeHtml(slot.path) + '</div>' +
+      '</div>' +
+      '<fieldset><legend>Position & rendering</legend><div class="field-grid">' + fields.join('') + '</div></fieldset>' +
+      '<div class="mode-tabs">' +
+      '<button id="tab-crop">Crop from reference sheet</button>' +
+      '<button id="tab-upload">Upload a PNG</button>' +
+      '</div>' +
+      '<div id="mode-body"></div>' +
+      '<div id="outputs"></div>' +
+      '<div id="actions">' +
+      '<button class="primary" id="btn-save">Save to project</button>' +
+      '<button class="danger" id="btn-remove-art" type="button"' + (slot.source ? '' : ' disabled') + '>Remove art</button>' +
+      removePropButton +
+      '<span id="save-status"></span>' +
+      '</div>'
+    );
+  }
+
+  function wireSlotControls(group, slot, state) {
+    el('tab-crop').addEventListener('click', async () => { state.mode = 'crop'; setActiveTab(); await loadSheetForCrop(slot, state); });
+    el('tab-upload').addEventListener('click', async () => { state.mode = 'upload'; setActiveTab(); await refreshUploadPreview(slot, state); });
+    setActiveTab();
+    el('btn-save').addEventListener('click', () => saveSlot(group, slot, state));
+    el('btn-remove-art').addEventListener('click', () => removeSlotArt(group, slot, state));
+    if (group === 'props') {
+      el('btn-remove-prop').addEventListener('click', () => removeProp(slot));
+    }
+    function setActiveTab() {
+      el('tab-crop').classList.toggle('active', state.mode === 'crop');
+      el('tab-upload').classList.toggle('active', state.mode === 'upload');
+    }
+  }
+
+  function readFieldsInto(group, slot) {
+    if (group === 'planes') {
+      slot.offsetX = Number(el('f-offsetX').value) || 0;
+      slot.offsetY = Number(el('f-offsetY').value) || 0;
+      slot.scrollFactor = Number(el('f-scrollFactor').value) || 0;
+      slot.depth = Number(el('f-depth').value) || 0;
+    } else {
+      slot.label = el('f-label').value || slot.label;
+      slot.x = Number(el('f-x').value) || 0;
+      slot.y = Number(el('f-y').value) || 0;
+      slot.scale = Number(el('f-scale').value) || 1;
+      slot.depth = Number(el('f-depth').value) || 0;
+      slot.flipX = !!el('f-flipX').checked;
+    }
+  }
+
+  async function removeProp(slot) {
+    if (!confirm('Delete prop "' + slot.id + '"? This removes it from the manifest (its art file on disk is left alone).')) return;
+    manifest.props = manifest.props.filter((p) => p.id !== slot.id);
+    delete editorState['props:' + slot.id];
+    await writeJSON(rootHandle, MANIFEST_PATH, manifest);
+    activeSlot = null;
+    $detail.innerHTML = '<div id="empty-state">Pick a plane or prop from the list.</div>';
+    renderSlotLists();
+    toast('Deleted "' + slot.id + '" and saved the manifest.');
+  }
+
+  // ---------------------------------------------------------------
+  // Reference sheets (art/*.png or art/uploads/*.png)
+  // ---------------------------------------------------------------
+  function knownSheets() {
+    const set = new Set(manifest.referenceSheets || []);
+    for (const s of sessionSheets) set.add(s);
+    return Array.from(set).sort();
+  }
+
+  async function addReferenceSheet(file, suggestedName) {
+    const raw = (suggestedName || file.name || 'sheet.png').split('/').pop().split('\\').pop();
+    let base = raw.replace(/[^a-zA-Z0-9_.-]+/g, '-');
+    if (!/\.(png|webp|jpe?g)$/i.test(base)) base += '.png';
+    const dot = base.lastIndexOf('.');
+    const stem = base.slice(0, dot);
+    const ext = base.slice(dot);
+    let candidate = base;
+    let n = 1;
+    while (await readFile(rootHandle, 'art/uploads/' + candidate)) { n += 1; candidate = stem + '-' + n + ext; }
+    try {
+      await writeFile(rootHandle, 'art/uploads/' + candidate, file);
+    } catch (e) {
+      toast('Could not save reference sheet: ' + (e.message || e), true);
+      return null;
+    }
+    const rel = 'uploads/' + candidate;
+    sessionSheets.add(rel);
+    if (!manifest.referenceSheets.includes(rel)) manifest.referenceSheets.push(rel);
+    toast('Added reference sheet "' + candidate + '".');
+    return rel;
+  }
+
+  function renderSheetPicker(slot, state) {
+    const row = el('sheet-picker-row');
+    if (!row) return;
+    row.innerHTML =
+      '<div class="rect-inputs" style="margin-top:0;">' +
+      '<label style="flex:1 1 100%;">Reference sheet<select id="sheet-select"></select></label>' +
+      '</div>' +
+      '<input type="file" id="sheet-file-input" accept="image/png,image/webp,image/jpeg" style="display:none;">';
+    const select = el('sheet-select');
+    if (!state.sheet) {
+      const placeholder = document.createElement('option');
+      placeholder.value = ''; placeholder.textContent = '— choose a sheet —';
+      select.appendChild(placeholder);
+    }
+    for (const sheet of knownSheets()) {
+      const opt = document.createElement('option');
+      opt.value = sheet; opt.textContent = sheet;
+      select.appendChild(opt);
+    }
+    const addOpt = document.createElement('option');
+    addOpt.value = '__add_new__';
+    addOpt.textContent = '➕ Add new reference sheet (upload PNG)…';
+    select.appendChild(addOpt);
+    select.value = state.sheet || '';
+    select.addEventListener('change', async () => {
+      if (select.value === '__add_new__') { select.value = state.sheet || ''; el('sheet-file-input').click(); return; }
+      state.sheet = select.value; state.sheetBitmap = null; state.rect = null;
+      await loadSheetForCrop(slot, state);
+    });
+    el('sheet-file-input').addEventListener('change', async (e) => {
+      const f = e.target.files[0]; e.target.value = '';
+      if (!f) return;
+      const rel = await addReferenceSheet(f);
+      if (!rel) return;
+      state.sheet = rel; state.sheetBitmap = null; state.rect = null;
+      await loadSheetForCrop(slot, state);
+    });
+  }
+
+  async function loadSheetForCrop(slot, state) {
+    const body = el('mode-body');
+    body.innerHTML = '<div id="sheet-picker-row"></div><div id="sheet-crop-body"></div>';
+    renderSheetPicker(slot, state);
+    const cropBody = el('sheet-crop-body');
+    if (!state.sheet) {
+      cropBody.innerHTML = '<p style="color:var(--slate);font-size:12px;">No reference sheet selected yet — pick one above, or add a new one from a PNG.</p>';
+      return;
+    }
+    cropBody.innerHTML = '<p style="color:var(--slate);font-size:12px;">Loading ' + escapeHtml(state.sheet) + '…</p>';
+    if (!state.sheetBitmap) {
+      const file = await readFile(rootHandle, 'art/' + state.sheet);
+      if (!file) {
+        cropBody.innerHTML = '<p style="color:var(--red);font-size:12px;">art/' + escapeHtml(state.sheet) + ' not found in the project folder.</p>';
+        return;
+      }
+      state.sheetBitmap = await loadBitmap(file);
+    }
+    const bmp = state.sheetBitmap;
+    if (!state.rect) {
+      const w = Math.round(bmp.width * 0.3);
+      const h = Math.round(bmp.height * 0.3);
+      state.rect = [Math.round((bmp.width - w) / 2), Math.round((bmp.height - h) / 2), w, h];
+    }
+    cropBody.innerHTML =
+      '<div id="crop-area">' +
+      '<div id="sheet-canvas-wrap"><canvas id="sheet-canvas"></canvas></div>' +
+      '<div>' +
+      '<div class="rect-inputs">' +
+      '<label>X<input type="number" id="rect-x"></label>' +
+      '<label>Y<input type="number" id="rect-y"></label>' +
+      '<label>W<input type="number" id="rect-w"></label>' +
+      '<label>H<input type="number" id="rect-h"></label>' +
+      '</div>' +
+      '<div class="rect-inputs"><button id="btn-reset-rect">Reset box</button></div>' +
+      '<p style="font-size:11px;color:var(--slate);max-width:220px;">Drag inside the box to move it, drag a corner to resize. Values are in the sheet\'s real pixels (' + bmp.width + '×' + bmp.height + ').</p>' +
+      '</div></div>';
+
+    const canvas = el('sheet-canvas');
+    const wrap = el('sheet-canvas-wrap');
+    const maxW = 800;
+    const scale = Math.min(1, Math.min(maxW, wrap.clientWidth || maxW) / bmp.width);
+    canvas.width = Math.round(bmp.width * scale);
+    canvas.height = Math.round(bmp.height * scale);
+    const ctx = canvas.getContext('2d');
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      const [x, y, w, h] = state.rect;
+      const rx = x * scale, ry = y * scale, rw = w * scale, rh = h * scale;
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.fillRect(0, 0, canvas.width, ry);
+      ctx.fillRect(0, ry + rh, canvas.width, canvas.height - ry - rh);
+      ctx.fillRect(0, ry, rx, rh);
+      ctx.fillRect(rx + rw, ry, canvas.width - rx - rw, rh);
+      ctx.strokeStyle = '#c9903f'; ctx.lineWidth = 2;
+      ctx.strokeRect(rx, ry, rw, rh);
+      const hs = 8; ctx.fillStyle = '#c9903f';
+      for (const [hx, hy] of [[rx, ry], [rx + rw, ry], [rx, ry + rh], [rx + rw, ry + rh]]) ctx.fillRect(hx - hs / 2, hy - hs / 2, hs, hs);
+      syncInputs();
+    }
+    function syncInputs() {
+      el('rect-x').value = state.rect[0]; el('rect-y').value = state.rect[1];
+      el('rect-w').value = state.rect[2]; el('rect-h').value = state.rect[3];
+    }
+    function clampRect() {
+      let [x, y, w, h] = state.rect;
+      w = Math.max(4, Math.min(w, bmp.width)); h = Math.max(4, Math.min(h, bmp.height));
+      x = Math.max(0, Math.min(x, bmp.width - w)); y = Math.max(0, Math.min(y, bmp.height - h));
+      state.rect = [Math.round(x), Math.round(y), Math.round(w), Math.round(h)];
+    }
+    ['rect-x', 'rect-y', 'rect-w', 'rect-h'].forEach((id, i) => {
+      el(id).addEventListener('change', () => {
+        state.rect[i] = Number(el(id).value) || 0;
+        clampRect(); draw(); refreshOutputPreviews(slot, state);
+      });
+    });
+    el('btn-reset-rect').addEventListener('click', () => { state.rect = null; loadSheetForCrop(slot, state); });
+
+    let dragMode = null, dragStart = null;
+    canvas.addEventListener('pointerdown', (e) => {
+      const p = pointerPos(e);
+      const [x, y, w, h] = state.rect;
+      const rx = x * scale, ry = y * scale, rw = w * scale, rh = h * scale;
+      const near = (px, py) => Math.hypot(p.x - px, p.y - py) < 10;
+      if (near(rx, ry)) dragMode = 'tl';
+      else if (near(rx + rw, ry)) dragMode = 'tr';
+      else if (near(rx, ry + rh)) dragMode = 'bl';
+      else if (near(rx + rw, ry + rh)) dragMode = 'br';
+      else if (p.x > rx && p.x < rx + rw && p.y > ry && p.y < ry + rh) dragMode = 'move';
+      else dragMode = 'new';
+      dragStart = { p, rect: state.rect.slice() };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!dragMode) return;
+      const p = pointerPos(e);
+      const dx = (p.x - dragStart.p.x) / scale, dy = (p.y - dragStart.p.y) / scale;
+      let [x, y, w, h] = dragStart.rect;
+      if (dragMode === 'move') { x += dx; y += dy; }
+      else if (dragMode === 'new') { x = Math.min(dragStart.p.x, p.x) / scale; y = Math.min(dragStart.p.y, p.y) / scale; w = Math.abs(p.x - dragStart.p.x) / scale; h = Math.abs(p.y - dragStart.p.y) / scale; }
+      else {
+        if (dragMode.includes('l')) { w -= dx; x += dx; }
+        if (dragMode.includes('r')) { w += dx; }
+        if (dragMode.includes('t')) { h -= dy; y += dy; }
+        if (dragMode.includes('b')) { h += dy; }
+      }
+      state.rect = [x, y, w, h]; clampRect(); draw();
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      if (dragMode) refreshOutputPreviews(slot, state);
+      dragMode = null; canvas.releasePointerCapture(e.pointerId);
+    });
+    function pointerPos(e) {
+      const r = canvas.getBoundingClientRect();
+      return { x: ((e.clientX - r.left) / r.width) * canvas.width, y: ((e.clientY - r.top) / r.height) * canvas.height };
+    }
+    draw();
+    refreshOutputPreviews(slot, state);
+  }
+
+  async function refreshUploadPreview(slot, state) {
+    const body = el('mode-body');
+    body.innerHTML =
+      '<div id="upload-area">Drag a PNG here, or <label style="color:var(--amber);cursor:pointer;text-decoration:underline;">browse<input type="file" id="file-input" accept="image/png,image/webp,image/jpeg" style="display:none;"></label></div>' +
+      '<div id="uploaded-file-info"></div>';
+    const area = el('upload-area');
+    area.addEventListener('dragover', (e) => { e.preventDefault(); area.classList.add('drag'); });
+    area.addEventListener('dragleave', () => area.classList.remove('drag'));
+    area.addEventListener('drop', async (e) => { e.preventDefault(); area.classList.remove('drag'); const f = e.dataTransfer.files[0]; if (f) await acceptUpload(slot, state, f); });
+    el('file-input').addEventListener('change', async (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) await acceptUpload(slot, state, f); });
+    if (state.uploadedFile) await renderUploadedInfo(slot, state);
+    else await refreshOutputPreviews(slot, state);
+  }
+
+  async function acceptUpload(slot, state, file) {
+    state.uploadedFile = file;
+    state.uploadedBitmap = await loadBitmap(file);
+    await renderUploadedInfo(slot, state);
+  }
+
+  async function renderUploadedInfo(slot, state) {
+    const info = el('uploaded-file-info');
+    if (!info) return;
+    info.innerHTML =
+      '<p style="font-size:12px;color:var(--tan);margin-top:10px;">Loaded: ' + escapeHtml(state.uploadedFile.name) +
+      ' (' + state.uploadedBitmap.width + '×' + state.uploadedBitmap.height + ')</p>';
+    await refreshOutputPreviews(slot, state);
+  }
+
+  async function currentMasterCanvas(slot, state) {
+    if (state.mode === 'crop') {
+      if (!state.sheetBitmap || !state.rect) return null;
+      const [x, y, w, h] = state.rect;
+      return canvasFromBitmap(state.sheetBitmap, x, y, w, h);
+    }
+    if (!state.uploadedBitmap) return null;
+    return canvasFromBitmap(state.uploadedBitmap, 0, 0, state.uploadedBitmap.width, state.uploadedBitmap.height);
+  }
+
+  async function refreshOutputPreviews(slot, state) {
+    const master = await currentMasterCanvas(slot, state);
+    state.masterCanvas = master;
+    const wrap = el('outputs');
+    if (!wrap) return;
+    if (!master) { wrap.innerHTML = ''; return; }
+    wrap.innerHTML =
+      '<div class="output-card">' +
+      '<canvas></canvas>' +
+      '<div class="dims">' + master.width + '×' + master.height + '</div>' +
+      '<div class="path">public/' + escapeHtml(slot.path) + '</div>' +
+      '</div>';
+    const outCanvas = wrap.querySelector('canvas');
+    outCanvas.width = master.width; outCanvas.height = master.height;
+    outCanvas.getContext('2d').drawImage(master, 0, 0);
+  }
+
+  async function saveSlot(group, slot, state) {
+    readFieldsInto(group, slot);
+    const master = state.masterCanvas || (await currentMasterCanvas(slot, state));
+    if (master) {
+      const blob = await canvasToBlob(master);
+      await writeFile(rootHandle, 'public/' + slot.path, blob);
+      slot.source = state.mode === 'crop'
+        ? { kind: 'sheet', sheet: state.sheet, rect: state.rect.slice() }
+        : { kind: 'uploaded' };
+      thumbCache.delete(slot.id + ':' + slot.path);
+    }
+    await writeJSON(rootHandle, MANIFEST_PATH, manifest);
+    el('save-status').textContent = 'Saved ' + new Date().toLocaleTimeString();
+    renderSlotLists();
+    toast('Saved "' + slot.id + '". Refresh the game preview to see it.');
+  }
+
+  async function removeSlotArt(group, slot, state) {
+    await removeFile(rootHandle, 'public/' + slot.path);
+    slot.source = null;
+    state.rect = null; state.sheet = null; state.uploadedFile = null; state.uploadedBitmap = null; state.masterCanvas = null;
+    thumbCache.delete(slot.id + ':' + slot.path);
+    await writeJSON(rootHandle, MANIFEST_PATH, manifest);
+    toast('Removed art for "' + slot.id + '".');
+    selectSlot(group, slot.id);
+  }
+
+  // ---------------------------------------------------------------
+  // Locations mode
+  // ---------------------------------------------------------------
+  function renderLocationList() {
+    if (!manifest) return;
+    $locationList.innerHTML = manifest.locations.map((loc) => (
+      '<div class="slot-row' + (activeMode === 'locations' && activeLocationId === loc.id ? ' active' : '') + '" data-id="' + escapeHtml(loc.id) + '">' +
+      '<div class="slot-meta">' +
+      '<div class="slot-label">' + escapeHtml(loc.label) + '</div>' +
+      '<div class="slot-id">x=' + loc.x + ' · radius ' + loc.radius + '</div>' +
+      '</div></div>'
+    )).join('');
+    $locationList.querySelectorAll('.slot-row').forEach((row) => {
+      row.addEventListener('click', () => selectLocation(row.dataset.id));
+    });
+  }
+
+  function selectLocation(id) {
+    const loc = manifest.locations.find((l) => l.id === id);
+    if (!loc) return;
+    activeLocationId = id;
+    renderLocationList();
+    $detail.innerHTML =
+      '<div class="detail-header"><h2>' + escapeHtml(loc.label) + '</h2><div class="sub">' + escapeHtml(loc.id) + '</div></div>' +
+      '<fieldset><legend>Position & prompt</legend><div class="field-grid">' +
+      '<label>Display label<input type="text" id="loc-label" value="' + escapeHtml(loc.label) + '"></label>' +
+      '<label>X position<input type="number" id="loc-x" value="' + loc.x + '"></label>' +
+      '<label>Interaction radius<input type="number" id="loc-radius" value="' + loc.radius + '"></label>' +
+      '<label>Prompt label<input type="text" id="loc-prompt" value="' + escapeHtml(loc.promptLabel) + '"></label>' +
+      '</div></fieldset>' +
+      '<fieldset><legend>Hanging sign</legend>' +
+      '<div class="rect-inputs"><label style="flex:1 1 100%;">Sign text (use \\n for a line break)<textarea id="sign-text">' + escapeHtml(loc.sign.text) + '</textarea></label></div>' +
+      '<div class="field-grid">' +
+      '<label>Sign X<input type="number" id="sign-x" value="' + loc.sign.x + '"></label>' +
+      '<label>Sign Y<input type="number" id="sign-y" value="' + loc.sign.y + '"></label>' +
+      '<label>Font size<input type="number" id="sign-fontSize" value="' + loc.sign.fontSize + '"></label>' +
+      '<label>Board width<input type="number" id="sign-boardWidth" value="' + loc.sign.boardWidth + '"></label>' +
+      '<label>Board height<input type="number" id="sign-boardHeight" value="' + loc.sign.boardHeight + '"></label>' +
+      '<label>Text color<input type="color" id="sign-textColor" value="' + toHexColor(loc.sign.textColor) + '"></label>' +
+      '<label>Board color<input type="color" id="sign-boardColor" value="' + toHexColor(loc.sign.boardColor) + '"></label>' +
+      '</div></fieldset>' +
+      '<div id="actions"><button class="primary" id="btn-save-location">Save to project</button><span id="save-status"></span></div>';
+
+    el('btn-save-location').addEventListener('click', () => saveLocation(loc));
+  }
+
+  function toHexColor(c) {
+    return /^#[0-9a-fA-F]{6}$/.test(c) ? c : '#f3dfab';
+  }
+
+  async function saveLocation(loc) {
+    loc.label = el('loc-label').value || loc.label;
+    loc.x = Number(el('loc-x').value) || loc.x;
+    loc.radius = Number(el('loc-radius').value) || loc.radius;
+    loc.promptLabel = el('loc-prompt').value || loc.promptLabel;
+    loc.sign.text = el('sign-text').value.replace(/\\n/g, '\n');
+    loc.sign.x = Number(el('sign-x').value) || loc.sign.x;
+    loc.sign.y = Number(el('sign-y').value) || loc.sign.y;
+    loc.sign.fontSize = Number(el('sign-fontSize').value) || loc.sign.fontSize;
+    loc.sign.boardWidth = Number(el('sign-boardWidth').value) || loc.sign.boardWidth;
+    loc.sign.boardHeight = Number(el('sign-boardHeight').value) || loc.sign.boardHeight;
+    loc.sign.textColor = el('sign-textColor').value;
+    loc.sign.boardColor = el('sign-boardColor').value;
+    await writeJSON(rootHandle, MANIFEST_PATH, manifest);
+    el('save-status').textContent = 'Saved ' + new Date().toLocaleTimeString();
+    renderLocationList();
+    toast('Saved "' + loc.id + '". Refresh the game preview to see it.');
+  }
+
+  // ---------------------------------------------------------------
+  // Preview pane + resizable divider
+  // ---------------------------------------------------------------
+  el('btn-preview-load').addEventListener('click', () => { el('game-frame').src = el('preview-url').value; });
+  el('btn-preview-refresh').addEventListener('click', () => { const f = el('game-frame'); f.src = f.src; });
+
+  const divider = el('pane-divider');
+  let resizing = false;
+  divider.addEventListener('pointerdown', (e) => { resizing = true; divider.classList.add('dragging'); divider.setPointerCapture(e.pointerId); });
+  divider.addEventListener('pointermove', (e) => {
+    if (!resizing) return;
+    const total = document.querySelector('main').clientWidth;
+    const fromRight = Math.max(240, Math.min(total - 360, total - e.clientX));
+    el('preview-pane').style.width = fromRight + 'px';
+  });
+  divider.addEventListener('pointerup', (e) => { resizing = false; divider.classList.remove('dragging'); divider.releasePointerCapture(e.pointerId); });
+})();
+</script>
+</body>
+</html>
