@@ -21,6 +21,7 @@ export interface DomainEventMap {
   readonly 'boarding-house-entered': undefined;
   readonly 'backlot-gate-entered': undefined;
   readonly 'extras-corral-entered': undefined;
+  readonly 'soundstage-entered': undefined;
   readonly 'advance-time-requested': undefined;
   readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
   readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;

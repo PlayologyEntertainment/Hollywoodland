@@ -12,7 +12,8 @@ export type BoulevardLocationId =
   | 'casting-office'
   | 'diner'
   | 'backlot-gate'
-  | 'extras-corral';
+  | 'extras-corral'
+  | 'soundstage';
 
 /** Where a plane or prop's art came from — either cropped from a shared
  * reference sheet (re-croppable later) or a standalone upload. Mirrors
@@ -94,6 +95,7 @@ const LOCATION_IDS: readonly BoulevardLocationId[] = [
   'diner',
   'backlot-gate',
   'extras-corral',
+  'soundstage',
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -197,7 +199,7 @@ export function isBoulevardManifest(value: unknown): value is BoulevardManifest 
  * validation, so a corrupt file degrades to the known-good layout instead
  * of a blank scene. */
 const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
-  worldWidth: 3790,
+  worldWidth: 4650,
   groundY: 1056,
   referenceSheets: ['Hollywoodland_Concept_Boulevard.png'],
   planes: [
@@ -388,6 +390,23 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
         x: 3730,
         y: 590,
         text: 'EXTRAS\nCORRAL',
+        fontSize: 19,
+        textColor: '#f3dfab',
+        boardColor: '#241609',
+        boardWidth: 210,
+        boardHeight: 130,
+      },
+    },
+    {
+      id: 'soundstage',
+      label: 'Soundstage',
+      x: 4150,
+      promptLabel: 'Rehearse on the soundstage',
+      radius: 205,
+      sign: {
+        x: 4280,
+        y: 590,
+        text: 'SOUND\nSTAGE',
         fontSize: 19,
         textColor: '#f3dfab',
         boardColor: '#241609',

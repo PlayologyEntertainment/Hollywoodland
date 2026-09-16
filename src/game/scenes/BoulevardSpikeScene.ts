@@ -182,6 +182,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       case 'extras-corral':
         this.domainEvents.emit('extras-corral-entered', undefined);
         return;
+      case 'soundstage':
+        this.domainEvents.emit('soundstage-entered', undefined);
+        return;
       default:
         return;
     }
