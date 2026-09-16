@@ -54,6 +54,8 @@
   #crop-area { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
   #sheet-canvas-wrap { position: relative; border: 1px solid var(--border); background: #000; max-width: 100%; max-height: 60vh; overflow: auto; touch-action: none; flex: 1 1 480px; min-width: 0; }
   #sheet-canvas { display: block; cursor: crosshair; }
+  #layout-canvas-wrap { position: relative; border: 1px solid var(--border); background: #000; max-width: 100%; max-height: 65vh; overflow: auto; touch-action: none; }
+  #layout-canvas { display: block; cursor: pointer; }
   .rect-inputs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
   .rect-inputs label { font-size: 11px; color: var(--tan); display: flex; flex-direction: column; gap: 2px; }
   .rect-inputs input { width: 80px; background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 4px 6px; }
@@ -91,6 +93,7 @@
   <div class="mode-switch">
     <button id="mode-art" class="active" type="button">🖼️ Art</button>
     <button id="mode-locations" type="button">📍 Locations</button>
+    <button id="mode-layout" type="button">🖱️ Layout</button>
   </div>
   <span class="status" id="root-status">No project folder open.</span>
   <div class="spacer"></div>
@@ -109,6 +112,17 @@
     <div id="location-sidebar-body" style="display:none; flex-direction:column; min-height:0; flex:1;">
       <div class="group-heading">Interactable locations (5, fixed)</div>
       <div id="location-list" style="flex:1; overflow-y:auto;"></div>
+    </div>
+    <div id="layout-sidebar-body" style="display:none; flex-direction:column; min-height:0; flex:1; overflow-y:auto;">
+      <div class="hint" style="margin:10px;">💡 Drag props, signs, and location markers directly on the canvas. Planes cover the whole scene, so select one here first, then drag anywhere to nudge its offset.</div>
+      <div class="group-heading">Planes</div>
+      <div id="layout-list-planes"></div>
+      <div class="group-heading">Props</div>
+      <div id="layout-list-props"></div>
+      <div class="group-heading">Locations (marker)</div>
+      <div id="layout-list-locations"></div>
+      <div class="group-heading">Signs</div>
+      <div id="layout-list-signs"></div>
     </div>
   </div>
 
@@ -229,8 +243,11 @@
   let activeMode = 'art';
   let activeSlot = null; // { group: 'planes'|'props', id }
   let activeLocationId = null;
+  let activeLayoutType = null; // 'plane' | 'prop' | 'location' | 'sign'
+  let activeLayoutId = null;
   const editorState = {}; // keyed by `${group}:${id}`, art-slot editor state
   const sessionSheets = new Set();
+  const layoutBitmaps = new Map(); // path -> ImageBitmap | null, for the Layout canvas only
 
   const el = (id) => document.getElementById(id);
   const $detail = el('detail');
@@ -318,20 +335,26 @@
   // ---------------------------------------------------------------
   el('mode-art').addEventListener('click', () => setMode('art'));
   el('mode-locations').addEventListener('click', () => setMode('locations'));
+  el('mode-layout').addEventListener('click', () => setMode('layout'));
 
   function setMode(mode) {
     activeMode = mode;
     el('mode-art').classList.toggle('active', mode === 'art');
     el('mode-locations').classList.toggle('active', mode === 'locations');
+    el('mode-layout').classList.toggle('active', mode === 'layout');
     el('art-sidebar-body').style.display = mode === 'art' ? 'flex' : 'none';
     el('location-sidebar-body').style.display = mode === 'locations' ? 'flex' : 'none';
+    el('layout-sidebar-body').style.display = mode === 'layout' ? 'flex' : 'none';
     activeSlot = null;
     activeLocationId = null;
+    if (mode !== 'layout') { activeLayoutType = null; activeLayoutId = null; }
     if (!manifest) return;
     if (mode === 'art') {
       $detail.innerHTML = '<div id="empty-state">Pick a plane or prop from the list.</div>';
-    } else {
+    } else if (mode === 'locations') {
       $detail.innerHTML = '<div id="empty-state">Pick a location from the list.</div>';
+    } else {
+      openLayoutCanvas();
     }
     renderAll();
   }
@@ -339,6 +362,7 @@
   function renderAll() {
     renderSlotLists();
     renderLocationList();
+    renderLayoutSidebar();
   }
 
   // ---------------------------------------------------------------
@@ -889,6 +913,337 @@
     el('save-status').textContent = 'Saved ' + new Date().toLocaleTimeString();
     renderLocationList();
     toast('Saved "' + loc.id + '". Refresh the game preview to see it.');
+  }
+
+  // ---------------------------------------------------------------
+  // Layout mode — a self-contained canvas mockup of the whole Boulevard
+  // (not the real Phaser render) that planes/props/locations/signs can be
+  // dragged around on directly. Every draggable thing is addressed as
+  // {type, id}; getLayoutRef/getPos/setPos/hitTest below are the only
+  // places that know each type's shape, so a future manifest section
+  // (another prop-like category, say) only needs a case added to those
+  // four functions and a row list in the sidebar, not a rewrite of the
+  // drag machinery itself.
+  // ---------------------------------------------------------------
+  function getLayoutRef(type, id) {
+    if (type === 'plane') return manifest.planes.find((p) => p.id === id);
+    if (type === 'prop') return manifest.props.find((p) => p.id === id);
+    return manifest.locations.find((l) => l.id === id); // 'location' and 'sign' both key off the location
+  }
+  function getLayoutPos(type, ref) {
+    if (type === 'plane') return [ref.offsetX, ref.offsetY];
+    if (type === 'prop') return [ref.x, ref.y];
+    if (type === 'location') return [ref.x, manifest.groundY];
+    return [ref.sign.x, ref.sign.y]; // sign
+  }
+  function setLayoutPos(type, ref, x, y) {
+    if (type === 'plane') { ref.offsetX = Math.round(x); ref.offsetY = Math.round(y); }
+    else if (type === 'prop') { ref.x = Math.round(x); ref.y = Math.round(y); }
+    else if (type === 'location') { ref.x = Math.round(x); } // locations live on the ground line — x only
+    else { ref.sign.x = Math.round(x); ref.sign.y = Math.round(y); }
+  }
+  function layoutTypeNoun(type) {
+    return { plane: 'plane', prop: 'prop', location: 'location marker', sign: 'sign' }[type];
+  }
+
+  function layoutRowHtml(type, id, label) {
+    const active = activeLayoutType === type && activeLayoutId === id;
+    return (
+      '<div class="slot-row' + (active ? ' active' : '') + '" data-type="' + type + '" data-id="' + escapeHtml(id) + '">' +
+      '<div class="slot-meta"><div class="slot-label">' + escapeHtml(label) + '</div></div></div>'
+    );
+  }
+
+  function renderLayoutSidebar() {
+    if (!manifest) return;
+    el('layout-list-planes').innerHTML = manifest.planes.map((p) => layoutRowHtml('plane', p.id, p.label)).join('');
+    el('layout-list-props').innerHTML = manifest.props.map((p) => layoutRowHtml('prop', p.id, p.label)).join('');
+    el('layout-list-locations').innerHTML = manifest.locations.map((l) => layoutRowHtml('location', l.id, l.label)).join('');
+    el('layout-list-signs').innerHTML = manifest.locations.map((l) => layoutRowHtml('sign', l.id, l.label + ' sign')).join('');
+    document.querySelectorAll('#layout-sidebar-body .slot-row').forEach((row) => {
+      row.addEventListener('click', () => selectLayoutElement(row.dataset.type, row.dataset.id));
+    });
+  }
+
+  function selectLayoutElement(type, id) {
+    activeLayoutType = type;
+    activeLayoutId = id;
+    renderLayoutSidebar();
+    renderLayoutSelectionPanel();
+    drawLayoutScene();
+  }
+
+  function buildLayoutSkeleton() {
+    return (
+      '<div class="detail-header"><h2>Live layout canvas</h2>' +
+      '<div class="sub">A mockup of the Boulevard, not the real Phaser render — good enough to place things by eye, but blend modes, glow, and vector sign trim are simplified.</div></div>' +
+      '<div class="hint">💡 Dragging updates positions in memory only. Nothing is written to disk until you click <b>Save to project</b> below.</div>' +
+      '<div id="layout-canvas-wrap"><canvas id="layout-canvas"></canvas></div>' +
+      '<div id="layout-selection-panel"></div>' +
+      '<div id="actions"><button class="primary" id="btn-save-layout">Save to project</button><span id="layout-save-status"></span></div>'
+    );
+  }
+
+  async function ensureLayoutBitmaps() {
+    const paths = new Set();
+    for (const p of manifest.planes) paths.add(p.path);
+    for (const p of manifest.props) paths.add(p.path);
+    await Promise.all(Array.from(paths).map(async (path) => {
+      if (layoutBitmaps.has(path)) return;
+      const file = await readFile(rootHandle, 'public/' + path);
+      layoutBitmaps.set(path, file ? await loadBitmap(file) : null);
+    }));
+  }
+
+  async function openLayoutCanvas() {
+    $detail.innerHTML = buildLayoutSkeleton();
+    el('btn-save-layout').addEventListener('click', saveLayoutManifest);
+    layoutBitmaps.clear(); // re-fetch so a change made in Art mode shows up here
+    await ensureLayoutBitmaps();
+    setupLayoutCanvasInteraction();
+    renderLayoutSelectionPanel();
+    drawLayoutScene();
+  }
+
+  function propBoxFor(prop) {
+    const bmp = layoutBitmaps.get(prop.path);
+    const w = (bmp ? bmp.width : 80) * prop.scale;
+    const h = (bmp ? bmp.height : 120) * prop.scale;
+    return { x: prop.x - w / 2, y: prop.y - h, w, h };
+  }
+
+  function hitTestLayout(px, py) {
+    for (const loc of manifest.locations) {
+      if (Math.hypot(px - loc.x, py - manifest.groundY) < 16) return { type: 'location', id: loc.id };
+    }
+    for (const loc of manifest.locations) {
+      const s = loc.sign;
+      if (px >= s.x - s.boardWidth / 2 && px <= s.x + s.boardWidth / 2 && py >= s.y - s.boardHeight / 2 && py <= s.y + s.boardHeight / 2) {
+        return { type: 'sign', id: loc.id };
+      }
+    }
+    const propsByDepthDesc = manifest.props.slice().sort((a, b) => b.depth - a.depth);
+    for (const prop of propsByDepthDesc) {
+      const box = propBoxFor(prop);
+      if (px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h) return { type: 'prop', id: prop.id };
+    }
+    return null;
+  }
+
+  function canvasPointerPos(canvas, e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * (canvas.width / r.width), y: (e.clientY - r.top) * (canvas.height / r.height) };
+  }
+
+  /** The camera viewport is a fixed 1080px tall, but a prop's Y (anchored
+   * at its own bottom edge) can sit below that — the sedan does — and
+   * still be intentional set dressing that's only ever partly on screen.
+   * The canvas is sized to fit everything so those props stay clickable,
+   * with a guide line marking where the real camera view actually ends. */
+  function layoutCanvasHeight() {
+    let maxY = 1080;
+    for (const prop of manifest.props) {
+      const box = propBoxFor(prop);
+      maxY = Math.max(maxY, box.y + box.h);
+    }
+    for (const loc of manifest.locations) {
+      maxY = Math.max(maxY, loc.sign.y + loc.sign.boardHeight / 2, manifest.groundY + 40);
+    }
+    return Math.ceil(maxY) + 30;
+  }
+
+  function setupLayoutCanvasInteraction() {
+    const canvas = el('layout-canvas');
+    canvas.width = manifest.worldWidth;
+    canvas.height = layoutCanvasHeight();
+    let dragging = null;
+    canvas.addEventListener('pointerdown', (e) => {
+      const p = canvasPointerPos(canvas, e);
+      let hit = hitTestLayout(p.x, p.y);
+      // Planes cover the whole canvas, so they never win a hit test against
+      // smaller foreground elements — but once picked from the sidebar,
+      // dragging anywhere nudges its offset.
+      if (!hit && activeLayoutType === 'plane') hit = { type: 'plane', id: activeLayoutId };
+      if (!hit) return;
+      selectLayoutElement(hit.type, hit.id);
+      const ref = getLayoutRef(hit.type, hit.id);
+      const startPos = getLayoutPos(hit.type, ref);
+      dragging = { type: hit.type, id: hit.id, ref, startPointer: p, startPos };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const p = canvasPointerPos(canvas, e);
+      const nx = dragging.startPos[0] + (p.x - dragging.startPointer.x);
+      const ny = dragging.startPos[1] + (p.y - dragging.startPointer.y);
+      setLayoutPos(dragging.type, dragging.ref, nx, ny);
+      drawLayoutScene();
+      syncLayoutSelectionFields();
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      dragging = null;
+      canvas.releasePointerCapture(e.pointerId);
+    });
+  }
+
+  function drawPlaceholderRect(ctx, x, y, w, h, label) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(201,144,63,0.6)';
+    ctx.setLineDash([6, 4]);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, h);
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(201,144,63,0.85)';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + w / 2, y + Math.min(h, 20));
+    ctx.restore();
+  }
+  function strokeSelectionRect(ctx, x, y, w, h) {
+    ctx.save();
+    ctx.strokeStyle = '#5fe0a0';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x - 2, y - 2, w + 4, h + 4);
+    ctx.restore();
+  }
+
+  function drawLayoutScene() {
+    const canvas = el('layout-canvas');
+    if (!canvas || !manifest) return;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#68b9ef';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (const plane of manifest.planes.slice().sort((a, b) => a.depth - b.depth)) {
+      const bmp = layoutBitmaps.get(plane.path);
+      if (bmp) ctx.drawImage(bmp, plane.offsetX, plane.offsetY, manifest.worldWidth, 1080);
+      else drawPlaceholderRect(ctx, plane.offsetX, plane.offsetY, manifest.worldWidth, 1080, plane.label + ' (no art)');
+      if (activeLayoutType === 'plane' && activeLayoutId === plane.id) {
+        strokeSelectionRect(ctx, plane.offsetX, plane.offsetY, manifest.worldWidth, 1080);
+      }
+    }
+
+    for (const prop of manifest.props.slice().sort((a, b) => a.depth - b.depth)) {
+      const bmp = layoutBitmaps.get(prop.path);
+      const box = propBoxFor(prop);
+      if (bmp) {
+        ctx.save();
+        if (prop.flipX) {
+          ctx.translate(prop.x, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(bmp, -box.w / 2, box.y, box.w, box.h);
+        } else {
+          ctx.drawImage(bmp, box.x, box.y, box.w, box.h);
+        }
+        ctx.restore();
+      } else {
+        drawPlaceholderRect(ctx, box.x, box.y, box.w, box.h, prop.label);
+      }
+      if (activeLayoutType === 'prop' && activeLayoutId === prop.id) strokeSelectionRect(ctx, box.x, box.y, box.w, box.h);
+    }
+
+    for (const loc of manifest.locations) {
+      const s = loc.sign;
+      ctx.fillStyle = /^#[0-9a-fA-F]{6}$/.test(s.boardColor) ? s.boardColor : '#241609';
+      ctx.fillRect(s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
+      ctx.fillStyle = /^#[0-9a-fA-F]{6}$/.test(s.textColor) ? s.textColor : '#f3dfab';
+      ctx.font = 'bold ' + s.fontSize + 'px Georgia, serif';
+      ctx.textAlign = 'center';
+      const lines = String(s.text).split('\n');
+      const lineHeight = s.fontSize + 4;
+      const startY = s.y - ((lines.length - 1) * lineHeight) / 2 + s.fontSize / 3;
+      lines.forEach((line, i) => ctx.fillText(line, s.x, startY + i * lineHeight));
+      if (activeLayoutType === 'sign' && activeLayoutId === loc.id) {
+        strokeSelectionRect(ctx, s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
+      }
+
+      const isSelectedMarker = activeLayoutType === 'location' && activeLayoutId === loc.id;
+      ctx.beginPath();
+      ctx.arc(loc.x, manifest.groundY, 12, 0, Math.PI * 2);
+      ctx.fillStyle = isSelectedMarker ? '#5fe0a0' : 'rgba(201,144,63,0.8)';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#241a0e';
+      ctx.stroke();
+      ctx.fillStyle = '#f2e6c9';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(loc.label, loc.x, manifest.groundY + 30);
+    }
+
+    if (canvas.height > 1080) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(95,224,160,0.8)';
+      ctx.setLineDash([10, 6]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 1080);
+      ctx.lineTo(canvas.width, 1080);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(95,224,160,0.9)';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('↑ camera view ends here — below this line is off-screen in the real game', 12, 1080 + 20);
+      ctx.restore();
+    }
+  }
+
+  function syncLayoutSelectionFields() {
+    if (!activeLayoutType) return;
+    const ref = getLayoutRef(activeLayoutType, activeLayoutId);
+    if (!ref) return;
+    const [x, y] = getLayoutPos(activeLayoutType, ref);
+    const xInput = el('layout-x'), yInput = el('layout-y');
+    if (xInput) xInput.value = Math.round(x);
+    if (yInput) yInput.value = Math.round(y);
+  }
+
+  function renderLayoutSelectionPanel() {
+    const panel = el('layout-selection-panel');
+    if (!panel) return;
+    if (!activeLayoutType) {
+      panel.innerHTML = '<p style="color:var(--slate);font-size:12px;">Click an element on the canvas, or pick one from the sidebar, to see and edit its position.</p>';
+      return;
+    }
+    const ref = getLayoutRef(activeLayoutType, activeLayoutId);
+    if (!ref) { activeLayoutType = null; activeLayoutId = null; panel.innerHTML = ''; return; }
+    const [x, y] = getLayoutPos(activeLayoutType, ref);
+    const label = ref.label + ' — ' + layoutTypeNoun(activeLayoutType);
+    const yLocked = activeLayoutType === 'location';
+    panel.innerHTML =
+      '<fieldset><legend>' + escapeHtml(label) + '</legend><div class="field-grid">' +
+      '<label>X<input type="number" id="layout-x" value="' + Math.round(x) + '"></label>' +
+      '<label>Y<input type="number" id="layout-y" value="' + Math.round(y) + '"' + (yLocked ? ' disabled title="Locations sit on the ground line — drag horizontally only."' : '') + '></label>' +
+      '</div>' +
+      '<div class="rect-inputs"><button id="btn-layout-edit-details" type="button">Edit full details →</button></div>' +
+      '</fieldset>';
+    el('layout-x').addEventListener('change', () => {
+      const [, cy] = getLayoutPos(activeLayoutType, ref);
+      setLayoutPos(activeLayoutType, ref, Number(el('layout-x').value) || 0, cy);
+      drawLayoutScene();
+    });
+    if (!yLocked) {
+      el('layout-y').addEventListener('change', () => {
+        const [cx] = getLayoutPos(activeLayoutType, ref);
+        setLayoutPos(activeLayoutType, ref, cx, Number(el('layout-y').value) || 0);
+        drawLayoutScene();
+      });
+    }
+    el('btn-layout-edit-details').addEventListener('click', () => {
+      // Capture before switching modes — setMode() clears activeLayoutType/Id
+      // as a side effect of leaving Layout mode.
+      const type = activeLayoutType, id = activeLayoutId;
+      if (type === 'plane') { setMode('art'); selectSlot('planes', id); }
+      else if (type === 'prop') { setMode('art'); selectSlot('props', id); }
+      else { setMode('locations'); selectLocation(id); }
+    });
+  }
+
+  async function saveLayoutManifest() {
+    await writeJSON(rootHandle, MANIFEST_PATH, manifest);
+    el('layout-save-status').textContent = 'Saved ' + new Date().toLocaleTimeString();
+    toast('Saved layout positions. Refresh the game preview to see them.');
   }
 
   // ---------------------------------------------------------------
