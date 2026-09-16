@@ -4,6 +4,27 @@ import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipD
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
 
+/** Debug content for round 15's third Boulevard location (see
+ * DialogueGraphs.ts's `LANDLADY_DIALOGUE`) — the `landlady` roster entry's
+ * first content. The `settled-in` stage is completable two ways: a generic
+ * reassurance always available while the quest is active, or (if already
+ * earned) showing the callback slip from First Audition — the same
+ * "narrative path OR content-gated path" branching round 9's
+ * `cite-experience`/`show-studio-headshot` choices used. */
+export const MAKING_RENT_QUEST: QuestDef = {
+  id: 'making-rent',
+  title: 'Making Rent',
+  summary: 'Keep a roof over your head at the boarding house.',
+  stages: [
+    { id: 'first-payment', description: 'Settle up with the landlady.' },
+    {
+      id: 'settled-in',
+      description: 'Earn the landlady\'s trust.',
+      rewards: [{ kind: 'resource-delta', delta: { energy: 20 } }],
+    },
+  ],
+};
+
 /** Debug content for round 14's second social hub (see DialogueGraphs.ts's
  * `DINER_DIALOGUE`) — the diner-confidant roster entry's first content,
  * eight rounds after RelationshipDefinitions.ts introduced the full nine-
@@ -83,6 +104,11 @@ export const SCREEN_TEST_QUEST: QuestDef = {
   ],
 };
 
-export const ALL_QUESTS: readonly QuestDef[] = [FIRST_AUDITION_QUEST, SCREEN_TEST_QUEST, DINER_INTRODUCTIONS_QUEST];
+export const ALL_QUESTS: readonly QuestDef[] = [
+  FIRST_AUDITION_QUEST,
+  SCREEN_TEST_QUEST,
+  DINER_INTRODUCTIONS_QUEST,
+  MAKING_RENT_QUEST,
+];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
