@@ -8,10 +8,13 @@ the running game, with no prompting and no code change.
 
 Modeled on Otaku Palace's Art Director tool, adapted for the fact that
 Hollywoodland's Boulevard is a Phaser canvas scene, not a DOM/React screen:
-there's no live drag-over-the-real-render like Otaku Palace's Layout mode
-here — you edit numeric fields and refresh the game tab to check the
-result. It has two modes, switched with the **Art** / **Locations** buttons
-in the header.
+instead of Otaku Palace's Layout mode (which drags real DOM boxes over an
+embedded live copy of the actual screen), this tool's **Layout** mode drags
+elements over a self-contained canvas mockup it draws itself — good enough
+to place things by eye, but not a pixel-exact stand-in for the real Phaser
+render (blend modes, glow, and the sign's vector trim are simplified). It
+has three modes, switched with the **Art** / **Locations** / **Layout**
+buttons in the header.
 
 ## Why this exists
 
@@ -58,10 +61,9 @@ Selecting a slot shows:
 - **Position & rendering fields** — for a plane: X/Y offset, scroll factor
   (parallax speed — 0 never scrolls, 1 scrolls at the same rate as the
   player), and depth (draw order; higher draws on top). For a prop: X/Y
-  position, scale, flip, and depth. These are plain numbers, not a live
-  drag — the tool has no way to overlay draggable handles on the actual
-  Phaser canvas, so type a value, save, and check it in the preview pane or
-  your own game tab.
+  position, scale, flip, and depth. These are plain numbers here — drag
+  them into place instead from **Layout** mode (§5), which edits the same
+  underlying fields.
 - **Crop from reference sheet** — pick a sheet (the sidebar's **Reference
   sheet** dropdown lists every sheet the manifest knows about, plus any you
   upload this session) and drag/resize a box over it, the same crop-box
@@ -131,7 +133,49 @@ fires) aren't editable — same reasoning as above.
 **Save to project** writes the location's fields straight into
 `public/data/boulevard-manifest.json`. Refresh the game to see the change.
 
-## 5. The preview pane
+## 5. Layout mode — live drag
+
+Click **🖱️ Layout** in the header. This is the same position data as Art
+mode's fields and Locations mode's X/prompt/sign fields, but placed by
+dragging on a canvas instead of typing numbers.
+
+The canvas is a from-scratch composite the tool draws itself from the
+manifest's current planes, props, signs, and location markers — not the
+real Phaser scene — so it's faithful for placement but not for final visual
+judgment (check the preview pane or your own game tab for that). It's
+scrollable at 1:1 pixel scale, the same drag-to-scroll-via-scrollbar
+interaction as Art mode's crop canvas, since the Boulevard is far wider
+than any screen.
+
+A dashed green line marks **y = 1080**, where the real camera's viewport
+actually ends — the camera's vertical bounds never scroll, so anything
+below that line is off-screen in the running game no matter how the player
+moves. The canvas itself is drawn taller than that when a prop's position
+needs the room (the sedan, for one), purely so it stays visible and
+draggable here; that extra canvas height is a tool convenience, not
+something the game ever shows.
+
+- **Props, signs, and location markers** are directly clickable and
+  draggable — click one on the canvas (or in the sidebar) and drag. A
+  location marker only moves horizontally (locations live on the ground
+  line, not at an arbitrary height), so its Y field is disabled.
+- **Planes** cover the entire canvas, so clicking one on the canvas would
+  always just select whichever plane happens to be on top — pick a plane
+  from the sidebar first, then drag anywhere on the canvas to nudge its
+  offset.
+- The panel below the canvas shows the selected element's X/Y as live,
+  editable numbers (typing works too, not just dragging), plus an **Edit
+  full details →** button that jumps to that element's full field editor in
+  Art or Locations mode.
+
+### Save
+
+Dragging only updates positions in memory — nothing touches disk until you
+click **Save to project**, which writes the whole manifest in one shot
+(Layout mode never touches art files, only position numbers). Refresh the
+game to see the change.
+
+## 6. The preview pane
 
 The right-hand pane is a plain iframe pointed at your local dev server
 (defaults to `http://127.0.0.1:5173/hollywoodland/`) with **Load** and a
