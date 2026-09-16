@@ -4,6 +4,28 @@ import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipD
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
 
+/** Debug content for round 17's fifth Boulevard location (see
+ * DialogueGraphs.ts's `PRODUCTION_COORDINATOR_DIALOGUE`) — the
+ * `production-coordinator` roster entry's first content. `cleared-for-call`
+ * is this codebase's first stage completed by a choice that also grants an
+ * item directly through the dialogue effect itself (see
+ * `background-extra-voucher` in InventoryDefinitions.ts) rather than
+ * through a `QuestStageReward` — the voucher represents being cleared, not
+ * a bonus for clearing, so it belongs to the choice rather than the stage. */
+export const EXTRAS_CALL_QUEST: QuestDef = {
+  id: 'extras-call',
+  title: 'Extras Call',
+  summary: 'Check in at the extras corral and get cleared for a paid day of background work.',
+  stages: [
+    { id: 'checked-in', description: 'Check in with the production coordinator.' },
+    {
+      id: 'cleared-for-call',
+      description: 'Get cleared for the call.',
+      rewards: [{ kind: 'xp-grant', amount: 10 }],
+    },
+  ],
+};
+
 /** Debug content for round 16's fourth Boulevard location (see
  * DialogueGraphs.ts's `RIVAL_DIALOGUE`) — the `rival` roster entry's first
  * content. Unlike the other three social hubs, `earned-respect` never
@@ -131,6 +153,7 @@ export const ALL_QUESTS: readonly QuestDef[] = [
   DINER_INTRODUCTIONS_QUEST,
   MAKING_RENT_QUEST,
   BACKLOT_RIVALRY_QUEST,
+  EXTRAS_CALL_QUEST,
 ];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

@@ -13,7 +13,7 @@ import { getTalentById } from '../../domain/TalentDefinitions';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 
-const WORLD_WIDTH = 3240;
+const WORLD_WIDTH = 3790;
 const LEGACY_WORLD_WIDTH = 5600;
 const HILLS_OFFSET_X = -330;
 const HILLS_OFFSET_Y = -230;
@@ -38,6 +38,10 @@ const BACKLOT_GATE_X = 3050;
 const BACKLOT_SIGN_X = 3180;
 const BACKLOT_SIGN_Y = 707;
 const BACKLOT_PROMPT_LABEL = 'Wait at the backlot gate';
+const EXTRAS_CORRAL_X = 3600;
+const EXTRAS_SIGN_X = 3730;
+const EXTRAS_SIGN_Y = 707;
+const EXTRAS_PROMPT_LABEL = 'Check in at the extras corral';
 
 /** A single interactable point along the Boulevard: proximity radius,
  * interaction prompt, and what happens on "E". Introduced in round 15 once
@@ -141,6 +145,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         x: BACKLOT_GATE_X,
         label: BACKLOT_PROMPT_LABEL,
         onEnter: () => this.domainEvents.emit('backlot-gate-entered', undefined),
+      },
+      {
+        x: EXTRAS_CORRAL_X,
+        label: EXTRAS_PROMPT_LABEL,
+        onEnter: () => this.domainEvents.emit('extras-corral-entered', undefined),
       },
     ];
 
@@ -282,6 +291,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const backlotSignCenterY = BACKLOT_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
     this.createSignGlow(BACKLOT_SIGN_X, backlotSignCenterY);
     this.createHangingSign(BACKLOT_SIGN_X, backlotSignCenterY, 'BACKLOT\nGATE');
+
+    const extrasSignCenterY = EXTRAS_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
+    this.createSignGlow(EXTRAS_SIGN_X, extrasSignCenterY);
+    this.createHangingSign(EXTRAS_SIGN_X, extrasSignCenterY, 'EXTRAS\nCORRAL');
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add

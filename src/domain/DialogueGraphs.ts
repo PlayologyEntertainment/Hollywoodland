@@ -1,7 +1,7 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, RIVAL } from './RelationshipDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, PRODUCTION_COORDINATOR, RIVAL } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
@@ -376,11 +376,89 @@ export const RIVAL_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(RIVAL_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
+/** Round 17's fifth Boulevard location: the `production-coordinator` roster
+ * entry's first content, past the Backlot Gate at the extras corral. The
+ * `ask-about-the-shot` and `show-callback-slip` choices are this codebase's
+ * first dialogue effects to grant an item directly (`item-grant` on
+ * `background-extra-voucher`) rather than through a quest stage reward —
+ * the engine has supported this since round 12, but no content used it
+ * until now. `show-callback-slip` reuses `first-callback-slip` the same way
+ * LANDLADY_DIALOGUE's choice of the same name did, rewarding continuity
+ * from First Audition with a larger trust gain than the generic path.
+ * `wait-for-the-wave` mirrors the other three locations' walk-away choice:
+ * no condition, no effects, `cleared-for-call` stays incomplete. */
+export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
+  id: 'extras-corral-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Production Coordinator',
+      text: '"Name?" she snaps, pen already hovering over the sign-in sheet. "Corral fills up fast — I do not have all morning."',
+      choices: [
+        {
+          id: 'give-name-crisply',
+          label: 'Give your name and step back to wait.',
+          next: 'checked-in-reply',
+          effects: [
+            { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'extras-call' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'extras-call', stageId: 'checked-in' },
+          ],
+        },
+        {
+          id: 'apologize-for-cutting-it-close',
+          label: 'Apologize — traffic on the Boulevard held you up.',
+          next: 'checked-in-reply',
+          effects: [
+            { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { tension: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'extras-call' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'extras-call', stageId: 'checked-in' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'checked-in-reply',
+      speaker: 'Production Coordinator',
+      text: '"You\'re on the list," she says, already scanning past you toward the corral. "Stay behind the rope until someone waves you onto the set."',
+      choices: [
+        {
+          id: 'ask-about-the-shot',
+          label: 'Ask what today\'s call actually needs from the extras.',
+          next: null,
+          conditions: [{ kind: 'quest-status', questId: 'extras-call', status: 'active' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'extras-call', stageId: 'cleared-for-call' },
+            { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 3 } },
+            { kind: 'item-grant', itemId: 'background-extra-voucher' },
+          ],
+        },
+        {
+          id: 'show-callback-slip',
+          label: 'Mention the callback slip from the casting office.',
+          next: null,
+          conditions: [{ kind: 'item-owned', itemId: 'first-callback-slip' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'extras-call', stageId: 'cleared-for-call' },
+            { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 4 } },
+            { kind: 'item-grant', itemId: 'background-extra-voucher' },
+          ],
+        },
+        { id: 'wait-for-the-wave', label: 'Say nothing and wait for the wave-in.', next: null },
+      ],
+    },
+  ],
+};
+
+validateDialogueGraph(PRODUCTION_COORDINATOR_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
   [DINER_DIALOGUE.id]: DINER_DIALOGUE,
   [LANDLADY_DIALOGUE.id]: LANDLADY_DIALOGUE,
   [RIVAL_DIALOGUE.id]: RIVAL_DIALOGUE,
+  [PRODUCTION_COORDINATOR_DIALOGUE.id]: PRODUCTION_COORDINATOR_DIALOGUE,
 });
 
 export function getDialogueGraphById(id: string): DialogueGraph | undefined {

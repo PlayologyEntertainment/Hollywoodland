@@ -45,6 +45,13 @@ export const ALL_ITEMS: readonly InventoryItemDefinition[] = [
     description: 'A small frame for the boarding-house room, waiting for its first photograph.',
     unlockSource: 'screen-test quest — attend stage reward',
   },
+  {
+    id: 'background-extra-voucher',
+    category: 'credit',
+    name: 'Background Extra Voucher',
+    description: 'A same-day work slip clearing you for a paid day in the extras corral.',
+    unlockSource: 'extras-call quest — cleared-for-call dialogue choice (granted directly, not a stage reward)',
+  },
 ];
 
 validateInventoryItems(ALL_ITEMS);

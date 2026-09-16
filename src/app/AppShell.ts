@@ -3,7 +3,7 @@ import type Phaser from 'phaser';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
-import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE, LANDLADY_DIALOGUE, RIVAL_DIALOGUE } from '../domain/DialogueGraphs';
+import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE, LANDLADY_DIALOGUE, PRODUCTION_COORDINATOR_DIALOGUE, RIVAL_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
@@ -123,6 +123,10 @@ export class AppShell {
     this.options.domainEvents.on('backlot-gate-entered', () => {
       this.openDialogue(RIVAL_DIALOGUE, 'The Backlot Gate');
       this.announce('You reached the backlot gate.');
+    });
+    this.options.domainEvents.on('extras-corral-entered', () => {
+      this.openDialogue(PRODUCTION_COORDINATOR_DIALOGUE, 'The Extras Corral');
+      this.announce('You checked in at the extras corral.');
     });
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
