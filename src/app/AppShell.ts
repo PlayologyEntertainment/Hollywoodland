@@ -3,7 +3,7 @@ import type Phaser from 'phaser';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
-import { CASTING_OFFICE_DIALOGUE } from '../domain/DialogueGraphs';
+import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
@@ -104,12 +104,17 @@ export class AppShell {
     const statusPanel = assertElement('#status-panel', HTMLElement);
     const fileInput = assertElement('#save-file-input', HTMLInputElement);
 
-    this.options.domainEvents.on('interaction-proximity-changed', (visible) => {
+    this.options.domainEvents.on('interaction-proximity-changed', ({ visible, label }) => {
       assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
+      assertElement('#interaction-prompt-label', HTMLElement).textContent = label;
     });
     this.options.domainEvents.on('casting-office-entered', () => {
-      this.openDialogue(CASTING_OFFICE_DIALOGUE);
+      this.openDialogue(CASTING_OFFICE_DIALOGUE, 'Sunset Casting Exchange');
       this.announce('You entered the Sunset Casting Exchange.');
+    });
+    this.options.domainEvents.on('diner-entered', () => {
+      this.openDialogue(DINER_DIALOGUE, 'Sunset Diner');
+      this.announce('You entered the Sunset Diner.');
     });
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
@@ -209,9 +214,10 @@ export class AppShell {
     return createInitialCareerState(identity, deriveAttributes(choices.originId));
   }
 
-  private openDialogue(graph: DialogueGraph): void {
+  private openDialogue(graph: DialogueGraph, location: string): void {
     this.activeDialogueGraph = graph;
     this.activeDialogueNodeId = graph.rootNodeId;
+    assertElement('#dialogue-location', HTMLElement).textContent = location;
     this.renderDialogueNode();
     assertElement('#interaction-dialog', HTMLDialogElement).showModal();
   }

@@ -1,7 +1,7 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
@@ -155,8 +155,85 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
+/** Round 14's second social hub: the `diner-confidant` roster entry's first
+ * content, eight rounds after RelationshipDefinitions.ts introduced the
+ * full nine-character debug roster with none of the other eight wired to
+ * anything yet. A deliberately lower-stakes counterpart to the casting
+ * office — no resource cost to enter (see BoulevardSpikeScene's
+ * `diner-entered` handling), and its `ask-about-gossip-column` choice is
+ * this codebase's first `talent-unlocked` condition in real content,
+ * giving the talent tree's "spend a point" action a narrative payoff the
+ * same way round 9's `cite-experience`/`show-studio-headshot` choices did
+ * for `level-at-least`/`item-owned`. */
+export const DINER_DIALOGUE: DialogueGraph = {
+  id: 'sunset-diner-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Counter Girl',
+      text: '"Coffee, doll? You look like you could use it," she says, already reaching for the pot.',
+      choices: [
+        {
+          id: 'take-coffee',
+          label: 'Thanks — I could use it.',
+          next: 'settled-in',
+          effects: [
+            { kind: 'relationship-delta', characterId: DINER_CONFIDANT.id, delta: { trust: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'diner-introductions' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'diner-introductions', stageId: 'introduced' },
+          ],
+        },
+        {
+          id: 'decline-coffee',
+          label: 'Just passing through.',
+          next: 'settled-in',
+          effects: [{ kind: 'relationship-delta', characterId: DINER_CONFIDANT.id, delta: { tension: 1 } }],
+        },
+      ],
+    },
+    {
+      id: 'settled-in',
+      speaker: 'Counter Girl',
+      text: '"So, what brings a face like yours to this end of the Boulevard?"',
+      choices: [
+        {
+          id: 'ask-about-town',
+          label: 'What is the real story on this town?',
+          next: 'gossip-reply',
+          conditions: [{ kind: 'quest-status', questId: 'diner-introductions', status: 'active' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'diner-introductions', stageId: 'earned-trust' },
+            { kind: 'relationship-delta', characterId: DINER_CONFIDANT.id, delta: { trust: 3 } },
+          ],
+        },
+        {
+          id: 'ask-about-gossip-column',
+          label: 'Read the room, then ask about the gossip column.',
+          next: 'gossip-reply',
+          conditions: [{ kind: 'talent-unlocked', talentId: 'observation-1' }],
+          effects: [
+            { kind: 'relationship-delta', characterId: DINER_CONFIDANT.id, delta: { trust: 2 } },
+            { kind: 'relationship-pivotal-flag', characterId: DINER_CONFIDANT.id, flag: 'sharedColumnTip' },
+          ],
+        },
+        { id: 'stay-quiet', label: 'Just finish your coffee.', next: null },
+      ],
+    },
+    {
+      id: 'gossip-reply',
+      speaker: 'Counter Girl',
+      text: '"Ask around enough and you will hear it all — who is bankable, who is trouble, and who is both."',
+      choices: [{ id: 'leave', label: 'Thanks for the coffee.', next: null }],
+    },
+  ],
+};
+
+validateDialogueGraph(DINER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
+  [DINER_DIALOGUE.id]: DINER_DIALOGUE,
 });
 
 export function getDialogueGraphById(id: string): DialogueGraph | undefined {

@@ -3,12 +3,21 @@ import type { DialogueChoiceSelectedPayload } from './Dialogue';
 import type { TalentUnlockRequestedPayload } from './Progression';
 import type { GameSettings } from '../settings/Settings';
 
+export interface InteractionProximityChangedPayload {
+  readonly visible: boolean;
+  /** Empty when `visible` is false — the label of whichever interactable
+   * the player is nearest to, now that the Boulevard has more than one
+   * (see BoulevardSpikeScene's casting-office/diner interaction points). */
+  readonly label: string;
+}
+
 export interface DomainEventMap {
   readonly 'career-state-changed': CareerState;
   readonly 'restore-career-state': CareerState;
   readonly 'settings-changed': GameSettings;
-  readonly 'interaction-proximity-changed': boolean;
+  readonly 'interaction-proximity-changed': InteractionProximityChangedPayload;
   readonly 'casting-office-entered': undefined;
+  readonly 'diner-entered': undefined;
   readonly 'advance-time-requested': undefined;
   readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
   readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;
