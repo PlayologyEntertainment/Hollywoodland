@@ -2,6 +2,7 @@ import './styles.css';
 
 import { AppShell } from './app/AppShell';
 import { SplashScreen } from './app/SplashScreen';
+import { NoOpAnalyticsClient, type AnalyticsEvent } from './analytics/Analytics';
 import { createDefaultCareerState, type CareerState } from './domain/CareerState';
 import { DomainEventBus } from './domain/DomainEventBus';
 import { createGame } from './game/createGame';
@@ -14,10 +15,18 @@ const settingsRepository = new BrowserSettingsRepository(window.localStorage);
 const saveRepository = new IndexedDbSaveRepository();
 const domainEvents = new DomainEventBus();
 let settings = settingsRepository.load();
+const analytics = new NoOpAnalyticsClient();
+/** The player's analytics setting is the sole consent gate — no event ever
+ * reaches the client (currently a no-op; see docs/PRODUCTION_ROADMAP.md
+ * Phase 0) while they have it turned off. */
+function track(event: AnalyticsEvent): void {
+  if (settings.analyticsEnabled) analytics.track(event);
+}
 const input = new InputController(window);
 let game: ReturnType<typeof createGame> | undefined;
 let latestState: CareerState = createDefaultCareerState();
 let startedAt = performance.now();
+track({ name: 'session_started' });
 
 /** Creates the Phaser game on first call — deferred until the player enters
  * play so the Main Menu shows the static concept art instead of live
@@ -49,6 +58,7 @@ const shell = new AppShell({
   onSettingsChanged: (nextSettings) => {
     settings = nextSettings;
     settingsRepository.save(nextSettings);
+    track({ name: 'settings_changed' });
     if (game !== undefined) {
       game.registry.set('settings', nextSettings);
       domainEvents.emit('settings-changed', nextSettings);
@@ -59,6 +69,7 @@ const shell = new AppShell({
     const activeGame = ensureGame(state);
     startedAt = performance.now();
     input.setGameplayActive(true);
+    if (isFirstStart) track({ name: 'foundation_entered' });
     if (state !== undefined && !isFirstStart) domainEvents.emit('restore-career-state', state);
     return activeGame;
   },
