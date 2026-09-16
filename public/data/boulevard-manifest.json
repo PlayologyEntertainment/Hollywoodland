@@ -19,8 +19,8 @@
       "id": "hills",
       "label": "Plane 2 — Hills & landmark",
       "path": "assets/environments/boulevard-v2/02-hills-landmark.png",
-      "offsetX": -900,
-      "offsetY": -220,
+      "offsetX": -998,
+      "offsetY": -226,
       "scrollFactor": 0.18,
       "depth": 1,
       "source": null
@@ -29,8 +29,8 @@
       "id": "distant-buildings",
       "label": "Plane 3 — Distant buildings",
       "path": "assets/environments/boulevard-v2/03-distant-buildings.png",
-      "offsetX": 0,
-      "offsetY": 800,
+      "offsetX": -29,
+      "offsetY": -231,
       "scrollFactor": 0.42,
       "depth": 2,
       "source": null
@@ -61,8 +61,8 @@
       "id": "palm-left",
       "label": "Palm (left)",
       "path": "assets/environments/foreground/hollywood-palm-v1.png",
-      "x": 250,
-      "y": 1150,
+      "x": 364,
+      "y": 1117,
       "scale": 0.8,
       "flipX": false,
       "depth": 31,
@@ -105,8 +105,8 @@
       "id": "sedan",
       "label": "Parked sedan",
       "path": "assets/environments/foreground/hollywood-sedan-v1.png",
-      "x": 3,
-      "y": 1155,
+      "x": 5,
+      "y": 1194,
       "scale": 0.5,
       "flipX": false,
       "depth": 31,
@@ -119,16 +119,16 @@
       "label": "Boarding house",
       "x": 1150,
       "promptLabel": "Enter boarding house",
-      "radius": 150,
+      "radius": 100,
       "sign": {
-        "x": 1230,
-        "y": 820,
+        "x": 1495,
+        "y": 676,
         "text": "BOARDING\nHOUSE",
-        "fontSize": 19,
-        "textColor": "#f3dfab",
-        "boardColor": "#241609",
-        "boardWidth": 180,
-        "boardHeight": 90
+        "fontSize": 13,
+        "textColor": "#c35b0c",
+        "boardColor": "#fbc885",
+        "boardWidth": 130,
+        "boardHeight": 60
       }
     },
     {
@@ -138,14 +138,14 @@
       "promptLabel": "Enter casting office",
       "radius": 150,
       "sign": {
-        "x": 2116,
-        "y": 700,
+        "x": 2112,
+        "y": 657,
         "text": "SUNSET\nCASTING\nEXCHANGE",
-        "fontSize": 19,
+        "fontSize": 14,
         "textColor": "#f3dfab",
         "boardColor": "#241609",
-        "boardWidth": 210,
-        "boardHeight": 130
+        "boardWidth": 160,
+        "boardHeight": 80
       }
     },
     {
@@ -153,16 +153,16 @@
       "label": "Sunset Diner",
       "x": 2500,
       "promptLabel": "Enter Sunset Diner",
-      "radius": 205,
+      "radius": 300,
       "sign": {
-        "x": 2630,
-        "y": 590,
+        "x": 3169,
+        "y": 629,
         "text": "SUNSET\nDINER",
-        "fontSize": 19,
-        "textColor": "#f3dfab",
-        "boardColor": "#241609",
-        "boardWidth": 210,
-        "boardHeight": 130
+        "fontSize": 20,
+        "textColor": "#ca2522",
+        "boardColor": "#a899a0",
+        "boardWidth": 140,
+        "boardHeight": 90
       }
     },
     {
@@ -170,16 +170,16 @@
       "label": "Backlot gate",
       "x": 3050,
       "promptLabel": "Wait at the backlot gate",
-      "radius": 205,
+      "radius": 200,
       "sign": {
-        "x": 3180,
-        "y": 590,
+        "x": 2441,
+        "y": 708,
         "text": "BACKLOT\nGATE",
-        "fontSize": 19,
+        "fontSize": 13,
         "textColor": "#f3dfab",
         "boardColor": "#241609",
-        "boardWidth": 210,
-        "boardHeight": 130
+        "boardWidth": 110,
+        "boardHeight": 70
       }
     },
     {
@@ -187,16 +187,16 @@
       "label": "Extras corral",
       "x": 3600,
       "promptLabel": "Check in at the extras corral",
-      "radius": 205,
+      "radius": 100,
       "sign": {
-        "x": 3730,
-        "y": 590,
+        "x": 2845,
+        "y": 837,
         "text": "EXTRAS\nCORRAL",
-        "fontSize": 19,
+        "fontSize": 13,
         "textColor": "#f3dfab",
         "boardColor": "#241609",
-        "boardWidth": 210,
-        "boardHeight": 130
+        "boardWidth": 110,
+        "boardHeight": 60
       }
     }
   ]
