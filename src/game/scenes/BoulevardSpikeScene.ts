@@ -34,6 +34,10 @@ const DINER_X = 2500;
 const DINER_SIGN_X = 2630;
 const DINER_SIGN_Y = 707;
 const DINER_PROMPT_LABEL = 'Enter Sunset Diner';
+const BACKLOT_GATE_X = 3050;
+const BACKLOT_SIGN_X = 3180;
+const BACKLOT_SIGN_Y = 707;
+const BACKLOT_PROMPT_LABEL = 'Wait at the backlot gate';
 
 /** A single interactable point along the Boulevard: proximity radius,
  * interaction prompt, and what happens on "E". Introduced in round 15 once
@@ -133,6 +137,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         },
       },
       { x: DINER_X, label: DINER_PROMPT_LABEL, onEnter: () => this.domainEvents.emit('diner-entered', undefined) },
+      {
+        x: BACKLOT_GATE_X,
+        label: BACKLOT_PROMPT_LABEL,
+        onEnter: () => this.domainEvents.emit('backlot-gate-entered', undefined),
+      },
     ];
 
     this.unsubscribers = [
@@ -269,6 +278,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const dinerSignCenterY = DINER_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
     this.createSignGlow(DINER_SIGN_X, dinerSignCenterY);
     this.createHangingSign(DINER_SIGN_X, dinerSignCenterY, 'SUNSET\nDINER');
+
+    const backlotSignCenterY = BACKLOT_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
+    this.createSignGlow(BACKLOT_SIGN_X, backlotSignCenterY);
+    this.createHangingSign(BACKLOT_SIGN_X, backlotSignCenterY, 'BACKLOT\nGATE');
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add
