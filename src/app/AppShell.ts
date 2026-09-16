@@ -3,7 +3,7 @@ import type Phaser from 'phaser';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
-import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE } from '../domain/DialogueGraphs';
+import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE, LANDLADY_DIALOGUE } from '../domain/DialogueGraphs';
 import type { DomainEventBus } from '../domain/DomainEventBus';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
@@ -115,6 +115,10 @@ export class AppShell {
     this.options.domainEvents.on('diner-entered', () => {
       this.openDialogue(DINER_DIALOGUE, 'Sunset Diner');
       this.announce('You entered the Sunset Diner.');
+    });
+    this.options.domainEvents.on('boarding-house-entered', () => {
+      this.openDialogue(LANDLADY_DIALOGUE, 'The Boarding House');
+      this.announce('You entered the boarding house.');
     });
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;

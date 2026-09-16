@@ -1,7 +1,7 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT } from './RelationshipDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
@@ -231,9 +231,82 @@ export const DINER_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(DINER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
+/** Round 15's third Boulevard location: the `landlady` roster entry's first
+ * content. `ask-for-extension` exercises the `obligation` favor-ledger axis
+ * for a second character (only `casting-gatekeeper`'s `ask-for-early-slot`
+ * used it before), and `show-callback-slip` is this codebase's second
+ * `item-owned` condition (against `first-callback-slip` rather than
+ * `studio-headshot`, and reachable the same way — First Audition's
+ * callback stage grants both). */
+export const LANDLADY_DIALOGUE: DialogueGraph = {
+  id: 'boarding-house-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Landlady',
+      text: '"Rent\'s due Friday, same as always," she says, not looking up from her ledger.',
+      choices: [
+        {
+          id: 'pay-rent-full',
+          label: 'Here — this week, paid in full.',
+          next: 'settled-in',
+          effects: [
+            { kind: 'resource-delta', delta: { money: -6 } },
+            { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 3 } },
+            { kind: 'quest-action', action: 'start', questId: 'making-rent' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'first-payment' },
+          ],
+        },
+        {
+          id: 'ask-for-extension',
+          label: 'Could I get a few more days?',
+          next: 'settled-in',
+          effects: [
+            { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { obligation: -5, tension: 2 } },
+            { kind: 'quest-action', action: 'start', questId: 'making-rent' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'first-payment' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'settled-in',
+      speaker: 'Landlady',
+      text: '"Just so we are clear where we stand," she says, setting down her pen.',
+      choices: [
+        {
+          id: 'reassure-generic',
+          label: 'I am good for it — steady work is coming.',
+          next: null,
+          conditions: [{ kind: 'quest-status', questId: 'making-rent', status: 'active' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'settled-in' },
+            { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 2 } },
+          ],
+        },
+        {
+          id: 'show-callback-slip',
+          label: 'Show her the callback slip from your last audition.',
+          next: null,
+          conditions: [{ kind: 'item-owned', itemId: 'first-callback-slip' }],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'settled-in' },
+            { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 4 } },
+          ],
+        },
+        { id: 'say-nothing', label: 'Just nod and head upstairs.', next: null },
+      ],
+    },
+  ],
+};
+
+validateDialogueGraph(LANDLADY_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
   [DINER_DIALOGUE.id]: DINER_DIALOGUE,
+  [LANDLADY_DIALOGUE.id]: LANDLADY_DIALOGUE,
 });
 
 export function getDialogueGraphById(id: string): DialogueGraph | undefined {

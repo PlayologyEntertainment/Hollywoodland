@@ -22,6 +22,10 @@ const GROUND_PLANE_OFFSET_Y = 430;
 const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
 const INTERACTION_RADIUS = 205;
+const BOARDING_HOUSE_X = 1150;
+const BOARDING_SIGN_X = 1280;
+const BOARDING_SIGN_Y = 707;
+const BOARDING_PROMPT_LABEL = 'Enter boarding house';
 const CASTING_OFFICE_X = 1675;
 const CASTING_SIGN_X = 1805;
 const CASTING_SIGN_Y = 707;
@@ -30,6 +34,18 @@ const DINER_X = 2500;
 const DINER_SIGN_X = 2630;
 const DINER_SIGN_Y = 707;
 const DINER_PROMPT_LABEL = 'Enter Sunset Diner';
+
+/** A single interactable point along the Boulevard: proximity radius,
+ * interaction prompt, and what happens on "E". Introduced in round 15 once
+ * a third location (the boarding house) made the previous if/else-per-
+ * location chain in `update()` worth generalizing — the same "generalize
+ * once it happens a third time" call round 14 made for the hanging-sign
+ * drawing code. */
+interface InteractionPoint {
+  readonly x: number;
+  readonly label: string;
+  readonly onEnter: () => void;
+}
 
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
@@ -41,6 +57,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private atmosphericTweens: Phaser.Tweens.Tween[] = [];
   private promptVisible = false;
   private promptLabel = '';
+  private interactionPoints: readonly InteractionPoint[] = [];
   private unsubscribers: Array<() => void> = [];
   private stateClock = 0;
 
@@ -101,6 +118,23 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
     this.cameras.main.setDeadzone(520, 290);
 
+    this.interactionPoints = [
+      {
+        x: BOARDING_HOUSE_X,
+        label: BOARDING_PROMPT_LABEL,
+        onEnter: () => this.domainEvents.emit('boarding-house-entered', undefined),
+      },
+      {
+        x: CASTING_OFFICE_X,
+        label: CASTING_PROMPT_LABEL,
+        onEnter: () => {
+          this.careerState = enterCastingOffice(this.careerState);
+          this.domainEvents.emit('casting-office-entered', undefined);
+        },
+      },
+      { x: DINER_X, label: DINER_PROMPT_LABEL, onEnter: () => this.domainEvents.emit('diner-entered', undefined) },
+    ];
+
     this.unsubscribers = [
       this.domainEvents.on('settings-changed', this.onSettingsChanged),
       this.domainEvents.on('restore-career-state', this.restoreState),
@@ -138,22 +172,18 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.player.setFrame(0);
     }
 
-    const nearCasting = Math.abs(this.player.x - CASTING_OFFICE_X) < INTERACTION_RADIUS;
-    const nearDiner = Math.abs(this.player.x - DINER_X) < INTERACTION_RADIUS;
-    const label = nearCasting ? CASTING_PROMPT_LABEL : nearDiner ? DINER_PROMPT_LABEL : '';
-    const visible = label.length > 0;
+    const nearest = this.interactionPoints.find(
+      (point) => Math.abs(this.player.x - point.x) < INTERACTION_RADIUS,
+    );
+    const label = nearest?.label ?? '';
+    const visible = nearest !== undefined;
     if (visible !== this.promptVisible || label !== this.promptLabel) {
       this.promptVisible = visible;
       this.promptLabel = label;
       this.domainEvents.emit('interaction-proximity-changed', { visible, label });
     }
-    if (visible && this.inputController.consumePress('interact')) {
-      if (nearCasting) {
-        this.careerState = enterCastingOffice(this.careerState);
-        this.domainEvents.emit('casting-office-entered', undefined);
-      } else {
-        this.domainEvents.emit('diner-entered', undefined);
-      }
+    if (nearest !== undefined && this.inputController.consumePress('interact')) {
+      nearest.onEnter();
       this.emitState();
     }
 
@@ -227,6 +257,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       .setOrigin(0.5, 1)
       .setScale(0.5)
       .setDepth(24);
+
+    const boardingSignCenterY = BOARDING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
+    this.createSignGlow(BOARDING_SIGN_X, boardingSignCenterY);
+    this.createHangingSign(BOARDING_SIGN_X, boardingSignCenterY, 'BOARDING\nHOUSE');
 
     const signCenterY = CASTING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
     this.createSignGlow(CASTING_SIGN_X, signCenterY);
