@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 
+import type { BoulevardManifest, BoulevardSign } from '../BoulevardManifest';
 import { enterCastingOffice, advanceTime } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
@@ -13,44 +14,35 @@ import { getTalentById } from '../../domain/TalentDefinitions';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 
-const WORLD_WIDTH = 3790;
+/** Pre-manifest world width, retained only to migrate a save's `playerX`
+ * from that era forward (see restoreState) — the live world width now
+ * comes from the manifest's `worldWidth` field. */
 const LEGACY_WORLD_WIDTH = 5600;
-const HILLS_OFFSET_X = -330;
-const HILLS_OFFSET_Y = -230;
-const MAIN_ARCHITECTURE_OFFSET_Y = -117;
-const GROUND_PLANE_OFFSET_Y = 430;
-const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
-const INTERACTION_RADIUS = 205;
-const BOARDING_HOUSE_X = 1150;
-const BOARDING_SIGN_X = 1280;
-const BOARDING_SIGN_Y = 707;
-const BOARDING_PROMPT_LABEL = 'Enter boarding house';
-const CASTING_OFFICE_X = 1675;
-const CASTING_SIGN_X = 1805;
-const CASTING_SIGN_Y = 707;
-const CASTING_PROMPT_LABEL = 'Enter casting office';
-const DINER_X = 2500;
-const DINER_SIGN_X = 2630;
-const DINER_SIGN_Y = 707;
-const DINER_PROMPT_LABEL = 'Enter Sunset Diner';
-const BACKLOT_GATE_X = 3050;
-const BACKLOT_SIGN_X = 3180;
-const BACKLOT_SIGN_Y = 707;
-const BACKLOT_PROMPT_LABEL = 'Wait at the backlot gate';
-const EXTRAS_CORRAL_X = 3600;
-const EXTRAS_SIGN_X = 3730;
-const EXTRAS_SIGN_Y = 707;
-const EXTRAS_PROMPT_LABEL = 'Check in at the extras corral';
+
+function planeKey(id: string): string {
+  return `plane:${id}`;
+}
+
+function propKey(id: string): string {
+  return `prop:${id}`;
+}
+
+function assetUrl(path: string): string {
+  return `${import.meta.env.BASE_URL}${path}`;
+}
 
 /** A single interactable point along the Boulevard: proximity radius,
  * interaction prompt, and what happens on "E". Introduced in round 15 once
  * a third location (the boarding house) made the previous if/else-per-
  * location chain in `update()` worth generalizing — the same "generalize
  * once it happens a third time" call round 14 made for the hanging-sign
- * drawing code. */
+ * drawing code. Position, label, radius, and sign styling now come from
+ * data/boulevard-manifest.json rather than being hardcoded here; onEnter
+ * stays in code since it's real gameplay wiring, not an art/layout knob. */
 interface InteractionPoint {
   readonly x: number;
+  readonly radius: number;
   readonly label: string;
   readonly onEnter: () => void;
 }
@@ -60,6 +52,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private settings!: GameSettings;
   private domainEvents!: DomainEventBus;
   private careerState!: CareerState;
+  private manifest!: BoulevardManifest;
+  private worldWidth = 0;
+  private groundY = 0;
   private player!: Phaser.GameObjects.Sprite;
   private playerShadow!: Phaser.GameObjects.Ellipse;
   private atmosphericTweens: Phaser.Tweens.Tween[] = [];
@@ -74,43 +69,18 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   }
 
   public preload(): void {
-    this.load.image(
-      'boulevard-sky',
-      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/01-sky.png`,
-    );
-    this.load.image(
-      'boulevard-hills',
-      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/02-hills-landmark.png`,
-    );
-    this.load.image(
-      'boulevard-distant-buildings',
-      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/03-distant-buildings.png`,
-    );
-    this.load.image(
-      'boulevard-main-architecture',
-      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/04-main-architecture.png`,
-    );
-    this.load.image(
-      'boulevard-sidewalk-street',
-      `${import.meta.env.BASE_URL}assets/environments/boulevard-v2/05-sidewalk-street.png`,
-    );
-    this.load.image(
-      'hollywood-palm',
-      `${import.meta.env.BASE_URL}assets/environments/foreground/hollywood-palm-v1.png`,
-    );
-    this.load.image(
-      'hollywood-streetlamp',
-      `${import.meta.env.BASE_URL}assets/environments/foreground/hollywood-streetlamp-v1.png`,
-    );
-    this.load.image(
-      'hollywood-sedan',
-      `${import.meta.env.BASE_URL}assets/environments/foreground/hollywood-sedan-v1.png`,
-    );
-    this.load.spritesheet(
-      'aspiring-actor',
-      `${import.meta.env.BASE_URL}assets/characters/aspiring-actor-walk.webp`,
-      { frameWidth: 384, frameHeight: 512 },
-    );
+    this.manifest = this.registry.get('boulevardManifest') as BoulevardManifest;
+
+    for (const plane of this.manifest.planes) {
+      this.load.image(planeKey(plane.id), assetUrl(plane.path));
+    }
+    for (const prop of this.manifest.props) {
+      this.load.image(propKey(prop.id), assetUrl(prop.path));
+    }
+    this.load.spritesheet('aspiring-actor', assetUrl('assets/characters/aspiring-actor-walk.webp'), {
+      frameWidth: 384,
+      frameHeight: 512,
+    });
   }
 
   public create(): void {
@@ -118,40 +88,22 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.settings = this.registry.get('settings') as GameSettings;
     this.domainEvents = this.registry.get('domainEvents') as DomainEventBus;
     this.careerState = createDefaultCareerState();
+    this.worldWidth = this.manifest.worldWidth;
+    this.groundY = this.manifest.groundY;
     this.cameras.main.setBackgroundColor('#68b9ef');
     this.createRenderedEnvironment();
     this.createPlayer();
 
-    this.cameras.main.setBounds(0, 0, WORLD_WIDTH, 1080);
+    this.cameras.main.setBounds(0, 0, this.worldWidth, 1080);
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
     this.cameras.main.setDeadzone(520, 290);
 
-    this.interactionPoints = [
-      {
-        x: BOARDING_HOUSE_X,
-        label: BOARDING_PROMPT_LABEL,
-        onEnter: () => this.domainEvents.emit('boarding-house-entered', undefined),
-      },
-      {
-        x: CASTING_OFFICE_X,
-        label: CASTING_PROMPT_LABEL,
-        onEnter: () => {
-          this.careerState = enterCastingOffice(this.careerState);
-          this.domainEvents.emit('casting-office-entered', undefined);
-        },
-      },
-      { x: DINER_X, label: DINER_PROMPT_LABEL, onEnter: () => this.domainEvents.emit('diner-entered', undefined) },
-      {
-        x: BACKLOT_GATE_X,
-        label: BACKLOT_PROMPT_LABEL,
-        onEnter: () => this.domainEvents.emit('backlot-gate-entered', undefined),
-      },
-      {
-        x: EXTRAS_CORRAL_X,
-        label: EXTRAS_PROMPT_LABEL,
-        onEnter: () => this.domainEvents.emit('extras-corral-entered', undefined),
-      },
-    ];
+    this.interactionPoints = this.manifest.locations.map((location) => ({
+      x: location.x,
+      radius: location.radius,
+      label: location.promptLabel,
+      onEnter: () => this.enterLocation(location.id),
+    }));
 
     this.unsubscribers = [
       this.domainEvents.on('settings-changed', this.onSettingsChanged),
@@ -178,7 +130,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.player.x = Phaser.Math.Clamp(
       this.player.x + direction * WALK_SPEED * (delta / 1000),
       110,
-      WORLD_WIDTH - 110,
+      this.worldWidth - 110,
     );
     this.playerShadow.x = this.player.x;
 
@@ -191,7 +143,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
 
     const nearest = this.interactionPoints.find(
-      (point) => Math.abs(this.player.x - point.x) < INTERACTION_RADIUS,
+      (point) => Math.abs(this.player.x - point.x) < point.radius,
     );
     const label = nearest?.label ?? '';
     const visible = nearest !== undefined;
@@ -212,89 +164,52 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
   }
 
+  private enterLocation(id: string): void {
+    switch (id) {
+      case 'boarding-house':
+        this.domainEvents.emit('boarding-house-entered', undefined);
+        return;
+      case 'casting-office':
+        this.careerState = enterCastingOffice(this.careerState);
+        this.domainEvents.emit('casting-office-entered', undefined);
+        return;
+      case 'diner':
+        this.domainEvents.emit('diner-entered', undefined);
+        return;
+      case 'backlot-gate':
+        this.domainEvents.emit('backlot-gate-entered', undefined);
+        return;
+      case 'extras-corral':
+        this.domainEvents.emit('extras-corral-entered', undefined);
+        return;
+      default:
+        return;
+    }
+  }
+
   private createRenderedEnvironment(): void {
-    this.add
-      .image(0, 0, 'boulevard-sky')
-      .setOrigin(0)
-      .setDisplaySize(WORLD_WIDTH, 1080)
-      .setScrollFactor(0)
-      .setDepth(0);
+    for (const plane of this.manifest.planes) {
+      this.add
+        .image(plane.offsetX, plane.offsetY, planeKey(plane.id))
+        .setOrigin(0)
+        .setDisplaySize(this.worldWidth, 1080)
+        .setScrollFactor(plane.scrollFactor)
+        .setDepth(plane.depth);
+    }
 
-    this.add
-      .image(HILLS_OFFSET_X, HILLS_OFFSET_Y, 'boulevard-hills')
-      .setOrigin(0)
-      .setDisplaySize(WORLD_WIDTH, 1080)
-      .setScrollFactor(0.18)
-      .setDepth(1);
+    for (const prop of this.manifest.props) {
+      this.add
+        .image(prop.x, prop.y, propKey(prop.id))
+        .setOrigin(0.5, 1)
+        .setScale(prop.scale)
+        .setFlipX(prop.flipX)
+        .setDepth(prop.depth);
+    }
 
-    this.add
-      .image(0, 0, 'boulevard-distant-buildings')
-      .setOrigin(0)
-      .setDisplaySize(WORLD_WIDTH, 1080)
-      .setScrollFactor(0.42)
-      .setDepth(2);
-
-    this.add
-      .image(0, MAIN_ARCHITECTURE_OFFSET_Y, 'boulevard-main-architecture')
-      .setOrigin(0)
-      .setDisplaySize(WORLD_WIDTH, 1080)
-      .setDepth(3);
-
-    this.add
-      .image(0, GROUND_PLANE_OFFSET_Y, 'boulevard-sidewalk-street')
-      .setOrigin(0)
-      .setDisplaySize(WORLD_WIDTH, 1080)
-      .setDepth(10);
-
-    this.add
-      .image(90, 650 + GROUND_PLANE_OFFSET_Y, 'hollywood-palm')
-      .setOrigin(0.5, 1)
-      .setScale(0.8)
-      .setDepth(8);
-    this.add
-      .image(WORLD_WIDTH - 95, 650 + GROUND_PLANE_OFFSET_Y, 'hollywood-palm')
-      .setOrigin(0.5, 1)
-      .setScale(0.9)
-      .setFlipX(true)
-      .setDepth(8);
-
-    this.add
-      .image(935, 654 + GROUND_PLANE_OFFSET_Y, 'hollywood-streetlamp')
-      .setOrigin(0.5, 1)
-      .setScale(0.74)
-      .setDepth(14);
-    this.add
-      .image(2035, 654 + GROUND_PLANE_OFFSET_Y, 'hollywood-streetlamp')
-      .setOrigin(0.5, 1)
-      .setScale(0.74)
-      .setFlipX(true)
-      .setDepth(14);
-
-    this.add
-      .image(685, 862 + GROUND_PLANE_OFFSET_Y, 'hollywood-sedan')
-      .setOrigin(0.5, 1)
-      .setScale(0.5)
-      .setDepth(24);
-
-    const boardingSignCenterY = BOARDING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
-    this.createSignGlow(BOARDING_SIGN_X, boardingSignCenterY);
-    this.createHangingSign(BOARDING_SIGN_X, boardingSignCenterY, 'BOARDING\nHOUSE');
-
-    const signCenterY = CASTING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
-    this.createSignGlow(CASTING_SIGN_X, signCenterY);
-    this.createHangingSign(CASTING_SIGN_X, signCenterY, 'SUNSET\nCASTING\nEXCHANGE');
-
-    const dinerSignCenterY = DINER_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
-    this.createSignGlow(DINER_SIGN_X, dinerSignCenterY);
-    this.createHangingSign(DINER_SIGN_X, dinerSignCenterY, 'SUNSET\nDINER');
-
-    const backlotSignCenterY = BACKLOT_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
-    this.createSignGlow(BACKLOT_SIGN_X, backlotSignCenterY);
-    this.createHangingSign(BACKLOT_SIGN_X, backlotSignCenterY, 'BACKLOT\nGATE');
-
-    const extrasSignCenterY = EXTRAS_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
-    this.createSignGlow(EXTRAS_SIGN_X, extrasSignCenterY);
-    this.createHangingSign(EXTRAS_SIGN_X, extrasSignCenterY, 'EXTRAS\nCORRAL');
+    for (const location of this.manifest.locations) {
+      this.createSignGlow(location.sign.x, location.sign.y);
+      this.createHangingSign(location.sign);
+    }
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add
@@ -344,18 +259,21 @@ export class BoulevardSpikeScene extends Phaser.Scene {
    * rivets — mounted above an interactable location's door. Originally
    * built for the casting office alone; generalized in round 14 to also
    * mark the diner, reusing the same background art rather than adding
-   * new location-specific assets. */
-  private createHangingSign(x: number, y: number, label: string): void {
-    const width = 210;
-    const height = 130;
+   * new location-specific assets. Text, board size/color, and font size
+   * now come from the location's manifest entry; the rivet/frame trim
+   * colors and glow stay fixed, matching the Art Director tool's "text +
+   * basic style" scope for signs. */
+  private createHangingSign(sign: BoulevardSign): void {
+    const { x, y, boardWidth: width, boardHeight: height } = sign;
     const left = x - width / 2;
     const top = y - height / 2;
     const inset = 9;
+    const boardColor = Phaser.Display.Color.HexStringToColor(sign.boardColor).color;
 
     const frame = this.add.graphics().setDepth(4.5);
     frame.fillStyle(0x120c08, 0.35);
     frame.fillRoundedRect(left + 4, top + 6, width, height, 8);
-    frame.fillStyle(0x241609, 1);
+    frame.fillStyle(boardColor, 1);
     frame.fillRoundedRect(left, top, width, height, 8);
     frame.fillStyle(0x40270f, 1);
     frame.fillRoundedRect(left + inset, top + inset, width - inset * 2, height - inset * 2, 5);
@@ -381,10 +299,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
 
     this.add
-      .text(x, y, label, {
-        color: '#f3dfab',
+      .text(x, y, sign.text, {
+        color: sign.textColor,
         fontFamily: 'Georgia, serif',
-        fontSize: '19px',
+        fontSize: `${sign.fontSize}px`,
         fontStyle: 'bold',
         letterSpacing: 2,
         align: 'center',
@@ -403,10 +321,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       repeat: -1,
     });
     this.playerShadow = this.add
-      .ellipse(DEFAULT_PLAYER_X, GROUND_Y + 18, 112, 22, 0x160f0c, 0.27)
+      .ellipse(DEFAULT_PLAYER_X, this.groundY + 18, 112, 22, 0x160f0c, 0.27)
       .setDepth(28);
     this.player = this.add
-      .sprite(DEFAULT_PLAYER_X, GROUND_Y + 22, 'aspiring-actor', 0)
+      .sprite(DEFAULT_PLAYER_X, this.groundY + 22, 'aspiring-actor', 0)
       .setOrigin(0.5, 1)
       .setScale(0.42)
       .setDepth(30);
@@ -423,10 +341,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   private readonly restoreState = (state: CareerState): void => {
     const migratedX =
-      state.playerX > WORLD_WIDTH
-        ? Math.round((state.playerX / LEGACY_WORLD_WIDTH) * WORLD_WIDTH)
+      state.playerX > this.worldWidth
+        ? Math.round((state.playerX / LEGACY_WORLD_WIDTH) * this.worldWidth)
         : state.playerX;
-    this.player.x = Phaser.Math.Clamp(migratedX, 110, WORLD_WIDTH - 110);
+    this.player.x = Phaser.Math.Clamp(migratedX, 110, this.worldWidth - 110);
     this.playerShadow.x = this.player.x;
     this.careerState = state;
     this.cameras.main.centerOn(this.player.x, this.player.y);
