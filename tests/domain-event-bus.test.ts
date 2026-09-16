@@ -15,11 +15,12 @@ describe('domain event bus', () => {
     const bus = new DomainEventBus();
     const first = vi.fn();
     const second = vi.fn();
+    const payload = { visible: true, label: 'Enter casting office' };
     bus.on('interaction-proximity-changed', first);
     bus.on('interaction-proximity-changed', second);
-    bus.emit('interaction-proximity-changed', true);
-    expect(first).toHaveBeenCalledWith(true);
-    expect(second).toHaveBeenCalledWith(true);
+    bus.emit('interaction-proximity-changed', payload);
+    expect(first).toHaveBeenCalledWith(payload);
+    expect(second).toHaveBeenCalledWith(payload);
   });
 
   it('never delivers to listeners on a different event name', () => {
@@ -35,7 +36,7 @@ describe('domain event bus', () => {
     const listener = vi.fn();
     const unsubscribe = bus.on('interaction-proximity-changed', listener);
     unsubscribe();
-    bus.emit('interaction-proximity-changed', true);
+    bus.emit('interaction-proximity-changed', { visible: true, label: 'Enter casting office' });
     expect(listener).not.toHaveBeenCalled();
   });
 
@@ -44,7 +45,7 @@ describe('domain event bus', () => {
     const listener = vi.fn();
     bus.on('interaction-proximity-changed', listener);
     bus.off('interaction-proximity-changed', listener);
-    bus.emit('interaction-proximity-changed', true);
+    bus.emit('interaction-proximity-changed', { visible: true, label: 'Enter casting office' });
     expect(listener).not.toHaveBeenCalled();
   });
 });

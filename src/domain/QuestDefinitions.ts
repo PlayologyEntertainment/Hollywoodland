@@ -4,6 +4,28 @@ import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipD
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
 
+/** Debug content for round 14's second social hub (see DialogueGraphs.ts's
+ * `DINER_DIALOGUE`) — the diner-confidant roster entry's first content,
+ * eight rounds after RelationshipDefinitions.ts introduced the full nine-
+ * character debug roster. A deliberately low-stakes, no-resource-cost
+ * counterpart to First Audition's professional stakes. */
+export const DINER_INTRODUCTIONS_QUEST: QuestDef = {
+  id: 'diner-introductions',
+  title: 'Diner Introductions',
+  summary: 'Get to know the counter girl at the Sunset Diner.',
+  stages: [
+    { id: 'introduced', description: 'Introduce yourself at the counter.' },
+    {
+      id: 'earned-trust',
+      description: 'Get her to open up.',
+      rewards: [
+        { kind: 'resource-delta', delta: { reputation: 3 } },
+        { kind: 'xp-grant', amount: 15 },
+      ],
+    },
+  ],
+};
+
 /** Debug content for the Phase 2 quest-graph spike, wired entirely through
  * the casting-office dialogue (see DialogueGraphs.ts) rather than any new
  * UI or domain event. Character names remain Owner-approval-required per
@@ -61,6 +83,6 @@ export const SCREEN_TEST_QUEST: QuestDef = {
   ],
 };
 
-export const ALL_QUESTS: readonly QuestDef[] = [FIRST_AUDITION_QUEST, SCREEN_TEST_QUEST];
+export const ALL_QUESTS: readonly QuestDef[] = [FIRST_AUDITION_QUEST, SCREEN_TEST_QUEST, DINER_INTRODUCTIONS_QUEST];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

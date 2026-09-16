@@ -21,9 +21,15 @@ const MAIN_ARCHITECTURE_OFFSET_Y = -117;
 const GROUND_PLANE_OFFSET_Y = 430;
 const GROUND_Y = 626 + GROUND_PLANE_OFFSET_Y;
 const WALK_SPEED = 390;
+const INTERACTION_RADIUS = 205;
 const CASTING_OFFICE_X = 1675;
 const CASTING_SIGN_X = 1805;
 const CASTING_SIGN_Y = 707;
+const CASTING_PROMPT_LABEL = 'Enter casting office';
+const DINER_X = 2500;
+const DINER_SIGN_X = 2630;
+const DINER_SIGN_Y = 707;
+const DINER_PROMPT_LABEL = 'Enter Sunset Diner';
 
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
@@ -34,6 +40,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private playerShadow!: Phaser.GameObjects.Ellipse;
   private atmosphericTweens: Phaser.Tweens.Tween[] = [];
   private promptVisible = false;
+  private promptLabel = '';
   private unsubscribers: Array<() => void> = [];
   private stateClock = 0;
 
@@ -131,14 +138,22 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.player.setFrame(0);
     }
 
-    const nearCasting = Math.abs(this.player.x - CASTING_OFFICE_X) < 205;
-    if (nearCasting !== this.promptVisible) {
-      this.promptVisible = nearCasting;
-      this.domainEvents.emit('interaction-proximity-changed', nearCasting);
+    const nearCasting = Math.abs(this.player.x - CASTING_OFFICE_X) < INTERACTION_RADIUS;
+    const nearDiner = Math.abs(this.player.x - DINER_X) < INTERACTION_RADIUS;
+    const label = nearCasting ? CASTING_PROMPT_LABEL : nearDiner ? DINER_PROMPT_LABEL : '';
+    const visible = label.length > 0;
+    if (visible !== this.promptVisible || label !== this.promptLabel) {
+      this.promptVisible = visible;
+      this.promptLabel = label;
+      this.domainEvents.emit('interaction-proximity-changed', { visible, label });
     }
-    if (nearCasting && this.inputController.consumePress('interact')) {
-      this.careerState = enterCastingOffice(this.careerState);
-      this.domainEvents.emit('casting-office-entered', undefined);
+    if (visible && this.inputController.consumePress('interact')) {
+      if (nearCasting) {
+        this.careerState = enterCastingOffice(this.careerState);
+        this.domainEvents.emit('casting-office-entered', undefined);
+      } else {
+        this.domainEvents.emit('diner-entered', undefined);
+      }
       this.emitState();
     }
 
@@ -214,23 +229,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       .setDepth(24);
 
     const signCenterY = CASTING_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
-    const castingGlow = this.add
-      .ellipse(CASTING_SIGN_X, signCenterY, 170, 175, 0xffc95f, 0.07)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setDepth(4);
-    this.atmosphericTweens.push(
-      this.tweens.add({
-        targets: castingGlow,
-        alpha: { from: 0.035, to: 0.11 },
-        scaleX: { from: 0.96, to: 1.04 },
-        duration: 1900,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      }),
-    );
+    this.createSignGlow(CASTING_SIGN_X, signCenterY);
+    this.createHangingSign(CASTING_SIGN_X, signCenterY, 'SUNSET\nCASTING\nEXCHANGE');
 
-    this.createCastingOfficeSign(CASTING_SIGN_X, signCenterY);
+    const dinerSignCenterY = DINER_SIGN_Y + MAIN_ARCHITECTURE_OFFSET_Y;
+    this.createSignGlow(DINER_SIGN_X, dinerSignCenterY);
+    this.createHangingSign(DINER_SIGN_X, dinerSignCenterY, 'SUNSET\nDINER');
 
     for (let index = 0; index < 22; index += 1) {
       const mote = this.add
@@ -255,9 +259,33 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     vignette.lineStyle(100, 0x261713, 0.12).strokeRect(-32, -32, 1984, 1144);
   }
 
+  /** The soft pulsing glow behind a hanging sign — factored out once round
+   * 14 added a second interactable location reusing the casting office's
+   * original one-off effect. */
+  private createSignGlow(x: number, y: number): void {
+    const glow = this.add
+      .ellipse(x, y, 170, 175, 0xffc95f, 0.07)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(4);
+    this.atmosphericTweens.push(
+      this.tweens.add({
+        targets: glow,
+        alpha: { from: 0.035, to: 0.11 },
+        scaleX: { from: 0.96, to: 1.04 },
+        duration: 1900,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      }),
+    );
+  }
+
   /** A hand-drawn hanging sign board — frame, inset panel, and corner
-   * rivets — mounted directly above the casting office door. */
-  private createCastingOfficeSign(x: number, y: number): void {
+   * rivets — mounted above an interactable location's door. Originally
+   * built for the casting office alone; generalized in round 14 to also
+   * mark the diner, reusing the same background art rather than adding
+   * new location-specific assets. */
+  private createHangingSign(x: number, y: number, label: string): void {
     const width = 210;
     const height = 130;
     const left = x - width / 2;
@@ -293,7 +321,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
 
     this.add
-      .text(x, y, 'SUNSET\nCASTING\nEXCHANGE', {
+      .text(x, y, label, {
         color: '#f3dfab',
         fontFamily: 'Georgia, serif',
         fontSize: '19px',
