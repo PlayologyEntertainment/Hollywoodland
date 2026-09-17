@@ -110,7 +110,7 @@
       <div id="slot-list-props" style="flex:1; overflow-y:auto;"></div>
     </div>
     <div id="location-sidebar-body" style="display:none; flex-direction:column; min-height:0; flex:1;">
-      <div class="group-heading">Interactable locations (5, fixed)</div>
+      <div class="group-heading">Interactable locations (fixed)</div>
       <div id="location-list" style="flex:1; overflow-y:auto;"></div>
     </div>
     <div id="layout-sidebar-body" style="display:none; flex-direction:column; min-height:0; flex:1; overflow-y:auto;">
@@ -1158,6 +1158,24 @@
       }
 
       const isSelectedMarker = activeLayoutType === 'location' && activeLayoutId === loc.id;
+
+      // The interaction radius's fall-off, drawn true-to-scale so an edit
+      // to the radius field is visible at a glance instead of only being
+      // confirmable by walking up to it in the game. The real check
+      // (BoulevardSpikeScene's update()) is `Math.abs(player.x - loc.x) <
+      // loc.radius` — 1D, since the player never leaves the ground line —
+      // so this circle's width at the ground line is the actual trigger
+      // zone; its height is just what makes a radius readable at a glance.
+      ctx.beginPath();
+      ctx.arc(loc.x, manifest.groundY, loc.radius, 0, Math.PI * 2);
+      ctx.fillStyle = isSelectedMarker ? 'rgba(95,224,160,0.14)' : 'rgba(201,144,63,0.08)';
+      ctx.fill();
+      ctx.setLineDash([6, 5]);
+      ctx.strokeStyle = isSelectedMarker ? 'rgba(95,224,160,0.75)' : 'rgba(201,144,63,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
       ctx.beginPath();
       ctx.arc(loc.x, manifest.groundY, 12, 0, Math.PI * 2);
       ctx.fillStyle = isSelectedMarker ? '#5fe0a0' : 'rgba(201,144,63,0.8)';

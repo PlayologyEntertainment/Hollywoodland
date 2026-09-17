@@ -2,9 +2,14 @@
 
 How to move, restyle, and re-art the Hollywood Boulevard scene — its five
 parallax planes, its foreground props (palms, streetlamps, the sedan), and
-the five interactable locations along it (position, interaction radius,
-prompt text, and hanging-sign wording/style) — and see the change land in
-the running game, with no prompting and no code change.
+the interactable locations along it (position, interaction radius, prompt
+text, and hanging-sign wording/style) — and see the change land in the
+running game, with no prompting and no code change.
+
+Saved edits take effect the next time you (re-)start or continue a career
+from the main menu — the game re-fetches the manifest at that point, even
+in a tab that's been open the whole time. It does *not* hot-reload while
+you're already mid-play; back out to the menu first.
 
 Modeled on Otaku Palace's Art Director tool, adapted for the fact that
 Hollywoodland's Boulevard is a Phaser canvas scene, not a DOM/React screen:
@@ -103,15 +108,16 @@ scene with a missing texture until you save new art, since (unlike Otaku
 Palace's optional UI chrome) every plane is required for the scene to
 render.
 
-## 4. Locations mode — the five interactable points
+## 4. Locations mode — the interactable points
 
-The sidebar lists the Boulevard's five fixed interactable locations
-(boarding house, casting office, diner, backlot gate, extras corral). This
-version of the tool only lets you edit these five — adding a sixth location
-that does something new still needs a domain event wired into
-`BoulevardSpikeScene.ts`'s `enterLocation()` switch, the same "wired vs
-reserved" honesty Otaku Palace's tool uses for slots that aren't rendered
-by any component yet.
+The sidebar lists the Boulevard's fixed interactable locations (boarding
+house, casting office, diner, backlot gate, extras corral, soundstage, and
+any added since). This tool only lets you edit the ones that already
+exist — adding a new one that does something new still needs a domain
+event wired into `BoulevardSpikeScene.ts`'s `enterLocation()` switch (and
+its id added to `BoulevardLocationId`/`LOCATION_IDS` in
+`BoulevardManifest.ts`), the same "wired vs reserved" honesty Otaku
+Palace's tool uses for slots that aren't rendered by any component yet.
 
 Selecting one shows:
 
@@ -131,7 +137,8 @@ fires) aren't editable — same reasoning as above.
 ### Save
 
 **Save to project** writes the location's fields straight into
-`public/data/boulevard-manifest.json`. Refresh the game to see the change.
+`public/data/boulevard-manifest.json`. Back out to the main menu and
+start/continue a career in the game to see the change.
 
 ## 5. Layout mode — live drag
 
@@ -159,6 +166,12 @@ something the game ever shows.
   draggable — click one on the canvas (or in the sidebar) and drag. A
   location marker only moves horizontally (locations live on the ground
   line, not at an arbitrary height), so its Y field is disabled.
+- Every location marker is ringed by a translucent, true-to-scale circle
+  showing its **interaction radius** — the field is still a typed number
+  (not draggable itself), but the circle updates the moment you move the
+  marker or edit the radius field elsewhere, so you can see at a glance
+  whether an edit actually changed anything instead of only being able to
+  confirm it by walking up to it in the game.
 - **Planes** cover the entire canvas, so clicking one on the canvas would
   always just select whichever plane happens to be on top — pick a plane
   from the sidebar first, then drag anywhere on the canvas to nudge its
@@ -172,8 +185,8 @@ something the game ever shows.
 
 Dragging only updates positions in memory — nothing touches disk until you
 click **Save to project**, which writes the whole manifest in one shot
-(Layout mode never touches art files, only position numbers). Refresh the
-game to see the change.
+(Layout mode never touches art files, only position numbers). Back out to
+the main menu and start/continue a career in the game to see the change.
 
 ## 6. The preview pane
 
