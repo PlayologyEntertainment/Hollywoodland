@@ -30,14 +30,30 @@ track({ name: 'session_started' });
 
 /** Creates the Phaser game on first call — deferred until the player enters
  * play so the Main Menu shows the static concept art instead of live
- * gameplay — and reuses it on every later call (e.g. returning to the menu
- * and starting again). A state to restore is only meaningful on the first
- * call: it seeds the scene's initial create() directly, since there is no
- * already-booted scene yet to safely target with an event. */
+ * gameplay — and reuses the same Phaser.Game on every later call (e.g.
+ * returning to the menu and starting again), rather than tearing down and
+ * recreating the whole engine.
+ *
+ * Every call past the first re-runs BoulevardBootScene from scratch (see
+ * that scene for why it's safe to run more than once), rather than just
+ * poking the already-running BoulevardSpikeScene with a
+ * 'restore-career-state' event — otherwise a manifest edit made through
+ * the Art Director tool while this tab stayed open would never take
+ * effect without a full page reload, since the tab's first boot is the
+ * only time the manifest would ever get fetched. Seeding
+ * `initialCareerState` in the registry before restarting reuses the exact
+ * same restore path the scene's own create() already has for its first
+ * boot, so there's one code path for "start with this state" rather than
+ * a special case per call site. */
 function ensureGame(initialState?: CareerState): ReturnType<typeof createGame> {
   if (game === undefined) {
     game = createGame({ input, settings, domainEvents, ...(initialState !== undefined ? { initialState } : {}) });
     domainEvents.on('career-state-changed', (state) => { latestState = state; });
+  } else {
+    if (initialState !== undefined) game.registry.set('initialCareerState', initialState);
+    else game.registry.remove('initialCareerState');
+    game.scene.stop('BoulevardSpikeScene');
+    game.scene.start('BoulevardBootScene');
   }
   return game;
 }
@@ -70,7 +86,6 @@ const shell = new AppShell({
     startedAt = performance.now();
     input.setGameplayActive(true);
     if (isFirstStart) track({ name: 'foundation_entered' });
-    if (state !== undefined && !isFirstStart) domainEvents.emit('restore-career-state', state);
     return activeGame;
   },
   onStop: () => input.setGameplayActive(false),
