@@ -31,14 +31,28 @@ interface LocationSceneArt {
  * background with a character portrait overlaid on top, composited in
  * openDialogue()/applySceneArt(). Only populated for locations with
  * approved runtime art (see docs/CONTENT_AND_ASSET_PIPELINE.md's approval
- * gates) — casting-office is the first, built as the one-off example for
- * Owner approval before the remaining five locations get the same
- * treatment. A location with no entry here falls back to the plain
- * text-only dialogue card. */
+ * gates). The soundstage has no location art yet, so scene-partner
+ * dialogue keeps the plain text-only dialogue card for now. */
 const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   'casting-office': {
     background: assetUrl('assets/locations/casting-office.webp'),
     character: { src: assetUrl('assets/characters/casting-gatekeeper.webp'), alt: 'The casting-office clerk' },
+  },
+  'boarding-house': {
+    background: assetUrl('assets/locations/boarding-house.webp'),
+    character: { src: assetUrl('assets/characters/landlady.webp'), alt: 'The boarding-house landlady' },
+  },
+  diner: {
+    background: assetUrl('assets/locations/diner.webp'),
+    character: { src: assetUrl('assets/characters/diner-confidant.webp'), alt: 'The counter girl at the Sunset Diner' },
+  },
+  'backlot-gate': {
+    background: assetUrl('assets/locations/backlot-gate.webp'),
+    character: { src: assetUrl('assets/characters/rival.webp'), alt: 'The rival at the backlot gate' },
+  },
+  'extras-corral': {
+    background: assetUrl('assets/locations/extras-corral.webp'),
+    character: { src: assetUrl('assets/characters/production-coordinator.webp'), alt: 'The production coordinator' },
   },
 };
 
