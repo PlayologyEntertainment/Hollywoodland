@@ -1,3 +1,4 @@
+import type { AssignmentResolution } from './Assignments';
 import type { CareerState } from './CareerState';
 import type { DialogueChoiceSelectedPayload } from './Dialogue';
 import type { AuditionChoices, AuditionResult } from './Performance';
@@ -22,6 +23,19 @@ export interface AuditionResolvedPayload {
   readonly result: AuditionResult;
 }
 
+/** Fired instead of `boarding-house-entered` (which it replaces): opening
+ * the Home Hub screen needs to know whether an idle assignment finished
+ * while the player was away, so the scene resolves it and reports the
+ * outcome (`undefined` when nothing was pending or nothing was due yet)
+ * rather than the shell re-deriving it from state. */
+export interface HomeHubEnteredPayload {
+  readonly resolution: AssignmentResolution | undefined;
+}
+
+export interface AssignmentStartRequestedPayload {
+  readonly assignmentId: string;
+}
+
 export interface DomainEventMap {
   readonly 'career-state-changed': CareerState;
   readonly 'restore-career-state': CareerState;
@@ -29,7 +43,7 @@ export interface DomainEventMap {
   readonly 'interaction-proximity-changed': InteractionProximityChangedPayload;
   readonly 'casting-office-entered': undefined;
   readonly 'diner-entered': undefined;
-  readonly 'boarding-house-entered': undefined;
+  readonly 'home-hub-entered': HomeHubEnteredPayload;
   readonly 'backlot-gate-entered': undefined;
   readonly 'extras-corral-entered': undefined;
   readonly 'soundstage-entered': undefined;
@@ -38,6 +52,8 @@ export interface DomainEventMap {
   readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;
   readonly 'audition-submitted': AuditionSubmittedPayload;
   readonly 'audition-resolved': AuditionResolvedPayload;
+  readonly 'assignment-start-requested': AssignmentStartRequestedPayload;
+  readonly 'housing-upgrade-requested': undefined;
 }
 
 type DomainEventListener<K extends keyof DomainEventMap> = (payload: DomainEventMap[K]) => void;

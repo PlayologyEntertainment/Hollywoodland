@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
 
 import type { BoulevardManifest, BoulevardSign } from '../BoulevardManifest';
-import { enterCastingOffice, advanceTime } from '../../domain/CareerActions';
+import { getAssignmentById, resolveActiveAssignment, startAssignment } from '../../domain/Assignments';
+import { ALL_ASSIGNMENTS } from '../../domain/AssignmentDefinitions';
+import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
-import type { AuditionSubmittedPayload, DomainEventBus } from '../../domain/DomainEventBus';
+import type { AssignmentStartRequestedPayload, AuditionSubmittedPayload, DomainEventBus } from '../../domain/DomainEventBus';
 import { ALL_ITEMS } from '../../domain/InventoryDefinitions';
 import { applyAuditionOutcome, resolveAudition } from '../../domain/Performance';
 import { getAuditionById } from '../../domain/PerformanceDefinitions';
@@ -114,6 +116,8 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('dialogue-choice-selected', this.onDialogueChoiceSelected),
       this.domainEvents.on('talent-unlock-requested', this.onTalentUnlockRequested),
       this.domainEvents.on('audition-submitted', this.onAuditionSubmitted),
+      this.domainEvents.on('assignment-start-requested', this.onAssignmentStartRequested),
+      this.domainEvents.on('housing-upgrade-requested', this.onHousingUpgradeRequested),
     ];
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const unsubscribe of this.unsubscribers) unsubscribe();
@@ -169,9 +173,19 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   private enterLocation(id: string): void {
     switch (id) {
-      case 'boarding-house':
-        this.domainEvents.emit('boarding-house-entered', undefined);
+      case 'boarding-house': {
+        // Unlike the other cases below, this resolves any due idle
+        // assignment and refreshes state *before* announcing the location,
+        // so the Home Hub screen (which reacts to 'home-hub-entered') has
+        // an already-up-to-date career state — including any reward just
+        // applied — rather than the stale snapshot the shell would
+        // otherwise hold until this frame's trailing emitState() call.
+        const { state, resolution } = resolveActiveAssignment(this.careerState, ALL_ASSIGNMENTS, ALL_RELATIONSHIP_CHARACTERS, Date.now());
+        this.careerState = state;
+        this.emitState();
+        this.domainEvents.emit('home-hub-entered', { resolution });
         return;
+      }
       case 'casting-office':
         this.careerState = enterCastingOffice(this.careerState);
         this.domainEvents.emit('casting-office-entered', undefined);
@@ -386,6 +400,18 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const talent = getTalentById(payload.talentId);
     if (talent === undefined) return;
     this.careerState = unlockTalent(this.careerState, talent);
+    this.emitState();
+  };
+
+  private readonly onAssignmentStartRequested = (payload: AssignmentStartRequestedPayload): void => {
+    const definition = getAssignmentById(ALL_ASSIGNMENTS, payload.assignmentId);
+    if (definition === undefined) return;
+    this.careerState = startAssignment(this.careerState, definition, Date.now());
+    this.emitState();
+  };
+
+  private readonly onHousingUpgradeRequested = (): void => {
+    this.careerState = purchaseHousingUpgrade(this.careerState);
     this.emitState();
   };
 
