@@ -31,8 +31,7 @@ interface LocationSceneArt {
  * background with a character portrait overlaid on top, composited in
  * openDialogue()/applySceneArt(). Only populated for locations with
  * approved runtime art (see docs/CONTENT_AND_ASSET_PIPELINE.md's approval
- * gates). The soundstage has no location art yet, so scene-partner
- * dialogue keeps the plain text-only dialogue card for now. */
+ * gates). */
 const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   'casting-office': {
     background: assetUrl('assets/locations/casting-office.webp'),
@@ -53,6 +52,10 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   'extras-corral': {
     background: assetUrl('assets/locations/extras-corral.webp'),
     character: { src: assetUrl('assets/characters/production-coordinator.webp'), alt: 'The production coordinator' },
+  },
+  soundstage: {
+    background: assetUrl('assets/locations/soundstage.webp'),
+    character: { src: assetUrl('assets/characters/scene-partner.webp'), alt: 'The scene partner' },
   },
 };
 
