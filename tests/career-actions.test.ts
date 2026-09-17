@@ -5,9 +5,10 @@ import {
   CASTING_OFFICE_ENERGY_COST,
   CASTING_OFFICE_REPUTATION_GAIN,
   enterCastingOffice,
+  purchaseHousingUpgrade,
   WAIT_ENERGY_RESTORE,
 } from '../src/domain/CareerActions';
-import { createDefaultCareerState } from '../src/domain/CareerState';
+import { createDefaultCareerState, type CareerState } from '../src/domain/CareerState';
 
 describe('career actions', () => {
   it('charges energy and grants reputation on the first casting-office visit', () => {
@@ -35,5 +36,29 @@ describe('career actions', () => {
   it('rolls the day over when waiting through evening', () => {
     const state = { ...createDefaultCareerState(), time: { day: 1, slot: 'evening' as const } };
     expect(advanceTime(state).time).toEqual({ day: 2, slot: 'morning' });
+  });
+
+  it('does not upgrade housing without enough money', () => {
+    const state = createDefaultCareerState();
+    expect(purchaseHousingUpgrade(state)).toBe(state);
+  });
+
+  it('upgrades housing and spends the cost when affordable', () => {
+    const state: CareerState = {
+      ...createDefaultCareerState(),
+      resources: { ...createDefaultCareerState().resources, money: 150 },
+    };
+    const next = purchaseHousingUpgrade(state);
+    expect(next.housing.tier).toBe('apartment');
+    expect(next.resources.money).toBe(0);
+  });
+
+  it('does not upgrade past the top housing tier', () => {
+    const state: CareerState = {
+      ...createDefaultCareerState(),
+      housing: { tier: 'mansion' },
+      resources: { ...createDefaultCareerState().resources, money: 999_999 },
+    };
+    expect(purchaseHousingUpgrade(state)).toBe(state);
   });
 });

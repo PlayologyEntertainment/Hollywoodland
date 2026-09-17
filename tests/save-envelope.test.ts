@@ -115,6 +115,24 @@ describe('save envelope', () => {
     expect(migrated.state.playerX).toBe(v5State.playerX);
   });
 
+  it('migrates a legacy v6 save (no housing or assignments) into the current shape', () => {
+    const { housing: _housing, assignments: _assignments, ...v6State } = createDefaultCareerState();
+    const legacy = {
+      schemaVersion: 6,
+      contentVersion: 'phase-2-core-systems',
+      saveId: 'v6-save',
+      label: 'Hollywood Boulevard',
+      savedAt: '2026-09-16T00:00:00.000Z',
+      playtimeSeconds: 50,
+      state: v6State,
+    };
+    const migrated = migrateSaveEnvelope(legacy);
+    expect(migrated.schemaVersion).toBe(SAVE_SCHEMA_VERSION);
+    expect(migrated.state.housing).toEqual(createDefaultCareerState().housing);
+    expect(migrated.state.assignments).toEqual(createDefaultCareerState().assignments);
+    expect(migrated.state.playerX).toBe(v6State.playerX);
+  });
+
   it('round-trips a migrated v1 save after re-serializing it', () => {
     const legacy = {
       schemaVersion: 1,

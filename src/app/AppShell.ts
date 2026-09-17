@@ -1,10 +1,13 @@
 import type Phaser from 'phaser';
 
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
+import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
+import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
 import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE, LANDLADY_DIALOGUE, PRODUCTION_COORDINATOR_DIALOGUE, RIVAL_DIALOGUE, SCENE_PARTNER_DIALOGUE } from '../domain/DialogueGraphs';
 import type { AuditionResolvedPayload, DomainEventBus } from '../domain/DomainEventBus';
+import { canAffordHousingUpgrade, HOUSING_TIERS, nextHousingTierDefinition } from '../domain/Housing';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
 import { deriveAttributes } from '../domain/Origins';
@@ -13,7 +16,7 @@ import { getAuditionById } from '../domain/PerformanceDefinitions';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { canUnlockTalent, isTalentUnlocked, xpRequiredForNextLevel, type ProgressionState, type TalentDefinition } from '../domain/Progression';
 import { getActiveStage, getQuestStatus } from '../domain/Quests';
-import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipLabel } from '../domain/Relationships';
+import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipDelta, type RelationshipLabel } from '../domain/Relationships';
 import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../domain/RelationshipDefinitions';
 import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
 import { weekdayForDay } from '../domain/TimeSystem';
@@ -114,6 +117,41 @@ function formatItemCategory(category: InventoryItemDefinition['category']): stri
   return category.split('-').map(capitalize).join(' ');
 }
 
+function formatAssignmentDuration(minutes: number): string {
+  const hours = minutes / 60;
+  return Number.isInteger(hours) ? `${hours}h` : `${minutes}m`;
+}
+
+function formatRelationshipDelta(delta: RelationshipDelta): string {
+  const parts: string[] = [];
+  if (delta.trust) parts.push(`${delta.trust > 0 ? '+' : ''}${delta.trust} trust`);
+  if (delta.tension) parts.push(`${delta.tension > 0 ? '+' : ''}${delta.tension} tension`);
+  if (delta.attraction) parts.push(`${delta.attraction > 0 ? '+' : ''}${delta.attraction} attraction`);
+  if (delta.obligation) parts.push(`${delta.obligation > 0 ? '+' : ''}${delta.obligation} obligation`);
+  return parts.join(', ');
+}
+
+/** Renders one assignment reward line for the "while you were away" summary
+ * card. `set-fact` has no player-facing text (it never appears in authored
+ * assignment content today, but the function stays total over
+ * `AssignmentReward` rather than assuming that). */
+function describeAssignmentReward(reward: AssignmentReward): string {
+  if (reward.kind === 'xp-grant') return `+${reward.amount} XP`;
+  if (reward.kind === 'resource-delta') {
+    const parts: string[] = [];
+    if (reward.delta.money) parts.push(`${reward.delta.money > 0 ? '+' : ''}$${reward.delta.money}`);
+    if (reward.delta.energy) parts.push(`${reward.delta.energy > 0 ? '+' : ''}${reward.delta.energy} energy`);
+    if (reward.delta.reputation) parts.push(`${reward.delta.reputation > 0 ? '+' : ''}${reward.delta.reputation} reputation`);
+    return parts.join(', ');
+  }
+  if (reward.kind === 'relationship-delta') {
+    const character = ALL_RELATIONSHIP_CHARACTERS.find((candidate) => candidate.id === reward.characterId);
+    return `${formatRelationshipDelta(reward.delta)} with ${character?.role ?? reward.characterId}`;
+  }
+  if (reward.kind === 'relationship-pivotal-flag') return 'A memory worth keeping.';
+  return '';
+}
+
 /** A locked talent names its blocker — a same-branch prerequisite, or
  * otherwise its point cost — rather than being omitted from the list the
  * way a locked quest is: a talent tree is the player's own plan for their
@@ -168,8 +206,8 @@ export class AppShell {
       this.openDialogue(DINER_DIALOGUE, 'Sunset Diner', 'diner');
       this.announce('You entered the Sunset Diner.');
     });
-    this.options.domainEvents.on('boarding-house-entered', () => {
-      this.openDialogue(LANDLADY_DIALOGUE, 'The Boarding House', 'boarding-house');
+    this.options.domainEvents.on('home-hub-entered', ({ resolution }) => {
+      this.openHomeHub(resolution);
       this.announce('You entered the boarding house.');
     });
     this.options.domainEvents.on('backlot-gate-entered', () => {
@@ -200,6 +238,16 @@ export class AppShell {
     assertElement('#audition-form', HTMLFormElement).addEventListener('submit', (event) => this.submitAudition(event));
     assertElement('#audition-continue', HTMLButtonElement).addEventListener('click', () => {
       assertElement('#audition-dialog', HTMLDialogElement).close();
+    });
+    assertElement('#home-hub-talk-landlady', HTMLButtonElement).addEventListener('click', () => {
+      assertElement('#home-hub-dialog', HTMLDialogElement).close();
+      this.openDialogue(LANDLADY_DIALOGUE, 'The Boarding House', 'boarding-house');
+    });
+    assertElement('#home-hub-close', HTMLButtonElement).addEventListener('click', () => {
+      assertElement('#home-hub-dialog', HTMLDialogElement).close();
+    });
+    assertElement('#home-hub-upgrade-housing', HTMLButtonElement).addEventListener('click', () => {
+      this.options.domainEvents.emit('housing-upgrade-requested', undefined);
     });
 
     newCareer.addEventListener('click', () => {
@@ -448,6 +496,8 @@ export class AppShell {
     this.renderRelationships(state);
     this.renderProgression(state);
     this.renderInventory(state);
+    this.renderHomeHubHousing(state);
+    this.renderHomeHubAssignments(state);
   }
 
   /** Locked quests are omitted entirely rather than shown as "???" —
@@ -564,6 +614,86 @@ export class AppShell {
     detail.textContent = item.description;
     listItem.append(summary, detail);
     return listItem;
+  }
+
+  /** Opens the Home Hub screen — the boarding house's "return home" screen
+   * (GDD: "schedule idle assignments, and advance the day") — separate from
+   * the landlady's own conversation, which stays reachable from inside it.
+   * `resolution` is `undefined` unless an idle assignment finished while the
+   * player was away, in which case it's shown once as a summary card. */
+  private openHomeHub(resolution: AssignmentResolution | undefined): void {
+    this.renderHomeHubAwaySummary(resolution);
+    assertElement('#home-hub-dialog', HTMLDialogElement).showModal();
+  }
+
+  private renderHomeHubAwaySummary(resolution: AssignmentResolution | undefined): void {
+    const section = assertElement('#home-hub-away-summary', HTMLElement);
+    if (resolution === undefined) {
+      section.hidden = true;
+      return;
+    }
+    section.hidden = false;
+    assertElement('#home-hub-away-headline', HTMLElement).textContent =
+      `${resolution.definition.title} finished while you were away (${formatAssignmentDuration(resolution.awayMinutes)}).`;
+    const list = assertElement('#home-hub-away-rewards', HTMLUListElement);
+    list.replaceChildren(
+      ...resolution.definition.rewards.map((reward) => {
+        const item = document.createElement('li');
+        item.textContent = describeAssignmentReward(reward);
+        return item;
+      }),
+    );
+  }
+
+  private renderHomeHubHousing(state: CareerState): void {
+    const tierLabel = HOUSING_TIERS.find((definition) => definition.tier === state.housing.tier)?.label ?? state.housing.tier;
+    assertElement('#home-hub-housing-tier', HTMLElement).textContent = `Currently: ${tierLabel}`;
+    const next = nextHousingTierDefinition(state.housing.tier);
+    const upgradeButton = assertElement('#home-hub-upgrade-housing', HTMLButtonElement);
+    if (next === undefined || next.upgradeCost === null) {
+      upgradeButton.hidden = true;
+      return;
+    }
+    upgradeButton.hidden = false;
+    upgradeButton.textContent = `Move to ${next.label} ($${next.upgradeCost})`;
+    const affordable = canAffordHousingUpgrade(state.housing, state.resources);
+    upgradeButton.disabled = !affordable;
+    upgradeButton.setAttribute('aria-disabled', String(!affordable));
+  }
+
+  /** Locked assignments (housing tier too low) are omitted entirely, the
+   * same posture `renderQuests` takes toward a locked quest. */
+  private renderHomeHubAssignments(state: CareerState): void {
+    const activeContainer = assertElement('#home-hub-active-assignment', HTMLElement);
+    const list = assertElement('#home-hub-assignment-list', HTMLUListElement);
+    const active = state.assignments.active;
+    if (active !== null) {
+      const definition = ALL_ASSIGNMENTS.find((candidate) => candidate.id === active.assignmentId);
+      activeContainer.hidden = false;
+      assertElement('#home-hub-active-assignment-label', HTMLElement).textContent =
+        definition !== undefined ? `In progress: ${definition.title} — check back later.` : 'In progress — check back later.';
+      list.replaceChildren();
+      return;
+    }
+    activeContainer.hidden = true;
+    const available = ALL_ASSIGNMENTS.filter((definition) => isAssignmentUnlocked(definition, state.housing));
+    list.replaceChildren(...available.map((definition) => this.buildAssignmentListItem(definition)));
+  }
+
+  private buildAssignmentListItem(definition: AssignmentDefinition): HTMLLIElement {
+    const item = document.createElement('li');
+    const summary = document.createElement('span');
+    summary.textContent = `${definition.title} (${formatAssignmentDuration(definition.durationMinutes)})`;
+    const detail = document.createElement('small');
+    detail.textContent = definition.description;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'Start';
+    button.addEventListener('click', () =>
+      this.options.domainEvents.emit('assignment-start-requested', { assignmentId: definition.id }),
+    );
+    item.append(summary, detail, button);
+    return item;
   }
 
   private async save(): Promise<void> {

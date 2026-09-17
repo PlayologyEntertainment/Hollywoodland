@@ -1,4 +1,5 @@
 import { applyResourceDelta } from './EconomySystem';
+import { canAffordHousingUpgrade, nextHousingTierDefinition, upgradeHousingTier } from './Housing';
 import { advanceTimeSlot } from './TimeSystem';
 import type { CareerState } from './CareerState';
 
@@ -28,5 +29,21 @@ export function advanceTime(state: CareerState): CareerState {
     ...state,
     time: advanceTimeSlot(state.time),
     resources: applyResourceDelta(state.resources, { energy: WAIT_ENERGY_RESTORE }),
+  };
+}
+
+/** No-ops when the player can't afford the next housing tier, or is already
+ * at the top one — the same defensive posture `unlockTalent` takes toward
+ * an unaffordable or already-maxed action. Spends the money and moves the
+ * tier marker in the same step, mirroring how `unlockTalent` spends a point
+ * and applies its attribute bonus together. */
+export function purchaseHousingUpgrade(state: CareerState): CareerState {
+  if (!canAffordHousingUpgrade(state.housing, state.resources)) return state;
+  const next = nextHousingTierDefinition(state.housing.tier);
+  if (next === undefined || next.upgradeCost === null) return state;
+  return {
+    ...state,
+    housing: upgradeHousingTier(state.housing),
+    resources: applyResourceDelta(state.resources, { money: -next.upgradeCost }),
   };
 }

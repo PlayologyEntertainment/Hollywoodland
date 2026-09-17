@@ -232,6 +232,38 @@
           </div>
         </dialog>
 
+        <dialog id="home-hub-dialog" aria-labelledby="home-hub-title" class="scene-dialog home-hub-dialog">
+          <div class="story-card home-hub-card">
+            <p class="eyebrow">The Boarding House</p>
+            <h2 id="home-hub-title">Home</h2>
+
+            <section id="home-hub-away-summary" class="home-hub-away-summary" hidden>
+              <h3>While You Were Away</h3>
+              <p id="home-hub-away-headline"></p>
+              <ul id="home-hub-away-rewards"></ul>
+            </section>
+
+            <section class="home-hub-housing">
+              <h3>Your Place</h3>
+              <p id="home-hub-housing-tier"></p>
+              <button id="home-hub-upgrade-housing" type="button" hidden></button>
+            </section>
+
+            <section class="home-hub-assignments">
+              <h3>Assignments</h3>
+              <p id="home-hub-active-assignment" hidden>
+                <span id="home-hub-active-assignment-label"></span>
+              </p>
+              <ul id="home-hub-assignment-list" class="home-hub-assignment-list"></ul>
+            </section>
+
+            <div class="home-hub-actions">
+              <button id="home-hub-talk-landlady" type="button">Talk to the Landlady</button>
+              <button id="home-hub-close" type="button" class="primary-button">Leave</button>
+            </div>
+          </div>
+        </dialog>
+
         <dialog id="settings-dialog" aria-labelledby="settings-title">
           <form method="dialog" class="settings-form">
             <div class="drawer-heading"><h2 id="settings-title">Settings &amp; Accessibility</h2><button value="cancel" aria-label="Close settings">×</button></div>

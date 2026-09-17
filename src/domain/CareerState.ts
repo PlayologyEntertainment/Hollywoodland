@@ -1,5 +1,7 @@
 import { DEFAULT_ATTRIBUTES, type AttributesState } from './Origins';
+import { DEFAULT_ASSIGNMENTS, type ActiveAssignmentState, type AssignmentsState } from './Assignments';
 import { DEFAULT_RESOURCES, type ResourcesState } from './EconomySystem';
+import { DEFAULT_HOUSING, type HousingState, type HousingTier } from './Housing';
 import { DEFAULT_INVENTORY, type InventoryState } from './Inventory';
 import { DEFAULT_PROGRESSION, type ProgressionState } from './Progression';
 import { DEFAULT_RELATIONSHIPS, type RelationshipAxes, type RelationshipState } from './Relationships';
@@ -54,6 +56,13 @@ export interface CareerState {
    * domain/InventoryDefinitions.ts. Lazily populated like `relationships` —
    * an absent id simply hasn't been earned yet. */
   readonly inventory: InventoryState;
+  /** Housing tier (round N): gates which idle/offline assignments are
+   * available — see domain/Assignments.ts. */
+  readonly housing: HousingState;
+  /** The single scheduled idle/offline assignment, if any (round N). One at
+   * a time for now; a later housing tier could raise this to multiple
+   * concurrent slots without changing this field's shape. */
+  readonly assignments: AssignmentsState;
 
   // Quest graph progress (round 3) deliberately does NOT get its own field
   // here — it's tracked through `facts` (see domain/Quests.ts), the same
@@ -73,6 +82,8 @@ export function createInitialCareerState(identity: IdentityState, attributes: At
     relationships: DEFAULT_RELATIONSHIPS,
     progression: DEFAULT_PROGRESSION,
     inventory: DEFAULT_INVENTORY,
+    housing: DEFAULT_HOUSING,
+    assignments: DEFAULT_ASSIGNMENTS,
   };
 }
 
@@ -196,6 +207,31 @@ function isInventoryState(value: unknown): value is InventoryState {
   );
 }
 
-export function isCareerStateShape(value: unknown): value is CareerState {
+const HOUSING_TIERS: readonly HousingTier[] = ['room', 'apartment', 'bungalow', 'mansion'];
+
+function isHousingState(value: unknown): value is HousingState {
+  return isRecord(value) && HOUSING_TIERS.includes(value.tier as HousingTier);
+}
+
+function isActiveAssignmentState(value: unknown): value is ActiveAssignmentState {
+  return isRecord(value) && typeof value.assignmentId === 'string' && typeof value.startedAtMs === 'number';
+}
+
+function isAssignmentsState(value: unknown): value is AssignmentsState {
+  return isRecord(value) && (value.active === null || isActiveAssignmentState(value.active));
+}
+
+/** The pre-round-N CareerState shape (inventory, but no housing or
+ * assignments). Exported only for save migration (see SaveEnvelope.ts) —
+ * nothing else should use this. */
+export function isCareerStateShapeV6(value: unknown): value is Omit<CareerState, 'housing' | 'assignments'> {
   return isCareerStateShapeV5(value) && isInventoryState((value as Record<string, unknown>).inventory);
+}
+
+export function isCareerStateShape(value: unknown): value is CareerState {
+  return (
+    isCareerStateShapeV6(value) &&
+    isHousingState((value as Record<string, unknown>).housing) &&
+    isAssignmentsState((value as Record<string, unknown>).assignments)
+  );
 }
