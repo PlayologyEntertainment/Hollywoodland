@@ -190,7 +190,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 }
 .has-scene-art .scene-panel {
   position: absolute; inset: 0 0 0 auto; z-index: 1; width: min(44%, 27rem); overflow-y: auto; text-align: right;
-  padding: 1.6rem 1.7rem; background: linear-gradient(90deg, transparent, var(--panel) 20%, var(--panel));
+  padding: 1.6rem 1.7rem; background: linear-gradient(90deg, transparent, var(--panel) 3rem, var(--panel));
 }
 /* Right-justified so the text sits against the panel's solid background
    instead of trailing off into the transparent edge of its gradient. */
