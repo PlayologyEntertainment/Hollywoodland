@@ -18,6 +18,30 @@ import { weekdayForDay } from '../domain/TimeSystem';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
 
+function assetUrl(path: string): string {
+  return `${import.meta.env.BASE_URL}${path}`;
+}
+
+interface LocationSceneArt {
+  readonly background: string;
+  readonly character: { readonly src: string; readonly alt: string };
+}
+
+/** Visual-novel-style scene art for a location's dialogue: a location
+ * background with a character portrait overlaid on top, composited in
+ * openDialogue()/applySceneArt(). Only populated for locations with
+ * approved runtime art (see docs/CONTENT_AND_ASSET_PIPELINE.md's approval
+ * gates) — casting-office is the first, built as the one-off example for
+ * Owner approval before the remaining five locations get the same
+ * treatment. A location with no entry here falls back to the plain
+ * text-only dialogue card. */
+const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
+  'casting-office': {
+    background: assetUrl('assets/locations/casting-office.webp'),
+    character: { src: assetUrl('assets/characters/casting-gatekeeper.webp'), alt: 'The casting-office clerk' },
+  },
+};
+
 interface MenuScreens {
   readonly titlePanel: HTMLElement;
   readonly playHud: HTMLElement;
@@ -109,27 +133,27 @@ export class AppShell {
       assertElement('#interaction-prompt-label', HTMLElement).textContent = label;
     });
     this.options.domainEvents.on('casting-office-entered', () => {
-      this.openDialogue(CASTING_OFFICE_DIALOGUE, 'Sunset Casting Exchange');
+      this.openDialogue(CASTING_OFFICE_DIALOGUE, 'Sunset Casting Exchange', 'casting-office');
       this.announce('You entered the Sunset Casting Exchange.');
     });
     this.options.domainEvents.on('diner-entered', () => {
-      this.openDialogue(DINER_DIALOGUE, 'Sunset Diner');
+      this.openDialogue(DINER_DIALOGUE, 'Sunset Diner', 'diner');
       this.announce('You entered the Sunset Diner.');
     });
     this.options.domainEvents.on('boarding-house-entered', () => {
-      this.openDialogue(LANDLADY_DIALOGUE, 'The Boarding House');
+      this.openDialogue(LANDLADY_DIALOGUE, 'The Boarding House', 'boarding-house');
       this.announce('You entered the boarding house.');
     });
     this.options.domainEvents.on('backlot-gate-entered', () => {
-      this.openDialogue(RIVAL_DIALOGUE, 'The Backlot Gate');
+      this.openDialogue(RIVAL_DIALOGUE, 'The Backlot Gate', 'backlot-gate');
       this.announce('You reached the backlot gate.');
     });
     this.options.domainEvents.on('extras-corral-entered', () => {
-      this.openDialogue(PRODUCTION_COORDINATOR_DIALOGUE, 'The Extras Corral');
+      this.openDialogue(PRODUCTION_COORDINATOR_DIALOGUE, 'The Extras Corral', 'extras-corral');
       this.announce('You checked in at the extras corral.');
     });
     this.options.domainEvents.on('soundstage-entered', () => {
-      this.openDialogue(SCENE_PARTNER_DIALOGUE, 'The Soundstage');
+      this.openDialogue(SCENE_PARTNER_DIALOGUE, 'The Soundstage', 'soundstage');
       this.announce('You stepped onto the soundstage.');
     });
     this.options.domainEvents.on('career-state-changed', (state) => {
@@ -230,12 +254,26 @@ export class AppShell {
     return createInitialCareerState(identity, deriveAttributes(choices.originId));
   }
 
-  private openDialogue(graph: DialogueGraph, location: string): void {
+  private openDialogue(graph: DialogueGraph, location: string, locationId: string): void {
     this.activeDialogueGraph = graph;
     this.activeDialogueNodeId = graph.rootNodeId;
     assertElement('#dialogue-location', HTMLElement).textContent = location;
+    this.applySceneArt(locationId);
     this.renderDialogueNode();
     assertElement('#interaction-dialog', HTMLDialogElement).showModal();
+  }
+
+  /** Toggles the visual-novel scene layout (background + overlaid character
+   * to its left, dialogue panel to the right) for locations with approved
+   * runtime art; other locations keep the plain text-only dialogue card. */
+  private applySceneArt(locationId: string): void {
+    const art = LOCATION_SCENE_ART[locationId];
+    assertElement('#interaction-dialog', HTMLDialogElement).classList.toggle('has-scene-art', art !== undefined);
+    assertElement('#scene-background', HTMLElement).style.backgroundImage = art !== undefined ? `url(${art.background})` : '';
+    const character = assertElement('#scene-character', HTMLImageElement);
+    character.src = art?.character.src ?? '';
+    character.alt = art?.character.alt ?? '';
+    character.hidden = art === undefined;
   }
 
   private renderDialogueNode(): void {
