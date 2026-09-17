@@ -203,12 +203,16 @@
           <p class="flavor-copy">One suitcase. One good shirt. One impossible address scribbled on the back of a bus ticket.</p>
         </aside>
 
-        <dialog id="interaction-dialog" aria-labelledby="interaction-title">
-          <div class="story-card dialogue-card">
-            <p id="dialogue-location" class="eyebrow">Sunset Casting Exchange</p>
-            <h2 id="interaction-title">Clerk</h2>
-            <blockquote id="dialogue-line"></blockquote>
-            <ul id="dialogue-choices" class="dialogue-choices" role="list"></ul>
+        <dialog id="interaction-dialog" aria-labelledby="interaction-title" class="scene-dialog">
+          <div class="scene">
+            <div id="scene-background" class="scene-background"></div>
+            <img id="scene-character" class="scene-character" src="" alt="" hidden />
+            <div class="story-card dialogue-card scene-panel">
+              <p id="dialogue-location" class="eyebrow">Sunset Casting Exchange</p>
+              <h2 id="interaction-title">Clerk</h2>
+              <blockquote id="dialogue-line"></blockquote>
+              <ul id="dialogue-choices" class="dialogue-choices" role="list"></ul>
+            </div>
           </div>
         </dialog>
 

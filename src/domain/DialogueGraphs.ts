@@ -394,7 +394,7 @@ export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
     {
       id: 'root',
       speaker: 'Production Coordinator',
-      text: '"Name?" she snaps, pen already hovering over the sign-in sheet. "Corral fills up fast — I do not have all morning."',
+      text: '"Name?" he snaps, pen already hovering over the sign-in sheet. "Corral fills up fast — I do not have all morning."',
       choices: [
         {
           id: 'give-name-crisply',
@@ -421,7 +421,7 @@ export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
     {
       id: 'checked-in-reply',
       speaker: 'Production Coordinator',
-      text: '"You\'re on the list," she says, already scanning past you toward the corral. "Stay behind the rope until someone waves you onto the set."',
+      text: '"You\'re on the list," he says, already scanning past you toward the corral. "Stay behind the rope until someone waves you onto the set."',
       choices: [
         {
           id: 'ask-about-the-shot',
