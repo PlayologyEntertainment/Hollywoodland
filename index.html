@@ -216,6 +216,22 @@
           </div>
         </dialog>
 
+        <dialog id="audition-dialog" aria-labelledby="audition-title" class="audition-dialog">
+          <div class="story-card audition-card">
+            <p class="eyebrow">Read the Room</p>
+            <h2 id="audition-title">The Screen Test</h2>
+            <form id="audition-form">
+              <div id="audition-categories" class="audition-categories"></div>
+              <button id="audition-submit" type="submit" class="primary-button" disabled>Perform</button>
+            </form>
+            <div id="audition-debrief" class="audition-debrief" hidden>
+              <h3 id="audition-outcome"></h3>
+              <ul id="audition-factors" class="audition-factors"></ul>
+              <button id="audition-continue" type="button" class="primary-button">Continue</button>
+            </div>
+          </div>
+        </dialog>
+
         <dialog id="settings-dialog" aria-labelledby="settings-title">
           <form method="dialog" class="settings-form">
             <div class="drawer-heading"><h2 id="settings-title">Settings &amp; Accessibility</h2><button value="cancel" aria-label="Close settings">×</button></div>

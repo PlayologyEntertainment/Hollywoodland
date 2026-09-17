@@ -1,5 +1,6 @@
 import type { CareerState } from './CareerState';
 import type { DialogueChoiceSelectedPayload } from './Dialogue';
+import type { AuditionChoices, AuditionResult } from './Performance';
 import type { TalentUnlockRequestedPayload } from './Progression';
 import type { GameSettings } from '../settings/Settings';
 
@@ -9,6 +10,16 @@ export interface InteractionProximityChangedPayload {
    * the player is nearest to, now that the Boulevard has more than one
    * (see BoulevardSpikeScene's casting-office/diner interaction points). */
   readonly label: string;
+}
+
+export interface AuditionSubmittedPayload {
+  readonly auditionId: string;
+  readonly choices: AuditionChoices;
+}
+
+export interface AuditionResolvedPayload {
+  readonly auditionId: string;
+  readonly result: AuditionResult;
 }
 
 export interface DomainEventMap {
@@ -25,6 +36,8 @@ export interface DomainEventMap {
   readonly 'advance-time-requested': undefined;
   readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
   readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;
+  readonly 'audition-submitted': AuditionSubmittedPayload;
+  readonly 'audition-resolved': AuditionResolvedPayload;
 }
 
 type DomainEventListener<K extends keyof DomainEventMap> = (payload: DomainEventMap[K]) => void;
