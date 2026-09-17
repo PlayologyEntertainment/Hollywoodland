@@ -189,8 +189,9 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   filter: drop-shadow(0 1.2rem 2.4rem rgb(0 0 0 / 55%));
 }
 .has-scene-art .scene-panel {
-  position: absolute; inset: 0 0 0 auto; z-index: 1; width: min(44%, 27rem); overflow-y: auto; text-align: right;
-  padding: 1.6rem 1.7rem; background: linear-gradient(90deg, transparent, var(--panel) 3rem, var(--panel));
+  position: absolute; inset: 0 0 0 auto; z-index: 1; width: min(46%, 29rem); overflow-y: auto; text-align: right;
+  padding: 1.6rem 1.7rem;
+  background: linear-gradient(90deg, transparent, rgb(17 14 15 / 45%) 2rem, var(--panel) 4.5rem, var(--panel));
 }
 /* Right-justified so the text sits against the panel's solid background
    instead of trailing off into the transparent edge of its gradient. */
