@@ -117,11 +117,11 @@
     {
       "id": "boarding-house",
       "label": "Boarding house",
-      "x": 1150,
+      "x": 1831,
       "promptLabel": "Enter boarding house",
       "radius": 100,
       "sign": {
-        "x": 1495,
+        "x": 1834,
         "y": 676,
         "text": "BOARDING\nHOUSE",
         "fontSize": 13,
@@ -134,12 +134,12 @@
     {
       "id": "casting-office",
       "label": "Casting office",
-      "x": 1675,
+      "x": 2589,
       "promptLabel": "Enter casting office",
-      "radius": 150,
+      "radius": 100,
       "sign": {
-        "x": 2112,
-        "y": 657,
+        "x": 2589,
+        "y": 648,
         "text": "SUNSET\nCASTING\nEXCHANGE",
         "fontSize": 14,
         "textColor": "#f3dfab",
@@ -151,12 +151,12 @@
     {
       "id": "diner",
       "label": "Sunset Diner",
-      "x": 2500,
+      "x": 3895,
       "promptLabel": "Enter Sunset Diner",
-      "radius": 300,
+      "radius": 200,
       "sign": {
-        "x": 3169,
-        "y": 629,
+        "x": 3886,
+        "y": 627,
         "text": "SUNSET\nDINER",
         "fontSize": 20,
         "textColor": "#ca2522",
@@ -168,12 +168,12 @@
     {
       "id": "backlot-gate",
       "label": "Backlot gate",
-      "x": 3050,
+      "x": 2974,
       "promptLabel": "Wait at the backlot gate",
-      "radius": 200,
+      "radius": 100,
       "sign": {
-        "x": 2441,
-        "y": 708,
+        "x": 2979,
+        "y": 858,
         "text": "BACKLOT\nGATE",
         "fontSize": 13,
         "textColor": "#f3dfab",
@@ -185,12 +185,12 @@
     {
       "id": "extras-corral",
       "label": "Extras corral",
-      "x": 3600,
+      "x": 3491,
       "promptLabel": "Check in at the extras corral",
       "radius": 100,
       "sign": {
-        "x": 2845,
-        "y": 837,
+        "x": 3491,
+        "y": 839,
         "text": "EXTRAS\nCORRAL",
         "fontSize": 13,
         "textColor": "#f3dfab",
@@ -202,18 +202,18 @@
     {
       "id": "soundstage",
       "label": "Soundstage",
-      "x": 4150,
+      "x": 4521,
       "promptLabel": "Rehearse on the soundstage",
-      "radius": 205,
+      "radius": 100,
       "sign": {
-        "x": 4280,
-        "y": 590,
+        "x": 4525,
+        "y": 640,
         "text": "SOUND\nSTAGE",
         "fontSize": 19,
         "textColor": "#f3dfab",
         "boardColor": "#241609",
-        "boardWidth": 210,
-        "boardHeight": 130
+        "boardWidth": 150,
+        "boardHeight": 95
       }
     }
   ]
