@@ -4,10 +4,12 @@ import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
 import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE, LANDLADY_DIALOGUE, PRODUCTION_COORDINATOR_DIALOGUE, RIVAL_DIALOGUE, SCENE_PARTNER_DIALOGUE } from '../domain/DialogueGraphs';
-import type { DomainEventBus } from '../domain/DomainEventBus';
+import type { AuditionResolvedPayload, DomainEventBus } from '../domain/DomainEventBus';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
 import { deriveAttributes } from '../domain/Origins';
+import type { AuditionCategory, AuditionChoices, AuditionDefinition, AuditionFactor, AuditionOutcome } from '../domain/Performance';
+import { getAuditionById } from '../domain/PerformanceDefinitions';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { canUnlockTalent, isTalentUnlocked, xpRequiredForNextLevel, type ProgressionState, type TalentDefinition } from '../domain/Progression';
 import { getActiveStage, getQuestStatus } from '../domain/Quests';
@@ -86,6 +88,13 @@ const TIME_SLOT_LABELS: Record<CareerState['time']['slot'], string> = {
   evening: 'Evening',
 };
 
+const AUDITION_OUTCOME_LABELS: Record<AuditionOutcome, string> = {
+  breakthrough: 'Breakthrough',
+  'promising-complication': 'Promising Complication',
+  'wrong-role-right-notice': 'Wrong Role, Right Notice',
+  'memorable-setback': 'Memorable Setback',
+};
+
 function capitalizeRelationshipLabel(label: RelationshipLabel): string {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
@@ -124,6 +133,8 @@ export class AppShell {
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
   private activeDialogueNodeId: string | undefined;
+  private activeAudition: AuditionDefinition | undefined;
+  private auditionChoices: AuditionChoices = {};
 
   public constructor(private readonly options: AppShellOptions) {
     this.settings = options.settings;
@@ -177,9 +188,18 @@ export class AppShell {
       this.careerState = state;
       this.renderCareerState(state);
     });
+    this.options.domainEvents.on('audition-resolved', (payload) => this.renderAuditionDebrief(payload));
     assertElement('#interaction-dialog', HTMLDialogElement).addEventListener('close', () => {
       this.activeDialogueGraph = undefined;
       this.activeDialogueNodeId = undefined;
+    });
+    assertElement('#audition-dialog', HTMLDialogElement).addEventListener('close', () => {
+      this.activeAudition = undefined;
+      this.auditionChoices = {};
+    });
+    assertElement('#audition-form', HTMLFormElement).addEventListener('submit', (event) => this.submitAudition(event));
+    assertElement('#audition-continue', HTMLButtonElement).addEventListener('click', () => {
+      assertElement('#audition-dialog', HTMLDialogElement).close();
     });
 
     newCareer.addEventListener('click', () => {
@@ -324,12 +344,95 @@ export class AppShell {
     // (via the career-state-changed subscription above) by the time emit()
     // returns — safe today, but a real coupling to synchronous dispatch.
     this.options.domainEvents.emit('dialogue-choice-selected', { graphId: graph.id, nodeId: node.id, choiceId: choice.id });
+    if (choice.startsAudition !== undefined) {
+      assertElement('#interaction-dialog', HTMLDialogElement).close();
+      this.openAudition(choice.startsAudition);
+      return;
+    }
     if (choice.next === null) {
       assertElement('#interaction-dialog', HTMLDialogElement).close();
       return;
     }
     this.activeDialogueNodeId = choice.next;
     this.renderDialogueNode();
+  }
+
+  /** Opens the Read the Room audition UI in place of the plain dialogue
+   * card — a fixed set of categories the player answers one option each
+   * before submitting, rather than a linear branching tree (see
+   * Performance.ts's `AuditionDefinition`). Silently no-ops on an unknown
+   * audition id, the same defensive posture `openDialogue` callers get from
+   * `getDialogueGraphById`. */
+  private openAudition(auditionId: string): void {
+    const definition = getAuditionById(auditionId);
+    if (definition === undefined) return;
+    this.activeAudition = definition;
+    this.auditionChoices = {};
+    assertElement('#audition-title', HTMLElement).textContent = definition.title;
+    this.renderAuditionCategories(definition);
+    assertElement('#audition-form', HTMLFormElement).hidden = false;
+    assertElement('#audition-debrief', HTMLElement).hidden = true;
+    assertElement('#audition-dialog', HTMLDialogElement).showModal();
+  }
+
+  private renderAuditionCategories(definition: AuditionDefinition): void {
+    const container = assertElement('#audition-categories', HTMLElement);
+    container.replaceChildren(...definition.categories.map((category) => this.buildAuditionCategoryElement(category)));
+    this.updateAuditionSubmitEnabled(definition);
+  }
+
+  private buildAuditionCategoryElement(category: AuditionCategory): HTMLFieldSetElement {
+    const fieldset = document.createElement('fieldset');
+    fieldset.className = 'audition-category';
+    const legend = document.createElement('legend');
+    legend.textContent = category.prompt;
+    fieldset.appendChild(legend);
+    for (const option of category.options) {
+      const label = document.createElement('label');
+      label.className = 'audition-option';
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = category.kind;
+      input.value = option.id;
+      input.addEventListener('change', () => {
+        this.auditionChoices = { ...this.auditionChoices, [category.kind]: option.id };
+        if (this.activeAudition !== undefined) this.updateAuditionSubmitEnabled(this.activeAudition);
+      });
+      label.append(input, document.createTextNode(option.label));
+      fieldset.appendChild(label);
+    }
+    return fieldset;
+  }
+
+  /** Every category needs an answer before the player can perform — per
+   * Performance.ts's design note, skipping a category (including
+   * `improvisation`) isn't a mechanic; content instead authors a no-risk
+   * baseline option for it. */
+  private updateAuditionSubmitEnabled(definition: AuditionDefinition): void {
+    const allAnswered = definition.categories.every((category) => this.auditionChoices[category.kind] !== undefined);
+    assertElement('#audition-submit', HTMLButtonElement).disabled = !allAnswered;
+  }
+
+  private submitAudition(event: SubmitEvent): void {
+    event.preventDefault();
+    if (this.activeAudition === undefined) return;
+    this.options.domainEvents.emit('audition-submitted', { auditionId: this.activeAudition.id, choices: this.auditionChoices });
+  }
+
+  private renderAuditionDebrief(payload: AuditionResolvedPayload): void {
+    if (this.activeAudition === undefined || this.activeAudition.id !== payload.auditionId) return;
+    assertElement('#audition-form', HTMLFormElement).hidden = true;
+    assertElement('#audition-outcome', HTMLElement).textContent = AUDITION_OUTCOME_LABELS[payload.result.outcome];
+    const list = assertElement('#audition-factors', HTMLUListElement);
+    list.replaceChildren(...payload.result.factors.map((factor) => this.buildAuditionFactorElement(factor)));
+    assertElement('#audition-debrief', HTMLElement).hidden = false;
+  }
+
+  private buildAuditionFactorElement(factor: AuditionFactor): HTMLLIElement {
+    const item = document.createElement('li');
+    const sign = factor.points > 0 ? '+' : '';
+    item.textContent = `${factor.label} (${sign}${factor.points})`;
+    return item;
   }
 
   private renderCareerState(state: CareerState): void {

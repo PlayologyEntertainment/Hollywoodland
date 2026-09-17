@@ -60,6 +60,12 @@ export interface DialogueChoice {
   readonly effects?: readonly DialogueEffect[];
   /** The node id to advance to, or null to end the conversation. */
   readonly next: string | null;
+  /** When set, selecting this choice hands off from the plain dialogue card
+   * to the Read the Room audition UI for this audition id (see
+   * Performance.ts) instead of just closing or advancing — the dialogue's
+   * `effects` still run first (e.g. the quest-action that completes the
+   * screen test's "attend" stage), same as any other choice. */
+  readonly startsAudition?: string;
 }
 
 export interface DialogueNode {

@@ -1,5 +1,6 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
+import { ALL_AUDITIONS } from './PerformanceDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, PRODUCTION_COORDINATOR, RIVAL, SCENE_PARTNER } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
@@ -34,6 +35,34 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
           label: 'I’ll start with a miracle.',
           next: 'miracle-reply',
           effects: [{ kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { tension: 3 } }],
+        },
+        {
+          id: 'ask-for-screen-test',
+          label: 'You mentioned a screen test.',
+          next: 'screen-test-called',
+          conditions: [{ kind: 'quest-status', questId: 'screen-test', status: 'available' }],
+          effects: [
+            { kind: 'quest-action', action: 'start', questId: 'screen-test' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'screen-test', stageId: 'attend' },
+          ],
+        },
+      ],
+    },
+    {
+      /** The vertical slice's critical-path step 9 (VERTICAL_SLICE_SPEC.md
+       * §3): completing the "attend" stage above hands the player their
+       * audition dress and props, then this node's sole choice launches the
+       * Read the Room audition itself via `startsAudition` — see
+       * PerformanceDefinitions.ts's SCREEN_TEST_AUDITION. */
+      id: 'screen-test-called',
+      speaker: 'Clerk',
+      text: '"Stage 4, dress in the dress. They’re waiting on you." She slides a dog-eared script across the counter.',
+      choices: [
+        {
+          id: 'head-to-the-stage',
+          label: 'Head to the soundstage.',
+          next: null,
+          startsAudition: 'screen-test',
         },
       ],
     },
@@ -153,7 +182,7 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
   ],
 };
 
-validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS, ALL_AUDITIONS);
 
 /** Round 14's second social hub: the `diner-confidant` roster entry's first
  * content, eight rounds after RelationshipDefinitions.ts introduced the

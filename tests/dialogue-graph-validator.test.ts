@@ -4,6 +4,8 @@ import { validateDialogueGraph } from '../src/content/DialogueGraphValidator';
 import { CASTING_OFFICE_DIALOGUE } from '../src/domain/DialogueGraphs';
 import type { InventoryItemDefinition } from '../src/domain/Inventory';
 import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
+import type { AuditionDefinition } from '../src/domain/Performance';
+import { ALL_AUDITIONS } from '../src/domain/PerformanceDefinitions';
 import type { TalentDefinition } from '../src/domain/Progression';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
@@ -96,10 +98,56 @@ describe('validateDialogueGraph', () => {
     expect(() => validateDialogueGraph(graph)).toThrow('root node "missing" does not exist');
   });
 
-  it('validates the real casting-office dialogue graph against the real quest, relationship, talent, and item content', () => {
+  it('validates the real casting-office dialogue graph against the real quest, relationship, talent, item, and audition content', () => {
     expect(() =>
-      validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS),
+      validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS, ALL_AUDITIONS),
     ).not.toThrow();
+  });
+
+  it('rejects a startsAudition reference to an unknown audition', () => {
+    const graph: DialogueGraph = {
+      id: 'bad-audition-reference',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, startsAudition: 'missing-audition' }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph)).toThrow('references missing audition "missing-audition"');
+  });
+
+  it('accepts a startsAudition reference to a known audition', () => {
+    const audition: AuditionDefinition = {
+      id: 'known-audition',
+      title: 'Known Audition',
+      featuredAttribute: 'craft',
+      scenePartnerId: 'nobody',
+      preparationChecks: [],
+      categories: [],
+      outcomeEffects: {
+        breakthrough: [],
+        'promising-complication': [],
+        'wrong-role-right-notice': [],
+        'memorable-setback': [],
+      },
+    };
+    const graph: DialogueGraph = {
+      id: 'good-audition-reference',
+      rootNodeId: 'a',
+      nodes: [
+        {
+          id: 'a',
+          speaker: 'X',
+          text: '...',
+          choices: [{ id: 'go', label: 'Go', next: null, startsAudition: 'known-audition' }],
+        },
+      ],
+    };
+    expect(() => validateDialogueGraph(graph, [], [], [], [], [audition])).not.toThrow();
   });
 
   it('rejects a quest-status condition referencing an unknown quest', () => {

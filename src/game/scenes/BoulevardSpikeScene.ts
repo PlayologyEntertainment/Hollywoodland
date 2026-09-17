@@ -5,8 +5,10 @@ import { enterCastingOffice, advanceTime } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
-import type { DomainEventBus } from '../../domain/DomainEventBus';
+import type { AuditionSubmittedPayload, DomainEventBus } from '../../domain/DomainEventBus';
 import { ALL_ITEMS } from '../../domain/InventoryDefinitions';
+import { applyAuditionOutcome, resolveAudition } from '../../domain/Performance';
+import { getAuditionById } from '../../domain/PerformanceDefinitions';
 import { unlockTalent, type TalentUnlockRequestedPayload } from '../../domain/Progression';
 import { ALL_QUESTS } from '../../domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../../domain/RelationshipDefinitions';
@@ -111,6 +113,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('advance-time-requested', this.onAdvanceTimeRequested),
       this.domainEvents.on('dialogue-choice-selected', this.onDialogueChoiceSelected),
       this.domainEvents.on('talent-unlock-requested', this.onTalentUnlockRequested),
+      this.domainEvents.on('audition-submitted', this.onAuditionSubmitted),
     ];
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const unsubscribe of this.unsubscribers) unsubscribe();
@@ -383,6 +386,18 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const talent = getTalentById(payload.talentId);
     if (talent === undefined) return;
     this.careerState = unlockTalent(this.careerState, talent);
+    this.emitState();
+  };
+
+  /** No randomness in `resolveAudition` (see Performance.ts), so the debrief
+   * this emits is exactly what committing `applyAuditionOutcome` below
+   * produces — the shell never needs to guess at or duplicate the result. */
+  private readonly onAuditionSubmitted = (payload: AuditionSubmittedPayload): void => {
+    const definition = getAuditionById(payload.auditionId);
+    if (definition === undefined) return;
+    const result = resolveAudition(this.careerState, definition, payload.choices, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
+    this.careerState = applyAuditionOutcome(this.careerState, definition, result, ALL_RELATIONSHIP_CHARACTERS);
+    this.domainEvents.emit('audition-resolved', { auditionId: payload.auditionId, result });
     this.emitState();
   };
 }
