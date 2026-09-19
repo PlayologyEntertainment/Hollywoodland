@@ -1,5 +1,5 @@
 {
-  "worldWidth": 7453,
+  "worldWidth": 7958,
   "groundY": 1010,
   "referenceSheets": [
     "Hollywoodland_Concept_Boulevard.png"
@@ -24,7 +24,7 @@
       "offsetX": -555,
       "offsetY": -78,
       "scale": 1.6,
-      "scrollFactor": 0.18,
+      "scrollFactor": 0.16,
       "depth": 1,
       "repeatX": false,
       "source": null
@@ -36,7 +36,7 @@
       "offsetX": 0,
       "offsetY": -51,
       "scale": 1.4,
-      "scrollFactor": 0.42,
+      "scrollFactor": 0.38,
       "depth": 2,
       "repeatX": false,
       "source": null
@@ -200,7 +200,7 @@
       "id": "palm-right",
       "label": "Palm (right)",
       "path": "assets/environments/foreground/hollywood-palm-v1.png",
-      "x": 7273,
+      "x": 7828,
       "y": 1080,
       "scale": 0.9,
       "flipX": true,
@@ -368,26 +368,26 @@
     {
       "id": "backlot-gate",
       "label": "Monarch Pictures gate",
-      "x": 6827,
+      "x": 6860,
       "promptLabel": "Wait at the Monarch Pictures gate",
       "radius": 100,
       "enterable": true,
       "sign": {
-        "x": 6826,
-        "y": 548,
+        "x": 6863,
+        "y": 551,
         "text": "MONARCH PICTURES",
         "fontSize": 19,
         "textColor": "#1e4a3f",
         "boardColor": "#241609",
-        "boardWidth": 308,
-        "boardHeight": 85,
+        "boardWidth": 326,
+        "boardHeight": 89,
         "textOnly": true
       }
     },
     {
       "id": "extras-corral",
       "label": "Extras corral",
-      "x": 6611,
+      "x": 6625,
       "promptLabel": "Check in at the extras corral",
       "radius": 80,
       "enterable": true,
@@ -396,11 +396,21 @@
     {
       "id": "soundstage",
       "label": "Soundstage",
-      "x": 7117,
+      "x": 7711,
       "promptLabel": "Rehearse on the soundstage",
       "radius": 90,
       "enterable": true,
-      "sign": null
+      "sign": {
+        "x": 7458,
+        "y": 505,
+        "text": "SOUND STAGE",
+        "fontSize": 22,
+        "textColor": "#1e4a3f",
+        "boardColor": "#241609",
+        "boardWidth": 325,
+        "boardHeight": 78,
+        "textOnly": true
+      }
     }
   ]
 }

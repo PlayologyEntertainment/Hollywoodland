@@ -37,14 +37,15 @@
   },
   "monarch-gate": {
     "runtime_size_px": [
-      1513,
-      988
+      2271,
+      1131
     ],
     "mask_master_px": [
-      500,
-      370,
-      1135,
-      960
-    ]
+      420,
+      340,
+      940,
+      870
+    ],
+    "feather_master_px": 24
   }
 }
