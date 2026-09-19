@@ -1,6 +1,6 @@
 # Location interiors, round 1: The Silver Thimble, The Klieg Light, The Celestial Palace
 
-Status: **Draft briefs and unreviewed source generations, pending owner visual review (staged 2026-09-19)**
+Status: **Source generations approved by the owner 2026-09-19; not yet converted, promoted or wired into any scene**
 
 ## Role in the game
 
@@ -52,7 +52,7 @@ generation_tool_and_version: gpt-image-2 via gg-image (Codex ChatGPT backend), -
 generation_date: 2026-09-19
 raw_source_location: art/generated/location-interior-silver-thimble.png
 human_edits: none
-review_status: pending review
+review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place name matches the canon approved 2026-09-18.
 runtime_files: not yet promoted
 ```
@@ -66,7 +66,7 @@ generation_tool_and_version: gpt-image-2 via gg-image (Codex ChatGPT backend), -
 generation_date: 2026-09-19
 raw_source_location: art/generated/location-interior-klieg-light.png
 human_edits: none
-review_status: pending review
+review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place name matches the canon approved 2026-09-18.
 runtime_files: not yet promoted
 ```
@@ -80,7 +80,7 @@ generation_tool_and_version: gpt-image-2 via gg-image (Codex ChatGPT backend), -
 generation_date: 2026-09-19
 raw_source_location: art/generated/location-interior-celestial-palace.png
 human_edits: none
-review_status: pending review
+review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place name matches the canon approved 2026-09-18.
 runtime_files: not yet promoted
 ```
@@ -98,5 +98,5 @@ Flags for the reviewer:
 - The Silver Thimble costume rack shows a prop sword hilt hanging with the pirate costume. It is a costume prop, but it is the only weapon in the set, so say so if the tone ceiling should exclude it.
 - The Celestial Palace lobby has two brass ashtray stands (empty). Easy to drop in a regeneration if you would rather not show them.
 - Tiny surfaces (ticket stubs, tape-measure markings, clock face) read as abstract marks at full size. Check them at 100% before promotion.
-- Round 1 only. Nothing is cleaned, converted to WebP, or referenced by any code or scene.
+- Round 1 only, approved as is. Nothing is cleaned, converted to WebP, or referenced by any code or scene.
 
