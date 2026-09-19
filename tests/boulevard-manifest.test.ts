@@ -149,10 +149,10 @@ describe('committed Boulevard manifest', () => {
     }
   });
 
-  it('gives the lot-access points no sign, and the not-yet-written entrance no interaction', () => {
+  it('signs the sound stage but not the corral, and gives the not-yet-written entrance no interaction', () => {
     const byId = new Map(committed.locations.map((l) => [l.id, l]));
     expect(byId.get('extras-corral')?.sign).toBeNull();
-    expect(byId.get('soundstage')?.sign).toBeNull();
+    expect(byId.get('soundstage')?.sign?.text).toBe('SOUND STAGE');
     expect(byId.get('alley')?.enterable, 'alley').toBe(false);
     for (const id of ['boarding-house', 'costume-shop', 'diner', 'celestial-palace', 'casting-office', 'klieg-light-office', 'backlot-gate', 'extras-corral', 'soundstage'] as const) {
       expect(byId.get(id)?.enterable, id).toBe(true);

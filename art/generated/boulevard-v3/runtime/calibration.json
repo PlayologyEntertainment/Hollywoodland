@@ -153,21 +153,27 @@
   },
   "monarch-gate": {
     "master_content_px": [
-      1508,
-      925
+      1745,
+      823
     ],
-    "display_scale_per_master_px": 0.669,
+    "display_scale_per_master_px": 0.8676,
     "runtime_size_px": [
-      1513,
-      988
+      2271,
+      1131
     ],
     "display_size_px": [
-      1009,
-      619
+      1514,
+      714
     ],
-    "ground_row_runtime_px": 928,
+    "ground_row_runtime_px": 1071,
     "overlap_runtime_px": 60,
-    "columns_extruded": 1504,
-    "reference": "guard-booth door used as the human-scale reference"
+    "columns_extruded": 1738,
+    "trim_box_master_px": [
+      15,
+      27,
+      1760,
+      850
+    ],
+    "reference": "guard-booth door leaf 626-845 master px (219) = 190 display px; reworked 2026-09-19 with the studio lot and the sound stage (modules/monarch-gate-v3-wide-master.png); the sound stage side door is 183 px, about 84% of the booth door"
   }
 }
