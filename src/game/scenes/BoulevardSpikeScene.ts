@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 
-import type { BoulevardManifest, BoulevardSign } from '../BoulevardManifest';
+import type { BoulevardActiveRule, BoulevardManifest, BoulevardSign } from '../BoulevardManifest';
+import { isBuildingActive, nearestInteractable } from '../BoulevardStates';
 import { getAssignmentById, resolveActiveAssignment, startAssignment } from '../../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../../domain/AssignmentDefinitions';
 import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../domain/CareerActions';
@@ -30,6 +31,24 @@ function planeKey(id: string): string {
 
 function propKey(id: string): string {
   return `prop:${id}`;
+}
+
+function buildingKey(id: string): string {
+  return `building:${id}`;
+}
+
+function buildingActiveKey(id: string): string {
+  return `building:${id}:active`;
+}
+
+/** A street-wall building whose art changes with time slot or world state.
+ * Only buildings with an active-state texture are tracked. */
+interface DynamicBuilding {
+  readonly image: Phaser.GameObjects.Image;
+  readonly baseKey: string;
+  readonly activeKey: string;
+  readonly rule: BoulevardActiveRule;
+  active: boolean;
 }
 
 function assetUrl(path: string): string {
@@ -62,6 +81,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Sprite;
   private playerShadow!: Phaser.GameObjects.Ellipse;
   private atmosphericTweens: Phaser.Tweens.Tween[] = [];
+  private dynamicBuildings: DynamicBuilding[] = [];
   private promptVisible = false;
   private promptLabel = '';
   private interactionPoints: readonly InteractionPoint[] = [];
@@ -77,6 +97,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
     for (const plane of this.manifest.planes) {
       this.load.image(planeKey(plane.id), assetUrl(plane.path));
+    }
+    for (const building of this.manifest.buildings) {
+      this.load.image(buildingKey(building.id), assetUrl(building.path));
+      if (building.activePath !== null) {
+        this.load.image(buildingActiveKey(building.id), assetUrl(building.activePath));
+      }
     }
     for (const prop of this.manifest.props) {
       this.load.image(propKey(prop.id), assetUrl(prop.path));
@@ -102,12 +128,16 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
     this.cameras.main.setDeadzone(520, 290);
 
-    this.interactionPoints = this.manifest.locations.map((location) => ({
-      x: location.x,
-      radius: location.radius,
-      label: location.promptLabel,
-      onEnter: () => this.enterLocation(location.id),
-    }));
+    // Entrances whose scene is not written yet (`enterable: false`) keep
+    // their sign but get no prompt and no interaction point.
+    this.interactionPoints = this.manifest.locations
+      .filter((location) => location.enterable)
+      .map((location) => ({
+        x: location.x,
+        radius: location.radius,
+        label: location.promptLabel,
+        onEnter: () => this.enterLocation(location.id),
+      }));
 
     this.unsubscribers = [
       this.domainEvents.on('settings-changed', this.onSettingsChanged),
@@ -149,9 +179,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.player.setFrame(0);
     }
 
-    const nearest = this.interactionPoints.find(
-      (point) => Math.abs(this.player.x - point.x) < point.radius,
-    );
+    const nearest = nearestInteractable(this.interactionPoints, this.player.x);
     const label = nearest?.label ?? '';
     const visible = nearest !== undefined;
     if (visible !== this.promptVisible || label !== this.promptLabel) {
@@ -209,12 +237,42 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   private createRenderedEnvironment(): void {
     for (const plane of this.manifest.planes) {
+      const key = planeKey(plane.id);
+      if (plane.repeatX) {
+        // The ground is one seamless, mirrored tile repeated across the world.
+        // Separate images rather than a TileSprite: the texture is not a power
+        // of two, and a TileSprite would have to resample it.
+        const tileWidth = this.textures.get(key).getSourceImage().width * plane.scale;
+        for (let x = plane.offsetX; x < this.worldWidth; x += tileWidth) {
+          this.add.image(x, plane.offsetY, key).setOrigin(0).setScale(plane.scale).setScrollFactor(plane.scrollFactor).setDepth(plane.depth);
+        }
+        continue;
+      }
+      // Uniform scale, never stretched to the world width.
       this.add
-        .image(plane.offsetX, plane.offsetY, planeKey(plane.id))
+        .image(plane.offsetX, plane.offsetY, key)
         .setOrigin(0)
-        .setDisplaySize(this.worldWidth, 1080)
+        .setScale(plane.scale)
         .setScrollFactor(plane.scrollFactor)
         .setDepth(plane.depth);
+    }
+
+    this.dynamicBuildings = [];
+    for (const building of this.manifest.buildings) {
+      const image = this.add
+        .image(building.x, building.y, buildingKey(building.id))
+        .setOrigin(0, 1)
+        .setScale(building.scale)
+        .setDepth(building.depth);
+      if (building.activePath !== null && building.activeWhen !== null) {
+        this.dynamicBuildings.push({
+          image,
+          baseKey: buildingKey(building.id),
+          activeKey: buildingActiveKey(building.id),
+          rule: building.activeWhen,
+          active: false,
+        });
+      }
     }
 
     for (const prop of this.manifest.props) {
@@ -227,6 +285,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
 
     for (const location of this.manifest.locations) {
+      if (location.sign === null) continue;
+      if (location.sign.textOnly) {
+        this.createSignText(location.sign);
+        continue;
+      }
       this.createSignGlow(location.sign.x, location.sign.y);
       this.createHangingSign(location.sign);
     }
@@ -318,19 +381,39 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       frame.fillCircle(rx - 1, ry - 1, 1.2);
     }
 
+    this.createSignText(sign);
+  }
+
+  /** The sign's lettering. For `textOnly` signs this is the whole sign: the
+   * v3 building art already has a blank panel painted where the name goes,
+   * so only the text is drawn (tighter tracking and no drop shadow, since
+   * it sits on a painted surface rather than a board). */
+  private createSignText(sign: BoulevardSign): void {
     this.add
-      .text(x, y, sign.text, {
+      .text(sign.x, sign.y, sign.text, {
         color: sign.textColor,
         fontFamily: 'Georgia, serif',
         fontSize: `${sign.fontSize}px`,
         fontStyle: 'bold',
-        letterSpacing: 2,
+        letterSpacing: sign.textOnly ? 1 : 2,
         align: 'center',
-        lineSpacing: 4,
-        shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 2, fill: true },
+        lineSpacing: sign.textOnly ? 2 : 4,
+        ...(sign.textOnly ? {} : { shadow: { offsetX: 0, offsetY: 1, color: '#000000', blur: 2, fill: true } }),
       })
       .setOrigin(0.5)
       .setDepth(5);
+  }
+
+  /** Swaps each stateful building between its default and active art from
+   * the current career state (time slot, world flags). Called from
+   * emitState, so it runs on the same beat as every other state change. */
+  private applyBuildingStates(): void {
+    for (const building of this.dynamicBuildings) {
+      const active = isBuildingActive(building.rule, this.careerState);
+      if (active === building.active) continue;
+      building.active = active;
+      building.image.setTexture(active ? building.activeKey : building.baseKey);
+    }
   }
 
   private createPlayer(): void {
@@ -352,6 +435,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
   private emitState(): void {
     this.careerState = { ...this.careerState, playerX: Math.round(this.player.x) };
+    this.applyBuildingStates();
     this.domainEvents.emit('career-state-changed', this.careerState);
   }
 

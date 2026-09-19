@@ -103,8 +103,10 @@
 <main>
   <div id="sidebar">
     <div id="art-sidebar-body" style="display:flex; flex-direction:column; min-height:0; flex:1;">
-      <div class="group-heading">Parallax planes (5, fixed)</div>
+      <div class="group-heading">Parallax planes (4, fixed)</div>
       <div id="slot-list-planes"></div>
+      <div class="group-heading">Street buildings</div>
+      <div id="slot-list-buildings"></div>
       <div class="group-heading">Foreground props</div>
       <div id="add-prop-row"><button id="btn-add-prop" type="button" disabled>➕ Add prop</button></div>
       <div id="slot-list-props" style="flex:1; overflow-y:auto;"></div>
@@ -114,9 +116,11 @@
       <div id="location-list" style="flex:1; overflow-y:auto;"></div>
     </div>
     <div id="layout-sidebar-body" style="display:none; flex-direction:column; min-height:0; flex:1; overflow-y:auto;">
-      <div class="hint" style="margin:10px;">💡 Drag props, signs, and location markers directly on the canvas. Planes cover the whole scene, so select one here first, then drag anywhere to nudge its offset.</div>
+      <div class="hint" style="margin:10px;">💡 Drag buildings, props, signs, and location markers directly on the canvas. Planes cover the whole scene, so select one here first, then drag anywhere to nudge its offset. Parallax planes are drawn as they appear with the camera at the far left; in the game they scroll slower than the street.</div>
       <div class="group-heading">Planes</div>
       <div id="layout-list-planes"></div>
+      <div class="group-heading">Buildings</div>
+      <div id="layout-list-buildings"></div>
       <div class="group-heading">Props</div>
       <div id="layout-list-props"></div>
       <div class="group-heading">Locations (marker)</div>
@@ -241,7 +245,7 @@
   let rootHandle = null;
   let manifest = null;
   let activeMode = 'art';
-  let activeSlot = null; // { group: 'planes'|'props', id }
+  let activeSlot = null; // { group: 'planes'|'buildings'|'props', id }
   let activeLocationId = null;
   let activeLayoutType = null; // 'plane' | 'prop' | 'location' | 'sign'
   let activeLayoutId = null;
@@ -254,6 +258,7 @@
   const $rootStatus = el('root-status');
   const $slotListPlanes = el('slot-list-planes');
   const $slotListProps = el('slot-list-props');
+  const $slotListBuildings = el('slot-list-buildings');
   const $locationList = el('location-list');
 
   function toast(msg, isError) {
@@ -371,11 +376,13 @@
   function allSlots() {
     return [
       ...manifest.planes.map((s) => ({ group: 'planes', slot: s })),
+      ...manifest.buildings.map((s) => ({ group: 'buildings', slot: s })),
       ...manifest.props.map((s) => ({ group: 'props', slot: s })),
     ];
   }
   function findSlot(group, id) {
-    return (group === 'planes' ? manifest.planes : manifest.props).find((s) => s.id === id);
+    const list = group === 'planes' ? manifest.planes : group === 'buildings' ? manifest.buildings : manifest.props;
+    return list.find((s) => s.id === id);
   }
 
   const thumbCache = new Map();
@@ -405,8 +412,9 @@
   function renderSlotLists() {
     if (!manifest) return;
     $slotListPlanes.innerHTML = manifest.planes.map((s) => slotRowHtml('planes', s)).join('');
+    $slotListBuildings.innerHTML = manifest.buildings.map((s) => slotRowHtml('buildings', s)).join('');
     $slotListProps.innerHTML = manifest.props.map((s) => slotRowHtml('props', s)).join('');
-    for (const wrap of [$slotListPlanes, $slotListProps]) {
+    for (const wrap of [$slotListPlanes, $slotListBuildings, $slotListProps]) {
       wrap.querySelectorAll('.slot-row').forEach((row) => {
         row.addEventListener('click', () => selectSlot(row.dataset.group, row.dataset.id));
       });
@@ -480,6 +488,7 @@
 
     $detail.innerHTML = buildSlotSkeleton(group, slot);
     wireSlotControls(group, slot, state);
+    if (isPositionOnly(group, slot)) return;
 
     if (state.mode === 'crop') await loadSheetForCrop(slot, state);
     else await refreshUploadPreview(slot, state);
@@ -489,13 +498,32 @@
     return '<label>' + escapeHtml(label) + '<input type="number" id="' + id + '" value="' + value + '" step="' + (step || 1) + '"></label>';
   }
 
+  /** Art that is a finished WebP made outside this tool (the v3 planes and
+   * every building module) is position-only: the crop/upload workflow writes
+   * PNG bytes to the slot's path and can delete the file, which would corrupt
+   * or lose a WebP. */
+  function isPositionOnly(group, slot) {
+    return group === 'buildings' || /\.webp$/i.test(slot.path);
+  }
+
   function buildSlotSkeleton(group, slot) {
     const isPlane = group === 'planes';
+    const isBuilding = group === 'buildings';
+    const positionOnly = isPositionOnly(group, slot);
     const fields = isPlane
       ? [
           numField('f-offsetX', 'Offset X', slot.offsetX),
           numField('f-offsetY', 'Offset Y', slot.offsetY),
+          numField('f-scale', 'Scale', slot.scale, 0.01),
           numField('f-scrollFactor', 'Scroll factor', slot.scrollFactor, 0.01),
+          numField('f-depth', 'Depth', slot.depth),
+        ]
+      : isBuilding
+      ? [
+          '<label>Label<input type="text" id="f-label" value="' + escapeHtml(slot.label) + '"></label>',
+          numField('f-x', 'X (left edge)', slot.x),
+          numField('f-y', 'Y (bottom edge)', slot.y),
+          numField('f-scale', 'Scale', slot.scale, 0.01),
           numField('f-depth', 'Depth', slot.depth),
         ]
       : [
@@ -506,22 +534,29 @@
           numField('f-depth', 'Depth', slot.depth),
           '<label style="flex-direction:row;align-items:center;gap:6px;">Flip X<input type="checkbox" id="f-flipX" ' + (slot.flipX ? 'checked' : '') + '></label>',
         ];
-    const removePropButton = isPlane ? '' : '<button class="danger" id="btn-remove-prop" type="button">Delete this prop</button>';
+    const removePropButton = isPlane || isBuilding ? '' : '<button class="danger" id="btn-remove-prop" type="button">Delete this prop</button>';
+    const buildingNote = isBuilding && slot.activePath
+      ? '<div class="hint">Active-state art (' + escapeHtml(slot.activePath) + ') swaps in when: ' +
+        escapeHtml(JSON.stringify(slot.activeWhen)) + '. Edit that rule in the manifest JSON.</div>'
+      : '';
     return (
       '<div class="detail-header">' +
       '<h2>' + escapeHtml(slot.label) + '</h2>' +
       '<div class="sub">' + escapeHtml(slot.id) + ' · outputs to public/' + escapeHtml(slot.path) + '</div>' +
       '</div>' +
       '<fieldset><legend>Position & rendering</legend><div class="field-grid">' + fields.join('') + '</div></fieldset>' +
-      '<div class="mode-tabs">' +
-      '<button id="tab-crop">Crop from reference sheet</button>' +
-      '<button id="tab-upload">Upload a PNG</button>' +
-      '</div>' +
-      '<div id="mode-body"></div>' +
-      '<div id="outputs"></div>' +
+      buildingNote +
+      (positionOnly
+        ? '<div class="hint">This art is a finished WebP produced outside the tool, so only its position and scale can be edited here.</div>'
+        : '<div class="mode-tabs">' +
+          '<button id="tab-crop">Crop from reference sheet</button>' +
+          '<button id="tab-upload">Upload a PNG</button>' +
+          '</div>' +
+          '<div id="mode-body"></div>' +
+          '<div id="outputs"></div>') +
       '<div id="actions">' +
       '<button class="primary" id="btn-save">Save to project</button>' +
-      '<button class="danger" id="btn-remove-art" type="button"' + (slot.source ? '' : ' disabled') + '>Remove art</button>' +
+      (positionOnly ? '' : '<button class="danger" id="btn-remove-art" type="button"' + (slot.source ? '' : ' disabled') + '>Remove art</button>') +
       removePropButton +
       '<span id="save-status"></span>' +
       '</div>'
@@ -529,6 +564,10 @@
   }
 
   function wireSlotControls(group, slot, state) {
+    if (isPositionOnly(group, slot)) {
+      el('btn-save').addEventListener('click', () => saveSlot(group, slot, state));
+      return;
+    }
     el('tab-crop').addEventListener('click', async () => { state.mode = 'crop'; setActiveTab(); await loadSheetForCrop(slot, state); });
     el('tab-upload').addEventListener('click', async () => { state.mode = 'upload'; setActiveTab(); await refreshUploadPreview(slot, state); });
     setActiveTab();
@@ -547,7 +586,14 @@
     if (group === 'planes') {
       slot.offsetX = Number(el('f-offsetX').value) || 0;
       slot.offsetY = Number(el('f-offsetY').value) || 0;
+      slot.scale = Number(el('f-scale').value) || slot.scale || 1;
       slot.scrollFactor = Number(el('f-scrollFactor').value) || 0;
+      slot.depth = Number(el('f-depth').value) || 0;
+    } else if (group === 'buildings') {
+      slot.label = el('f-label').value || slot.label;
+      slot.x = Number(el('f-x').value) || 0;
+      slot.y = Number(el('f-y').value) || 0;
+      slot.scale = Number(el('f-scale').value) || slot.scale || 1;
       slot.depth = Number(el('f-depth').value) || 0;
     } else {
       slot.label = el('f-label').value || slot.label;
@@ -821,7 +867,7 @@
 
   async function saveSlot(group, slot, state) {
     readFieldsInto(group, slot);
-    const master = state.masterCanvas || (await currentMasterCanvas(slot, state));
+    const master = isPositionOnly(group, slot) ? null : state.masterCanvas || (await currentMasterCanvas(slot, state));
     if (master) {
       const blob = await canvasToBlob(master);
       await writeFile(rootHandle, 'public/' + slot.path, blob);
@@ -855,7 +901,7 @@
       '<div class="slot-row' + (activeMode === 'locations' && activeLocationId === loc.id ? ' active' : '') + '" data-id="' + escapeHtml(loc.id) + '">' +
       '<div class="slot-meta">' +
       '<div class="slot-label">' + escapeHtml(loc.label) + '</div>' +
-      '<div class="slot-id">x=' + loc.x + ' · radius ' + loc.radius + '</div>' +
+      '<div class="slot-id">x=' + loc.x + ' · radius ' + loc.radius + (loc.enterable ? '' : ' · not enterable yet') + (loc.sign ? '' : ' · no sign') + '</div>' +
       '</div></div>'
     )).join('');
     $locationList.querySelectorAll('.slot-row').forEach((row) => {
@@ -875,18 +921,22 @@
       '<label>X position<input type="number" id="loc-x" value="' + loc.x + '"></label>' +
       '<label>Interaction radius<input type="number" id="loc-radius" value="' + loc.radius + '"></label>' +
       '<label>Prompt label<input type="text" id="loc-prompt" value="' + escapeHtml(loc.promptLabel) + '"></label>' +
+      '<label style="flex-direction:row;align-items:center;gap:6px;">Enterable<input type="checkbox" id="loc-enterable" ' + (loc.enterable ? 'checked' : '') + '></label>' +
       '</div></fieldset>' +
-      '<fieldset><legend>Hanging sign</legend>' +
-      '<div class="rect-inputs"><label style="flex:1 1 100%;">Sign text (use \\n for a line break)<textarea id="sign-text">' + escapeHtml(loc.sign.text) + '</textarea></label></div>' +
-      '<div class="field-grid">' +
-      '<label>Sign X<input type="number" id="sign-x" value="' + loc.sign.x + '"></label>' +
-      '<label>Sign Y<input type="number" id="sign-y" value="' + loc.sign.y + '"></label>' +
-      '<label>Font size<input type="number" id="sign-fontSize" value="' + loc.sign.fontSize + '"></label>' +
-      '<label>Board width<input type="number" id="sign-boardWidth" value="' + loc.sign.boardWidth + '"></label>' +
-      '<label>Board height<input type="number" id="sign-boardHeight" value="' + loc.sign.boardHeight + '"></label>' +
-      '<label>Text color<input type="color" id="sign-textColor" value="' + toHexColor(loc.sign.textColor) + '"></label>' +
-      '<label>Board color<input type="color" id="sign-boardColor" value="' + toHexColor(loc.sign.boardColor) + '"></label>' +
-      '</div></fieldset>' +
+      (loc.sign
+        ? '<fieldset><legend>Sign</legend>' +
+          '<div class="rect-inputs"><label style="flex:1 1 100%;">Sign text (use \\n for a line break)<textarea id="sign-text">' + escapeHtml(loc.sign.text) + '</textarea></label></div>' +
+          '<div class="field-grid">' +
+          '<label>Sign X<input type="number" id="sign-x" value="' + loc.sign.x + '"></label>' +
+          '<label>Sign Y<input type="number" id="sign-y" value="' + loc.sign.y + '"></label>' +
+          '<label>Font size<input type="number" id="sign-fontSize" value="' + loc.sign.fontSize + '"></label>' +
+          '<label>Panel width<input type="number" id="sign-boardWidth" value="' + loc.sign.boardWidth + '"></label>' +
+          '<label>Panel height<input type="number" id="sign-boardHeight" value="' + loc.sign.boardHeight + '"></label>' +
+          '<label>Text color<input type="color" id="sign-textColor" value="' + toHexColor(loc.sign.textColor) + '"></label>' +
+          '<label>Board color<input type="color" id="sign-boardColor" value="' + toHexColor(loc.sign.boardColor) + '"></label>' +
+          '<label style="flex-direction:row;align-items:center;gap:6px;">Text only (painted panel)<input type="checkbox" id="sign-textOnly" ' + (loc.sign.textOnly ? 'checked' : '') + '></label>' +
+          '</div></fieldset>'
+        : '<div class="hint">This location has no sign of its own.</div>') +
       '<div id="actions"><button class="primary" id="btn-save-location">Save to project</button><span id="save-status"></span></div>';
 
     el('btn-save-location').addEventListener('click', () => saveLocation(loc));
@@ -901,14 +951,18 @@
     loc.x = Number(el('loc-x').value) || loc.x;
     loc.radius = Number(el('loc-radius').value) || loc.radius;
     loc.promptLabel = el('loc-prompt').value || loc.promptLabel;
-    loc.sign.text = el('sign-text').value.replace(/\\n/g, '\n');
-    loc.sign.x = Number(el('sign-x').value) || loc.sign.x;
-    loc.sign.y = Number(el('sign-y').value) || loc.sign.y;
-    loc.sign.fontSize = Number(el('sign-fontSize').value) || loc.sign.fontSize;
-    loc.sign.boardWidth = Number(el('sign-boardWidth').value) || loc.sign.boardWidth;
-    loc.sign.boardHeight = Number(el('sign-boardHeight').value) || loc.sign.boardHeight;
-    loc.sign.textColor = el('sign-textColor').value;
-    loc.sign.boardColor = el('sign-boardColor').value;
+    loc.enterable = !!el('loc-enterable').checked;
+    if (loc.sign) {
+      loc.sign.text = el('sign-text').value.replace(/\\n/g, '\n');
+      loc.sign.x = Number(el('sign-x').value) || loc.sign.x;
+      loc.sign.y = Number(el('sign-y').value) || loc.sign.y;
+      loc.sign.fontSize = Number(el('sign-fontSize').value) || loc.sign.fontSize;
+      loc.sign.boardWidth = Number(el('sign-boardWidth').value) || loc.sign.boardWidth;
+      loc.sign.boardHeight = Number(el('sign-boardHeight').value) || loc.sign.boardHeight;
+      loc.sign.textColor = el('sign-textColor').value;
+      loc.sign.boardColor = el('sign-boardColor').value;
+      loc.sign.textOnly = !!el('sign-textOnly').checked;
+    }
     await writeJSON(rootHandle, MANIFEST_PATH, manifest);
     el('save-status').textContent = 'Saved ' + new Date().toLocaleTimeString();
     renderLocationList();
@@ -927,23 +981,24 @@
   // ---------------------------------------------------------------
   function getLayoutRef(type, id) {
     if (type === 'plane') return manifest.planes.find((p) => p.id === id);
+    if (type === 'building') return manifest.buildings.find((b) => b.id === id);
     if (type === 'prop') return manifest.props.find((p) => p.id === id);
     return manifest.locations.find((l) => l.id === id); // 'location' and 'sign' both key off the location
   }
   function getLayoutPos(type, ref) {
     if (type === 'plane') return [ref.offsetX, ref.offsetY];
-    if (type === 'prop') return [ref.x, ref.y];
+    if (type === 'building' || type === 'prop') return [ref.x, ref.y];
     if (type === 'location') return [ref.x, manifest.groundY];
     return [ref.sign.x, ref.sign.y]; // sign
   }
   function setLayoutPos(type, ref, x, y) {
     if (type === 'plane') { ref.offsetX = Math.round(x); ref.offsetY = Math.round(y); }
-    else if (type === 'prop') { ref.x = Math.round(x); ref.y = Math.round(y); }
+    else if (type === 'building' || type === 'prop') { ref.x = Math.round(x); ref.y = Math.round(y); }
     else if (type === 'location') { ref.x = Math.round(x); } // locations live on the ground line — x only
     else { ref.sign.x = Math.round(x); ref.sign.y = Math.round(y); }
   }
   function layoutTypeNoun(type) {
-    return { plane: 'plane', prop: 'prop', location: 'location marker', sign: 'sign' }[type];
+    return { plane: 'plane', building: 'building', prop: 'prop', location: 'location marker', sign: 'sign' }[type];
   }
 
   function layoutRowHtml(type, id, label) {
@@ -957,9 +1012,10 @@
   function renderLayoutSidebar() {
     if (!manifest) return;
     el('layout-list-planes').innerHTML = manifest.planes.map((p) => layoutRowHtml('plane', p.id, p.label)).join('');
+    el('layout-list-buildings').innerHTML = manifest.buildings.map((b) => layoutRowHtml('building', b.id, b.label)).join('');
     el('layout-list-props').innerHTML = manifest.props.map((p) => layoutRowHtml('prop', p.id, p.label)).join('');
     el('layout-list-locations').innerHTML = manifest.locations.map((l) => layoutRowHtml('location', l.id, l.label)).join('');
-    el('layout-list-signs').innerHTML = manifest.locations.map((l) => layoutRowHtml('sign', l.id, l.label + ' sign')).join('');
+    el('layout-list-signs').innerHTML = manifest.locations.filter((l) => l.sign).map((l) => layoutRowHtml('sign', l.id, l.label + ' sign')).join('');
     document.querySelectorAll('#layout-sidebar-body .slot-row').forEach((row) => {
       row.addEventListener('click', () => selectLayoutElement(row.dataset.type, row.dataset.id));
     });
@@ -987,6 +1043,7 @@
   async function ensureLayoutBitmaps() {
     const paths = new Set();
     for (const p of manifest.planes) paths.add(p.path);
+    for (const b of manifest.buildings) paths.add(b.path);
     for (const p of manifest.props) paths.add(p.path);
     await Promise.all(Array.from(paths).map(async (path) => {
       if (layoutBitmaps.has(path)) return;
@@ -1012,12 +1069,29 @@
     return { x: prop.x - w / 2, y: prop.y - h, w, h };
   }
 
+  /** A building is anchored at its bottom-left corner. */
+  function buildingBoxFor(building) {
+    const bmp = layoutBitmaps.get(building.path);
+    const w = (bmp ? bmp.width : 400) * building.scale;
+    const h = (bmp ? bmp.height : 600) * building.scale;
+    return { x: building.x, y: building.y - h, w, h };
+  }
+
+  /** A plane's drawn size: uniform scale, never stretched to the world. */
+  function planeBoxFor(plane) {
+    const bmp = layoutBitmaps.get(plane.path);
+    const w = (bmp ? bmp.width : manifest.worldWidth) * plane.scale;
+    const h = (bmp ? bmp.height : 1080) * plane.scale;
+    return { x: plane.offsetX, y: plane.offsetY, w, h };
+  }
+
   function hitTestLayout(px, py) {
     for (const loc of manifest.locations) {
       if (Math.hypot(px - loc.x, py - manifest.groundY) < 16) return { type: 'location', id: loc.id };
     }
     for (const loc of manifest.locations) {
       const s = loc.sign;
+      if (!s) continue;
       if (px >= s.x - s.boardWidth / 2 && px <= s.x + s.boardWidth / 2 && py >= s.y - s.boardHeight / 2 && py <= s.y + s.boardHeight / 2) {
         return { type: 'sign', id: loc.id };
       }
@@ -1026,6 +1100,11 @@
     for (const prop of propsByDepthDesc) {
       const box = propBoxFor(prop);
       if (px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h) return { type: 'prop', id: prop.id };
+    }
+    const buildingsByDepthDesc = manifest.buildings.slice().sort((a, b) => b.depth - a.depth);
+    for (const building of buildingsByDepthDesc) {
+      const box = buildingBoxFor(building);
+      if (px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h) return { type: 'building', id: building.id };
     }
     return null;
   }
@@ -1046,8 +1125,9 @@
       const box = propBoxFor(prop);
       maxY = Math.max(maxY, box.y + box.h);
     }
+    for (const building of manifest.buildings) maxY = Math.max(maxY, building.y);
     for (const loc of manifest.locations) {
-      maxY = Math.max(maxY, loc.sign.y + loc.sign.boardHeight / 2, manifest.groundY + 40);
+      maxY = Math.max(maxY, loc.sign ? loc.sign.y + loc.sign.boardHeight / 2 : 0, manifest.groundY + 40);
     }
     return Math.ceil(maxY) + 30;
   }
@@ -1114,12 +1194,32 @@
     ctx.fillStyle = '#68b9ef';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    for (const plane of manifest.planes.slice().sort((a, b) => a.depth - b.depth)) {
-      const bmp = layoutBitmaps.get(plane.path);
-      if (bmp) ctx.drawImage(bmp, plane.offsetX, plane.offsetY, manifest.worldWidth, 1080);
-      else drawPlaceholderRect(ctx, plane.offsetX, plane.offsetY, manifest.worldWidth, 1080, plane.label + ' (no art)');
-      if (activeLayoutType === 'plane' && activeLayoutId === plane.id) {
-        strokeSelectionRect(ctx, plane.offsetX, plane.offsetY, manifest.worldWidth, 1080);
+    // Planes and buildings share one depth-sorted pass, so the ground plane
+    // (depth 8) draws over the buildings (depth 3) and hides their overlap.
+    const layers = [
+      ...manifest.planes.map((ref) => ({ kind: 'plane', ref })),
+      ...manifest.buildings.map((ref) => ({ kind: 'building', ref })),
+    ].sort((a, b) => a.ref.depth - b.ref.depth);
+    for (const { kind, ref } of layers) {
+      if (kind === 'plane') {
+        const plane = ref;
+        const bmp = layoutBitmaps.get(plane.path);
+        const box = planeBoxFor(plane);
+        if (bmp && plane.repeatX) {
+          for (let x = plane.offsetX; x < manifest.worldWidth; x += box.w) ctx.drawImage(bmp, x, box.y, box.w, box.h);
+        } else if (bmp) {
+          ctx.drawImage(bmp, box.x, box.y, box.w, box.h);
+        } else {
+          drawPlaceholderRect(ctx, box.x, box.y, box.w, box.h, plane.label + ' (no art)');
+        }
+        if (activeLayoutType === 'plane' && activeLayoutId === plane.id) strokeSelectionRect(ctx, box.x, box.y, box.w, box.h);
+      } else {
+        const building = ref;
+        const bmp = layoutBitmaps.get(building.path);
+        const box = buildingBoxFor(building);
+        if (bmp) ctx.drawImage(bmp, box.x, box.y, box.w, box.h);
+        else drawPlaceholderRect(ctx, box.x, box.y, box.w, box.h, building.label + ' (no art)');
+        if (activeLayoutType === 'building' && activeLayoutId === building.id) strokeSelectionRect(ctx, box.x, box.y, box.w, box.h);
       }
     }
 
@@ -1144,20 +1244,29 @@
 
     for (const loc of manifest.locations) {
       const s = loc.sign;
-      ctx.fillStyle = /^#[0-9a-fA-F]{6}$/.test(s.boardColor) ? s.boardColor : '#241609';
-      ctx.fillRect(s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
-      ctx.fillStyle = /^#[0-9a-fA-F]{6}$/.test(s.textColor) ? s.textColor : '#f3dfab';
-      ctx.font = 'bold ' + s.fontSize + 'px Georgia, serif';
-      ctx.textAlign = 'center';
-      const lines = String(s.text).split('\n');
-      const lineHeight = s.fontSize + 4;
-      const startY = s.y - ((lines.length - 1) * lineHeight) / 2 + s.fontSize / 3;
-      lines.forEach((line, i) => ctx.fillText(line, s.x, startY + i * lineHeight));
-      if (activeLayoutType === 'sign' && activeLayoutId === loc.id) {
-        strokeSelectionRect(ctx, s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
+      if (s) {
+        // Text-only signs sit on the panel already painted into the building
+        // art, so no board is drawn behind the lettering.
+        if (!s.textOnly) {
+          ctx.fillStyle = /^#[0-9a-fA-F]{6}$/.test(s.boardColor) ? s.boardColor : '#241609';
+          ctx.fillRect(s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
+        }
+        ctx.fillStyle = /^#[0-9a-fA-F]{6}$/.test(s.textColor) ? s.textColor : '#f3dfab';
+        ctx.font = 'bold ' + s.fontSize + 'px Georgia, serif';
+        ctx.textAlign = 'center';
+        const lines = String(s.text).split('\n');
+        const lineHeight = s.fontSize + (s.textOnly ? 2 : 4);
+        const startY = s.y - ((lines.length - 1) * lineHeight) / 2 + s.fontSize / 3;
+        lines.forEach((line, i) => ctx.fillText(line, s.x, startY + i * lineHeight));
+        if (activeLayoutType === 'sign' && activeLayoutId === loc.id) {
+          strokeSelectionRect(ctx, s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
+        }
       }
 
       const isSelectedMarker = activeLayoutType === 'location' && activeLayoutId === loc.id;
+      // Locations that are not enterable yet have no trigger zone in the game,
+      // so their radius is drawn faint and their marker hollow.
+      const live = loc.enterable !== false;
 
       // The interaction radius's fall-off, drawn true-to-scale so an edit
       // to the radius field is visible at a glance instead of only being
@@ -1168,7 +1277,7 @@
       // zone; its height is just what makes a radius readable at a glance.
       ctx.beginPath();
       ctx.arc(loc.x, manifest.groundY, loc.radius, 0, Math.PI * 2);
-      ctx.fillStyle = isSelectedMarker ? 'rgba(95,224,160,0.14)' : 'rgba(201,144,63,0.08)';
+      ctx.fillStyle = isSelectedMarker ? 'rgba(95,224,160,0.14)' : live ? 'rgba(201,144,63,0.08)' : 'rgba(150,150,150,0.05)';
       ctx.fill();
       ctx.setLineDash([6, 5]);
       ctx.strokeStyle = isSelectedMarker ? 'rgba(95,224,160,0.75)' : 'rgba(201,144,63,0.4)';
@@ -1178,7 +1287,7 @@
 
       ctx.beginPath();
       ctx.arc(loc.x, manifest.groundY, 12, 0, Math.PI * 2);
-      ctx.fillStyle = isSelectedMarker ? '#5fe0a0' : 'rgba(201,144,63,0.8)';
+      ctx.fillStyle = isSelectedMarker ? '#5fe0a0' : live ? 'rgba(201,144,63,0.8)' : 'rgba(150,150,150,0.55)';
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = '#241a0e';
@@ -1253,6 +1362,7 @@
       // as a side effect of leaving Layout mode.
       const type = activeLayoutType, id = activeLayoutId;
       if (type === 'plane') { setMode('art'); selectSlot('planes', id); }
+      else if (type === 'building') { setMode('art'); selectSlot('buildings', id); }
       else if (type === 'prop') { setMode('art'); selectSlot('props', id); }
       else { setMode('locations'); selectLocation(id); }
     });

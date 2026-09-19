@@ -44,15 +44,15 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   },
   'boarding-house': {
     background: assetUrl('assets/locations/boarding-house.webp'),
-    character: { src: assetUrl('assets/characters/landlady.webp'), alt: 'The boarding-house landlady' },
+    character: { src: assetUrl('assets/characters/landlady.webp'), alt: 'The Bellhaven Rooms landlady' },
   },
   diner: {
     background: assetUrl('assets/locations/diner.webp'),
-    character: { src: assetUrl('assets/characters/diner-confidant.webp'), alt: 'The counter girl at the Sunset Diner' },
+    character: { src: assetUrl('assets/characters/diner-confidant.webp'), alt: 'The counter girl at The Gilded Spoon' },
   },
   'backlot-gate': {
     background: assetUrl('assets/locations/backlot-gate.webp'),
-    character: { src: assetUrl('assets/characters/rival.webp'), alt: 'The rival at the backlot gate' },
+    character: { src: assetUrl('assets/characters/rival.webp'), alt: 'The rival at the Monarch Pictures gate' },
   },
   'extras-corral': {
     background: assetUrl('assets/locations/extras-corral.webp'),
@@ -203,16 +203,16 @@ export class AppShell {
       this.announce('You entered the Sunset Casting Exchange.');
     });
     this.options.domainEvents.on('diner-entered', () => {
-      this.openDialogue(DINER_DIALOGUE, 'Sunset Diner', 'diner');
-      this.announce('You entered the Sunset Diner.');
+      this.openDialogue(DINER_DIALOGUE, 'The Gilded Spoon', 'diner');
+      this.announce('You entered The Gilded Spoon.');
     });
     this.options.domainEvents.on('home-hub-entered', ({ resolution }) => {
       this.openHomeHub(resolution);
-      this.announce('You entered the boarding house.');
+      this.announce('You entered Bellhaven Rooms.');
     });
     this.options.domainEvents.on('backlot-gate-entered', () => {
-      this.openDialogue(RIVAL_DIALOGUE, 'The Backlot Gate', 'backlot-gate');
-      this.announce('You reached the backlot gate.');
+      this.openDialogue(RIVAL_DIALOGUE, 'Monarch Pictures Gate', 'backlot-gate');
+      this.announce('You reached the Monarch Pictures gate.');
     });
     this.options.domainEvents.on('extras-corral-entered', () => {
       this.openDialogue(PRODUCTION_COORDINATOR_DIALOGUE, 'The Extras Corral', 'extras-corral');
@@ -241,7 +241,7 @@ export class AppShell {
     });
     assertElement('#home-hub-talk-landlady', HTMLButtonElement).addEventListener('click', () => {
       assertElement('#home-hub-dialog', HTMLDialogElement).close();
-      this.openDialogue(LANDLADY_DIALOGUE, 'The Boarding House', 'boarding-house');
+      this.openDialogue(LANDLADY_DIALOGUE, 'Bellhaven Rooms', 'boarding-house');
     });
     assertElement('#home-hub-close', HTMLButtonElement).addEventListener('click', () => {
       assertElement('#home-hub-dialog', HTMLDialogElement).close();
