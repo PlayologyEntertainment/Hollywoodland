@@ -89,3 +89,12 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 Several choices began as recommended defaults after a blank selection and were subsequently carried forward when the user continued: attributes plus skills, hybrid stat/player-skill challenge resolution, scheduled career assignments while away, the full origin-based creator, acting-led career focus, teen dramedy boundaries, the arrival premise, the rival, and the screen-test climax. They are treated as accepted working direction in this package but remain easy to revise during document approval.
 
 The exact Phaser/Vite versions, analytics provider, deployment provider, animation frame counts, and asset budgets remain intentionally unresolved until their named gates. Cast identities, fictional proper nouns, the origin list, the screen-test genre, and the tone boundary were resolved on September 18, 2026 (see Canon above). The full creator appearance matrix is still open.
+
+## Open decisions
+
+| Area | Question | Raised |
+|---|---|---|
+| The Celestial Palace character | The lobby scene uses an unnamed usher with no portrait. Assign an existing portrait (Gus Albrecht is the unused one), or design a new character? Owner is deciding later | 2026-09-19 |
+| Phase 1 visual tweaks | Owner will outline minor tweaks to the approved Phase 1 visual spike | 2026-09-19 |
+| Phase 1 exit | Measured feasibility report and final asset/frame budgets are still needed (`PRODUCTION_ROADMAP.md`) | 2026-09-19 |
+| The alley | The only Boulevard entrance without a scene | 2026-09-19 |

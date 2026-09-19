@@ -2,7 +2,17 @@ import { validateDialogueGraph } from '../content/DialogueGraphValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_AUDITIONS } from './PerformanceDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, DINER_CONFIDANT, LANDLADY, PRODUCTION_COORDINATOR, RIVAL, SCENE_PARTNER } from './RelationshipDefinitions';
+import {
+  ALL_RELATIONSHIP_CHARACTERS,
+  CASTING_GATEKEEPER,
+  DINER_CONFIDANT,
+  LANDLADY,
+  PRODUCTION_COORDINATOR,
+  REPORTER,
+  RIVAL,
+  SCENE_PARTNER,
+  WARDROBE_MENTOR,
+} from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { DialogueGraph } from './Dialogue';
 
@@ -566,6 +576,199 @@ export const SCENE_PARTNER_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(SCENE_PARTNER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
+/** The Silver Thimble: the `wardrobe-mentor` roster entry's first content.
+ * Every gain is one-time (gated on a `fact` that the same choice sets), so
+ * revisiting the shop cannot farm trust. `ask-for-a-fitting` spends a favor
+ * (`obligation` goes negative: the player owes her), the same ledger
+ * convention as LANDLADY_DIALOGUE's `ask-for-extension`. */
+export const COSTUME_SHOP_DIALOGUE: DialogueGraph = {
+  id: 'silver-thimble-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Wardrobe Mistress',
+      text: '"Mind the pins, and keep your hands off the silk," she says, a yellow tape measure trailing from her neck. "Half of Monarch\'s call sheet is hanging in this shop, and every seam on it is mine."',
+      choices: [
+        {
+          id: 'admire-the-coat',
+          label: 'Admire the swashbuckler\'s coat on the rack.',
+          next: 'coat-reply',
+          conditions: [{ kind: 'fact', fact: 'silver-thimble-admired-coat', equals: false }],
+          effects: [
+            { kind: 'relationship-delta', characterId: WARDROBE_MENTOR.id, delta: { trust: 2 } },
+            { kind: 'set-fact', fact: 'silver-thimble-admired-coat' },
+          ],
+        },
+        {
+          id: 'ask-for-a-fitting',
+          label: 'Ask whether she has a minute to size up a newcomer.',
+          next: 'fitting-reply',
+          conditions: [{ kind: 'fact', fact: 'silver-thimble-fitting-offered', equals: false }],
+          effects: [
+            { kind: 'relationship-delta', characterId: WARDROBE_MENTOR.id, delta: { trust: 1, obligation: -2 } },
+            { kind: 'relationship-pivotal-flag', characterId: WARDROBE_MENTOR.id, flag: 'offeredFitting' },
+            { kind: 'set-fact', fact: 'silver-thimble-fitting-offered' },
+          ],
+        },
+        { id: 'browse-quietly', label: 'Just browse.', next: null },
+      ],
+    },
+    {
+      id: 'coat-reply',
+      speaker: 'Wardrobe Mistress',
+      text: '"The Corsair\'s Daughter," she says, smoothing a sleeve. "Forty yards of braid, and not one of those pirates can sit down in it. Ask me how I know."',
+      choices: [
+        { id: 'ask-about-a-fitting', label: 'Ask whether she could spare a minute for you, too.', next: 'fitting-reply', conditions: [{ kind: 'fact', fact: 'silver-thimble-fitting-offered', equals: false }], effects: [
+          { kind: 'relationship-delta', characterId: WARDROBE_MENTOR.id, delta: { trust: 1, obligation: -2 } },
+          { kind: 'relationship-pivotal-flag', characterId: WARDROBE_MENTOR.id, flag: 'offeredFitting' },
+          { kind: 'set-fact', fact: 'silver-thimble-fitting-offered' },
+        ] },
+        { id: 'leave-her-to-the-braid', label: 'Let her get back to the braid.', next: null },
+      ],
+    },
+    {
+      id: 'fitting-reply',
+      speaker: 'Wardrobe Mistress',
+      text: '"Chin level, shoulders down, and do not breathe in," she says, chalk already moving. "A costume that fits is worth more to a career than a good headshot. Come back when you have a callback."',
+      choices: [{ id: 'thank-her', label: 'Thank her and promise to come back.', next: null }],
+    },
+  ],
+};
+
+validateDialogueGraph(COSTUME_SHOP_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
+/** The Klieg Light: the `reporter` roster entry's first content. Nick trades
+ * in favors, so both productive branches move `obligation`: giving him a
+ * harmless tip makes him owe the player (positive), and asking what he knows
+ * makes the player owe him (negative). Brushing him off costs a little
+ * `tension`, the "mishandling him" path from the canon. */
+export const KLIEG_LIGHT_DIALOGUE: DialogueGraph = {
+  id: 'klieg-light-intro',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Newspaper Stringer',
+      text: '"Fresh face, no entourage, suitcase still on the shoulder," he says, notebook already raised. "Give me something I can print, and I\'ll owe you one."',
+      choices: [
+        {
+          id: 'give-a-harmless-tip',
+          label: 'Give him a harmless bit of color about your arrival.',
+          next: 'tip-reply',
+          conditions: [{ kind: 'fact', fact: 'klieg-light-tip-given', equals: false }],
+          effects: [
+            { kind: 'relationship-delta', characterId: REPORTER.id, delta: { trust: 1, obligation: 2 } },
+            { kind: 'set-fact', fact: 'klieg-light-tip-given' },
+          ],
+        },
+        {
+          id: 'ask-what-he-knows',
+          label: 'Ask what he has heard about Monarch\'s casting.',
+          next: 'gossip-reply',
+          conditions: [{ kind: 'fact', fact: 'klieg-light-gossip-asked', equals: false }],
+          effects: [
+            { kind: 'relationship-delta', characterId: REPORTER.id, delta: { trust: 1, obligation: -2 } },
+            { kind: 'relationship-pivotal-flag', characterId: REPORTER.id, flag: 'sharedCastingTip' },
+            { kind: 'set-fact', fact: 'klieg-light-gossip-asked' },
+          ],
+        },
+        {
+          id: 'dodge-the-question',
+          label: 'Smile and say you have nothing to print.',
+          next: 'cool-reply',
+          effects: [{ kind: 'relationship-delta', characterId: REPORTER.id, delta: { tension: 1 } }],
+        },
+      ],
+    },
+    {
+      id: 'tip-reply',
+      speaker: 'Newspaper Stringer',
+      text: '"Wholesome. My editor will hate it," he grins, scribbling. "But a name in print is a name people remember. Remember who put it there."',
+      choices: [{ id: 'thank-him', label: 'Tip your hat and head out.', next: null }],
+    },
+    {
+      id: 'gossip-reply',
+      speaker: 'Newspaper Stringer',
+      text: '"Monarch\'s casting is a revolving door, and Sunset Casting Exchange holds the key," he says, lowering his voice. "Be early and be reliable, and they forget you\'re new. Be a story, and I\'ll be the one who tells it."',
+      choices: [{ id: 'take-the-hint', label: 'Take the hint.', next: null }],
+    },
+    {
+      id: 'cool-reply',
+      speaker: 'Newspaper Stringer',
+      text: '"Everybody\'s got something," he says, tipping his hat back with the pencil. "You know where the desk is."',
+      choices: [{ id: 'leave', label: 'Walk back out onto the Boulevard.', next: null }],
+    },
+  ],
+};
+
+validateDialogueGraph(KLIEG_LIGHT_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
+/** The Celestial Palace lobby: no roster character is assigned yet, so this
+ * scene is an usher with no portrait (`LOCATION_SCENE_ART` allows a location
+ * with a background and no character) and remembers its beats only as
+ * `facts`. `show-extra-voucher` is the first dialogue choice to read
+ * `background-extra-voucher`, which the extras corral grants. */
+export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
+  id: 'celestial-palace-lobby',
+  rootNodeId: 'root',
+  nodes: [
+    {
+      id: 'root',
+      speaker: 'Usher',
+      text: 'A brass-buttoned usher looks up from polishing the rail. "The feature does not start until the evening show, but the lobby is free to look at, and it is the finest room in Hollywood."',
+      choices: [
+        {
+          id: 'admire-the-ceiling',
+          label: 'Take in the painted ceiling.',
+          next: 'ceiling-reply',
+          effects: [{ kind: 'set-fact', fact: 'celestial-palace-visited' }],
+        },
+        { id: 'ask-about-the-picture', label: 'Ask what is playing tonight.', next: 'picture-reply' },
+        { id: 'leave-quietly', label: 'Step back out to the Boulevard.', next: null },
+      ],
+    },
+    {
+      id: 'ceiling-reply',
+      speaker: 'Usher',
+      text: '"Every star up there is gold leaf, set by hand," the usher says. "Folks claim that if you stand under the sunburst long enough, the industry notices you. Mostly it gives you a stiff neck."',
+      choices: [
+        { id: 'ask-about-the-picture', label: 'Ask what is playing tonight.', next: 'picture-reply' },
+        { id: 'leave', label: 'Rub your neck and head out.', next: null },
+      ],
+    },
+    {
+      id: 'picture-reply',
+      speaker: 'Usher',
+      text: '"Monarch\'s new swashbuckler, The Corsair\'s Daughter, opens next month," the usher says, nodding at the empty poster frames. "Until then it is newsreels and a cartoon."',
+      choices: [
+        {
+          id: 'show-extra-voucher',
+          label: 'Mention your background-extra voucher.',
+          next: 'voucher-reply',
+          conditions: [{ kind: 'item-owned', itemId: 'background-extra-voucher' }],
+        },
+        { id: 'leave', label: 'Thank the usher and head out.', next: null },
+      ],
+    },
+    {
+      id: 'voucher-reply',
+      speaker: 'Usher',
+      text: '"A Monarch voucher?" The usher straightens and lowers his voice. "Come by for the Tuesday matinee. Crew and extras sit free, and nobody asks where you got the seat."',
+      choices: [
+        {
+          id: 'accept-the-matinee-pass',
+          label: 'Promise to come by.',
+          next: null,
+          effects: [{ kind: 'set-fact', fact: 'celestial-palace-matinee-pass' }],
+        },
+      ],
+    },
+  ],
+};
+
+validateDialogueGraph(CELESTIAL_PALACE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+
 const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
   [DINER_DIALOGUE.id]: DINER_DIALOGUE,
@@ -573,6 +776,9 @@ const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [RIVAL_DIALOGUE.id]: RIVAL_DIALOGUE,
   [PRODUCTION_COORDINATOR_DIALOGUE.id]: PRODUCTION_COORDINATOR_DIALOGUE,
   [SCENE_PARTNER_DIALOGUE.id]: SCENE_PARTNER_DIALOGUE,
+  [COSTUME_SHOP_DIALOGUE.id]: COSTUME_SHOP_DIALOGUE,
+  [KLIEG_LIGHT_DIALOGUE.id]: KLIEG_LIGHT_DIALOGUE,
+  [CELESTIAL_PALACE_DIALOGUE.id]: CELESTIAL_PALACE_DIALOGUE,
 });
 
 export function getDialogueGraphById(id: string): DialogueGraph | undefined {
