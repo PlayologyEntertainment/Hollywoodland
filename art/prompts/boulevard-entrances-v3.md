@@ -1,6 +1,6 @@
 # Boulevard entrances v3 brief
 
-Status: **Scope approved by the owner September 18, 2026. Plane 4 is built from per-building modules (approach B, approved). All nine modules are generated, calibrated and staged in `art/generated/boulevard-v3/`, pending owner review. World width is decided: full-size buildings, about 7,450 px. Planes 1-3 and 5 and the four overlays are not yet generated. Nothing is promoted to `public/assets/`.**
+Status: **Scope approved by the owner September 18, 2026. Plane 4 is built from per-building modules (approach B, approved). All nine modules are generated, calibrated and staged in `art/generated/boulevard-v3/`, pending owner review. World width is decided: full-size buildings, about 7,450 px. The Plane 5 ground tile and the four active-state variants are also generated and staged (sections 10-11). Planes 1-3 are not yet generated. Nothing is promoted to `public/assets/`.**
 
 Supersedes the layout of `boulevard-five-plane-v2.md` (which stays as the record of the current runtime art). Everything not changed here (style, palette, blank-signage policy, chroma-key extraction, validation gates) is inherited from that brief.
 
@@ -50,7 +50,7 @@ The Segment and x columns below are the original first-pass plan and are **super
 | 7 | The Klieg Light | B, 73% (~5,016) | Red-brick newsroom, steel-framed window, frosted-glass door, klieg-lamp blade-sign bracket (blank) | none |
 | 8 | Monarch Pictures gate | B, 88% (~5,376) | Monumental stucco arch, wrought-iron double gate, green-roofed guard booth, red-and-white barrier arm. Echoes the backlot gate scene (`backlot-gate.webp`) | barrier up |
 
-**Overlay assets (4):** the base plane shows each changing location in its default state (Spoon dark, Palace marquee dim, Casting Exchange shuttered, Monarch gate closed with the barrier down). One transparent overlay per location supplies the active state (Spoon open and lit, Palace marquee lit, Casting Exchange door open with lit window, Monarch gate open with the barrier raised). Each overlay is registered to Plane 4 and fully covers the base door area. This gives every changing location two states with 4 assets instead of 8.
+**Overlay assets (4):** the base plane shows each changing location in its default state (Spoon dark, Palace marquee dim, Casting Exchange shuttered, Monarch gate closed with the barrier down). One transparent overlay per location supplies the active state (Spoon open and lit, Palace marquee lit, Casting Exchange door open with lit window, Monarch gate open with the barrier raised). Each overlay is registered to Plane 4 and fully covers the base door area. This gives every changing location two states with 4 assets instead of 8. (Delivered as full-module state variants that the engine swaps, because an overlay can only add pixels and could not hide the closed gate; see section 11.)
 
 ## 4. Shared blocks
 
@@ -293,4 +293,79 @@ human_edits: deterministic calibration only (trim, bottom flatten, door-height s
 review_status: pending review
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place names are approved canon; the costume shop's name, The Silver Thimble, is owner-approved.
 runtime_files: not yet promoted; calibrated staging PNGs in art/generated/boulevard-v3/runtime/
+```
+
+## 10. Plane 5 (ground) and state overlays
+
+Status: approach and prompts recorded 2026-09-18 before generation. Results are appended in section 11.
+
+### Plane 5: ground tile
+
+The ground is a repeating strip, not one wide image. A single tile is generated, then made seamless by mirroring (`[T | mirror(T)]` repeats with no blend seam), and tiled across the world (a tile sprite in the scene). The visible part on screen is only the top ~120 display px (sidewalk and curb lip) above the walk baseline; the rest is kept for camera margin. The top edge is the building line at display y = 963, where the module ground rows sit and their hidden 40 px overlap tucks under the slabs.
+
+```text
+Use case: stylized-concept
+Asset type: Plane 5 (sidewalk and street ground) tile for a 1935 Hollywood side-scrolling game; a horizontal strip that will be repeated left to right
+Input image roles: Image 1 is the approved earlier ground strip: match its materials, warm daylight color, slab proportions, star inlay style and camera height exactly, but do not copy its layout. Image 2 is the boulevard style concept. Image 3 shows the finished building fronts that will stand on this ground; match their warm sunlight.
+Primary request: Render only an empty, clean horizontal cross-section strip of a Hollywood Boulevard sidewalk and street. At the top edge, warm concrete sidewalk slabs meet the line where building bases will stand (the top edge is a perfectly straight horizontal line). Show joints between slabs and subtle cracks. Two or three slabs carry a terracotta-red five-pointed star terrazzo inlay with no names, letters, or symbols. Below the slabs are a worn granite curb lip, a narrow gutter with one flush drain grate, then asphalt roadway with two embedded steel streetcar rails running horizontally and a faint lane seam. Vivid hand-painted storybook rendering, romanticized 1935.
+Composition/framing: straight-on orthographic side-scroller view with only a slight downward tilt and no converging perspective: every slab joint on the sidewalk is a perfectly vertical straight line and every other line is perfectly horizontal, and the star inlays are upright and symmetrical, so the strip looks natural when mirrored left to right; the strip fills the entire canvas edge to edge, with no sky, no building, and no border. The content within 15 percent of the left and right edges is a plain stretch of slab, curb, gutter and asphalt with no star, drain grate, or other feature, so the strip can be mirrored and repeated.
+Constraints: fully opaque artwork; no people, vehicles, litter, signs, poles, plants, or loose props; no cast shadows from objects; no text, letters, numerals, logos, or symbols anywhere.
+```
+
+### Plane 5: ground details (transparent overlays on the sidewalk)
+
+Two small pieces for places the plain tile cannot cover, each registered to the ground line: a **driveway apron** with a lowered curb cut for the Monarch gate, and **cobbled alley paving** that runs back from the alley mouth. The depot needs no piece; its module already carries its own tile base and platform bays. Prompts are written when generated.
+
+### State overlays (four)
+
+Each active state is made by editing the untouched module master with the edit prompt below (the model must change only the entrance area), then keeping only a feathered rectangle around the entrance from the edited image, composited over the base module pixels. Everything outside the rectangle stays identical to the base, so registration is exact. The overlay is then trimmed, scaled, and alpha-normalized with the same transform as its base module.
+
+Edit prompt template (`[STATE]` filled per location):
+
+```text
+Edit this building image. Keep the building, its framing, its position, its scale, its colors, and every architectural detail outside the entrance area exactly identical, pixel for pixel. Change only the entrance area to its active state: [STATE] Keep the transparent background transparent. Do not add text, letters, numerals, people, or objects. Every sign panel and marquee face stays completely blank.
+```
+
+- **The Gilded Spoon (open and lit):** the interior lights are on with a warm amber glow behind the windows, the blinds are raised so the red booths and chrome stools show clearly, the glass door is lit, and the awning is lit from below.
+- **The Celestial Palace (marquee lit):** every bulb around the marquee and canopy is lit bright warm gold, the marquee panel glows softly but stays blank, the lobby doors glow gold, and the two lanterns are brighter.
+- **Sunset Casting Exchange (open):** the blinds are raised on the ground-floor windows, warm lamplight and a green desk lamp show inside, the brass door glass is lit, and the wall lanterns are lit.
+- **Monarch Pictures gate (open):** the iron gate leaves are swung fully open and folded back against the pylons, and the red-and-white barrier arm is raised to a near-vertical position.
+
+## 11. Plane 5 and state results (2026-09-18)
+
+### Ground tile
+
+- The ground was generated twice. The first tile (`ground-tile-v1-perspective-master.png`) drew slab joints converging to a central vanishing point, which made the mirror seam show as a chevron; the prompt was changed to an orthographic strip with vertical joints (section 10) and the second tile is the one used. The backend returned 2,171 x 724, fully opaque (a ground is inherently opaque, so the transparent-background rule does not apply to it).
+- **Processing:** the leftover dark band above the sidewalk was cropped off (rows above 46 px), the tile resampled to 2,048 px wide, and mirrored into a 4,096 x 640 seamless repeat unit (`art/generated/boulevard-v3/runtime/ground-tile.png`; 4,096 is the safe texture width on older GPUs). At 3x zoom the mirror joint and the wrap joint are near-invisible; the cracks mirror softly.
+- **Use:** repeat horizontally in the scene (a tile sprite) with its top edge at display y = 963, at engine scale 2/3 (runtime pixels are 1.5x display). At that scale the sidewalk slabs are about 147 display px wide, in proportion to the 190 px door leaf. Only the top ~120 display px are on screen above the walk baseline.
+- **Tunable:** stars repeat about every 360 display px at this scale, a little regular. If it reads as too even, use a second tile variant or a larger tile scale.
+- **Deferred (optional polish):** the driveway apron (curb cut) at the Monarch gate and cobbled alley paving are not generated; the plain sidewalk runs under every module and each module carries its own stoop or base.
+
+### State variants (four)
+
+Each was made by editing the untouched module master (`--edit-target`, `--background transparent`) with the section 10 edit prompt. All four edits returned at the base module's canvas size (the Spoon 1 px wider, resized back) and changed only the intended area in substance, with hair-thin resampling differences elsewhere. Only a feathered rectangle around each entrance is taken from the edit; everything outside is the untouched base, so registration is exact (masks in `art/generated/boulevard-v3/runtime/states.json`).
+
+**Delivered as variants, not overlays:** an overlay can only add pixels, and the open Monarch gate has to remove the closed gate. So each active state is a full-module image with the same size and transform as its base module (`<id>-active.png`), and the scene swaps textures between default and active.
+
+| Location | Default (base module) | Active variant |
+|---|---|---|
+| The Gilded Spoon | dark, blinds down | interior lights on, blinds up, booths and stools visible, door and awning lit |
+| The Celestial Palace | dim marquee | marquee and canopy bulbs lit gold, lobby doors and lanterns glowing (marquee stays blank) |
+| Sunset Casting Exchange | shuttered | blinds up, lamps and a green desk lamp inside, door glass and lanterns lit |
+| Monarch Pictures gate | gate closed, barrier down | gate leaves folded back against the pylons, barrier arm raised near-vertical |
+
+**Notes:** with the gate open, the arch shows whatever is behind the street wall (Plane 3 in the scene); a "studio lot beyond" backdrop layer is worth adding later. Nothing baked as text.
+
+```text
+asset_id: boulevard_v3_plane5_ground_and_state_variants
+asset_type: seamless ground tile plus four active-state module variants
+prompt_or_brief: sections 10 and 11 of this file
+reference_asset_ids: v2 ground strip crop, Hollywoodland_Concept_Boulevard, composite preview of the nine modules (ground); the nine module masters (state edits)
+generation_tool_and_version: gpt-image-2 via gg-image (ground: generate, opaque; states: edit, transparent)
+generation_date: 2026-09-18
+raw_source_location: art/generated/boulevard-v3/ground/ (ground-tile-master.png; v1 kept), art/generated/boulevard-v3/overlays/ (*-active-edit-master.png raw edits, *-active-master.png composites)
+human_edits: deterministic processing only (ground: crop, resample, mirror; states: feathered entrance mask composite, same calibration as the base modules, alpha normalization); no repainting
+review_status: pending review
+rights_or_license_notes: project-owned development generation; human rights/provenance review required
+runtime_files: not yet promoted; staging PNGs in art/generated/boulevard-v3/runtime/ (ground-tile.png, *-active.png, states.json)
 ```
