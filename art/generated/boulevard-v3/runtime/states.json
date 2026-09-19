@@ -1,0 +1,50 @@
+{
+  "gilded-spoon": {
+    "runtime_size_px": [
+      1073,
+      873
+    ],
+    "mask_master_px": [
+      95,
+      560,
+      1385,
+      1062
+    ]
+  },
+  "celestial-palace": {
+    "runtime_size_px": [
+      1756,
+      1368
+    ],
+    "mask_master_px": [
+      420,
+      430,
+      1030,
+      1000
+    ]
+  },
+  "sunset-casting-exchange": {
+    "runtime_size_px": [
+      1380,
+      1258
+    ],
+    "mask_master_px": [
+      140,
+      700,
+      1290,
+      1145
+    ]
+  },
+  "monarch-gate": {
+    "runtime_size_px": [
+      1513,
+      988
+    ],
+    "mask_master_px": [
+      500,
+      370,
+      1135,
+      960
+    ]
+  }
+}
