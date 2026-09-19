@@ -543,3 +543,25 @@ The parallax factors were lowered so the hills and distant-buildings planes stil
 - **"SOUND STAGE" is new text, chosen for the panel, not approved canon.** It is drawn by code from the manifest and can be changed in the Art Director tool.
 - The street is 505 px longer (about 1.3 s of walking).
 - The open-gate variant was checked as a still (over the sky) and its trigger (`discoveredCastingOffice`) was not exercised in the running game.
+
+## 16. Klieg Light to Monarch gap closed (2026-09-19)
+
+Owner tweak: a big gap between The Klieg Light and the Monarch gate let the hills and distant buildings show between them, so the player saw parallax there. The other gaps are small and were left alone.
+
+**Measured** from the runtime WebPs at display scale (alpha > 128, wall level y 700-960): the Klieg Light's wall ends at world x 6228 and the Monarch gate's begins at 6325, a **96 px gap**. The next largest is 23 px (depot to Bellhaven Rooms); every other pair abuts. The Klieg's blade sign hangs in that space, which is why a bounding-box check missed it.
+
+**Fix:** move the Monarch gate module left by **108 px** (the smallest shift that leaves no slit at any row from y 700 to 962; the two walls have slightly different insets, so 96 was not enough). Everything to its right moves with it: the gate, extras corral and sound stage triggers and their signs, the right palm, and the world width (7,958 to 7,850). No art changed.
+
+| Item | Before | After |
+|---|---|---|
+| `monarch-gate` x | 6,324 | 6,216 |
+| `klieg-light-office` depth | 3 | 4 |
+| World width | 7,958 | 7,850 |
+| `backlot-gate` trigger / arch sign x | 6,860 / 6,863 | 6,752 / 6,755 |
+| `extras-corral` trigger x | 6,625 | 6,517 |
+| `soundstage` trigger / sign x | 7,711 / 7,458 | 7,603 / 7,350 |
+| `palm-right` x | 7,828 | 7,720 |
+
+**Overlap is deliberate.** The Klieg Light's module now overlaps the Monarch module by 108 px (its blade sign hangs over the Monarch's left edge and palm). It has a higher depth (4 against 3) so the sign draws in front. `tests/boulevard-manifest.test.ts` allows that one overhang (up to 120 px, only from `klieg-light-office`, and only if it draws above the next building); every other pair must still abut within 2 px.
+
+**Checked:** 323 tests pass, `tsc` is clean. In headless Chrome the walls meet with no hills showing between them, the Klieg sign sits in front of the Monarch palm, and the Klieg Light and Monarch gate prompts still trigger at their doors.
