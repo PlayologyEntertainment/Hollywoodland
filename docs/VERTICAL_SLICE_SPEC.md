@@ -55,8 +55,8 @@ Approved roster (September 18, 2026; backgrounds and relationship boundaries in 
 | Aspiring rival/foil | Delphine Voss | Friend, romance, enemy, or ally |
 | Boarding-house proprietor | Odalys Bellhaven | Trust/obligation; no romance |
 | Diner worker / neighborhood confidant | Frankie Dolan | Friendship or slow-burn romance; never rivalry |
-| Casting-office gatekeeper | Selwyn Pruitt | Trust/obligation; no romance |
-| Assistant director / production coordinator | Ruth Kessler | Trust and professional reputation; no romance |
+| Casting-office gatekeeper | Selma Pruitt | Trust/obligation; no romance |
+| Assistant director / production coordinator | Ray Kessler | Trust and professional reputation; no romance |
 | Experienced extra / mentor | Gus Albrecht | Mentor/friendship only |
 | Scene partner | Corinne Lake | Friend, romance, or professional rivalry |
 | Reporter / gossip-adjacent | Nick Ferro | Obligation/favor; mishandling him costs reputation |
