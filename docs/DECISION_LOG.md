@@ -66,11 +66,13 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 | Diner | The Gilded Spoon |
 | Boarding house | Bellhaven Rooms |
 | Tabloid | The Klieg Light |
+| Costume shop | The Silver Thimble (approved September 18, 2026 during Boulevard entrance work) |
 | Slice cast (9) | Delphine Voss (rival/foil), Odalys Bellhaven (boarding-house proprietor), Frankie Dolan (diner confidant), Selwyn Pruitt (casting-office gatekeeper), Ruth Kessler (assistant director / production coordinator), Gus Albrecht (experienced extra / mentor), Corinne Lake (scene partner), Nick Ferro (reporter), Ola Whitfield (wardrobe mistress, origin-linked specialist) |
 | Romance | Romance-capable in the slice: Delphine Voss, Frankie Dolan, Corinne Lake, all attraction-flexible and reactive to the player's creator choices. Everyone else uses trust, obligation, or mentor tracks |
 | Origins (5) | Small-Town Hopeful, Vaudeville Trouper, Runaway Society Name, Immigrant Striver, Studio-Lot Hand-Me-Down. Each trades a +1 for a -1 and grants one starting contact |
 | Screen test | *The Corsair's Daughter*, Monarch's swashbuckling adventure-romance. The player is a background extra in its harbor-market crowd scene; the screen test is a small speaking role opposite Corinne Lake in a rescue/banter scene |
 | Tone ceiling | Longing looks, hand-holding, one tasteful kiss that may cut away, spoken declarations. No depicted sex or nudity, no shock innuendo, no modern profanity or slurs, no gore, no real-weapon threat played straight, no glorified drunkenness, period prejudice softened per the GDD |
+| Boulevard entrances | Eight street entrances (Bellhaven Rooms, The Silver Thimble, The Gilded Spoon, an alley, The Celestial Palace, Sunset Casting Exchange, The Klieg Light, the Monarch Pictures gate) plus a depot landmark. The extras corral, soundstage, wardrobe department, and screen-test space sit behind the Monarch gate. The street is built from per-building modules at a shared door scale, about 7,450 px long (full buildings, approved September 18, 2026). See `art/prompts/boulevard-entrances-v3.md` |
 | Art status | Cast appearances are approved as written briefs only. Each portrait still passes visual review under `CONTENT_AND_ASSET_PIPELINE.md` section 9 |
 
 ## Working assumptions requiring explicit approval
