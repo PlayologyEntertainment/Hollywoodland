@@ -1,6 +1,14 @@
-# Hollywoodland — Track B Canon Proposal (DRAFT)
+# Hollywoodland — Track B Canon (Approved)
 
-Status: **Draft for owner review — nothing here is approved.**
+Status: **Approved by the owner September 18, 2026, as drafted.** The filename keeps `DRAFT` so existing links stay valid.
+
+## Approval record
+
+The owner approved every section as drafted: the naming slate (§1), the nine-character cast and relationship boundaries (§2), the five origins (§3), *The Corsair's Daughter* as the first screen test (§4), and the tone and romance guardrails (§5). The four open questions at the end are resolved by keeping the proposal's answers: none of the six names changes, the genre stays swashbuckling adventure-romance, the origin starting contacts stay as listed, and every romanceable character stays attraction-flexible.
+
+Accepted parts are folded into `DECISION_LOG.md`, `VERTICAL_SLICE_SPEC.md` (§2, §9), and `GAME_DESIGN_DOCUMENT.md` (§2, §4, §7, §11). This file remains the detailed source. Cast appearances are approved as written briefs only; each portrait still passes visual review under `CONTENT_AND_ASSET_PIPELINE.md` §9. Still open: the full creator appearance matrix and the art-size and frame budgets.
+
+The text below is the original proposal, unchanged.
 
 This document proposes first drafts for every item the approval package marks
 "Owner approval required" ahead of Phase 3/4 content work: the fictional
@@ -156,7 +164,7 @@ dramedy" line:
   without the game dwelling on or explaining away real historical
   atrocity.
 
-## Open questions for you
+## Open questions for you (resolved: approved as drafted)
 
 - Any of the six proper nouns clash with something you already have in mind?
 - Is *The Corsair's Daughter* the right genre, or would you rather the first

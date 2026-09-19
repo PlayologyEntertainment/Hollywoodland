@@ -14,7 +14,7 @@ Deliverables:
 
 - Approve the documentation package.
 - Resolve all **Owner approval required** items.
-- Approve the fictional naming slate and vertical-slice cast.
+- Approve the fictional naming slate and vertical-slice cast (approved September 18, 2026).
 - Define the exact target test machines and hosting provider.
 - Confirm analytics provider or choose a first-party endpoint/no-op adapter.
 

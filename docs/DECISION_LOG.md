@@ -1,6 +1,6 @@
 # Hollywoodland — Decision Log
 
-Status: Owner approved September 12, 2026.
+Status: Owner approved September 12, 2026. Track B canon (naming slate, cast, origins, screen-test premise, tone boundary) approved September 18, 2026.
 
 | Area | Decision |
 |---|---|
@@ -54,8 +54,27 @@ Status: Owner approved September 12, 2026.
 | Rival | Charismatic aspiring actor who may become friend, romance, enemy, or ally |
 | Repository | `PlayologyEntertainment/Hollywoodland`; documentation committed directly to `main` |
 
+## Canon approved September 18, 2026
+
+Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as drafted; the filename is kept so links stay valid).
+
+| Area | Decision |
+|---|---|
+| Studio | Monarch Pictures |
+| Casting office | Sunset Casting Exchange |
+| Grand theater | The Celestial Palace |
+| Diner | The Gilded Spoon |
+| Boarding house | Bellhaven Rooms |
+| Tabloid | The Klieg Light |
+| Slice cast (9) | Delphine Voss (rival/foil), Odalys Bellhaven (boarding-house proprietor), Frankie Dolan (diner confidant), Selwyn Pruitt (casting-office gatekeeper), Ruth Kessler (assistant director / production coordinator), Gus Albrecht (experienced extra / mentor), Corinne Lake (scene partner), Nick Ferro (reporter), Ola Whitfield (wardrobe mistress, origin-linked specialist) |
+| Romance | Romance-capable in the slice: Delphine Voss, Frankie Dolan, Corinne Lake, all attraction-flexible and reactive to the player's creator choices. Everyone else uses trust, obligation, or mentor tracks |
+| Origins (5) | Small-Town Hopeful, Vaudeville Trouper, Runaway Society Name, Immigrant Striver, Studio-Lot Hand-Me-Down. Each trades a +1 for a -1 and grants one starting contact |
+| Screen test | *The Corsair's Daughter*, Monarch's swashbuckling adventure-romance. The player is a background extra in its harbor-market crowd scene; the screen test is a small speaking role opposite Corinne Lake in a rescue/banter scene |
+| Tone ceiling | Longing looks, hand-holding, one tasteful kiss that may cut away, spoken declarations. No depicted sex or nudity, no shock innuendo, no modern profanity or slurs, no gore, no real-weapon threat played straight, no glorified drunkenness, period prejudice softened per the GDD |
+| Art status | Cast appearances are approved as written briefs only. Each portrait still passes visual review under `CONTENT_AND_ASSET_PIPELINE.md` section 9 |
+
 ## Working assumptions requiring explicit approval
 
 Several choices began as recommended defaults after a blank selection and were subsequently carried forward when the user continued: attributes plus skills, hybrid stat/player-skill challenge resolution, scheduled career assignments while away, the full origin-based creator, acting-led career focus, teen dramedy boundaries, the arrival premise, the rival, and the screen-test climax. They are treated as accepted working direction in this package but remain easy to revise during document approval.
 
-The exact Phaser/Vite versions, analytics provider, deployment provider, cast identities, fictional proper nouns, origin list, screen-test genre, animation frame counts, and asset budgets remain intentionally unresolved until their named gates.
+The exact Phaser/Vite versions, analytics provider, deployment provider, animation frame counts, and asset budgets remain intentionally unresolved until their named gates. Cast identities, fictional proper nouns, the origin list, the screen-test genre, and the tone boundary were resolved on September 18, 2026 (see Canon above). The full creator appearance matrix is still open.

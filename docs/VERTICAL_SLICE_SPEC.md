@@ -48,7 +48,25 @@ Introduce 8–10 named characters. Required roles:
 - Reporter, photographer, or gossip-adjacent character.
 - Optional specialist tied to an origin or alternate route.
 
-Final names, appearances, backgrounds, and exact relationship configurations are **Owner approval required** before character art production.
+Approved roster (September 18, 2026; backgrounds and relationship boundaries in `DRAFT_TRACK_B_CANON_PROPOSAL.md` §2):
+
+| Required role | Character | Relationship track |
+|---|---|---|
+| Aspiring rival/foil | Delphine Voss | Friend, romance, enemy, or ally |
+| Boarding-house proprietor | Odalys Bellhaven | Trust/obligation; no romance |
+| Diner worker / neighborhood confidant | Frankie Dolan | Friendship or slow-burn romance; never rivalry |
+| Casting-office gatekeeper | Selwyn Pruitt | Trust/obligation; no romance |
+| Assistant director / production coordinator | Ruth Kessler | Trust and professional reputation; no romance |
+| Experienced extra / mentor | Gus Albrecht | Mentor/friendship only |
+| Scene partner | Corinne Lake | Friend, romance, or professional rivalry |
+| Reporter / gossip-adjacent | Nick Ferro | Obligation/favor; mishandling him costs reputation |
+| Optional origin-linked specialist | Ola Whitfield (wardrobe mistress) | Mentor/obligation; no romance |
+
+Appearances are approved as written briefs only; each portrait still passes visual review before it is treated as final.
+
+### Screen-test premise
+
+The background-extra job is the harbor-market crowd scene of Monarch Pictures' prestige swashbuckler *The Corsair's Daughter*. The screen test is for a small speaking role opposite Corinne Lake in a rescue/banter scene on the same set, which lets Read the Room exercise blocking, verbal sparring, and a timed emotional turn.
 
 ## 3. Critical path
 
@@ -132,11 +150,17 @@ The slice is approval-ready when:
 - All final assets have provenance, generation prompt/version notes, cleanup status, and usage approval.
 - No runtime AI, account dependency, advertisements, purchases, or game implementation beyond the approved slice appears.
 
-## 9. Owner approval required
+## 9. Owner approval
 
-- Final protagonist creator matrix and origin list.
-- Names, visual briefs, and relationship boundaries for the 8–10 recurring characters.
+Resolved September 18, 2026 (see `DECISION_LOG.md` and `DRAFT_TRACK_B_CANON_PROPOSAL.md`):
+
+- Origin list: five origins, each with a +1/-1 trade and one starting contact.
+- Names, visual briefs, and relationship boundaries for the nine recurring characters.
 - Fictional studio, film, theater, diner, casting office, boarding house, and tabloid names.
-- Final screen-test genre and scene premise.
-- Exact dialogue tone and romance boundaries.
+- Screen-test genre and scene premise.
+- Dialogue tone and romance boundaries.
+
+Still **Owner approval required**:
+
+- Final protagonist creator matrix (appearance categories and option counts beyond the origin list).
 - Representative art-size and animation-frame budgets after a pipeline test.

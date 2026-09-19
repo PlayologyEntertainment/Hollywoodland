@@ -27,6 +27,14 @@ The target is players who enjoy narrative RPGs, life/career simulation, characte
 
 The world uses fictional studios, stars, moguls, unions, tabloids, and productions. Real landmarks and broad historical texture may appear. The tone is a romanticized Golden Age rather than a documentary or historical indictment.
 
+Writer guardrails (approved September 18, 2026):
+
+- **Romance ceiling:** longing looks, hand-holding, one tasteful kiss that may cut away, and spoken declarations of feeling. No depicted sex or nudity and no innuendo written for shock.
+- **Language:** period interjections only ("swell", "for Pete's sake"). No modern profanity and no slurs, even as period authenticity.
+- **Vice and scandal:** speakeasy and cocktail-party texture is atmosphere. Drunkenness is never a goal or a joke at a character's expense. Scandal (affairs, blacklisting threats, payola) is handled through implication and gossip-column text.
+- **Peril:** chases, pratfalls, mock swordplay, and on-set crises stay slapstick or adventure-choreography. No gore and no real-weapon threat played straight.
+- **Historical inequities:** softened. A character can meet a closed door or a backhanded comment that signals period prejudice without the game dwelling on or explaining away real atrocity.
+
 ## 3. Player experience loop
 
 ### Minute-to-minute loop
@@ -60,6 +68,16 @@ The creator uses curated modular choices that preserve a cohesive retro-cartoon 
 - A live hero preview, animation preview, and summary of narrative/mechanical effects.
 
 The origin is mechanically meaningful. It modifies initial attributes, starting skill access, dialogue tags, one contact, early money or energy conditions, and portions of the arrival sequence. No origin is strictly superior.
+
+Approved origins (September 18, 2026). Each trades a benefit for a cost and connects to one cast member:
+
+| Origin | Trade | Starting contact |
+|---|---|---|
+| Small-Town Hopeful | +1 Grit, -1 Wit | Gus Albrecht (a family friend wrote ahead) |
+| Vaudeville Trouper | +1 Craft, -1 Grit | Corinne Lake (crossed paths on a bill) |
+| Runaway Society Name | +1 Presence, -1 starting money | Nick Ferro (recognizes the name and offers an uneasy trade of discretion for a future story) |
+| Immigrant Striver | +1 Grit, -1 Presence | Odalys Bellhaven (shared home community; discounted first week's rent) |
+| Studio-Lot Hand-Me-Down | +1 Wit, -1 Nerve | Ola Whitfield (unlocks the wardrobe-department route past the casting-office gatekeeper) |
 
 Wardrobe is a cosmetic collection rather than numerical armor. Clothing expresses identity, films completed, achievements, and housing displays; quest requirements may ask for a costume or dress code, but items do not carry rarity tiers or general stat bonuses.
 
@@ -104,7 +122,7 @@ Important conversations use classic, readable branching dialogue trees. Choices 
 
 The recurring cast participates in a full relationship web. Each key character tracks a small authored set of states rather than a single universal affection score: trust, tension, attraction where applicable, obligation/favors, and pivotal flags. Relationships can become friendship, rivalry, romance, alliance, estrangement, or combinations that change over time.
 
-The charismatic aspiring rival is the player’s narrative foil. They compete for rooms and roles but can become a friend, romance, enemy, or ally. Romance is optional and never required for optimal progression.
+The charismatic aspiring rival, Delphine Voss, is the player’s narrative foil. They compete for rooms and roles but can become a friend, romance, enemy, or ally. Romance is optional and never required for optimal progression. In the slice, the romance-capable characters are Delphine Voss, Frankie Dolan, and Corinne Lake, each attraction-flexible and reactive to what the player set in the creator. Every other recurring character uses trust, obligation, or mentor tracks. The full slice roster and its relationship boundaries are in the Vertical Slice Specification.
 
 ## 8. Auditions and conflict resolution
 
@@ -142,7 +160,7 @@ Achievements provide titles, posters, outfits, trophies, scrapbook entries, and 
 
 The story begins in 1935 with the player arriving by bus or train with one suitcase, little money, temporary lodging, and a fragile studio lead. The career branches through choices, relationships, job outcomes, scandals, and roles toward multiple endings.
 
-The first slice introduces a background-extra job that grows into a possible screen test. The full game should escalate from survival and access, through supporting work and public identity, to starring opportunities and the question of what the player is willing to trade for fame.
+The first slice introduces a background-extra job on Monarch Pictures' swashbuckler *The Corsair's Daughter* that grows into a possible screen test opposite Corinne Lake. The full game should escalate from survival and access, through supporting work and public identity, to starring opportunities and the question of what the player is willing to trade for fame.
 
 ## 12. Presentation
 
