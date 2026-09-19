@@ -5,7 +5,17 @@ import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward,
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
-import { CASTING_OFFICE_DIALOGUE, DINER_DIALOGUE, LANDLADY_DIALOGUE, PRODUCTION_COORDINATOR_DIALOGUE, RIVAL_DIALOGUE, SCENE_PARTNER_DIALOGUE } from '../domain/DialogueGraphs';
+import {
+  CASTING_OFFICE_DIALOGUE,
+  CELESTIAL_PALACE_DIALOGUE,
+  COSTUME_SHOP_DIALOGUE,
+  DINER_DIALOGUE,
+  KLIEG_LIGHT_DIALOGUE,
+  LANDLADY_DIALOGUE,
+  PRODUCTION_COORDINATOR_DIALOGUE,
+  RIVAL_DIALOGUE,
+  SCENE_PARTNER_DIALOGUE,
+} from '../domain/DialogueGraphs';
 import type { AuditionResolvedPayload, DomainEventBus } from '../domain/DomainEventBus';
 import { canAffordHousingUpgrade, HOUSING_TIERS, nextHousingTierDefinition } from '../domain/Housing';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
@@ -29,7 +39,8 @@ function assetUrl(path: string): string {
 
 interface LocationSceneArt {
   readonly background: string;
-  readonly character: { readonly src: string; readonly alt: string };
+  /** Omitted for a location whose scene has no assigned character yet. */
+  readonly character?: { readonly src: string; readonly alt: string };
 }
 
 /** Visual-novel-style scene art for a location's dialogue: a location
@@ -61,6 +72,17 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   soundstage: {
     background: assetUrl('assets/locations/soundstage.webp'),
     character: { src: assetUrl('assets/characters/scene-partner.webp'), alt: 'The scene partner' },
+  },
+  'costume-shop': {
+    background: assetUrl('assets/locations/costume-shop.webp'),
+    character: { src: assetUrl('assets/characters/wardrobe-mentor.webp'), alt: 'The wardrobe mistress at The Silver Thimble' },
+  },
+  'klieg-light-office': {
+    background: assetUrl('assets/locations/klieg-light-office.webp'),
+    character: { src: assetUrl('assets/characters/reporter.webp'), alt: 'The newspaper stringer at The Klieg Light' },
+  },
+  'celestial-palace': {
+    background: assetUrl('assets/locations/celestial-palace.webp'),
   },
 };
 
@@ -222,6 +244,18 @@ export class AppShell {
       this.openDialogue(SCENE_PARTNER_DIALOGUE, 'The Soundstage', 'soundstage');
       this.announce('You stepped onto the soundstage.');
     });
+    this.options.domainEvents.on('costume-shop-entered', () => {
+      this.openDialogue(COSTUME_SHOP_DIALOGUE, 'The Silver Thimble', 'costume-shop');
+      this.announce('You entered The Silver Thimble.');
+    });
+    this.options.domainEvents.on('klieg-light-entered', () => {
+      this.openDialogue(KLIEG_LIGHT_DIALOGUE, 'The Klieg Light', 'klieg-light-office');
+      this.announce('You entered The Klieg Light.');
+    });
+    this.options.domainEvents.on('celestial-palace-entered', () => {
+      this.openDialogue(CELESTIAL_PALACE_DIALOGUE, 'The Celestial Palace', 'celestial-palace');
+      this.announce('You entered The Celestial Palace.');
+    });
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
       this.renderCareerState(state);
@@ -356,9 +390,9 @@ export class AppShell {
     assertElement('#interaction-dialog', HTMLDialogElement).classList.toggle('has-scene-art', art !== undefined);
     assertElement('#scene-background', HTMLElement).style.backgroundImage = art !== undefined ? `url(${art.background})` : '';
     const character = assertElement('#scene-character', HTMLImageElement);
-    character.src = art?.character.src ?? '';
-    character.alt = art?.character.alt ?? '';
-    character.hidden = art === undefined;
+    character.src = art?.character?.src ?? '';
+    character.alt = art?.character?.alt ?? '';
+    character.hidden = art?.character === undefined;
   }
 
   private renderDialogueNode(): void {

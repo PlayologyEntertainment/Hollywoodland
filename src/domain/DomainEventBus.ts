@@ -47,6 +47,9 @@ export interface DomainEventMap {
   readonly 'backlot-gate-entered': undefined;
   readonly 'extras-corral-entered': undefined;
   readonly 'soundstage-entered': undefined;
+  readonly 'costume-shop-entered': undefined;
+  readonly 'klieg-light-entered': undefined;
+  readonly 'celestial-palace-entered': undefined;
   readonly 'advance-time-requested': undefined;
   readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
   readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;

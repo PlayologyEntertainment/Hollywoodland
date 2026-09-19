@@ -1,16 +1,16 @@
 # Location interiors, round 1: The Silver Thimble, The Klieg Light, The Celestial Palace
 
-Status: **Source generations approved by the owner 2026-09-19; not yet converted, promoted or wired into any scene**
+Status: **Approved by the owner 2026-09-19, converted to runtime WebP and wired into the game (see "Promotion and wiring")**
 
 ## Role in the game
 
-These are the interiors for the three Boulevard entrances that show a sign but have no scene yet (`enterable: false` in `public/data/boulevard-manifest.json`). Each will follow the existing visual-novel pattern in `src/app/AppShell.ts` (`LOCATION_SCENE_ART`): a location background with a character portrait overlaid. Nothing here is wired into code yet.
+These are the interiors for the three Boulevard entrances that show a sign but have no scene yet (`enterable: false` in `public/data/boulevard-manifest.json`). Each follows the existing visual-novel pattern in `src/app/AppShell.ts` (`LOCATION_SCENE_ART`): a location background with a character portrait overlaid.
 
 | Location | Manifest id | Canon | Planned portrait (proposal, not yet decided) |
 |---|---|---|---|
-| The Silver Thimble | `costume-shop` | Costume shop, owner-approved 2026-09-18 | Ola Whitfield (`wardrobe-mentor`) |
-| The Klieg Light | `klieg-light-office` | Tabloid, approved canon 2026-09-18 | Nick Ferro (`reporter`) |
-| The Celestial Palace | `celestial-palace` | Grand theater, approved canon 2026-09-18 | none assigned |
+| The Silver Thimble | `costume-shop` | Costume shop, owner-approved 2026-09-18 | Ola Whitfield (`wardrobe-mentor`), confirmed by the owner 2026-09-19 |
+| The Klieg Light | `klieg-light-office` | Tabloid, approved canon 2026-09-18 | Nick Ferro (`reporter`), confirmed by the owner 2026-09-19 |
+| The Celestial Palace | `celestial-palace` | Grand theater, approved canon 2026-09-18 | none assigned; the scene is an unnamed usher with no portrait |
 
 The alley is intentionally not in this round.
 
@@ -54,7 +54,7 @@ raw_source_location: art/generated/location-interior-silver-thimble.png
 human_edits: none
 review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place name matches the canon approved 2026-09-18.
-runtime_files: not yet promoted
+runtime_files: see "Promotion and wiring" below
 ```
 
 ```text
@@ -68,7 +68,7 @@ raw_source_location: art/generated/location-interior-klieg-light.png
 human_edits: none
 review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place name matches the canon approved 2026-09-18.
-runtime_files: not yet promoted
+runtime_files: see "Promotion and wiring" below
 ```
 
 ```text
@@ -82,7 +82,7 @@ raw_source_location: art/generated/location-interior-celestial-palace.png
 human_edits: none
 review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place name matches the canon approved 2026-09-18.
-runtime_files: not yet promoted
+runtime_files: see "Promotion and wiring" below
 ```
 
 ## Generation notes (2026-09-19, first pass, single take each)
@@ -100,3 +100,22 @@ Flags for the reviewer:
 - Tiny surfaces (ticket stubs, tape-measure markings, clock face) read as abstract marks at full size. Check them at 100% before promotion.
 - Round 1 only, approved as is. Nothing is cleaned, converted to WebP, or referenced by any code or scene.
 
+## Promotion and wiring (2026-09-19)
+
+Converted with Pillow (`quality=90, method=6`, RGB, lossy VP8, the same encoding as the existing interiors) from the unedited raw PNGs. No cleanup or repainting.
+
+```text
+asset_id: location_interior_silver_thimble, location_interior_klieg_light, location_interior_celestial_palace
+source_asset: art/generated/location-interior-*.png (raw, unchanged)
+human_edits: format conversion only
+runtime_files: public/assets/locations/costume-shop.webp, public/assets/locations/klieg-light-office.webp, public/assets/locations/celestial-palace.webp (each 1448x1086)
+review_status: approved by the owner 2026-09-19
+```
+
+Wired in this pass:
+
+- `public/data/boulevard-manifest.json` and the built-in default: `costume-shop`, `klieg-light-office` and `celestial-palace` are `enterable: true` with "Enter ..." prompts. The alley is the only entrance left without a scene.
+- `BoulevardSpikeScene.enterLocation` emits `costume-shop-entered`, `klieg-light-entered` and `celestial-palace-entered` (declared in `DomainEventBus.ts`).
+- `AppShell.ts`: `LOCATION_SCENE_ART` entries for the three locations (the Palace has a background and no character, so `character` is now optional) and an event handler for each that opens the dialogue.
+- `DialogueGraphs.ts`: `COSTUME_SHOP_DIALOGUE` (Ola, `wardrobe-mentor`), `KLIEG_LIGHT_DIALOGUE` (Nick, `reporter`) and `CELESTIAL_PALACE_DIALOGUE` (an usher). Every gain is one-time, gated on a fact the same choice sets. No new quests. Draft copy for the owner to revise.
+- `tests/location-dialogues.test.ts` (10 tests) covers registration, the promoted backgrounds, the one-time gains, the favor ledger signs, the reporter's tension cost and the voucher gate.

@@ -128,8 +128,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
     this.cameras.main.setDeadzone(520, 290);
 
-    // Entrances whose scene is not written yet (`enterable: false`) keep
-    // their sign but get no prompt and no interaction point.
+    // Entrances whose scene is not written yet (`enterable: false`, today
+    // only the alley) keep their sign but get no prompt and no interaction
+    // point.
     this.interactionPoints = this.manifest.locations
       .filter((location) => location.enterable)
       .map((location) => ({
@@ -229,6 +230,15 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         return;
       case 'soundstage':
         this.domainEvents.emit('soundstage-entered', undefined);
+        return;
+      case 'costume-shop':
+        this.domainEvents.emit('costume-shop-entered', undefined);
+        return;
+      case 'klieg-light-office':
+        this.domainEvents.emit('klieg-light-entered', undefined);
+        return;
+      case 'celestial-palace':
+        this.domainEvents.emit('celestial-palace-entered', undefined);
         return;
       default:
         return;
