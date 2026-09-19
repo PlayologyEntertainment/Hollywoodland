@@ -1,6 +1,6 @@
 # Boulevard entrances v3 brief
 
-Status: **Scope approved by the owner September 18, 2026. Plane 4 is built from per-building modules (approach B, approved). All nine modules are generated, calibrated and staged in `art/generated/boulevard-v3/`, pending owner review. World width is decided: full-size buildings, about 7,450 px. The Plane 5 ground tile and the four active-state variants are also generated and staged (sections 10-11). Planes 1-3 are not yet generated. Nothing is promoted to `public/assets/`.**
+Status: **Scope approved by the owner September 18, 2026. Plane 4 is built from per-building modules (approach B, approved). All nine modules are generated, calibrated and staged in `art/generated/boulevard-v3/`, pending owner review. World width is decided: full-size buildings, about 7,450 px. The Plane 5 ground tile and the four active-state variants are also generated and staged (sections 10-11). Planes 1-3 are generated and assembled (sections 12-13), so all five planes now exist in staging. Nothing is promoted to `public/assets/`.**
 
 Supersedes the layout of `boulevard-five-plane-v2.md` (which stays as the record of the current runtime art). Everything not changed here (style, palette, blank-signage policy, chroma-key extraction, validation gates) is inherited from that brief.
 
@@ -368,4 +368,88 @@ human_edits: deterministic processing only (ground: crop, resample, mirror; stat
 review_status: pending review
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
 runtime_files: not yet promoted; staging PNGs in art/generated/boulevard-v3/runtime/ (ground-tile.png, *-active.png, states.json)
+```
+
+## 12. Planes 1-3 (sky, hills, distant buildings)
+
+Status: approach and prompts recorded 2026-09-18 before generation. Results are appended in section 13.
+
+**Geometry (world 7,453 display px, camera 1,920 px, so the camera travels 5,533 px):**
+
+| Plane | scrollFactor | Needed display width | How it is made |
+|---|---|---|---|
+| 1 Sky | 0 | 1,920 (fixed on screen) | One opaque 16:9 render, resized to 1,920 x 1,080 |
+| 2 Hills and landmark | 0.18 | 1,920 + 0.18 x 5,533 = 2,916 | One render (about 2,171 wide) scaled up ~1.34x; distant hills tolerate the softness |
+| 3 Distant buildings | 0.42 | 1,920 + 0.42 x 5,533 = 4,244 | Two renders (halves A and B), about 2,171 wide each at ~1:1, each with the outer 10% of its width completely empty so the halves join through open space and no seam exists |
+
+Vertical placement (engine offsets, tunable in the Art Director tool): hills bottom-aligned to the screen bottom (their solid mass runs to the bottom edge); distant buildings bottom-aligned to the street ground line at display y = 963, so they show above the low modules (depot, Spoon, gate) and through the open bays and arch. The first-pass horizontal offsets are 0; the "HOLLYWOODLAND" sign position is tuned by the hills' offsetX.
+
+Planes 2-3 use the chroma workflow (the backend removes `#ff00ff` itself and trims to content); bottoms and outer edges are extruded in post where a few pixels are short. The prompts forbid pink, magenta and purple tones so hazy tints are not mistaken for the key color.
+
+### Plane 1: sky
+
+```text
+Use case: stylized-concept
+Asset type: Plane 1 (sky) of a registered parallax environment for a 1935 Hollywood side-scrolling game; it stays fixed on screen behind everything
+Input image roles: Image 1 is the approved earlier sky and Image 2 is the boulevard concept. Match style, palette, warm light and painterly finish exactly; extend rather than copy.
+Primary request: Render only a Southern California sky with a soft gradient from clear cerulean blue at the top to a warm pale-gold haze at the horizon, and a few warm cream storybook clouds with soft sunlit undersides, sunlight coming from the upper right. Vivid hand-painted Golden Age Hollywood storybook finish, crisp illustrative cloud shapes, subtle painterly texture.
+Composition/framing: 16:9 landscape, calm and uncluttered, clouds distributed naturally, with the lower quarter mostly clear pale haze so distant hills read cleanly against it and no single cloud dominating. Fill every pixel to all four edges; fully opaque.
+Constraints: sky and clouds only. [NEG] No hills, no landmark, no sign, and no text.
+```
+
+### Plane 2: hills and landmark
+
+```text
+Use case: stylized-concept
+Asset type: Plane 2 (distant Hollywood hills and landmark) of a registered parallax environment for a 1935 Hollywood side-scrolling game
+Input image roles: Image 1 is the approved earlier hills plane and Image 2 is the boulevard concept. Match hillside forms, palette (sunlit ochre and sage), warm light from the upper right, atmospheric softness and painterly finish exactly, without copying the layout.
+Primary request: Render only a broad range of distant Hollywood hills in romanticized 1935 form: rolling sunlit ochre and sage ridges with softly detailed chaparral texture and gentle atmospheric haze on the far ridges. On a mid-height ridge in the upper middle-right stands the historical hillside sign spelling exactly "HOLLYWOODLAND" in tall white block letters with a few small support struts. The sign is the only lettering anywhere. No buildings.
+Composition/framing: ultrawide lateral view. A clean natural ridge silhouette runs across the upper half of the image, rising and falling gently, with the sign's ridge the highest point. The hill mass continues as solid painted terrain all the way down to the bottom edge and across to both side edges. The far left and far right 5 percent are plain continuing ridge.
+Constraints: [CHROMA] No pink, magenta, or purple tones in the artwork. [NEG] No buildings or architecture. No text except "HOLLYWOODLAND".
+```
+
+### Plane 3: distant buildings (halves A and B)
+
+Half B also receives half A as an extra reference and the line "Make this half different from the first: different building shapes and rhythm; do not repeat it."
+
+```text
+Use case: stylized-concept
+Asset type: Plane 3 (distant buildings), one of two halves that will be placed end to end, of a parallax environment for a 1935 Hollywood side-scrolling game
+Input image roles: Image 1 is the approved earlier distant-buildings plane, Image 2 is the boulevard concept, and Image 3 shows the finished street buildings that will stand in front of this layer. Match style, warm light from the upper right and painterly finish, but keep this layer quieter, smaller, cooler and less contrasty than the street buildings.
+Primary request: Render only a continuous layer of small, distant 1935 Hollywood buildings stepping across the foothills: restrained Spanish Colonial, Art Deco and early commercial silhouettes of varied heights and rooflines, with a few water towers and slim towers, softened by atmospheric perspective into pale, cool, hazy tones. Every building continues downward as complete painted wall mass to the bottom edge.
+Composition/framing: ultrawide lateral view. The buildings occupy the lower 60 percent of the image, with varied rooflines and clear gaps between clusters. The first 10 percent and the last 10 percent of the width are completely empty, with no buildings at all and nothing at the bottom edge either, so that two halves can be placed end to end.
+Constraints: [CHROMA] No pink, magenta, or purple tones in the artwork. All signboards and painted wall signs are blank. [NEG] No hills, no sky, and no text.
+```
+
+## 13. Planes 1-3 results (2026-09-18)
+
+All four renders (sky, hills, distant buildings A and B) succeeded on the first attempt, one take each. Masters are in `art/generated/boulevard-v3/planes/`; assembled runtime files and placement numbers are in `art/generated/boulevard-v3/runtime/` (`sky.png`, `hills.png`, `distant-buildings.png`, `planes123.json`).
+
+| Plane | Runtime file | Engine scale | Scroll | Placement (display px) |
+|---|---|---|---|---|
+| 1 Sky | 1,920 x 1,080, opaque | 1.0 | 0 | x 0, y 0 |
+| 2 Hills and landmark | 2,172 x 724 | 1.6 | 0.18 | x -555, y -78 (bottom-aligned to the screen) |
+| 3 Distant buildings | 3,036 x 784 (includes a 60 px hidden overlap strip) | 1.4 | 0.42 | x 0, y -51 (building bases on the ground line at y = 963) |
+
+**What was checked:** no magenta pixels in either cutout; the only lettering anywhere is "HOLLYWOODLAND"; all signboards blank; the two distant halves are different skylines at matching scale (half B resampled 0.964x to match half A's height) joined through their empty outer margins, so there is no seam; full-scene composites were rendered with each layer at its true parallax speed at five camera positions across the whole street, and every layer covers the full 1,920 px view at all of them.
+
+**Decisions and tuning:**
+
+- **Distant buildings at 1.4x:** at 1:1 their rooftops would sit lower on screen than every street module and be hidden entirely; at 1.4x the skyline clears the lowest roofs (depot, Spoon, gate) and shows through the open bays and arch, and still reads as distant through the haze.
+- **Hills at 1.6x with x = -555:** raises the sign to display y of about 266-314, above most rooflines, while keeping the layer's edges off screen at both ends of the camera range (left edge <= 0 at the start, right edge >= 1,920 at the far end). Changing the offset moves where the sign passes behind the tall buildings; tune it in the Art Director tool.
+- **Open Monarch gate:** with the gate open, the distant skyline (and hills behind it) shows through the arch, which stands in well for a "studio lot beyond" backdrop. A dedicated backdrop is no longer needed.
+- **Hills texture:** the hills carry small painted oak trees and chaparral as hillside texture, despite the shared negative direction's tree exclusion. They read as texture at this distance and were kept.
+
+```text
+asset_id: boulevard_v3_planes_1_to_3
+asset_type: sky (opaque), hills and landmark (cutout), distant buildings (two halves joined, cutout)
+prompt_or_brief: section 12 of this file
+reference_asset_ids: art/assets/plane1-3.png (v2 masters), Hollywoodland_Concept_Boulevard, composite of the nine street modules
+generation_tool_and_version: gpt-image-2 via gg-image (backend-extracted alpha for the cutouts)
+generation_date: 2026-09-18
+raw_source_location: art/generated/boulevard-v3/planes/ (sky, hills, distant-a, distant-b masters)
+human_edits: deterministic assembly only (sky resized to 1920x1080; distant halves scaled, joined, given a 60 px overlap strip; alpha normalized); no repainting
+review_status: pending review
+rights_or_license_notes: project-owned development generation; human rights/provenance review required
+runtime_files: not yet promoted; staging files in art/generated/boulevard-v3/runtime/
 ```

@@ -1,0 +1,35 @@
+{
+  "world_width_display": 7453,
+  "sky": {
+    "runtime_px": [
+      1920,
+      1080
+    ],
+    "engine_scale": 1.0,
+    "scrollFactor": 0,
+    "x": 0,
+    "y": 0
+  },
+  "hills": {
+    "runtime_px": [
+      2172,
+      724
+    ],
+    "engine_scale": 1.6,
+    "scrollFactor": 0.18,
+    "x": -555,
+    "y": -78,
+    "note": "bottom-aligned to screen bottom; x offset keeps coverage (left edge <= 0 and right edge >= 1920 across the whole camera range); lifts the HOLLYWOODLAND sign above most rooflines"
+  },
+  "distant_buildings": {
+    "runtime_px": [
+      3036,
+      784
+    ],
+    "engine_scale": 1.4,
+    "scrollFactor": 0.42,
+    "x": 0,
+    "y": -51,
+    "note": "building bases at ground line y=963; 60 px overlap strip below"
+  }
+}
