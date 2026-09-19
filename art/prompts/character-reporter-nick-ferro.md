@@ -1,6 +1,6 @@
 # Character brief: Nick Ferro (reporter / gossip-adjacent)
 
-Status: **Draft brief and unreviewed source generation, pending owner visual review**
+Status: **Brief and round 2 source approved by the owner 2026-09-19; runtime portrait in place**
 
 ## Role in the game
 
@@ -47,8 +47,8 @@ generation_tool_and_version: gpt-image-2 via gg-image (Codex ChatGPT backend)
 generation_date: 2026-09-18
 raw_source_location: art/generated/character-reporter-nick-ferro.png
 human_edits: none yet
-review_status: pending review
-rights_or_license_notes: project-owned development generation; human rights/provenance review required. Character name and design are from an unapproved draft canon proposal.
+review_status: superseded by round 2 (kept for reference)
+rights_or_license_notes: project-owned development generation; human rights/provenance review required. Name and design match the canon approved 2026-09-18.
 runtime_files: not yet promoted
 ```
 
@@ -74,9 +74,9 @@ generation_tool_and_version: gpt-image-2 via gg-image (Codex ChatGPT backend), -
 generation_date: 2026-09-18
 raw_source_location: art/generated/character-reporter-nick-ferro-r2.png
 human_edits: none yet
-review_status: pending review
-rights_or_license_notes: project-owned development generation; human rights/provenance review required. Character name and design are from an unapproved draft canon proposal.
-runtime_files: not yet promoted
+review_status: approved by the owner 2026-09-19
+rights_or_license_notes: project-owned development generation; human rights/provenance review required. Name and design match the canon approved 2026-09-18.
+runtime_files: public/assets/characters/reporter.webp (see the cleanup and staging record below)
 ```
 
 Verified after generation: RGBA PNG, 1024x1536, all four corners alpha 0, no glow or halo (pixels farther than ~7px from the figure have alpha <= 2 of 255), checked over saturated green. Owner viewed the files and approved the look (round 2 supersedes round 1 for these fixes; round 1 file kept for reference).
@@ -95,7 +95,7 @@ source_asset: art/generated/character-reporter-nick-ferro-r2.png (raw, unchanged
 human_edits: deterministic alpha normalization only, done with a script and no repainting. Alpha >= 250 set to 255 (fully opaque interior); alpha <= 3 set to 0 (invisible stray specks); antialiased edge alpha 4-249 and all RGB left untouched.
 cleaned_source: art/generated/character-reporter-nick-ferro-r2-clean.png (lossless PNG)
 runtime_files: public/assets/characters/reporter.webp (1024x1536 RGBA, lossy quality 90, alpha_quality 100, same format and size as the other character portraits)
-review_status: pending review (staged at the owner's request 2026-09-18 after the owner viewed the r2 files; not yet referenced by any code or scene)
+review_status: approved by the owner 2026-09-19; runtime file in place, not yet referenced by any scene
 ```
 
 Verified from the encoded WebP: corners alpha 0, no glow or halo over black, white or saturated green, roughly 1.5% partial-alpha edge pixels.
