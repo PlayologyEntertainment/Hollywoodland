@@ -67,7 +67,7 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 | Boarding house | Bellhaven Rooms |
 | Tabloid | The Klieg Light |
 | Costume shop | The Silver Thimble (approved September 18, 2026 during Boulevard entrance work) |
-| Slice cast (9) | Delphine Voss (rival/foil), Odalys Bellhaven (boarding-house proprietor), Frankie Dolan (diner confidant), Selwyn Pruitt (casting-office gatekeeper), Ruth Kessler (assistant director / production coordinator), Gus Albrecht (experienced extra / mentor), Corinne Lake (scene partner), Nick Ferro (reporter), Ola Whitfield (wardrobe mistress, origin-linked specialist) |
+| Slice cast (9) | Delphine Voss (rival/foil), Odalys Bellhaven (boarding-house proprietor), Frankie Dolan (diner confidant), Selma Pruitt (casting-office gatekeeper), Ray Kessler (assistant director / production coordinator), Gus Albrecht (experienced extra / mentor), Corinne Lake (scene partner), Nick Ferro (reporter), Ola Whitfield (wardrobe mistress, origin-linked specialist) |
 | Romance | Romance-capable in the slice: Delphine Voss, Frankie Dolan, Corinne Lake, all attraction-flexible and reactive to the player's creator choices. Everyone else uses trust, obligation, or mentor tracks |
 | Origins (5) | Small-Town Hopeful, Vaudeville Trouper, Runaway Society Name, Immigrant Striver, Studio-Lot Hand-Me-Down. Each trades a +1 for a -1 and grants one starting contact |
 | Screen test | *The Corsair's Daughter*, Monarch's swashbuckling adventure-romance. The player is a background extra in its harbor-market crowd scene; the screen test is a small speaking role opposite Corinne Lake in a rescue/banter scene |
@@ -81,6 +81,7 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 |---|---|
 | Phase 1 visual spike | Approved by the owner, with minor tweaks to be outlined. Phase 1 exit still needs the measured feasibility report and final asset/frame budgets (`PRODUCTION_ROADMAP.md`) |
 | Boulevard v3 art | Nine building modules, four active-state variants, ground tile, and planes 1-3 approved and promoted as runtime WebP in `public/assets/environments/boulevard-v3/` |
+| Cast name revisions | The casting-gatekeeper portrait is a woman and the production-coordinator portrait is a man, so the canon names were changed to match the approved art: Selwyn Pruitt is now **Selma Pruitt** and Ruth Kessler is now **Ray Kessler**. Roles, surnames, personalities and relationship tracks are unchanged. Code dialogue already used "she" for the gatekeeper and "he" for the coordinator |
 | Character portraits | Gus Albrecht, Nick Ferro, and Ola Whitfield approved as runtime WebP in `public/assets/characters/`; not yet referenced by any scene |
 
 ## Working assumptions requiring explicit approval

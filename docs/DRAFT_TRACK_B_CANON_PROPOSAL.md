@@ -60,15 +60,15 @@ sets in the Creator — rather than hard-coded straight/gay, matching the GDD's
    scribbling screenplay ideas between orders at the Gilded Spoon. Player's
    easiest early friend; low-stakes venting outlet. Friendship or a gentle
    slow-burn romance track; never rivalry.
-4. **Selwyn Pruitt — Casting-office gatekeeper.** Prim, exacting, clipboard
-   welded to his hand at Sunset Casting Exchange. Not a villain — a
+4. **Selma Pruitt — Casting-office gatekeeper.** Prim, exacting, clipboard
+   welded to her hand at Sunset Casting Exchange. Not a villain — a
    bureaucrat who respects reliability over charm. Obligation/trust only;
    softens through competence, not flattery.
-5. **Ruth Kessler — Assistant director / production coordinator.** Perpetually
+5. **Ray Kessler — Assistant director / production coordinator.** Perpetually
    moving, perpetually behind schedule, runs the extras corral on the Monarch
    lot. Brusque but fair; the character who actually hands the player their
    shot. Trust and professional-reputation track; no romance (power-dynamic
-   boundary — she's the player's direct work supervisor).
+   boundary — he's the player's direct work supervisor).
 6. **Gus Albrecht — Experienced extra/mentor.** Grizzled, twenty years of
    background work, knows every trick for surviving a set. Warm, funny,
    protective of newcomers who remind him of himself. Mentor/friendship only;
