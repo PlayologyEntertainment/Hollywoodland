@@ -1,0 +1,173 @@
+{
+  "depot-canopy": {
+    "master_content_px": [
+      1463,
+      907
+    ],
+    "display_scale_per_master_px": 0.595,
+    "runtime_size_px": [
+      1306,
+      869
+    ],
+    "display_size_px": [
+      871,
+      539
+    ],
+    "ground_row_runtime_px": 809,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1387,
+    "reference": "no door; canopy underside ~510 master px = 1.6 x leaf"
+  },
+  "bellhaven-rooms": {
+    "master_content_px": [
+      1153,
+      1145
+    ],
+    "display_scale_per_master_px": 0.757,
+    "runtime_size_px": [
+      1309,
+      1360
+    ],
+    "display_size_px": [
+      873,
+      867
+    ],
+    "ground_row_runtime_px": 1300,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1151,
+    "reference": "door leaf 813-1064 master px -> 190 display px"
+  },
+  "costume-tailor-shop": {
+    "master_content_px": [
+      733,
+      1423
+    ],
+    "display_scale_per_master_px": 0.4524,
+    "runtime_size_px": [
+      497,
+      1026
+    ],
+    "display_size_px": [
+      331,
+      644
+    ],
+    "ground_row_runtime_px": 966,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 731,
+    "reference": "door leaf 1012-1432 master px -> 190 display px"
+  },
+  "gilded-spoon": {
+    "master_content_px": [
+      1374,
+      1041
+    ],
+    "display_scale_per_master_px": 0.5205,
+    "runtime_size_px": [
+      1073,
+      873
+    ],
+    "display_size_px": [
+      715,
+      542
+    ],
+    "ground_row_runtime_px": 813,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1373,
+    "reference": "door leaf 688-1053 master px -> 190 display px"
+  },
+  "alley": {
+    "master_content_px": [
+      961,
+      1438
+    ],
+    "display_scale_per_master_px": 0.508,
+    "runtime_size_px": [
+      732,
+      1156
+    ],
+    "display_size_px": [
+      488,
+      731
+    ],
+    "ground_row_runtime_px": 1096,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 959,
+    "reference": "door leaf 1055-1429 master px -> 190 display px"
+  },
+  "celestial-palace": {
+    "master_content_px": [
+      1399,
+      1042
+    ],
+    "display_scale_per_master_px": 0.837,
+    "runtime_size_px": [
+      1756,
+      1368
+    ],
+    "display_size_px": [
+      1171,
+      872
+    ],
+    "ground_row_runtime_px": 1308,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1397,
+    "reference": "door leaf 743-970 master px -> 190 display px"
+  },
+  "sunset-casting-exchange": {
+    "master_content_px": [
+      1278,
+      1110
+    ],
+    "display_scale_per_master_px": 0.7197,
+    "runtime_size_px": [
+      1380,
+      1258
+    ],
+    "display_size_px": [
+      920,
+      799
+    ],
+    "ground_row_runtime_px": 1198,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1208,
+    "reference": "door leaf 826-1090 master px -> 190 display px"
+  },
+  "klieg-light-office": {
+    "master_content_px": [
+      1230,
+      1005
+    ],
+    "display_scale_per_master_px": 0.6786,
+    "runtime_size_px": [
+      1252,
+      1083
+    ],
+    "display_size_px": [
+      835,
+      682
+    ],
+    "ground_row_runtime_px": 1023,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1089,
+    "reference": "door leaf 700-980 master px -> 190 display px"
+  },
+  "monarch-gate": {
+    "master_content_px": [
+      1508,
+      925
+    ],
+    "display_scale_per_master_px": 0.669,
+    "runtime_size_px": [
+      1513,
+      988
+    ],
+    "display_size_px": [
+      1009,
+      619
+    ],
+    "ground_row_runtime_px": 928,
+    "overlap_runtime_px": 60,
+    "columns_extruded": 1504,
+    "reference": "guard-booth door used as the human-scale reference"
+  }
+}
