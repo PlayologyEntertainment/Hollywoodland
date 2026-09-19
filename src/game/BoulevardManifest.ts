@@ -308,7 +308,7 @@ export function isBoulevardManifest(value: unknown): value is BoulevardManifest 
  * v3 street instead of a blank scene. Keep it identical to the committed
  * JSON; tests/boulevard-manifest.test.ts enforces that. */
 const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
-  worldWidth: 7958,
+  worldWidth: 7850,
   groundY: 1010,
   referenceSheets: ['Hollywoodland_Concept_Boulevard.png'],
   planes: [
@@ -462,7 +462,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
       x: 5489,
       y: 1003,
       scale: 0.666667,
-      depth: 3,
+      depth: 4,
       activePath: null,
       activeWhen: null,
       source: null,
@@ -471,7 +471,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
       id: 'monarch-gate',
       label: 'Monarch Pictures gate',
       path: 'assets/environments/boulevard-v3/buildings/monarch-gate.webp',
-      x: 6324,
+      x: 6216,
       y: 1003,
       scale: 0.666667,
       depth: 3,
@@ -499,7 +499,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
       id: 'palm-right',
       label: 'Palm (right)',
       path: 'assets/environments/foreground/hollywood-palm-v1.png',
-      x: 7828,
+      x: 7720,
       y: 1080,
       scale: 0.9,
       flipX: true,
@@ -667,12 +667,12 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
     {
       id: 'backlot-gate',
       label: 'Monarch Pictures gate',
-      x: 6860,
+      x: 6752,
       promptLabel: 'Wait at the Monarch Pictures gate',
       radius: 100,
       enterable: true,
       sign: {
-        x: 6863,
+        x: 6755,
         y: 551,
         text: 'MONARCH PICTURES',
         fontSize: 19,
@@ -686,7 +686,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
     {
       id: 'extras-corral',
       label: 'Extras corral',
-      x: 6625,
+      x: 6517,
       promptLabel: 'Check in at the extras corral',
       radius: 80,
       enterable: true,
@@ -695,12 +695,12 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
     {
       id: 'soundstage',
       label: 'Soundstage',
-      x: 7711,
+      x: 7603,
       promptLabel: 'Rehearse on the soundstage',
       radius: 90,
       enterable: true,
       sign: {
-        x: 7458,
+        x: 7350,
         y: 505,
         text: 'SOUND STAGE',
         fontSize: 22,

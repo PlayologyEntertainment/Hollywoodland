@@ -70,13 +70,22 @@ describe('committed Boulevard manifest', () => {
   });
 
   it('lays the buildings out left to right without overlaps or gaps', () => {
+    // The Klieg Light's blade sign hangs past its right wall, so its module
+    // deliberately overlaps the next one (the Monarch gate) by up to this much
+    // to close the visible gap between the two walls. It must draw above it.
+    const OVERHANG: Readonly<Record<string, number>> = { 'klieg-light-office': 120 };
     const buildings = [...committed.buildings].sort((a, b) => a.x - b.x);
     for (let i = 1; i < buildings.length; i += 1) {
       const previous = buildings[i - 1];
       const current = buildings[i];
       if (previous === undefined || current === undefined) throw new Error('unreachable');
       const gap = current.x - (previous.x + buildingWidth(previous));
-      expect(Math.abs(gap), `${previous.id} to ${current.id}`).toBeLessThanOrEqual(2);
+      const overhang = OVERHANG[previous.id] ?? 0;
+      expect(gap, `${previous.id} to ${current.id}`).toBeGreaterThanOrEqual(-overhang - 2);
+      expect(gap, `${previous.id} to ${current.id}`).toBeLessThanOrEqual(2);
+      if (gap < -2) {
+        expect(previous.depth, `${previous.id} draws above ${current.id}`).toBeGreaterThan(current.depth);
+      }
     }
     const last = buildings[buildings.length - 1];
     if (last === undefined) throw new Error('no buildings');
