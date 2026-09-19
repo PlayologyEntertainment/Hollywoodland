@@ -309,7 +309,7 @@ export function isBoulevardManifest(value: unknown): value is BoulevardManifest 
  * JSON; tests/boulevard-manifest.test.ts enforces that. */
 const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
   worldWidth: 7453,
-  groundY: 1056,
+  groundY: 1010,
   referenceSheets: ['Hollywoodland_Concept_Boulevard.png'],
   planes: [
     {
