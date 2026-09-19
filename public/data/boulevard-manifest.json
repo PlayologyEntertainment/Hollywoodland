@@ -1,5 +1,5 @@
 {
-  "worldWidth": 4650,
+  "worldWidth": 7453,
   "groundY": 1056,
   "referenceSheets": [
     "Hollywoodland_Concept_Boulevard.png"
@@ -8,51 +8,179 @@
     {
       "id": "sky",
       "label": "Plane 1 — Sky",
-      "path": "assets/environments/boulevard-v2/01-sky.png",
+      "path": "assets/environments/boulevard-v3/sky.webp",
       "offsetX": 0,
       "offsetY": 0,
+      "scale": 1,
       "scrollFactor": 0,
       "depth": 0,
+      "repeatX": false,
       "source": null
     },
     {
       "id": "hills",
       "label": "Plane 2 — Hills & landmark",
-      "path": "assets/environments/boulevard-v2/02-hills-landmark.png",
-      "offsetX": -998,
-      "offsetY": -226,
+      "path": "assets/environments/boulevard-v3/hills.webp",
+      "offsetX": -555,
+      "offsetY": -78,
+      "scale": 1.6,
       "scrollFactor": 0.18,
       "depth": 1,
+      "repeatX": false,
       "source": null
     },
     {
       "id": "distant-buildings",
       "label": "Plane 3 — Distant buildings",
-      "path": "assets/environments/boulevard-v2/03-distant-buildings.png",
-      "offsetX": -29,
-      "offsetY": -231,
+      "path": "assets/environments/boulevard-v3/distant-buildings.webp",
+      "offsetX": 0,
+      "offsetY": -51,
+      "scale": 1.4,
       "scrollFactor": 0.42,
       "depth": 2,
-      "source": null
-    },
-    {
-      "id": "main-architecture",
-      "label": "Plane 4 — Main architecture",
-      "path": "assets/environments/boulevard-v2/04-main-architecture.png",
-      "offsetX": 0,
-      "offsetY": -113,
-      "scrollFactor": 1,
-      "depth": 3,
+      "repeatX": false,
       "source": null
     },
     {
       "id": "sidewalk-street",
       "label": "Plane 5 — Sidewalk & street",
-      "path": "assets/environments/boulevard-v2/05-sidewalk-street.png",
+      "path": "assets/environments/boulevard-v3/ground-tile.webp",
       "offsetX": 0,
-      "offsetY": 430,
+      "offsetY": 963,
+      "scale": 0.666667,
       "scrollFactor": 1,
       "depth": 8,
+      "repeatX": true,
+      "source": null
+    }
+  ],
+  "buildings": [
+    {
+      "id": "depot-canopy",
+      "label": "Depot canopy",
+      "path": "assets/environments/boulevard-v3/buildings/depot-canopy.webp",
+      "x": 120,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": null,
+      "activeWhen": null,
+      "source": null
+    },
+    {
+      "id": "bellhaven-rooms",
+      "label": "Bellhaven Rooms",
+      "path": "assets/environments/boulevard-v3/buildings/bellhaven-rooms.webp",
+      "x": 991,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": null,
+      "activeWhen": null,
+      "source": null
+    },
+    {
+      "id": "costume-tailor-shop",
+      "label": "The Silver Thimble",
+      "path": "assets/environments/boulevard-v3/buildings/costume-tailor-shop.webp",
+      "x": 1864,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": null,
+      "activeWhen": null,
+      "source": null
+    },
+    {
+      "id": "gilded-spoon",
+      "label": "The Gilded Spoon",
+      "path": "assets/environments/boulevard-v3/buildings/gilded-spoon.webp",
+      "x": 2195,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": "assets/environments/boulevard-v3/buildings/gilded-spoon-active.webp",
+      "activeWhen": {
+        "timeSlots": [
+          "morning",
+          "evening"
+        ],
+        "flag": null
+      },
+      "source": null
+    },
+    {
+      "id": "alley",
+      "label": "Alley",
+      "path": "assets/environments/boulevard-v3/buildings/alley.webp",
+      "x": 2910,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": null,
+      "activeWhen": null,
+      "source": null
+    },
+    {
+      "id": "celestial-palace",
+      "label": "The Celestial Palace",
+      "path": "assets/environments/boulevard-v3/buildings/celestial-palace.webp",
+      "x": 3398,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": "assets/environments/boulevard-v3/buildings/celestial-palace-active.webp",
+      "activeWhen": {
+        "timeSlots": [
+          "evening"
+        ],
+        "flag": null
+      },
+      "source": null
+    },
+    {
+      "id": "sunset-casting-exchange",
+      "label": "Sunset Casting Exchange",
+      "path": "assets/environments/boulevard-v3/buildings/sunset-casting-exchange.webp",
+      "x": 4569,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": "assets/environments/boulevard-v3/buildings/sunset-casting-exchange-active.webp",
+      "activeWhen": {
+        "timeSlots": [
+          "morning",
+          "afternoon"
+        ],
+        "flag": null
+      },
+      "source": null
+    },
+    {
+      "id": "klieg-light-office",
+      "label": "The Klieg Light",
+      "path": "assets/environments/boulevard-v3/buildings/klieg-light-office.webp",
+      "x": 5489,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": null,
+      "activeWhen": null,
+      "source": null
+    },
+    {
+      "id": "monarch-gate",
+      "label": "Monarch Pictures gate",
+      "path": "assets/environments/boulevard-v3/buildings/monarch-gate.webp",
+      "x": 6324,
+      "y": 1003,
+      "scale": 0.666667,
+      "depth": 3,
+      "activePath": "assets/environments/boulevard-v3/buildings/monarch-gate-active.webp",
+      "activeWhen": {
+        "timeSlots": [],
+        "flag": "discoveredCastingOffice"
+      },
       "source": null
     }
   ],
@@ -61,8 +189,8 @@
       "id": "palm-left",
       "label": "Palm (left)",
       "path": "assets/environments/foreground/hollywood-palm-v1.png",
-      "x": 436,
-      "y": 1138,
+      "x": 300,
+      "y": 1080,
       "scale": 0.8,
       "flipX": false,
       "depth": 31,
@@ -72,8 +200,8 @@
       "id": "palm-right",
       "label": "Palm (right)",
       "path": "assets/environments/foreground/hollywood-palm-v1.png",
-      "x": 3575,
-      "y": 1150,
+      "x": 7273,
+      "y": 1080,
       "scale": 0.9,
       "flipX": true,
       "depth": 31,
@@ -83,8 +211,8 @@
       "id": "streetlamp-left",
       "label": "Streetlamp (left)",
       "path": "assets/environments/foreground/hollywood-streetlamp-v1.png",
-      "x": 1296,
-      "y": 1050,
+      "x": 1864,
+      "y": 1084,
       "scale": 0.74,
       "flipX": false,
       "depth": 14,
@@ -94,8 +222,8 @@
       "id": "streetlamp-right",
       "label": "Streetlamp (right)",
       "path": "assets/environments/foreground/hollywood-streetlamp-v1.png",
-      "x": 2349,
-      "y": 1049,
+      "x": 6430,
+      "y": 1084,
       "scale": 0.74,
       "flipX": true,
       "depth": 14,
@@ -105,116 +233,174 @@
       "id": "sedan",
       "label": "Parked sedan",
       "path": "assets/environments/foreground/hollywood-sedan-v1.png",
-      "x": 5,
-      "y": 1194,
+      "x": 1350,
+      "y": 1292,
       "scale": 0.5,
       "flipX": false,
-      "depth": 31,
+      "depth": 24,
       "source": null
     }
   ],
   "locations": [
     {
       "id": "boarding-house",
-      "label": "Boarding house",
-      "x": 1831,
-      "promptLabel": "Enter boarding house",
-      "radius": 100,
+      "label": "Bellhaven Rooms",
+      "x": 1454,
+      "promptLabel": "Enter Bellhaven Rooms",
+      "radius": 130,
+      "enterable": true,
       "sign": {
-        "x": 1834,
-        "y": 676,
-        "text": "BOARDING\nHOUSE",
-        "fontSize": 13,
-        "textColor": "#c35b0c",
-        "boardColor": "#fbc885",
-        "boardWidth": 130,
-        "boardHeight": 60
-      }
-    },
-    {
-      "id": "casting-office",
-      "label": "Casting office",
-      "x": 2589,
-      "promptLabel": "Enter casting office",
-      "radius": 100,
-      "sign": {
-        "x": 2589,
-        "y": 648,
-        "text": "SUNSET\nCASTING\nEXCHANGE",
+        "x": 1452,
+        "y": 562,
+        "text": "BELLHAVEN ROOMS",
         "fontSize": 14,
         "textColor": "#f3dfab",
         "boardColor": "#241609",
-        "boardWidth": 160,
-        "boardHeight": 80
+        "boardWidth": 244,
+        "boardHeight": 38,
+        "textOnly": true
+      }
+    },
+    {
+      "id": "costume-shop",
+      "label": "The Silver Thimble",
+      "x": 2106,
+      "promptLabel": "The Silver Thimble",
+      "radius": 100,
+      "enterable": false,
+      "sign": {
+        "x": 2030,
+        "y": 623,
+        "text": "THE SILVER THIMBLE",
+        "fontSize": 14,
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 207,
+        "boardHeight": 39,
+        "textOnly": true
       }
     },
     {
       "id": "diner",
-      "label": "Sunset Diner",
-      "x": 3895,
-      "promptLabel": "Enter Sunset Diner",
-      "radius": 200,
+      "label": "The Gilded Spoon",
+      "x": 2661,
+      "promptLabel": "Enter The Gilded Spoon",
+      "radius": 130,
+      "enterable": true,
       "sign": {
-        "x": 3886,
-        "y": 627,
-        "text": "SUNSET\nDINER",
+        "x": 2635,
+        "y": 619,
+        "text": "THE GILDED SPOON",
         "fontSize": 20,
-        "textColor": "#ca2522",
-        "boardColor": "#a899a0",
-        "boardWidth": 140,
-        "boardHeight": 90
+        "textColor": "#f3dfab",
+        "boardColor": "#241609",
+        "boardWidth": 488,
+        "boardHeight": 37,
+        "textOnly": true
+      }
+    },
+    {
+      "id": "alley",
+      "label": "Alley",
+      "x": 3156,
+      "promptLabel": "The alley",
+      "radius": 100,
+      "enterable": false,
+      "sign": null
+    },
+    {
+      "id": "celestial-palace",
+      "label": "The Celestial Palace",
+      "x": 3984,
+      "promptLabel": "The Celestial Palace",
+      "radius": 140,
+      "enterable": false,
+      "sign": {
+        "x": 3984,
+        "y": 527,
+        "text": "THE CELESTIAL\nPALACE",
+        "fontSize": 22,
+        "textColor": "#4a1510",
+        "boardColor": "#241609",
+        "boardWidth": 377,
+        "boardHeight": 77,
+        "textOnly": true
+      }
+    },
+    {
+      "id": "casting-office",
+      "label": "Sunset Casting Exchange",
+      "x": 5025,
+      "promptLabel": "Enter Sunset Casting Exchange",
+      "radius": 140,
+      "enterable": true,
+      "sign": {
+        "x": 5033,
+        "y": 643,
+        "text": "SUNSET CASTING\nEXCHANGE",
+        "fontSize": 11,
+        "textColor": "#3a2410",
+        "boardColor": "#241609",
+        "boardWidth": 150,
+        "boardHeight": 40,
+        "textOnly": true
+      }
+    },
+    {
+      "id": "klieg-light-office",
+      "label": "The Klieg Light",
+      "x": 6091,
+      "promptLabel": "The Klieg Light",
+      "radius": 110,
+      "enterable": false,
+      "sign": {
+        "x": 5758,
+        "y": 662,
+        "text": "THE KLIEG LIGHT",
+        "fontSize": 16,
+        "textColor": "#3a2410",
+        "boardColor": "#241609",
+        "boardWidth": 475,
+        "boardHeight": 31,
+        "textOnly": true
       }
     },
     {
       "id": "backlot-gate",
-      "label": "Backlot gate",
-      "x": 2974,
-      "promptLabel": "Wait at the backlot gate",
+      "label": "Monarch Pictures gate",
+      "x": 6827,
+      "promptLabel": "Wait at the Monarch Pictures gate",
       "radius": 100,
+      "enterable": true,
       "sign": {
-        "x": 2979,
-        "y": 858,
-        "text": "BACKLOT\nGATE",
-        "fontSize": 13,
-        "textColor": "#f3dfab",
+        "x": 6826,
+        "y": 548,
+        "text": "MONARCH PICTURES",
+        "fontSize": 19,
+        "textColor": "#1e4a3f",
         "boardColor": "#241609",
-        "boardWidth": 110,
-        "boardHeight": 70
+        "boardWidth": 308,
+        "boardHeight": 85,
+        "textOnly": true
       }
     },
     {
       "id": "extras-corral",
       "label": "Extras corral",
-      "x": 3491,
+      "x": 6611,
       "promptLabel": "Check in at the extras corral",
-      "radius": 100,
-      "sign": {
-        "x": 3491,
-        "y": 839,
-        "text": "EXTRAS\nCORRAL",
-        "fontSize": 13,
-        "textColor": "#f3dfab",
-        "boardColor": "#241609",
-        "boardWidth": 110,
-        "boardHeight": 60
-      }
+      "radius": 80,
+      "enterable": true,
+      "sign": null
     },
     {
       "id": "soundstage",
       "label": "Soundstage",
-      "x": 4521,
+      "x": 7117,
       "promptLabel": "Rehearse on the soundstage",
-      "radius": 100,
-      "sign": {
-        "x": 4525,
-        "y": 640,
-        "text": "SOUND\nSTAGE",
-        "fontSize": 19,
-        "textColor": "#f3dfab",
-        "boardColor": "#241609",
-        "boardWidth": 150,
-        "boardHeight": 95
-      }
+      "radius": 90,
+      "enterable": true,
+      "sign": null
     }
   ]
 }

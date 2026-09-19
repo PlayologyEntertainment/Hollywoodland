@@ -1,10 +1,20 @@
 # The Boulevard Art Director tool
 
-How to move, restyle, and re-art the Hollywood Boulevard scene — its five
-parallax planes, its foreground props (palms, streetlamps, the sedan), and
-the interactable locations along it (position, interaction radius, prompt
-text, and hanging-sign wording/style) — and see the change land in the
-running game, with no prompting and no code change.
+How to move, restyle, and re-art the Hollywood Boulevard scene — its four
+parallax planes (sky, hills, distant buildings, ground), the row of street
+building modules that forms the street wall, its foreground props (palms,
+streetlamps, the sedan), and the interactable locations along it (position,
+interaction radius, prompt text, and sign wording/style) — and see the
+change land in the running game, with no prompting and no code change.
+
+> **v3 layout (September 2026).** The street wall is no longer one stretched
+> plane: it is nine separately generated building modules (`buildings` in the
+> manifest), the ground is a repeating tile, and every plane is drawn at a
+> uniform `scale` rather than stretched to the world width. Four buildings
+> also carry an active-state texture that the scene swaps in by time slot or
+> world flag (`activePath` + `activeWhen`). The art itself is finished WebP
+> made outside this tool, so the tool edits **positions and scale only** for
+> the planes and buildings. See `art/prompts/boulevard-entrances-v3.md`.
 
 Saved edits take effect the next time you (re-)start or continue a career
 from the main menu — the game re-fetches the manifest at that point, even
@@ -55,20 +65,30 @@ a bug).
 
 ## 3. Art mode — planes and props
 
-The sidebar lists the **5 parallax planes** (sky, hills, distant buildings,
-main architecture, sidewalk/street — fixed, can't be added or removed) and
-**foreground props** (palms, streetlamps, the sedan — a free-form list you
-can add to, remove from, or duplicate by hand-editing the fields after
-adding).
+The sidebar lists the **4 parallax planes** (sky, hills, distant buildings,
+sidewalk/street — fixed, can't be added or removed), the **street
+buildings** (the nine modules of the street wall — fixed, position and scale
+only), and **foreground props** (palms, streetlamps, the sedan — a free-form
+list you can add to, remove from, or duplicate by hand-editing the fields
+after adding).
 
 Selecting a slot shows:
 
-- **Position & rendering fields** — for a plane: X/Y offset, scroll factor
-  (parallax speed — 0 never scrolls, 1 scrolls at the same rate as the
-  player), and depth (draw order; higher draws on top). For a prop: X/Y
-  position, scale, flip, and depth. These are plain numbers here — drag
+- **Position & rendering fields** — for a plane: X/Y offset, scale, scroll
+  factor (parallax speed — 0 never scrolls, 1 scrolls at the same rate as
+  the player), and depth (draw order; higher draws on top). For a building:
+  X (left edge), Y (bottom edge, a few pixels below the ground line so the
+  sidewalk covers the overlap), scale, and depth. For a prop: X/Y position,
+  scale, flip, and depth. These are plain numbers here — drag
   them into place instead from **Layout** mode (§5), which edits the same
   underlying fields.
+- **Position-only art.** Anything whose art is a finished `.webp` (every
+  v3 plane and every building) hides the crop and upload controls below and
+  the **Remove art** button, because that workflow writes PNG bytes to the
+  slot's path and can delete the file. Only the position fields and **Save
+  to project** are shown. A building with an active-state texture also
+  shows its rule; edit `activeWhen` in the manifest JSON (see *Manifest
+  shape*).
 - **Crop from reference sheet** — pick a sheet (the sidebar's **Reference
   sheet** dropdown lists every sheet the manifest knows about, plus any you
   upload this session) and drag/resize a box over it, the same crop-box
@@ -88,7 +108,7 @@ upload is saved as-is.
 **➕ Add prop** creates a new entry with placeholder position/path values —
 give it real art (crop or upload) and adjust its position fields before
 saving, or the game will fail to load a texture for it. **Delete this
-prop** (in a prop's own detail view, not available for the 5 fixed planes)
+prop** (in a prop's own detail view, not available for the fixed planes or buildings)
 removes its manifest entry; it doesn't delete the art file already on disk
 for it.
 
@@ -103,16 +123,21 @@ for it.
   or "uploaded"), back into `public/data/boulevard-manifest.json`.
 
 **Remove art** deletes that slot's output file and clears its captured
-state back to "original" — for one of the 5 fixed planes this leaves the
+state back to "original" — for one of the fixed planes this leaves the
 scene with a missing texture until you save new art, since (unlike Otaku
 Palace's optional UI chrome) every plane is required for the scene to
 render.
 
 ## 4. Locations mode — the interactable points
 
-The sidebar lists the Boulevard's fixed interactable locations (boarding
-house, casting office, diner, backlot gate, extras corral, soundstage, and
-any added since). This tool only lets you edit the ones that already
+The sidebar lists the Boulevard's fixed interactable locations: the eight
+street entrances (Bellhaven Rooms, The Silver Thimble, The Gilded Spoon,
+the alley, The Celestial Palace, Sunset Casting Exchange, The Klieg Light,
+the Monarch Pictures gate) plus two lot-access points (the extras corral and
+the soundstage) that sit inside the Monarch gate module until the studio-lot
+map exists. Their ids are `boarding-house`, `costume-shop`, `diner`,
+`alley`, `celestial-palace`, `casting-office`, `klieg-light-office`,
+`backlot-gate`, `extras-corral`, and `soundstage`. This tool only lets you edit the ones that already
 exist — adding a new one that does something new still needs a domain
 event wired into `BoulevardSpikeScene.ts`'s `enterLocation()` switch (and
 its id added to `BoulevardLocationId`/`LOCATION_IDS` in
@@ -122,14 +147,18 @@ Palace's tool uses for slots that aren't rendered by any component yet.
 Selecting one shows:
 
 - **Position & prompt** — its X position along the Boulevard, the
-  proximity radius that triggers the "Press E" prompt, and the prompt
-  label text itself.
-- **Hanging sign** — the sign's wording (use `\n` for a line break, matching
-  how the existing signs stack "SUNSET / CASTING / EXCHANGE" onto three
-  lines), its X/Y position, font size, board width/height, and text/board
-  color. The sign's frame trim, rivets, and glow are still fixed Phaser
-  vector drawing, not exposed here — this is "text + basic style", not a
-  full re-skin.
+  proximity radius that triggers the "Press E" prompt, the prompt label
+  text itself, and **Enterable**. Four entrances (The Silver Thimble, the
+  alley, The Celestial Palace, The Klieg Light) are not enterable yet: their
+  sign shows but there is no prompt and nothing to press E on, until their
+  scene is written. Where two trigger zones overlap, the nearer door wins.
+- **Sign** — the sign's wording (use `\n` for a line break, matching
+  how "SUNSET CASTING / EXCHANGE" stacks onto two lines), its X/Y position,
+  font size, panel width/height, and text/board color. **Text only**
+  (the setting for all v3 signs) draws just the lettering on the blank
+  panel already painted into the building art; turned off, the scene draws
+  the original hanging board with rivets and a glow. The alley and the two
+  lot-access points have no sign of their own.
 
 Display label and the location's identity itself (which domain event it
 fires) aren't editable — same reasoning as above.
@@ -162,7 +191,7 @@ needs the room (the sedan, for one), purely so it stays visible and
 draggable here; that extra canvas height is a tool convenience, not
 something the game ever shows.
 
-- **Props, signs, and location markers** are directly clickable and
+- **Buildings, props, signs, and location markers** are directly clickable and
   draggable — click one on the canvas (or in the sidebar) and drag. A
   location marker only moves horizontally (locations live on the ground
   line, not at an arbitrary height), so its Y field is disabled.
@@ -175,7 +204,10 @@ something the game ever shows.
 - **Planes** cover the entire canvas, so clicking one on the canvas would
   always just select whichever plane happens to be on top — pick a plane
   from the sidebar first, then drag anywhere on the canvas to nudge its
-  offset.
+  offset. The mockup draws each plane at its uniform scale as it appears
+  with the camera at the far left; in the game the sky, hills and distant
+  buildings scroll slower than the street, so their on-screen position
+  shifts as the player walks.
 - The panel below the canvas shows the selected element's X/Y as live,
   editable numbers (typing works too, not just dragging), plus an **Edit
   full details →** button that jumps to that element's full field editor in
@@ -199,6 +231,25 @@ check a save without alt-tabbing. Drag the divider to resize it.
 
 See `src/game/BoulevardManifest.ts` for the authoritative TypeScript types
 and validation (`isBoulevardManifest`) — the scene falls back to
-`DEFAULT_BOULEVARD_MANIFEST` (the exact pre-tool hardcoded layout) if the
-file is missing or fails validation, so a bad hand-edit degrades safely
-instead of crashing the scene.
+`DEFAULT_BOULEVARD_MANIFEST` (the same v3 street, kept identical to the
+committed JSON by `tests/boulevard-manifest.test.ts`) if the file is
+missing or fails validation, so a bad hand-edit degrades safely instead of
+crashing the scene.
+
+A building's active state is `activePath` (the alternate texture) plus
+`activeWhen`, `{ "timeSlots": [...], "flag": null | "discoveredCastingOffice" }`:
+the alternate art shows while the current time slot is listed **or** the
+flag is set. Both must be set together or both null. Currently: The Gilded
+Spoon is open in the morning and evening, The Celestial Palace is lit in the
+evening, Sunset Casting Exchange is open in the morning and afternoon, and
+the Monarch gate opens once the casting office has been discovered.
+
+## Interim: the studio lot
+
+The slice design puts the extras corral, soundstage, wardrobe department and
+screen-test space **behind the Monarch gate**, on a small second map that
+does not exist yet. Until it does, the extras corral and soundstage stay
+playable as two extra trigger zones inside the gate module (the guard booth
+and the right-hand wing), so the existing critical path is not broken. They
+have no signs; when the lot map exists, move them there and drop the two
+`locations` entries.

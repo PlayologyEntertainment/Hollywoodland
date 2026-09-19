@@ -61,9 +61,9 @@ export const EXTRAS_CALL_QUEST: QuestDef = {
 export const BACKLOT_RIVALRY_QUEST: QuestDef = {
   id: 'backlot-rivalry',
   title: 'Backlot Rivalry',
-  summary: 'Figure out where you stand with the other hopeful at the backlot gate.',
+  summary: 'Figure out where you stand with the other hopeful at the Monarch Pictures gate.',
   stages: [
-    { id: 'first-encounter', description: 'Cross paths at the backlot gate.' },
+    { id: 'first-encounter', description: 'Cross paths at the Monarch Pictures gate.' },
     {
       id: 'earned-respect',
       description: 'Settle where you stand with her.',
@@ -82,7 +82,7 @@ export const BACKLOT_RIVALRY_QUEST: QuestDef = {
 export const MAKING_RENT_QUEST: QuestDef = {
   id: 'making-rent',
   title: 'Making Rent',
-  summary: 'Keep a roof over your head at the boarding house.',
+  summary: 'Keep a roof over your head at Bellhaven Rooms.',
   stages: [
     { id: 'first-payment', description: 'Settle up with the landlady.' },
     {
@@ -101,7 +101,7 @@ export const MAKING_RENT_QUEST: QuestDef = {
 export const DINER_INTRODUCTIONS_QUEST: QuestDef = {
   id: 'diner-introductions',
   title: 'Diner Introductions',
-  summary: 'Get to know the counter girl at the Sunset Diner.',
+  summary: 'Get to know the counter girl at The Gilded Spoon.',
   stages: [
     { id: 'introduced', description: 'Introduce yourself at the counter.' },
     {

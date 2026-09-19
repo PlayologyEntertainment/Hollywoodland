@@ -453,3 +453,28 @@ review_status: pending review
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
 runtime_files: not yet promoted; staging files in art/generated/boulevard-v3/runtime/
 ```
+
+## 14. Code integration (2026-09-18)
+
+The staged art is now in the game. Runtime WebP files (about 4 MB from 33 MB of PNG, alpha preserved) are in `public/assets/environments/boulevard-v3/`: `buildings/` (nine modules and four `-active` variants), `ground-tile.webp`, `sky.webp`, `hills.webp`, `distant-buildings.webp`. The staged PNGs in `art/generated/` are unchanged.
+
+**Manifest (`public/data/boulevard-manifest.json`, mirrored by the built-in default):** world 7,453 px; four planes at native scale (sky scale 1, scroll 0; hills scale 1.6, scroll 0.18, offset -555,-78; distant buildings scale 1.4, scroll 0.42, offset 0,-51; ground tile scale 2/3 repeated from y = 963); nine buildings abutting from x = 120, bottom edge y = 1003 (ground line 963 plus the 40 px hidden overlap), scale 2/3; ten locations.
+
+**Anchor measurements** (master pixels on the untouched modules, converted to world px with the calibration scale and each module's trimmed bounding box):
+
+| Module | Door / trigger centre x | Sign panel (centre x, y; w x h) |
+|---|---|---|
+| Bellhaven Rooms | 702 | 699, 636; 322 x 50 (teal plaque) |
+| The Silver Thimble | 679 | 512, 712; 457 x 87 (teal band) |
+| The Gilded Spoon | 926 | 877, 400; 937 x 72 (upper red band) |
+| Alley | 515 (arched gate) | none |
+| The Celestial Palace | 725 | 725, 540; 451 x 92 (marquee) |
+| Sunset Casting Exchange | 682 | 693, 678; 208 x 55 (brass plaque) |
+| The Klieg Light | 1110 | 620, 587; 700 x 46 (stone band) |
+| Monarch Pictures gate | 766 (gate); 443 (guard booth, extras corral); 1200 (right wing, soundstage) | 764, 360; 460 x 127 (arch panel) |
+
+The lettering of each sign was then nudged by eye in the running game so it sits inside its painted panel (the Klieg Light up 11 px, the Monarch arch up 20 px and set on one line, the Casting plaque smaller and up 5 px, Bellhaven up 3 px). The two streetlamps stand at the Bellhaven/Silver Thimble seam and on the Monarch left wing, and the right palm was moved clear of the arch, so none covers a sign or the Klieg blade sign.
+
+**Behavior:** the scene draws each plane at its manifest scale (no stretch), places the buildings, and swaps four buildings to their active texture from the career state (`activeWhen`: The Gilded Spoon morning or evening; The Celestial Palace evening; Sunset Casting Exchange morning or afternoon; the Monarch gate once `discoveredCastingOffice` is set). The four entrances with no scene yet (The Silver Thimble, alley, The Celestial Palace, The Klieg Light) show their sign but have no prompt. Where trigger zones overlap the nearer door wins. The extras corral and soundstage stay playable as two trigger zones inside the Monarch module until the studio-lot map exists.
+
+**Verified:** 313 tests pass (32 new, in `tests/boulevard-manifest.test.ts`: the committed JSON validates and equals the built-in default; every referenced image exists; buildings abut without overlaps; every building stands on the ground line; every sign sits on a building; the parallax planes cover the camera at every scroll position; validator rejection cases; active-state and nearest-door logic), `tsc` is clean, and the production build succeeds. The running game was also driven end to end in Chrome over the DevTools Protocol: a new career, the whole street walked, every prompt and every live scene checked, and the time-of-day swaps observed at the Spoon, the Palace and the Casting Exchange, plus the gate opening after the casting office was visited. The Art Director tool was syntax-checked and reviewed, but not exercised in a browser (it needs a folder-picker permission).
