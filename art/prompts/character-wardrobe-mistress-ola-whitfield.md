@@ -1,6 +1,6 @@
 # Character brief: Ola Whitfield (wardrobe mistress / origin-linked specialist)
 
-Status: **Existing concept art staged as a runtime portrait, pending owner visual review**
+Status: **Existing concept art staged as a runtime portrait, approved by the owner 2026-09-19**
 
 ## Role in the game
 
@@ -24,8 +24,8 @@ generation_tool_and_version: not recorded in the repo (added in commit 0f9d207, 
 generation_date: 2026-09-16 (commit date; actual generation date unknown)
 raw_source_location: art/Hollywoodland_Character_Wardrobe_Mistress.png (unchanged)
 human_edits: none recorded for the concept file
-review_status: pending review
-rights_or_license_notes: project-owned development asset; human rights/provenance review required. Character name and design are from an unapproved draft canon proposal.
+review_status: approved by the owner 2026-09-19
+rights_or_license_notes: project-owned development asset; human rights/provenance review required. Name and design match the canon approved 2026-09-18.
 runtime_files: public/assets/characters/wardrobe-mentor.webp
 ```
 
@@ -36,7 +36,7 @@ asset_id: wardrobe_mentor_portrait
 source_asset: art/Hollywoodland_Character_Wardrobe_Mistress.png (unchanged)
 human_edits: deterministic alpha normalization on the runtime copy only, done with a script and no repainting. Alpha >= 250 set to 255 (the source had no fully opaque pixels; 34% sat at 250-254); alpha <= 3 set to 0; antialiased edge alpha 4-249 and all RGB left untouched.
 runtime_files: public/assets/characters/wardrobe-mentor.webp (1024x1536 RGBA, lossy quality 90, alpha_quality 100; same format and size as the other character portraits)
-review_status: pending review (staged at the owner's request 2026-09-18; not yet referenced by any code or scene)
+review_status: approved by the owner 2026-09-19; runtime file in place, not yet referenced by any scene
 ```
 
 Verified from the encoded WebP: corners alpha 0, no glow or halo over black or white, about 1.5% partial-alpha edge pixels. Some image viewers show a glow around the source PNG; that is leftover color stored in fully transparent pixels, not visible in the alpha channel or in the game.

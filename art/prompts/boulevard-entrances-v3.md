@@ -1,6 +1,6 @@
 # Boulevard entrances v3 brief
 
-Status: **Scope approved by the owner September 18, 2026. Plane 4 is built from per-building modules (approach B, approved). All nine modules are generated, calibrated and staged in `art/generated/boulevard-v3/`, pending owner review. World width is decided: full-size buildings, about 7,450 px. The Plane 5 ground tile and the four active-state variants are also generated and staged (sections 10-11). Planes 1-3 are generated and assembled (sections 12-13), so all five planes now exist in staging. Nothing is promoted to `public/assets/`.**
+Status: **Scope approved by the owner September 18, 2026. Plane 4 is built from per-building modules (approach B, approved). All nine modules are generated, calibrated and staged in `art/generated/boulevard-v3/`, approved by the owner 2026-09-19. World width is decided: full-size buildings, about 7,450 px. The Plane 5 ground tile and the four active-state variants are also generated and staged (sections 10-11). Planes 1-3 are generated and assembled (sections 12-13), so all five planes now exist in staging. Everything was approved by the owner 2026-09-19 and is promoted as runtime WebP in `public/assets/environments/boulevard-v3/` (section 14).**
 
 Supersedes the layout of `boulevard-five-plane-v2.md` (which stays as the record of the current runtime art). Everything not changed here (style, palette, blank-signage policy, chroma-key extraction, validation gates) is inherited from that brief.
 
@@ -276,7 +276,7 @@ generation_tool_and_version: gpt-image-2 via gg-image
 generation_date: 2026-09-18
 raw_source_location: art/generated/boulevard-v3/plane4-a-trial1-backend-alpha.png (1828x860) and art/generated/boulevard-v3/plane4-a-chroma.png (2058x764, backend-extracted RGBA; file name is historical)
 human_edits: none (a defringe experiment was run on a scratch copy and discarded)
-review_status: pending review
+review_status: trial only; superseded by the building modules, not promoted
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
 runtime_files: not yet promoted
 ```
@@ -290,9 +290,9 @@ generation_tool_and_version: gpt-image-2 via gg-image, --background transparent,
 generation_date: 2026-09-18
 raw_source_location: art/generated/boulevard-v3/modules/*-master.png (Palace v1 and v2 kept as -v1-dragons and -v2-tall)
 human_edits: deterministic calibration only (trim, bottom flatten, door-height scale, premultiplied resize, 40 display px overlap strip, alpha normalization); no repainting
-review_status: pending review
+review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required. Place names are approved canon; the costume shop's name, The Silver Thimble, is owner-approved.
-runtime_files: not yet promoted; calibrated staging PNGs in art/generated/boulevard-v3/runtime/
+runtime_files: public/assets/environments/boulevard-v3/buildings/ (nine modules); staging PNGs remain in art/generated/boulevard-v3/runtime/
 ```
 
 ## 10. Plane 5 (ground) and state overlays
@@ -365,9 +365,9 @@ generation_tool_and_version: gpt-image-2 via gg-image (ground: generate, opaque;
 generation_date: 2026-09-18
 raw_source_location: art/generated/boulevard-v3/ground/ (ground-tile-master.png; v1 kept), art/generated/boulevard-v3/overlays/ (*-active-edit-master.png raw edits, *-active-master.png composites)
 human_edits: deterministic processing only (ground: crop, resample, mirror; states: feathered entrance mask composite, same calibration as the base modules, alpha normalization); no repainting
-review_status: pending review
+review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
-runtime_files: not yet promoted; staging PNGs in art/generated/boulevard-v3/runtime/ (ground-tile.png, *-active.png, states.json)
+runtime_files: public/assets/environments/boulevard-v3/ground-tile.webp and buildings/*-active.webp; staging PNGs remain in art/generated/boulevard-v3/runtime/
 ```
 
 ## 12. Planes 1-3 (sky, hills, distant buildings)
@@ -449,9 +449,9 @@ generation_tool_and_version: gpt-image-2 via gg-image (backend-extracted alpha f
 generation_date: 2026-09-18
 raw_source_location: art/generated/boulevard-v3/planes/ (sky, hills, distant-a, distant-b masters)
 human_edits: deterministic assembly only (sky resized to 1920x1080; distant halves scaled, joined, given a 60 px overlap strip; alpha normalized); no repainting
-review_status: pending review
+review_status: approved by the owner 2026-09-19
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
-runtime_files: not yet promoted; staging files in art/generated/boulevard-v3/runtime/
+runtime_files: public/assets/environments/boulevard-v3/sky.webp, hills.webp, distant-buildings.webp; staging files remain in art/generated/boulevard-v3/runtime/
 ```
 
 ## 14. Code integration (2026-09-18)

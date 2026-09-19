@@ -1,6 +1,6 @@
 # Boulevard five-plane render brief
 
-Status: **Native-alpha runtime integration complete; pending owner visual review September 13, 2026**
+Status: **Native-alpha runtime integration complete; approved by the owner 2026-09-19 with the Phase 1 visual spike; superseded by the v3 art**
 
 ## Delivery contract
 
@@ -120,7 +120,7 @@ generation_tools: gpt-image-2 high-quality source render; deterministic local na
 generation_date: 2026-09-13
 raw_source_location: art/assets/plane1.png through plane5.png
 human_edits: chroma masters preserved; Plane 4 runtime derivative normalized from 2169x725 to 2172x724; native-alpha extraction and visual QA
-review_status: source renders approved for integration; runtime composite pending owner visual review
+review_status: approved by the owner 2026-09-19 with the Phase 1 visual spike; the street is now drawn from the v3 art (see boulevard-entrances-v3.md), and these v2 runtime files are no longer referenced by code
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
 runtime_files: public/assets/environments/boulevard-v2/01-sky.png through 05-sidewalk-street.png
 ```

@@ -1,6 +1,6 @@
 # Phase 1 Visual Gameplay Spike
 
-Status: **Implementation review build**
+Status: **Visual spike approved by the owner 2026-09-19; minor tweaks to follow.** The street now runs on the v3 art (see `art/prompts/boulevard-entrances-v3.md`); the v2 plane record below is the original spike proof.
 
 This milestone turns the foundation scene into a reviewable Hollywood Boulevard experience while remaining inside the approved Phase 1 gate.
 

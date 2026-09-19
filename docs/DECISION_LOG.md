@@ -1,6 +1,6 @@
 # Hollywoodland — Decision Log
 
-Status: Owner approved September 12, 2026. Track B canon (naming slate, cast, origins, screen-test premise, tone boundary) approved September 18, 2026.
+Status: Owner approved September 12, 2026. Track B canon (naming slate, cast, origins, screen-test premise, tone boundary) approved September 18, 2026. Phase 1 visual spike and the staged Boulevard v3 and portrait art approved September 19, 2026.
 
 | Area | Decision |
 |---|---|
@@ -74,6 +74,14 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 | Tone ceiling | Longing looks, hand-holding, one tasteful kiss that may cut away, spoken declarations. No depicted sex or nudity, no shock innuendo, no modern profanity or slurs, no gore, no real-weapon threat played straight, no glorified drunkenness, period prejudice softened per the GDD |
 | Boulevard entrances | Eight street entrances (Bellhaven Rooms, The Silver Thimble, The Gilded Spoon, an alley, The Celestial Palace, Sunset Casting Exchange, The Klieg Light, the Monarch Pictures gate) plus a depot landmark. The extras corral, soundstage, wardrobe department, and screen-test space sit behind the Monarch gate. The street is built from per-building modules at a shared door scale, about 7,450 px long (full buildings, approved September 18, 2026). See `art/prompts/boulevard-entrances-v3.md` |
 | Art status | Cast appearances are approved as written briefs only. Each portrait still passes visual review under `CONTENT_AND_ASSET_PIPELINE.md` section 9 |
+
+## Approved 2026-09-19
+
+| Area | Decision |
+|---|---|
+| Phase 1 visual spike | Approved by the owner, with minor tweaks to be outlined. Phase 1 exit still needs the measured feasibility report and final asset/frame budgets (`PRODUCTION_ROADMAP.md`) |
+| Boulevard v3 art | Nine building modules, four active-state variants, ground tile, and planes 1-3 approved and promoted as runtime WebP in `public/assets/environments/boulevard-v3/` |
+| Character portraits | Gus Albrecht, Nick Ferro, and Ola Whitfield approved as runtime WebP in `public/assets/characters/`; not yet referenced by any scene |
 
 ## Working assumptions requiring explicit approval
 
