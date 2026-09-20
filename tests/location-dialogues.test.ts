@@ -14,7 +14,7 @@ import {
 import { grantItem } from '../src/domain/Inventory';
 import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
-import { ALL_RELATIONSHIP_CHARACTERS, REPORTER, WARDROBE_MENTOR } from '../src/domain/RelationshipDefinitions';
+import { ALL_RELATIONSHIP_CHARACTERS, HOUSE_MANAGER, REPORTER, WARDROBE_MENTOR } from '../src/domain/RelationshipDefinitions';
 import { getRelationshipAxes } from '../src/domain/Relationships';
 
 function pick(state: CareerState, graph: DialogueGraph, nodeId: string, choiceId: string): CareerState {
@@ -37,6 +37,12 @@ describe('the three new Boulevard interiors', () => {
   it('each have a promoted interior background', () => {
     for (const file of ['costume-shop', 'klieg-light-office', 'celestial-palace']) {
       expect(existsSync(new URL(`../public/assets/locations/${file}.webp`, import.meta.url)), file).toBe(true);
+    }
+  });
+
+  it('each have a character portrait', () => {
+    for (const file of ['wardrobe-mentor', 'reporter', 'house-manager']) {
+      expect(existsSync(new URL(`../public/assets/characters/${file}.webp`, import.meta.url)), file).toBe(true);
     }
   });
 });
@@ -94,12 +100,20 @@ describe('The Klieg Light', () => {
 });
 
 describe('The Celestial Palace', () => {
-  it('remembers a visit as a fact', () => {
+  it('earns the house manager\'s trust once for admiring the ceiling, and remembers the visit', () => {
     const after = pick(createDefaultCareerState(), CELESTIAL_PALACE_DIALOGUE, 'root', 'admire-the-ceiling');
     expect(after.facts['celestial-palace-visited']).toBe(true);
+    expect(getRelationshipAxes(after.relationships, HOUSE_MANAGER).trust).toBe(2);
+    expect(available(after, CELESTIAL_PALACE_DIALOGUE, 'root', 'admire-the-ceiling')).toBe(false);
+    expect(pick(after, CELESTIAL_PALACE_DIALOGUE, 'root', 'admire-the-ceiling')).toBe(after);
   });
 
-  it('offers the matinee pass only to a player who owns the extra voucher', () => {
+  it('is not a romance track', () => {
+    const after = pick(createDefaultCareerState(), CELESTIAL_PALACE_DIALOGUE, 'root', 'admire-the-ceiling');
+    expect(getRelationshipAxes(after.relationships, HOUSE_MANAGER).attraction).toBeNull();
+  });
+
+  it('offers the matinee pass only to a player who owns the extra voucher, and only once', () => {
     const state = createDefaultCareerState();
     expect(available(state, CELESTIAL_PALACE_DIALOGUE, 'picture-reply', 'show-extra-voucher')).toBe(false);
 
@@ -110,5 +124,9 @@ describe('The Celestial Palace', () => {
 
     const passed = pick(holder, CELESTIAL_PALACE_DIALOGUE, 'voucher-reply', 'accept-the-matinee-pass');
     expect(passed.facts['celestial-palace-matinee-pass']).toBe(true);
+    const axes = getRelationshipAxes(passed.relationships, HOUSE_MANAGER);
+    expect(axes.trust).toBe(1);
+    expect(axes.obligation).toBe(-1);
+    expect(available(passed, CELESTIAL_PALACE_DIALOGUE, 'picture-reply', 'show-extra-voucher')).toBe(false);
   });
 });

@@ -67,7 +67,7 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 | Boarding house | Bellhaven Rooms |
 | Tabloid | The Klieg Light |
 | Costume shop | The Silver Thimble (approved September 18, 2026 during Boulevard entrance work) |
-| Slice cast (9) | Delphine Voss (rival/foil), Odalys Bellhaven (boarding-house proprietor), Frankie Dolan (diner confidant), Selma Pruitt (casting-office gatekeeper), Ray Kessler (assistant director / production coordinator), Gus Albrecht (experienced extra / mentor), Corinne Lake (scene partner), Nick Ferro (reporter), Ola Whitfield (wardrobe mistress, origin-linked specialist) |
+| Slice cast (10) | Delphine Voss (rival/foil), Odalys Bellhaven (boarding-house proprietor), Frankie Dolan (diner confidant), Selma Pruitt (casting-office gatekeeper), Ray Kessler (assistant director / production coordinator), Gus Albrecht (experienced extra / mentor), Corinne Lake (scene partner), Nick Ferro (reporter), Ola Whitfield (wardrobe mistress, origin-linked specialist), Lucian Vale (house manager of The Celestial Palace, added and approved 2026-09-19) |
 | Romance | Romance-capable in the slice: Delphine Voss, Frankie Dolan, Corinne Lake, all attraction-flexible and reactive to the player's creator choices. Everyone else uses trust, obligation, or mentor tracks |
 | Origins (5) | Small-Town Hopeful, Vaudeville Trouper, Runaway Society Name, Immigrant Striver, Studio-Lot Hand-Me-Down. Each trades a +1 for a -1 and grants one starting contact |
 | Screen test | *The Corsair's Daughter*, Monarch's swashbuckling adventure-romance. The player is a background extra in its harbor-market crowd scene; the screen test is a small speaking role opposite Corinne Lake in a rescue/banter scene |
@@ -83,6 +83,7 @@ Detail and rationale live in `DRAFT_TRACK_B_CANON_PROPOSAL.md` (approved as draf
 | Boulevard v3 art | Nine building modules, four active-state variants, ground tile, and planes 1-3 approved and promoted as runtime WebP in `public/assets/environments/boulevard-v3/` |
 | Cast name revisions | The casting-gatekeeper portrait is a woman and the production-coordinator portrait is a man, so the canon names were changed to match the approved art: Selwyn Pruitt is now **Selma Pruitt** and Ruth Kessler is now **Ray Kessler**. Roles, surnames, personalities and relationship tracks are unchanged. Code dialogue already used "she" for the gatekeeper and "he" for the coordinator |
 | Monarch gate rework | Owner chose take b of the studio-lot gate and a wider module with the sound stage standing on the street. Now in the game (`art/prompts/boulevard-entrances-v3.md` section 15); a "SOUND STAGE" sign was added, and the hills and distant-buildings parallax factors were lowered slightly for the longer street |
+| Celestial Palace character | The lobby has its own character: **Lucian Vale**, house manager and head usher (`house-manager`), a proposal by Claude that the owner approved on 2026-09-19. He is the tenth and last slot of the 8-10 slice cast. Portrait `public/assets/characters/house-manager.webp`; brief `art/prompts/character-house-manager-lucian-vale.md` |
 | Character portraits | Gus Albrecht, Nick Ferro, and Ola Whitfield approved as runtime WebP in `public/assets/characters/`; not yet referenced by any scene |
 
 ## Working assumptions requiring explicit approval
@@ -95,7 +96,6 @@ The exact Phaser/Vite versions, analytics provider, deployment provider, animati
 
 | Area | Question | Raised |
 |---|---|---|
-| The Celestial Palace character | The lobby scene uses an unnamed usher with no portrait. Assign an existing portrait (Gus Albrecht is the unused one), or design a new character? Owner is deciding later | 2026-09-19 |
 | Phase 1 visual tweaks | Owner will outline minor tweaks to the approved Phase 1 visual spike | 2026-09-19 |
 | Phase 1 exit | Measured feasibility report and final asset/frame budgets are still needed (`PRODUCTION_ROADMAP.md`) | 2026-09-19 |
 | The alley | The only Boulevard entrance without a scene | 2026-09-19 |

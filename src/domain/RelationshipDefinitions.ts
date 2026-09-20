@@ -54,6 +54,14 @@ export const WARDROBE_MENTOR: RelationshipCharacterDef = {
   role: 'Origin-linked specialist',
   supportsAttraction: false,
 };
+/** The Celestial Palace's house manager (Lucian Vale in the proposed canon,
+ * pending owner approval): a trust/obligation character who trades in favors
+ * of seats, with no romance track. */
+export const HOUSE_MANAGER: RelationshipCharacterDef = {
+  id: 'house-manager',
+  role: 'Movie-palace house manager',
+  supportsAttraction: false,
+};
 
 export const ALL_RELATIONSHIP_CHARACTERS: readonly RelationshipCharacterDef[] = [
   RIVAL,
@@ -65,6 +73,7 @@ export const ALL_RELATIONSHIP_CHARACTERS: readonly RelationshipCharacterDef[] = 
   SCENE_PARTNER,
   REPORTER,
   WARDROBE_MENTOR,
+  HOUSE_MANAGER,
 ];
 
 validateRelationshipRoster(ALL_RELATIONSHIP_CHARACTERS);

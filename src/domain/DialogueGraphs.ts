@@ -6,6 +6,7 @@ import {
   ALL_RELATIONSHIP_CHARACTERS,
   CASTING_GATEKEEPER,
   DINER_CONFIDANT,
+  HOUSE_MANAGER,
   LANDLADY,
   PRODUCTION_COORDINATOR,
   REPORTER,
@@ -704,25 +705,31 @@ export const KLIEG_LIGHT_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(KLIEG_LIGHT_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
-/** The Celestial Palace lobby: no roster character is assigned yet, so this
- * scene is an usher with no portrait (`LOCATION_SCENE_ART` allows a location
- * with a background and no character) and remembers its beats only as
- * `facts`. `show-extra-voucher` is the first dialogue choice to read
- * `background-extra-voucher`, which the extras corral grants. */
+/** The Celestial Palace lobby: the `house-manager` roster entry's first
+ * content (Lucian Vale in the proposed canon). Every gain is one-time, gated
+ * on a `fact` the same choice sets. `show-extra-voucher` is the first
+ * dialogue choice to read `background-extra-voucher`, which the extras
+ * corral grants; accepting the pass earns trust and puts the player a little
+ * in his debt (`obligation` goes negative, the same ledger convention as
+ * LANDLADY_DIALOGUE's `ask-for-extension`). */
 export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
   id: 'celestial-palace-lobby',
   rootNodeId: 'root',
   nodes: [
     {
       id: 'root',
-      speaker: 'Usher',
-      text: 'A brass-buttoned usher looks up from polishing the rail. "The feature does not start until the evening show, but the lobby is free to look at, and it is the finest room in Hollywood."',
+      speaker: 'House Manager',
+      text: 'A silver-templed man in a maroon tailcoat straightens from the velvet rope and sweeps a white glove toward the ceiling. "Welcome to the Celestial Palace," he says. "The feature does not start until the evening show, but the lobby is always open to those who can appreciate it."',
       choices: [
         {
           id: 'admire-the-ceiling',
           label: 'Take in the painted ceiling.',
           next: 'ceiling-reply',
-          effects: [{ kind: 'set-fact', fact: 'celestial-palace-visited' }],
+          conditions: [{ kind: 'fact', fact: 'celestial-palace-visited', equals: false }],
+          effects: [
+            { kind: 'relationship-delta', characterId: HOUSE_MANAGER.id, delta: { trust: 2 } },
+            { kind: 'set-fact', fact: 'celestial-palace-visited' },
+          ],
         },
         { id: 'ask-about-the-picture', label: 'Ask what is playing tonight.', next: 'picture-reply' },
         { id: 'leave-quietly', label: 'Step back out to the Boulevard.', next: null },
@@ -730,8 +737,8 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
     },
     {
       id: 'ceiling-reply',
-      speaker: 'Usher',
-      text: '"Every star up there is gold leaf, set by hand," the usher says. "Folks claim that if you stand under the sunburst long enough, the industry notices you. Mostly it gives you a stiff neck."',
+      speaker: 'House Manager',
+      text: '"Every star up there is gold leaf, set by hand," he says, with the pride of a man reciting a family history. "They say that if you stand under the sunburst long enough, the industry notices you. Mostly it gives you a stiff neck."',
       choices: [
         { id: 'ask-about-the-picture', label: 'Ask what is playing tonight.', next: 'picture-reply' },
         { id: 'leave', label: 'Rub your neck and head out.', next: null },
@@ -739,28 +746,34 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
     },
     {
       id: 'picture-reply',
-      speaker: 'Usher',
-      text: '"Monarch\'s new swashbuckler, The Corsair\'s Daughter, opens next month," the usher says, nodding at the empty poster frames. "Until then it is newsreels and a cartoon."',
+      speaker: 'House Manager',
+      text: '"Monarch\'s new swashbuckler, The Corsair\'s Daughter, opens next month," he says, tapping an empty poster frame with the brass flashlight. "Until then it is newsreels and a cartoon."',
       choices: [
         {
           id: 'show-extra-voucher',
           label: 'Mention your background-extra voucher.',
           next: 'voucher-reply',
-          conditions: [{ kind: 'item-owned', itemId: 'background-extra-voucher' }],
+          conditions: [
+            { kind: 'item-owned', itemId: 'background-extra-voucher' },
+            { kind: 'fact', fact: 'celestial-palace-matinee-pass', equals: false },
+          ],
         },
-        { id: 'leave', label: 'Thank the usher and head out.', next: null },
+        { id: 'leave', label: 'Thank him and head out.', next: null },
       ],
     },
     {
       id: 'voucher-reply',
-      speaker: 'Usher',
-      text: '"A Monarch voucher?" The usher straightens and lowers his voice. "Come by for the Tuesday matinee. Crew and extras sit free, and nobody asks where you got the seat."',
+      speaker: 'House Manager',
+      text: '"A Monarch voucher?" He straightens further, if that is possible, and lowers his voice. "Crew and extras sit free at the Tuesday matinee, and nobody asks where you got the seat. Ask for me at the rope."',
       choices: [
         {
           id: 'accept-the-matinee-pass',
           label: 'Promise to come by.',
           next: null,
-          effects: [{ kind: 'set-fact', fact: 'celestial-palace-matinee-pass' }],
+          effects: [
+            { kind: 'relationship-delta', characterId: HOUSE_MANAGER.id, delta: { trust: 1, obligation: -1 } },
+            { kind: 'set-fact', fact: 'celestial-palace-matinee-pass' },
+          ],
         },
       ],
     },

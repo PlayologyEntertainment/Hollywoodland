@@ -10,7 +10,7 @@ These are the interiors for the three Boulevard entrances that show a sign but h
 |---|---|---|---|
 | The Silver Thimble | `costume-shop` | Costume shop, owner-approved 2026-09-18 | Ola Whitfield (`wardrobe-mentor`), confirmed by the owner 2026-09-19 |
 | The Klieg Light | `klieg-light-office` | Tabloid, approved canon 2026-09-18 | Nick Ferro (`reporter`), confirmed by the owner 2026-09-19 |
-| The Celestial Palace | `celestial-palace` | Grand theater, approved canon 2026-09-18 | none assigned; the scene is an unnamed usher with no portrait |
+| The Celestial Palace | `celestial-palace` | Grand theater, approved canon 2026-09-18 | Lucian Vale (`house-manager`), added and approved 2026-09-19 (`character-house-manager-lucian-vale.md`); the first pass used an unnamed usher with no portrait |
 
 The alley is intentionally not in this round.
 
@@ -117,5 +117,5 @@ Wired in this pass:
 - `public/data/boulevard-manifest.json` and the built-in default: `costume-shop`, `klieg-light-office` and `celestial-palace` are `enterable: true` with "Enter ..." prompts. The alley is the only entrance left without a scene.
 - `BoulevardSpikeScene.enterLocation` emits `costume-shop-entered`, `klieg-light-entered` and `celestial-palace-entered` (declared in `DomainEventBus.ts`).
 - `AppShell.ts`: `LOCATION_SCENE_ART` entries for the three locations (the Palace has a background and no character, so `character` is now optional) and an event handler for each that opens the dialogue.
-- `DialogueGraphs.ts`: `COSTUME_SHOP_DIALOGUE` (Ola, `wardrobe-mentor`), `KLIEG_LIGHT_DIALOGUE` (Nick, `reporter`) and `CELESTIAL_PALACE_DIALOGUE` (an usher). Every gain is one-time, gated on a fact the same choice sets. No new quests. Draft copy for the owner to revise.
+- `DialogueGraphs.ts`: `COSTUME_SHOP_DIALOGUE` (Ola, `wardrobe-mentor`), `KLIEG_LIGHT_DIALOGUE` (Nick, `reporter`) and `CELESTIAL_PALACE_DIALOGUE` (an usher in the first pass; the House Manager, Lucian Vale, from 2026-09-19). Every gain is one-time, gated on a fact the same choice sets. No new quests. Draft copy for the owner to revise.
 - `tests/location-dialogues.test.ts` (10 tests) covers registration, the promoted backgrounds, the one-time gains, the favor ledger signs, the reporter's tension cost and the voucher gate.
