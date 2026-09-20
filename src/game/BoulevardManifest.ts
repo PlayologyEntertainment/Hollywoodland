@@ -114,6 +114,10 @@ export interface BoulevardSign {
    * building art (the v3 modules are drawn with blank panels). When false the
    * scene draws the original hanging board with rivets and a glow. */
   readonly textOnly: boolean;
+  /** The lettering is already painted into the building art (the Monarch gate's
+   * ornate arch sign), so the scene draws no text over it. `text` stays as the
+   * sign's name for the tools and tests. Absent means false. */
+  readonly painted?: boolean;
 }
 
 export interface BoulevardLocation {
@@ -254,7 +258,8 @@ function isSign(value: unknown): value is BoulevardSign {
     typeof value.boardColor === 'string' &&
     typeof value.boardWidth === 'number' &&
     typeof value.boardHeight === 'number' &&
-    typeof value.textOnly === 'boolean'
+    typeof value.textOnly === 'boolean' &&
+    (value.painted === undefined || typeof value.painted === 'boolean')
   );
 }
 
@@ -681,6 +686,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
         boardWidth: 326,
         boardHeight: 89,
         textOnly: true,
+        painted: true,
       },
     },
     {

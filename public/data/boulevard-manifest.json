@@ -381,7 +381,8 @@
         "boardColor": "#241609",
         "boardWidth": 326,
         "boardHeight": 89,
-        "textOnly": true
+        "textOnly": true,
+        "painted": true
       }
     },
     {

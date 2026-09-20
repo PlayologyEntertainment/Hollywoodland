@@ -329,7 +329,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
 
     for (const location of this.manifest.locations) {
-      if (location.sign === null) continue;
+      if (location.sign === null || location.sign.painted === true) continue;
       if (location.sign.textOnly) {
         this.createSignText(location.sign);
         continue;
