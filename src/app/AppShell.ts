@@ -54,7 +54,7 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
     character: { src: assetUrl('assets/characters/casting-gatekeeper.webp'), alt: 'The casting-office clerk' },
   },
   'boarding-house': {
-    background: assetUrl('assets/locations/boarding-house.webp'),
+    background: assetUrl('assets/locations/boarding-house-lobby.webp'),
     character: { src: assetUrl('assets/characters/landlady.webp'), alt: 'The Bellhaven Rooms landlady' },
   },
   diner: {
@@ -86,6 +86,10 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
     character: { src: assetUrl('assets/characters/house-manager.webp'), alt: 'The house manager of The Celestial Palace' },
   },
 };
+
+/** The Bellhaven Rooms Home Menu is shown over the player's rented room (the
+ * lobby is the landlady's scene, above). */
+const HOME_HUB_BACKGROUND = assetUrl('assets/locations/boarding-house.webp');
 
 interface MenuScreens {
   readonly titlePanel: HTMLElement;
@@ -671,6 +675,7 @@ export class AppShell {
    * player was away, in which case it's shown once as a summary card. */
   private openHomeHub(resolution: AssignmentResolution | undefined): void {
     this.renderHomeHubAwaySummary(resolution);
+    assertElement('#home-hub-background', HTMLElement).style.backgroundImage = `url(${HOME_HUB_BACKGROUND})`;
     assertElement('#home-hub-dialog', HTMLDialogElement).showModal();
   }
 

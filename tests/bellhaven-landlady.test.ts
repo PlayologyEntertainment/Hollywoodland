@@ -1,3 +1,6 @@
+// @ts-expect-error Node's runtime module is available to Vitest; the browser build intentionally omits Node globals.
+import { existsSync, readFileSync } from 'node:fs';
+
 import { describe, expect, it } from 'vitest';
 
 import { createDefaultCareerState, type CareerState } from '../src/domain/CareerState';
@@ -58,5 +61,20 @@ describe('the landlady conversation that opens Bellhaven Rooms', () => {
     for (const choice of root?.choices ?? []) {
       expect(choice.opensHomeHub, choice.id).toBeUndefined();
     }
+  });
+});
+
+describe('Bellhaven Rooms backgrounds', () => {
+  const appShell = readFileSync(new URL('../src/app/AppShell.ts', import.meta.url), 'utf8') as string;
+
+  it('has a lobby for the landlady scene and keeps the room for the Home Menu', () => {
+    expect(existsSync(new URL('../public/assets/locations/boarding-house-lobby.webp', import.meta.url))).toBe(true);
+    expect(existsSync(new URL('../public/assets/locations/boarding-house.webp', import.meta.url))).toBe(true);
+  });
+
+  it('shows the lobby behind the landlady and the room behind the Home Menu', () => {
+    const entry = appShell.slice(appShell.indexOf("'boarding-house': {"));
+    expect(entry.slice(0, 160)).toContain("assetUrl('assets/locations/boarding-house-lobby.webp')");
+    expect(appShell).toContain("const HOME_HUB_BACKGROUND = assetUrl('assets/locations/boarding-house.webp');");
   });
 });
