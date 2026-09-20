@@ -6,6 +6,8 @@
     <meta name="theme-color" content="#11100f" />
     <meta name="description" content="Hollywoodland — build a film career in a romanticized 1935 Hollywood." />
     <title>Hollywoodland</title>
+    <!-- Linked here, not imported from main.ts: in the dev server an imported stylesheet is injected by JavaScript after the first paint, which flashed the unstyled page (a white background and the 2996 px logo). A link blocks the first paint in dev and in the production build. -->
+    <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
     <a class="skip-link" href="#main-menu">Skip to menu</a>
