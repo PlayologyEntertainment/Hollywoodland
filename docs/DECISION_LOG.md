@@ -104,5 +104,6 @@ The exact Phaser/Vite versions, analytics provider, deployment provider, animati
 | Phase 1 visual tweaks | Owner will outline minor tweaks to the approved Phase 1 visual spike | 2026-09-19 |
 | Phase 1 exit | Measured feasibility report and final asset/frame budgets are still needed (`PRODUCTION_ROADMAP.md`) | 2026-09-19 |
 | The alley | The only Boulevard entrance without a scene | 2026-09-19 |
+| Limelight button font | Owner review of the Limelight (SIL OFL 1.1, Sorkin Type) lettering on the Main Menu buttons, the creator's Back and Start Career, the header links and the footer buttons. Text unchanged, no faux bold, primary buttons distinguished by colour and size. The splash Enter button, dialogue choices, origin cards and other buttons keep the current font. Built on `claude/limelight-buttons`, in review | 2026-09-20 |
 | Monarch arch sign | Owner review of the ornate Monarch Pictures sign painted into the gate's curved arch panel, replacing the plain drawn text. Built on `claude/monarch-sign`, not committed (`art/prompts/boulevard-monarch-sign.md`) | 2026-09-20 |
 | Main Menu film slate | Owner review of the new Main Menu: a 1930s film slate replaces the dark panel, and `art/Hollywoodland_Logo.png` replaces the title text. Built on `claude/main-menu-slate`, not committed (`art/prompts/ui-main-menu-slate.md`) | 2026-09-20 |
