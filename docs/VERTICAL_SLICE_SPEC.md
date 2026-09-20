@@ -48,7 +48,7 @@ Introduce 8–10 named characters. Required roles:
 - Reporter, photographer, or gossip-adjacent character.
 - Optional specialist tied to an origin or alternate route.
 
-Approved roster (September 18, 2026; backgrounds and relationship boundaries in `DRAFT_TRACK_B_CANON_PROPOSAL.md` §2):
+Approved roster (September 18, 2026, plus Lucian Vale added September 19, 2026; backgrounds and relationship boundaries in `DRAFT_TRACK_B_CANON_PROPOSAL.md` §2):
 
 | Required role | Character | Relationship track |
 |---|---|---|
@@ -61,6 +61,7 @@ Approved roster (September 18, 2026; backgrounds and relationship boundaries in 
 | Scene partner | Corinne Lake | Friend, romance, or professional rivalry |
 | Reporter / gossip-adjacent | Nick Ferro | Obligation/favor; mishandling him costs reputation |
 | Optional origin-linked specialist | Ola Whitfield (wardrobe mistress) | Mentor/obligation; no romance |
+| Movie-palace house manager (added September 19, 2026) | Lucian Vale | Trust/obligation, paid in favors of seats; no romance |
 
 Appearances are approved as written briefs only; each portrait still passes visual review before it is treated as final.
 

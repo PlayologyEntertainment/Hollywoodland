@@ -37,7 +37,7 @@ compete with it.
 | Boarding house | **Bellhaven Rooms** | Named for its proprietor (below); "haven" signals safety/first home away from home. |
 | Tabloid/gossip rag | **The Klieg Light** | Klieg lights are the harsh studio lighting rigs of the era — the pun (exposure, being "under the lights") fits a gossip sheet without inventing a fake real-paper knockoff. |
 
-## 2. Recurring cast (9 characters, covers the required 8–10)
+## 2. Recurring cast (10 characters, the top of the required 8–10)
 
 Each entry: role, one-line visual brief, personality, and relationship
 boundaries (what states apply and how far they can go). All romance-capable
@@ -88,6 +88,13 @@ sets in the Creator — rather than hard-coded straight/gay, matching the GDD's
    knows that character, unlocking a wardrobe-department shortcut past
    Pruitt's front desk). Mentor/obligation track; no romance (mentor
    boundary).
+10. **Lucian Vale — House manager of The Celestial Palace.** *(Added and
+   approved September 19, 2026.)* Fifties, tall and ceremonial in a maroon
+   usher's uniform with gold braid; he treats the Palace as a cathedral and
+   every moviegoer as a congregation. Proud and a little theatrical, and fair
+   to anyone who respects the craft of going to the pictures. He trades
+   favors in seats: the Tuesday matinee pass for crew and extras, a word at
+   the rope. Trust/obligation track only; no romance.
 
 ## 3. Protagonist creator: origins (proposed list of five)
 

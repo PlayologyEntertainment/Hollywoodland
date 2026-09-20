@@ -39,7 +39,7 @@ function assetUrl(path: string): string {
 
 interface LocationSceneArt {
   readonly background: string;
-  /** Omitted for a location whose scene has no assigned character yet. */
+  /** Optional so a location can show its background before a character is assigned. */
   readonly character?: { readonly src: string; readonly alt: string };
 }
 
@@ -83,6 +83,7 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   },
   'celestial-palace': {
     background: assetUrl('assets/locations/celestial-palace.webp'),
+    character: { src: assetUrl('assets/characters/house-manager.webp'), alt: 'The house manager of The Celestial Palace' },
   },
 };
 
