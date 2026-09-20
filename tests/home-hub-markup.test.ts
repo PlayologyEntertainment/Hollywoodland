@@ -19,4 +19,11 @@ describe('home hub dialog', () => {
     expect(dialog).toContain('id="home-hub-talk-landlady"');
     expect(dialog).toContain('id="home-hub-close"');
   });
+
+  it('uses the scene layout, with a background element the Home Menu fills with the room image', () => {
+    const dialog = indexHtml.match(/<dialog id="home-hub-dialog"[\s\S]*?<\/dialog>/)?.[0];
+    expect(dialog).toContain('has-scene-art');
+    expect(dialog).toContain('id="home-hub-background"');
+    expect(dialog).toMatch(/class="story-card home-hub-card scene-panel"/);
+  });
 });
