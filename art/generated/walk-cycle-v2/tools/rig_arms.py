@@ -4,10 +4,15 @@ Reads  aspiring-actor-walk-v2-master-smoothed.png  (output of smooth_upper_body.
 Writes aspiring-actor-walk-v2-master.png
 
 The generator drew the same scissor in every frame (one hand back, one forward, never crossing), with the hands wandering
-by up to ~50 px between frames. Here each loop frame is rebuilt as: far arm (behind) + torso layer (arms removed, shirt
-back repainted) + near arm (in front). Both arms are cut from the standing pose, where they hang straight, and swung on
-a pendulum: the near arm goes back while the far arm goes forward, they pass beside the body at the passing frames, then
-swap. The forearm folds forward as the arm swings forward.
+by up to ~50 px between frames. Here each loop frame is rebuilt as: far arm (behind) + torso layer + near arm (in front).
+Both arms are cut from the standing pose, where they hang straight, and swung on a pendulum: the near arm goes back while
+the far arm goes forward, they pass beside the body at the passing frames, then swap. The forearm folds forward as the arm
+swings forward.
+
+Torso layer: the drawn shoulder cap of the near sleeve is kept (its own outline and the suspender strap over it stay
+intact) and the rigged upper arm fades in from under it, so the arm grows out of the shoulder. Everything else the old
+arms covered is rebuilt: belt and trouser pixels caught only in the erase margin are restored, and the exposed shirt back,
+chest front and belt ends are repainted inside the cleared area only, with edges anchored to the visible belt ends.
 
 Needs numpy, pillow, scipy.
 """
@@ -23,10 +28,12 @@ D = 'C:/Hollywoodland/art/generated/walk-cycle-v2/'
 LOOP = 16
 
 # ---- swing parameters (degrees; 0 = hanging straight down, + = swung forward) -------------------------------------
-MEAN_DEG = 5.0             # slight forward bias, as in a real walk
-SWING_DEG = 28.0           # natural swing: about +33 forward / -23 back
+MEAN_DEG = 0.0             # centred: the first version (+33 forward / -23 back) was too far forward
+SWING_DEG = 30.0           # about +30 forward / -30 back
 ELBOW_REST_DEG = 12.0      # relaxed elbow
-ELBOW_FORWARD_DEG = 0.55   # extra flexion per degree of forward swing (33 deg forward -> about 30 deg of bend)
+ELBOW_FORWARD_DEG = 0.55   # extra flexion per degree of forward swing (30 deg forward -> about 28 deg of bend)
+CAP_RADIUS = 40            # px around the shoulder pivot where the drawn sleeve cap stays in the torso layer
+FEATHER_INNER, FEATHER_OUTER = 8.0, 30.0   # the rigged upper arm fades in between these distances from the pivot
 FAR_ARM_SHADE = 0.90       # the arm behind the body is drawn a little darker
 
 
@@ -64,6 +71,23 @@ def erase(c, mask, grow=3):
         if sz < 900:
             out[(lab == i)] = 0
     return out
+
+
+def poly_coverage(polys, ss=4):
+    """Anti-aliased coverage (0..1) of polygons given as lists of (x, y), drawn at ss x resolution."""
+    from PIL import ImageDraw
+    im = Image.new('L', (CW * ss, CH * ss), 0)
+    d = ImageDraw.Draw(im)
+    for poly in polys:
+        d.polygon([(x * ss, y * ss) for x, y in poly], fill=255)
+    return np.asarray(im, float).reshape(CH, ss, CW, ss).mean(axis=(1, 3)) / 255.0
+
+
+def line_coverage(pts, width, ss=4):
+    from PIL import ImageDraw
+    im = Image.new('L', (CW * ss, CH * ss), 0)
+    ImageDraw.Draw(im).line([(x * ss, y * ss) for x, y in pts], fill=255, width=int(width * ss), joint='curve')
+    return np.asarray(im, float).reshape(CH, ss, CW, ss).mean(axis=(1, 3)) / 255.0
 
 
 def affine(img, angle_deg, pivot, shift):
@@ -160,6 +184,11 @@ class ArmSprites:
         edge = np.rint(np.median(idle[ndi.binary_dilation(skin, iterations=2) & ~ndi.binary_dilation(skin, iterations=1) & (lu < 115) & (idle[..., 3] > 200)][:, :3], axis=0))             if ((ndi.binary_dilation(skin, iterations=2) & (lu < 115)).any()) else np.array([110, 62, 42])
         edge = np.clip(edge, 40, 140)
         self.upper = clean_sprite(idle, upper_core, edge)
+        # fade the sleeve in with distance from the shoulder pivot, so it grows out from the drawn shoulder cap
+        yy, xx = np.mgrid[0:CH, 0:CW]
+        d = np.hypot(xx - self.shoulder[0], yy - self.shoulder[1])
+        ramp = np.clip((d - FEATHER_INNER) / (FEATHER_OUTER - FEATHER_INNER), 0, 1)
+        self.upper[..., 3] = np.rint(self.upper[..., 3] * ramp).astype(np.uint8)
         fore = clean_sprite(idle, fore_core, edge)
         # extend the forearm's top up under the cuff so the elbow can bend without opening a gap
         self.fore = self._extrude_up(fore, fore_core, 30)
@@ -179,72 +208,133 @@ class ArmSprites:
         return out
 
 
-def torso_back_profile(idle, y_s, y_w):
-    """The idle pose's back edge of the shirt (the sleeve hangs at the torso's side, so its outer edge is the back)."""
-    a = idle[..., 3] > 128
-    prof = {}
-    for y in range(y_s + 6, y_w + 1):
-        xs = np.where(a[y])[0]
-        prof[y] = float(xs.min()) + 6.0
-    return prof
-
-
-def rebuild_shirt_back(body, idle_profile, idle_ref, idle_rows, y_s, y_w, tx):
-    """Repaint the shirt's back where the sleeve used to hide it: this frame's own shirt tone, a slanted shoulder line,
-    a darker band along the back edge and a drawn outline."""
+def rebuild_torso(body, orig, erased, removed, far, y_s, y_w, tx, pivot):
+    """Repaint only what the old arms truly hid: the exposed shirt back below the shoulder cap, the chest front and the
+    ends of the belt. Belt and trouser pixels that were only caught in the erase margin are restored from the original
+    first. Silhouette edges are anchored to the visible belt ends and drawn as smooth anti-aliased lines; the shirt gets
+    its own tone plus grain (one shared noise for all channels, so no colour speckle)."""
+    o = orig.astype(int)
+    yy, xx = np.mgrid[0:CH, 0:CW]
+    dark_o = (o[..., 3] > 200) & (o[..., 0] < 105) & (o[..., 1] < 95) & (o[..., 2] < 90) & (abs(o[..., 0] - o[..., 1]) < 14)
+    # 1. restore belt/trouser pixels the erase margin took (grey-dark pixels are never arm pixels)
+    restore = (erased & ~removed) & dark_o & (yy >= y_w - 8) & (body[..., 3] == 0)
+    body = body.copy()
+    body[restore] = orig[restore]
     a = body[..., 3] > 128
-    cm = colour_masks(body)[2]
-    band = cm[y_s + 10:y_w - 6, int(tx) - 45:int(tx) + 45]
-    tone = np.median(body[y_s + 10:y_w - 6, int(tx) - 45:int(tx) + 45][band][:, :3], axis=0) if band.any() else np.array([236, 205, 170])
-    base = np.append(np.rint(tone), 255).astype(np.uint8)
-    shade = np.append(np.rint(tone * 0.90), 255).astype(np.uint8)
-    line = np.array([72, 52, 44, 255], np.uint8)
-    shift = tx - idle_ref[0]
-    fill = np.zeros((CH, CW), bool)
-    yi0, yi1 = idle_rows
-    rows = list(range(y_s - 3, y_w + 1))
-    # chest front: a smooth envelope of each row's rightmost torso pixel, so the notch left where the far arm's cuff
-    # overlapped the front edge is filled back to the line the neighbouring rows follow
-    last = {}
-    for y in rows:
-        xs = np.where(a[y, int(tx) - 20:int(tx) + 70])[0]
-        last[y] = int(tx) - 20 + int(xs.max()) if len(xs) else None
-    ys_ok = [y for y in rows if last[y] is not None and y >= y_s + 4]
-    env = {}
-    if ys_ok:
-        vals = np.array([last[y] for y in ys_ok], float)
-        med = ndi.median_filter(vals, size=41, mode='nearest')
-        for y, m in zip(ys_ok, med):
-            env[y] = int(max(m, last[y]))
-    for y in rows:
-        f = (y - y_s) / max(y_w - y_s, 1)
-        yi = int(round(yi0 + f * (yi1 - yi0)))
-        yi = min(max(yi, min(idle_profile)), max(idle_profile))
-        xb = idle_profile[yi] + shift
-        if y < y_s + 6:                                  # shoulder slope: the back edge slants toward the neck
-            xb += (y_s + 6 - y) * 3.5
-        xb = int(round(xb))
-        span = np.where(a[y, max(xb, 0):int(tx) + 70])[0]
-        if len(span) == 0:
-            continue
-        x_last = max(xb, 0) + int(span.max())
-        x_end = max(x_last, env.get(y, x_last))
-        row = ~a[y, xb:x_end + 1]                        # every empty pixel between the back edge and the chest front
-        if y < y_s + 2 and x_end - xb > 90:
-            row[:] = False                               # never bridge the collar/neck gap
-        fill[y, xb:x_end + 1] = row
-    fill = ndi.binary_opening(fill, iterations=1) | (fill & ndi.binary_dilation(a, iterations=1))
-    # smooth the repainted region's outline so the slanted shoulder line and the back edge do not stair-step
-    fill = (ndi.gaussian_filter(fill.astype(float), 1.3) > 0.5) & ~a | (fill & ndi.binary_dilation(a, iterations=1))
-    out = body.copy()
-    outside = ~(a | fill)
-    border = fill & ndi.binary_dilation(outside, iterations=2)
-    dist_border = ndi.distance_transform_edt(~border)
-    ys, xs = np.where(fill)
-    for y, x in zip(ys, xs):
-        t = min(dist_border[y, x] / 12.0, 1.0)
-        out[y, x] = np.rint(shade * (1 - t) + base * t).astype(np.uint8)
-    out[border] = line
+    dark_body = dark_o & a
+
+    # 2. where the belt ends now (visible), and where the trouser edges say it should end
+    x0 = max(int(tx) - 120, 0)
+    ends_l, ends_r = [], []
+    for y in range(y_w + 3, y_w + 10):
+        xs = np.where(dark_body[y, x0:int(tx) + 130])[0]
+        if len(xs):
+            ends_l.append(x0 + xs.min())
+            ends_r.append(x0 + xs.max())
+    if not ends_l:
+        return body
+    x_bl, x_br = float(np.median(ends_l)), float(np.median(ends_r))
+
+    def edge_fit(side):
+        ys_, xs_ = [], []
+        for y in range(y_w + 26, y_w + 70):
+            xs = np.where(dark_body[y, x0:int(tx) + 130])[0]
+            if len(xs):
+                ys_.append(y)
+                xs_.append(x0 + (xs.min() if side == 'l' else xs.max()))
+        return np.polyfit(ys_, xs_, 1) if len(ys_) >= 8 else None
+
+    fl, fr = edge_fit('l'), edge_fit('r')
+    # extend a belt end that is short of the trouser edge, but only by a little: the hips curve in near the belt
+    if fr is not None and np.polyval(fr, y_w + 6) > x_br + 5:
+        x_br += min(np.polyval(fr, y_w + 6) - x_br, 12)
+    if fl is not None and np.polyval(fl, y_w + 6) < x_bl - 5:
+        x_bl -= min(x_bl - np.polyval(fl, y_w + 6), 12)
+
+    # 3. chest front: from the last unaffected rows under the collar down to the belt's front end
+    far_rows = np.where(far[:, int(tx) - 10:].any(axis=1))[0]
+    far_rows = far_rows[far_rows > y_s + 20]
+    y_up = int(far_rows.min()) - 8 if len(far_rows) else y_s + 30
+    y_up = max(y_up, y_s + 14)
+    xs_up = []
+    for y in range(y_up - 6, y_up + 1):
+        row = np.where(a[y, int(tx) - 20:int(tx) + 90])[0]
+        if len(row):
+            xs_up.append(int(tx) - 20 + row.max())
+    x_up = float(np.median(xs_up)) if xs_up else tx + 40
+    # cream just above the belt, if visible, fixes the bottom of the front edge better than the belt end alone
+    cm_o = colour_masks(orig)[2] & a
+    xs_hem = [int(tx) - 20 + np.where(cm_o[y, int(tx) - 20:int(tx) + 90])[0].max() for y in range(y_w - 14, y_w - 2)
+              if cm_o[y, int(tx) - 20:int(tx) + 90].any()]
+    x_hem = max(x_br, float(np.median(xs_hem))) if xs_hem else x_br
+    x_hem = max(x_hem, x_up - 6)
+
+    # 4. back edge: from the bottom of the kept shoulder cap to the belt's back end
+    cap_bottom = int(pivot[1] + CAP_RADIUS - 6)
+    xs_back = np.where(a[cap_bottom - 6:cap_bottom + 2, :int(tx)])[1]
+    x_capb = float(xs_back.min()) if len(xs_back) else tx - 45
+
+    shirt_poly = [(x_capb - 2, cap_bottom - 12), (x_bl - 1, y_w), (x_hem + 1, y_w), (x_up + 1, y_up),
+                  (tx - 10, y_up), (tx - 10, cap_bottom - 12)]
+    belt_poly = [(x_bl - 0.5, y_w - 1), (x_br + 0.5, y_w - 1), (x_br + 0.5, y_w + 13), (x_bl - 0.5, y_w + 13)]
+    # paint only inside the area the erase cleared, so no belt or shirt is drawn where an arm never hid it
+    zone = ndi.gaussian_filter(ndi.binary_dilation(erased, iterations=1).astype(float), 0.8)
+    cov_shirt = poly_coverage([shirt_poly]) * zone
+    cov_belt = poly_coverage([belt_poly]) * zone
+
+    # colours: this frame's own shirt tone, darker toward the back edge, plus a soft grain from the drawn shirt
+    ch = cm_o[y_s + 10:y_w - 6, int(tx) - 45:int(tx) + 45]
+    chest = body[y_s + 10:y_w - 6, int(tx) - 45:int(tx) + 45][ch][:, :3].astype(float)
+    tone = np.median(chest, axis=0) if len(chest) else np.array([236.0, 205.0, 170.0])
+    lum_sd = float(np.std(chest.mean(axis=1))) if len(chest) else 3.0
+    rng = np.random.default_rng(7)
+    noise = ndi.gaussian_filter(rng.standard_normal((CH, CW)), 1.4)
+    noise *= min(lum_sd, 5.0) * 0.6 / max(noise.std(), 1e-6)
+    back_x = x_capb + (x_bl - x_capb) * np.clip((yy - cap_bottom) / max(y_w - cap_bottom, 1), 0, 1)
+    d_back = np.clip((xx - back_x) / 16.0, 0, 1)
+    d_belt = np.clip((y_w - yy) / 12.0, 0, 1)
+    shade = (0.88 + 0.12 * d_back) * (0.94 + 0.06 * d_belt)
+    tone_rgb = np.clip(tone * shade[..., None] + noise[..., None], 0, 255)
+    cream_present = cm_o & (yy < y_w + 2)
+    dist_c, (iy, ix) = ndi.distance_transform_edt(~cream_present, return_indices=True)
+    nearest = body[iy, ix, :3].astype(float)
+    w = np.clip(dist_c / 10.0, 0, 1)[..., None]
+    shirt_rgb = nearest * (1 - w) + tone_rgb * w
+    rows = dark_o[y_w + 2:y_w + 10]
+    belt_med = np.median(o[y_w + 2:y_w + 10][rows][:, :3], axis=0) if rows.any() else np.array([58.0, 50.0, 44.0])
+    belt_rgb = np.clip(np.broadcast_to(belt_med, (CH, CW, 3)) + noise[..., None] * 0.4, 0, 255)
+
+    fill = np.zeros((CH, CW, 4), float)
+    for cov, rgb in ((cov_shirt, shirt_rgb), (cov_belt, belt_rgb)):
+        m = cov > 0
+        fill[m, :3] = fill[m, :3] * (1 - cov[m, None]) + rgb[m] * cov[m, None]
+        fill[m, 3] = np.maximum(fill[m, 3], cov[m] * 255)
+
+    # outline along the freshly drawn back and front edges
+    line_col = np.array([72.0, 52.0, 44.0])
+    cov_line = np.maximum(line_coverage([(x_capb, cap_bottom - 8), (x_bl, y_w)], 2.4),
+                          line_coverage([(x_up, y_up), (x_hem, y_w)], 2.4)) * zone
+    fill[..., :3] = fill[..., :3] * (1 - cov_line[..., None]) + line_col * cov_line[..., None]
+    fill[..., 3] = np.maximum(fill[..., 3], cov_line * 255)
+    layer = np.rint(fill).astype(np.uint8)
+    result = over(layer, body)                              # the surviving drawn pixels stay on top
+    return patch_pinholes(result, y_s, y_w, tx)
+
+
+def patch_pinholes(img, y_s, y_w, tx):
+    """Fill small transparent notches enclosed by the torso (chest front beside the suspender, hem, belt ends) with the
+    nearest drawn colour. Only rows from the collar to just below the belt, and only within the torso's width."""
+    yy, xx = np.mgrid[0:CH, 0:CW]
+    solid = img[..., 3] > 128
+    zone = (yy >= y_s + 4) & (yy <= y_w + 16) & (xx >= tx - 75) & (xx <= tx + 75)
+    closed = ndi.binary_closing(solid, structure=np.ones((11, 11), bool))
+    hole = closed & ~solid & zone
+    if not hole.any():
+        return img
+    _, (iy, ix) = ndi.distance_transform_edt(~solid, return_indices=True)
+    out = img.copy()
+    out[hole, :3] = img[iy[hole], ix[hole], :3]
+    out[hole, 3] = 255
     return out
 
 
@@ -279,20 +369,24 @@ def main(preview=None):
     sheet = np.array(Image.open(D + 'aspiring-actor-walk-v2-master-smoothed.png').convert('RGBA'))
     idle = cell(sheet, 16)
     sprites = ArmSprites(idle)
-    prof = torso_back_profile(idle, sprites.y_s, sprites.y_w)
     print('idle: shoulder', np.round(sprites.shoulder, 1), 'elbow', np.round(sprites.elbow, 1), 'torso length', sprites.torso_len)
     out = sheet.copy()
     frames = range(LOOP) if preview is None else preview
+    yy, xx = np.mgrid[0:CH, 0:CW]
     for n in frames:
         c = cell(sheet, n)
         y_s = shirt_row(c)
         y_w = waist_row(c, y_s)
         tx = torso_x(c, y_s)
-        parts = split(c, y_s)
-        body = erase(c, parts['near'] | parts['far'], grow=3)
-        body = rebuild_shirt_back(body, prof, sprites.ref, (sprites.y_s, sprites.y_w), y_s, y_w, tx)
-        th_n, th_f = swing(n % LOOP)
         ref = (tx, y_s)
+        pivot = (sprites.shoulder[0] + ref[0] - sprites.ref[0], sprites.shoulder[1] + ref[1] - sprites.ref[1])
+        parts = split(c, y_s)
+        cap = parts['near'] & (np.hypot(xx - pivot[0], yy - pivot[1]) <= CAP_RADIUS)     # the drawn shoulder cap stays
+        removed = (parts['near'] & ~cap) | parts['far']
+        body = erase(c, removed, grow=3)
+        erased = ndi.binary_dilation(removed, iterations=3)
+        body = rebuild_torso(body, c, erased, ndi.binary_dilation(removed, iterations=0) | removed, parts['far'], y_s, y_w, tx, pivot)
+        th_n, th_f = swing(n % LOOP)
         s = (y_w - y_s) / sprites.torso_len
         far = place_arm(sprites, th_f, ref, s, FAR_ARM_SHADE)
         near = place_arm(sprites, th_n, ref, s)
