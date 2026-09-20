@@ -194,6 +194,10 @@ export class AppShell {
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
   private activeDialogueNodeId: string | undefined;
+  /** What happened while the player was away, held from the moment they walk
+   * into Bellhaven Rooms until the landlady conversation hands off to the
+   * Home Menu, which is where the "While You Were Away" summary is shown. */
+  private pendingAwayResolution: AssignmentResolution | undefined;
   private activeAudition: AuditionDefinition | undefined;
   private auditionChoices: AuditionChoices = {};
 
@@ -230,7 +234,9 @@ export class AppShell {
       this.announce('You entered The Gilded Spoon.');
     });
     this.options.domainEvents.on('home-hub-entered', ({ resolution }) => {
-      this.openHomeHub(resolution);
+      // Walking in starts with the landlady; her closing choices open the Home Menu.
+      this.pendingAwayResolution = resolution;
+      this.openDialogue(LANDLADY_DIALOGUE, 'Bellhaven Rooms', 'boarding-house');
       this.announce('You entered Bellhaven Rooms.');
     });
     this.options.domainEvents.on('backlot-gate-entered', () => {
@@ -430,6 +436,13 @@ export class AppShell {
     if (choice.startsAudition !== undefined) {
       assertElement('#interaction-dialog', HTMLDialogElement).close();
       this.openAudition(choice.startsAudition);
+      return;
+    }
+    if (choice.opensHomeHub === true) {
+      assertElement('#interaction-dialog', HTMLDialogElement).close();
+      const resolution = this.pendingAwayResolution;
+      this.pendingAwayResolution = undefined;
+      this.openHomeHub(resolution);
       return;
     }
     if (choice.next === null) {
@@ -724,6 +737,8 @@ export class AppShell {
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = 'Start';
+    // The button sits left of its text, so several identical "Start" buttons need a name.
+    button.setAttribute('aria-label', `Start ${definition.title}`);
     button.addEventListener('click', () =>
       this.options.domainEvents.emit('assignment-start-requested', { assignmentId: definition.id }),
     );

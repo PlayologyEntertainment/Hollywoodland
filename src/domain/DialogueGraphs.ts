@@ -308,6 +308,10 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
             { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'first-payment' },
           ],
         },
+        // Entering Bellhaven Rooms now always opens this conversation, so a
+        // player who has already settled up can skip the rent talk without
+        // paying or asking for an extension again.
+        { id: 'nothing-to-settle', label: 'Nothing to settle today.', next: 'settled-in' },
       ],
     },
     {
@@ -319,6 +323,7 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
           id: 'reassure-generic',
           label: 'I am good for it — steady work is coming.',
           next: null,
+          opensHomeHub: true,
           conditions: [{ kind: 'quest-status', questId: 'making-rent', status: 'active' }],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'settled-in' },
@@ -329,13 +334,14 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
           id: 'show-callback-slip',
           label: 'Show her the callback slip from your last audition.',
           next: null,
+          opensHomeHub: true,
           conditions: [{ kind: 'item-owned', itemId: 'first-callback-slip' }],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'settled-in' },
             { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 4 } },
           ],
         },
-        { id: 'say-nothing', label: 'Just nod and head upstairs.', next: null },
+        { id: 'say-nothing', label: 'Just nod and head upstairs.', next: null, opensHomeHub: true },
       ],
     },
   ],

@@ -66,6 +66,11 @@ export interface DialogueChoice {
    * `effects` still run first (e.g. the quest-action that completes the
    * screen test's "attend" stage), same as any other choice. */
   readonly startsAudition?: string;
+  /** When set, selecting this choice closes the dialogue card and opens the
+   * Bellhaven Rooms Home Menu (assignments and housing) instead of just
+   * ending the conversation. The choice's `effects` still run first. Meant
+   * for choices with `next: null`. */
+  readonly opensHomeHub?: boolean;
 }
 
 export interface DialogueNode {
