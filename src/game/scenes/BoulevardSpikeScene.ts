@@ -2,6 +2,13 @@ import Phaser from 'phaser';
 
 import type { BoulevardActiveRule, BoulevardManifest, BoulevardSign } from '../BoulevardManifest';
 import { isBuildingActive, nearestInteractable } from '../BoulevardStates';
+import {
+  DEFAULT_WALK_CYCLE,
+  distanceForFrame,
+  footprintsForFrame,
+  walkFrameAt,
+  type WalkCycle,
+} from '../WalkCycle';
 import { getAssignmentById, resolveActiveAssignment, startAssignment } from '../../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../../domain/AssignmentDefinitions';
 import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../domain/CareerActions';
@@ -24,6 +31,19 @@ import type { GameSettings } from '../../settings/Settings';
  * comes from the manifest's `worldWidth` field. */
 const LEGACY_WORLD_WIDTH = 5600;
 const WALK_SPEED = 390;
+/** Reduced motion slows the walk itself (not just the animation) so the feet
+ * stay planted on the street. */
+const REDUCED_MOTION_WALK_FACTOR = 0.78;
+/** How far below the manifest's ground line the character's soles rest. */
+const PLAYER_SOLE_OFFSET = 14;
+/** Shoe-print shadow: the print is a shoe seen from above on the street, so it
+ * is foreshortened to a flat oval. Sizes are display px. */
+const FOOTPRINT_LENGTH = 46;
+const FOOTPRINT_DEPTH = 13;
+const FOOTPRINT_COLOR = 0x160f0c;
+const FOOTPRINT_ALPHA = 0.34;
+/** A faint contact shadow under the torso ties the two prints together. */
+const TORSO_SHADOW = { width: 44, height: 12, alpha: 0.12 };
 
 function planeKey(id: string): string {
   return `plane:${id}`;
@@ -79,7 +99,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private worldWidth = 0;
   private groundY = 0;
   private player!: Phaser.GameObjects.Sprite;
-  private playerShadow!: Phaser.GameObjects.Ellipse;
+  private playerShadow!: Phaser.GameObjects.Graphics;
+  private walkCycle: WalkCycle = DEFAULT_WALK_CYCLE;
+  /** Total world px walked, driving the frame shown; see WalkCycle.ts. */
+  private walkDistance = 0;
+  private walking = false;
   private atmosphericTweens: Phaser.Tweens.Tween[] = [];
   private dynamicBuildings: DynamicBuilding[] = [];
   private promptVisible = false;
@@ -107,9 +131,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     for (const prop of this.manifest.props) {
       this.load.image(propKey(prop.id), assetUrl(prop.path));
     }
-    this.load.spritesheet('aspiring-actor', assetUrl('assets/characters/aspiring-actor-walk.webp'), {
-      frameWidth: 384,
-      frameHeight: 512,
+    this.walkCycle = (this.registry.get('walkCycle') as WalkCycle | undefined) ?? DEFAULT_WALK_CYCLE;
+    this.load.spritesheet('aspiring-actor', assetUrl(this.walkCycle.sheet), {
+      frameWidth: this.walkCycle.frameWidth,
+      frameHeight: this.walkCycle.frameHeight,
     });
   }
 
@@ -161,23 +186,32 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   }
 
   public override update(_time: number, delta: number): void {
-    this.player.anims.timeScale = this.settings.reducedMotion ? 0.78 : 1;
     const direction =
       Number(this.inputController.isDown('moveRight')) -
       Number(this.inputController.isDown('moveLeft'));
+    const speed = this.settings.reducedMotion ? WALK_SPEED * REDUCED_MOTION_WALK_FACTOR : WALK_SPEED;
+    const previousX = this.player.x;
     this.player.x = Phaser.Math.Clamp(
-      this.player.x + direction * WALK_SPEED * (delta / 1000),
+      this.player.x + direction * speed * (delta / 1000),
       110,
       this.worldWidth - 110,
     );
-    this.playerShadow.x = this.player.x;
+    // Measure the ground actually covered, so pushing against the world's edge
+    // holds the feet still instead of walking on the spot.
+    const moved = Math.abs(this.player.x - previousX);
+    if (direction !== 0) this.player.setFlipX(direction < 0);
 
-    if (direction !== 0) {
-      this.player.setFlipX(direction < 0);
-      if (!this.player.anims.isPlaying) this.player.play('actor-walk');
-    } else {
-      this.player.stop();
-      this.player.setFrame(0);
+    if (moved > 0) {
+      if (!this.walking) {
+        // Start the loop from the standing pose rather than popping to another frame.
+        this.walking = true;
+        this.walkDistance = distanceForFrame(this.walkCycle, this.walkCycle.idleFrame % this.walkCycle.frameCount);
+      }
+      this.walkDistance += moved;
+      this.setPlayerFrame(walkFrameAt(this.walkCycle, this.walkDistance));
+    } else if (this.walking) {
+      this.walking = false;
+      this.setPlayerFrame(this.walkCycle.idleFrame);
     }
 
     const nearest = nearestInteractable(this.interactionPoints, this.player.x);
@@ -427,20 +461,40 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   }
 
   private createPlayer(): void {
-    this.anims.create({
-      key: 'actor-walk',
-      frames: this.anims.generateFrameNumbers('aspiring-actor', { start: 0, end: 7 }),
-      frameRate: 11,
-      repeat: -1,
-    });
-    this.playerShadow = this.add
-      .ellipse(DEFAULT_PLAYER_X, this.groundY + 18, 112, 22, 0x160f0c, 0.27)
-      .setDepth(28);
+    const cycle = this.walkCycle;
+    this.playerShadow = this.add.graphics().setDepth(28);
     this.player = this.add
-      .sprite(DEFAULT_PLAYER_X, this.groundY + 22, 'aspiring-actor', 0)
-      .setOrigin(0.5, 1)
-      .setScale(0.42)
+      .sprite(DEFAULT_PLAYER_X, this.groundY + PLAYER_SOLE_OFFSET, 'aspiring-actor', cycle.idleFrame)
+      .setOrigin(0.5, cycle.soleY / cycle.frameHeight)
+      .setScale(cycle.displayScale)
       .setDepth(30);
+    this.drawPlayerShadow();
+  }
+
+  private setPlayerFrame(frame: number): void {
+    if (Number(this.player.frame.name) !== frame) this.player.setFrame(frame);
+    this.drawPlayerShadow();
+  }
+
+  /** Two shoe prints that follow the drawn feet through the cycle (a lifted
+   * foot's print shrinks and fades) plus a faint torso contact shadow. */
+  private drawPlayerShadow(): void {
+    const shadow = this.playerShadow;
+    const facing = this.player.flipX ? -1 : 1;
+    const y = this.groundY + PLAYER_SOLE_OFFSET + 1;
+    shadow.clear();
+    shadow.fillStyle(FOOTPRINT_COLOR, TORSO_SHADOW.alpha);
+    shadow.fillEllipse(this.player.x, y, TORSO_SHADOW.width, TORSO_SHADOW.height);
+    const prints = footprintsForFrame(this.walkCycle, Number(this.player.frame.name));
+    for (const print of prints) {
+      const grow = 1 - 0.3 * print.lift;
+      shadow.fillStyle(FOOTPRINT_COLOR, FOOTPRINT_ALPHA * (1 - 0.65 * print.lift));
+      shadow.fillEllipse(this.player.x + facing * print.dx, y, FOOTPRINT_LENGTH * grow, FOOTPRINT_DEPTH * grow);
+    }
+    if (prints.length === 0) {
+      shadow.fillStyle(FOOTPRINT_COLOR, FOOTPRINT_ALPHA);
+      shadow.fillEllipse(this.player.x, y, FOOTPRINT_LENGTH * 1.6, FOOTPRINT_DEPTH);
+    }
   }
 
   private emitState(): void {
@@ -459,7 +513,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         ? Math.round((state.playerX / LEGACY_WORLD_WIDTH) * this.worldWidth)
         : state.playerX;
     this.player.x = Phaser.Math.Clamp(migratedX, 110, this.worldWidth - 110);
-    this.playerShadow.x = this.player.x;
+    this.drawPlayerShadow();
     this.careerState = state;
     this.cameras.main.centerOn(this.player.x, this.player.y);
     this.emitState();
