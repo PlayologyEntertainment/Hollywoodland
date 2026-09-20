@@ -1,7 +1,7 @@
 """Smooth the upper body's path through the walk cycle.
 
 Reads  aspiring-actor-walk-v2-master-unsmoothed.png  (output of build_sheet.py)
-Writes aspiring-actor-walk-v2-master.png
+Writes aspiring-actor-walk-v2-master-smoothed.png  (rig_arms.py then writes aspiring-actor-walk-v2-master.png)
 
 Every loop frame is warped so the shoulder line follows a gentle two-bobs-per-loop curve (highest at the
 passing frames, lowest at heel contact) and the torso sits at the cell's horizontal centre, instead of
@@ -78,7 +78,7 @@ def main():
     for n in range(LOOP):
         cy, cx = (n // 4) * CH, (n % 4) * CW
         out[cy:cy + CH, cx:cx + CW] = warp(cell(sheet, n), int(dy[n]), int(dx[n]), meas[n][0])
-    Image.fromarray(out, 'RGBA').save(D + 'aspiring-actor-walk-v2-master.png')
+    Image.fromarray(out, 'RGBA').save(D + 'aspiring-actor-walk-v2-master-smoothed.png')
     after = [measure(cell(out, n)) for n in range(LOOP)]
     h2 = np.array([BASE_Y - ys for ys, _ in after], float)
     for name, a in (('before', height), ('after ', h2)):
