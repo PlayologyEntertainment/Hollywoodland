@@ -1,5 +1,3 @@
-import './styles.css';
-
 import { AppShell } from './app/AppShell';
 import { SplashScreen } from './app/SplashScreen';
 import { NoOpAnalyticsClient, type AnalyticsEvent } from './analytics/Analytics';
