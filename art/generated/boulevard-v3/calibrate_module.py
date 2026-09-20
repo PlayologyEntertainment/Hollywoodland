@@ -7,8 +7,10 @@ height of 284 master px.
 
 Steps, per art/prompts/boulevard-entrances-v3.md section 8:
   1. Trim the master to its content (alpha >= ALPHA_TRIM).
-  2. Extrude short bottom gaps flat down to the ground row, so every column
-     of the building stands on the same line.
+  2. Extrude each column's last fully opaque pixel down to the ground row, so
+     every column stands on the same line and no ragged, semi-transparent
+     master edge is left above it. To drop a ragged edge, pass a trim box that
+     ends above it (its last row becomes the ground row).
   3. Scale so the reference door leaf is exactly DOOR_DISPLAY_PX display px,
      resampled premultiplied (no edge bleed) at RUNTIME_PER_DISPLAY (1.5x).
   4. Add a hidden overlap strip of OVERLAP_DISPLAY_PX display px below the
@@ -31,6 +33,7 @@ RUNTIME_PER_DISPLAY = 1.5
 OVERLAP_DISPLAY_PX = 40
 ALPHA_TRIM = 8
 GAP_LIMIT_MASTER_PX = 60
+SOLID_ALPHA = 250
 
 
 def calibrate(master_path, door_master_px, out_path, box=None):
@@ -42,12 +45,16 @@ def calibrate(master_path, door_master_px, out_path, box=None):
     w, h = im.size
     px = im.load()
 
-    # Bottom edge of the content in every column.
+    # Bottom edge of the content in every column: the last *fully opaque*
+    # pixel, not the last visible one. A generated master's bottom edge is
+    # often a ragged, semi-transparent fade several px tall; extruding from a
+    # semi-transparent pixel would copy that transparency downward and leave a
+    # see-through band above the ground line (seen on the Monarch gate).
     bottoms = []
     for x in range(w):
         last = -1
         for y in range(h - 1, -1, -1):
-            if px[x, y][3] >= 128:
+            if px[x, y][3] >= SOLID_ALPHA:
                 last = y
                 break
         bottoms.append(last)
@@ -56,12 +63,13 @@ def calibrate(master_path, door_master_px, out_path, box=None):
     extruded = 0
     for x in range(w):
         b = bottoms[x]
-        if b < 0 or b >= ground_row or ground_row - b > GAP_LIMIT_MASTER_PX:
+        if b < 0 or ground_row - b > GAP_LIMIT_MASTER_PX:
             continue
-        src = px[x, b]
+        r, g, bl, _ = px[x, b]
         for y in range(b + 1, h):
-            px[x, y] = src
-        extruded += 1
+            px[x, y] = (r, g, bl, 255)
+        if b < ground_row:
+            extruded += 1
 
     scale = DOOR_DISPLAY_PX / door_master_px
     overlap_master = OVERLAP_DISPLAY_PX / scale

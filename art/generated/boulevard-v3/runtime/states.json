@@ -38,14 +38,22 @@
   "monarch-gate": {
     "runtime_size_px": [
       2271,
-      1131
+      1113
     ],
-    "mask_master_px": [
-      420,
-      340,
-      940,
+    "search_region_master_px": [
+      410,
+      300,
+      960,
       870
     ],
-    "feather_master_px": 24
+    "mask_threshold": 56,
+    "mask_grow_px": 8,
+    "mask_feather_px": 3,
+    "trim_box_master_px": [
+      15,
+      27,
+      1760,
+      836
+    ]
   }
 }

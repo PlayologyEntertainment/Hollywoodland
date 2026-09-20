@@ -163,6 +163,17 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .check-row input { width: 1.25rem; height: 1.25rem; }
 .story-card h2 { margin: 0; color: var(--gold-bright); font-size: 2.4rem; }
 .story-card p, .story-card blockquote { line-height: 1.6; }
+/* Home Menu assignments: each row is a Start button on the left, with the
+   title above its description on the right. The button stays after the text
+   in the DOM (so a screen reader hears the assignment first); the grid only
+   moves it. */
+.home-hub-assignment-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.home-hub-assignment-list li {
+  display: grid; grid-template-columns: max-content 1fr; column-gap: 1.1rem; row-gap: .2rem; align-items: start;
+}
+.home-hub-assignment-list li > button { grid-column: 1; grid-row: 1 / span 2; justify-self: start; }
+.home-hub-assignment-list li > span { grid-column: 2; grid-row: 1; }
+.home-hub-assignment-list li > small { grid-column: 2; grid-row: 2; color: var(--muted); line-height: 1.4; }
 .story-card blockquote { margin: 0; padding: 1rem; border-left: 3px solid var(--gold); background: rgb(255 255 255 / 4%); font-size: 1.15em; font-style: italic; }
 .dialogue-choices { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
 .dialogue-choices li { margin: 0; }
