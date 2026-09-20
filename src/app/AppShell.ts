@@ -195,6 +195,7 @@ export class AppShell {
   private settings: GameSettings;
   private fpsTimer = 0;
   private game: Phaser.Game | undefined;
+  private syncHeaderHeight: () => void = () => undefined;
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
   private activeDialogueNodeId: string | undefined;
@@ -217,6 +218,7 @@ export class AppShell {
       menuBackdrop: assertElement('#menu-backdrop', HTMLElement),
       statusBar: assertElement('#status-bar', HTMLElement),
     };
+    this.trackHeaderHeight(screens.statusBar);
     const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
@@ -344,7 +346,9 @@ export class AppShell {
       assertElement('#text-scale-output', HTMLOutputElement).value = `${input.value}%`;
     });
 
-    statusButton.addEventListener('click', () => this.openStatus(statusPanel, statusButton));
+    statusButton.addEventListener('click', () =>
+      statusPanel.hidden ? this.openStatus(statusPanel, statusButton) : this.closeStatus(statusPanel, statusButton),
+    );
     assertElement('#close-status', HTMLButtonElement).addEventListener('click', () => this.closeStatus(statusPanel, statusButton));
     assertElement('#film-mode', HTMLButtonElement).addEventListener('click', (event) => this.toggleFilmMode(event.currentTarget as HTMLButtonElement));
     assertElement('#fullscreen', HTMLButtonElement).addEventListener('click', () => void this.toggleFullscreen());
@@ -363,11 +367,33 @@ export class AppShell {
     }
   }
 
+  /** Publishes the black status header's height as `--header-h` on the game
+   * frame (0 while the header is hidden), so the game view and the Status
+   * panel can start below it instead of under it. A ResizeObserver keeps it
+   * right when the header wraps or the text scale changes. */
+  private trackHeaderHeight(header: HTMLElement): void {
+    const frame = assertElement('#game-frame', HTMLElement);
+    const sync = (): void => {
+      const height = header.hidden ? 0 : Math.round(header.getBoundingClientRect().height);
+      const value = `${height}px`;
+      if (frame.style.getPropertyValue('--header-h') === value) return;
+      frame.style.setProperty('--header-h', value);
+      // Phaser fits its canvas to its parent when it boots and on window resize,
+      // not when the parent changes size on its own, so re-fit it here.
+      this.game?.scale.refresh();
+    };
+    new ResizeObserver(sync).observe(header);
+    this.syncHeaderHeight = sync;
+    sync();
+  }
+
   private startGame(screens: MenuScreens, state?: CareerState): void {
     screens.titlePanel.hidden = true;
     screens.playHud.hidden = false;
     screens.menuBackdrop.hidden = true;
     screens.statusBar.hidden = false;
+    // Publish the header's height before the game boots, so Phaser measures the shorter game area.
+    this.syncHeaderHeight();
     const isFirstStart = this.game === undefined;
     this.game = this.options.onStart(state);
     if (isFirstStart) this.startFpsMeter(this.game);
