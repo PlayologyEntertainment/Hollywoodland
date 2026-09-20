@@ -1244,7 +1244,12 @@
 
     for (const loc of manifest.locations) {
       const s = loc.sign;
-      if (s) {
+      if (s && s.painted) {
+        // The lettering is painted into the building art; only outline it when selected.
+        if (activeLayoutType === 'sign' && activeLayoutId === loc.id) {
+          strokeSelectionRect(ctx, s.x - s.boardWidth / 2, s.y - s.boardHeight / 2, s.boardWidth, s.boardHeight);
+        }
+      } else if (s) {
         // Text-only signs sit on the panel already painted into the building
         // art, so no board is drawn behind the lettering.
         if (!s.textOnly) {

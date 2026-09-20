@@ -168,6 +168,35 @@ describe('committed Boulevard manifest', () => {
     }
   });
 
+  it('accepts a sign without the painted flag and rejects a non-boolean one', () => {
+    const withSign = (patch: Record<string, unknown>): unknown => ({
+      ...committed,
+      locations: committed.locations.map((l) =>
+        l.id === 'diner' && l.sign !== null ? { ...l, sign: { ...l.sign, ...patch } } : l,
+      ),
+    });
+    expect(isBoulevardManifest(withSign({}))).toBe(true);
+    expect(isBoulevardManifest(withSign({ painted: true }))).toBe(true);
+    expect(isBoulevardManifest(withSign({ painted: 'yes' }))).toBe(false);
+  });
+
+  it('paints the Monarch gate lettering into its art and draws text for every other sign', () => {
+    // The gate's ornate arch sign is baked into monarch-gate(.active).webp, so the scene must not draw MONARCH
+    // PICTURES over it; every other sign is still drawn as text on its painted panel.
+    const byId = new Map(committed.locations.map((l) => [l.id, l]));
+    expect(byId.get('backlot-gate')?.sign?.painted).toBe(true);
+    const others = committed.locations.filter((l) => l.id !== 'backlot-gate' && l.sign !== null);
+    for (const location of others) expect(location.sign?.painted, location.id).not.toBe(true);
+  });
+
+  it('keeps the Monarch gate closed and open art the same size', () => {
+    const gate = committed.buildings.find((b) => b.id === 'monarch-gate');
+    expect(gate?.activePath).not.toBeNull();
+    const closed = webpSize(gate?.path ?? '');
+    const open = webpSize(gate?.activePath ?? '');
+    expect(open).toEqual(closed);
+  });
+
   it('uses the approved canon names on the signs', () => {
     const text = committed.locations.flatMap((l) => (l.sign === null ? [] : [l.sign.text.replace(/\n/g, ' ')]));
     expect(text).toEqual(
