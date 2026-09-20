@@ -76,20 +76,32 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .hud-quickstats { color: var(--muted); font-family: Arial, sans-serif; font-size: .78em; letter-spacing: .04em; text-align: center; }
 .text-button { min-height: auto; border: 0; padding: .35rem .5rem; background: transparent; box-shadow: none; text-decoration: underline; text-underline-offset: .2em; }
 
+/* Main menu: a 1930s film slate. The art (clapper and hand-lettered fields on top, a clear chalkboard below) is a
+   nine-slice border image, so the top keeps its proportions and the blank board stretches to fit the menu text (small
+   screens, larger text scale). The border widths are the slice sizes (493 66 83 68 of a 1516x1027 image) scaled to the
+   panel width, which is what --slate-w carries. */
 .title-panel {
-  position: absolute; z-index: 3; top: 50%; left: 50%; width: min(90vw, 44rem); padding: clamp(1.5rem, 4vw, 3.25rem);
-  transform: translate(-50%, -50%); border: 1px solid var(--gold); background: var(--panel);
-  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 75%), inset 0 0 0 .35rem #0d0b0d; text-align: center;
+  --slate-w: min(90vw, 53.75rem, calc((100vh - 3rem) * 1.4761));
+  position: absolute; z-index: 3; top: 50%; left: 50%; width: var(--slate-w); min-height: calc(var(--slate-w) * .6774);
+  display: flex; flex-direction: column; justify-content: center; padding: .25rem .5rem 0;
+  border: solid transparent; border-width: calc(var(--slate-w) * .3252) calc(var(--slate-w) * .0435) calc(var(--slate-w) * .0547) calc(var(--slate-w) * .0449);
+  border-image: url('/assets/ui/main-menu-slate.webp') 493 66 83 68 fill stretch;
+  transform: translate(-50%, -50%); filter: drop-shadow(0 1.25rem 1.5rem rgb(0 0 0 / 55%)); text-align: center;
 }
-.title-panel::before, .drawer::before, dialog::before { position: absolute; inset: .5rem; border: 1px solid rgb(216 173 88 / 42%); content: ''; pointer-events: none; }
+.title-panel[hidden] { display: none; }
+.drawer::before, dialog::before { position: absolute; inset: .5rem; border: 1px solid rgb(216 173 88 / 42%); content: ''; pointer-events: none; }
 .eyebrow, .build-label { margin: 0; color: var(--muted); font-family: Arial, sans-serif; font-size: .72em; letter-spacing: .19em; text-transform: uppercase; }
 h1 {
   margin: .12em 0 0; color: var(--gold-bright); font-family: var(--display-font);
   font-size: clamp(1.9rem, 6.4vw, 4.6rem); font-weight: 900; line-height: 1;
   overflow-wrap: break-word; text-wrap: balance; text-shadow: 0 3px 0 #5b351b, 0 8px 24px #000;
 }
-.tagline { margin: 1rem 0 1.5rem; font-style: italic; }
 .menu { display: grid; gap: .65rem; width: min(100%, 22rem); margin: auto; }
+.title-panel h1 { margin: .25rem 0 .55rem; font-size: 0; line-height: 0; text-shadow: none; }
+.title-logo { display: block; width: calc(var(--slate-w) * .58); max-width: 100%; height: auto; margin: 0 auto; filter: drop-shadow(0 .2rem .35rem rgb(0 0 0 / 60%)); }
+.title-panel .menu { grid-template-columns: 1fr 1fr; width: 100%; gap: .45rem .65rem; }
+.title-panel .menu button { min-height: 2.2rem; padding: .3rem .75rem; font-size: .95rem; }
+.title-panel .build-label { margin: .55rem 0 .3rem; font-size: .6rem; }
 .primary-button { border-color: var(--gold-bright); background: linear-gradient(#875d30, #402817); font-weight: 700; }
 .build-label { margin-top: 1.35rem; }
 
@@ -328,7 +340,9 @@ body.high-contrast { --ink: #fff; --muted: #fff; --gold: #ffe100; --gold-bright:
 body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
 
 @media (max-width: 780px), (max-height: 620px) {
-  .title-panel { width: calc(100% - 1rem); max-height: calc(100% - 5rem); padding: 1.25rem; overflow: auto; }
+  .title-panel { --slate-w: calc(100vw - 1rem); max-height: calc(100% - 5rem); overflow: auto; }
+  .title-panel .menu { grid-template-columns: 1fr; }
+  .title-logo { width: calc(var(--slate-w) * .8); }
   .status-bar { align-items: flex-start; }
   .status-actions { flex-wrap: wrap; justify-content: end; }
   .fps-output, .hud-quickstats, .build-label { display: none; }
