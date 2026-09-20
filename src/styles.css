@@ -54,8 +54,10 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .skip-link { position: fixed; z-index: 100; top: .5rem; left: .5rem; padding: .75rem 1rem; transform: translateY(-180%); background: #000; color: #fff; }
 .skip-link:focus { transform: translateY(0); }
 .app-shell, .game-frame, #game-root, #game-root canvas { width: 100%; height: 100%; }
-.game-frame { position: relative; isolation: isolate; max-width: 2560px; margin: auto; overflow: hidden; background: var(--splash-bg); }
-#game-root { position: absolute; inset: 0; z-index: -2; }
+/* --header-h is the height of the black status header while it is showing (set
+   from AppShell, 0 when hidden). The game view starts below it. */
+.game-frame { --header-h: 0px; position: relative; isolation: isolate; max-width: 2560px; margin: auto; overflow: hidden; background: var(--splash-bg); }
+#game-root { position: absolute; inset: var(--header-h) 0 0; height: auto; z-index: -2; }
 #game-root canvas { display: block; object-fit: contain; transition: filter .55s ease; }
 
 .menu-backdrop {
@@ -66,7 +68,7 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .status-bar {
   position: absolute; z-index: 4; top: 0; left: 0; display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem;
   padding: .7rem clamp(1rem, 3vw, 3rem); border-bottom: 1px solid rgb(216 173 88 / 32%);
-  background: linear-gradient(rgb(10 8 10 / 92%), rgb(10 8 10 / 30%), transparent); text-shadow: 0 2px 5px #000;
+  background: #000;
 }
 .status-bar[hidden] { display: none; }
 .status-actions, .hud-actions { display: flex; align-items: center; gap: .6rem; }
@@ -126,8 +128,22 @@ h1 {
 kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35rem; background: #151116; color: #fff; box-shadow: inset 0 -2px 0 rgb(255 255 255 / 12%); }
 .interaction-prompt { position: absolute; z-index: 6; bottom: 10.5rem; left: 50%; padding: .8rem 1.1rem; transform: translateX(-50%); border: 1px solid var(--gold); background: rgb(11 9 11 / 92%); box-shadow: 0 8px 30px #000; }
 
-.drawer { position: absolute; z-index: 8; top: 0; right: 0; width: min(100%, 29rem); height: 100%; padding: 1.7rem; border-left: 1px solid var(--gold); background: var(--panel); box-shadow: -1rem 0 3rem rgb(0 0 0 / 65%); }
-.drawer-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+/* The Status panel starts below the header. Its title row stays put and only
+   the body scrolls (the panel itself does not, so its inner border stays fixed). */
+.drawer {
+  position: absolute; z-index: 8; top: var(--header-h); right: 0; bottom: 0; width: min(100%, 29rem); padding: 1.7rem 0 0;
+  display: flex; flex-direction: column; border-left: 1px solid var(--gold); background: var(--panel); box-shadow: -1rem 0 3rem rgb(0 0 0 / 65%);
+}
+/* `display: flex` above would override the [hidden] attribute, so restore it. */
+.drawer[hidden] { display: none; }
+.drawer-heading { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 1.7rem .6rem; }
+.drawer-scroll {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.7rem 1.7rem; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: rgb(216 173 88 / 55%) transparent;
+}
+.drawer-scroll::-webkit-scrollbar { width: .55rem; }
+.drawer-scroll::-webkit-scrollbar-track { background: transparent; }
+.drawer-scroll::-webkit-scrollbar-thumb { border-radius: .3rem; background: rgb(216 173 88 / 55%); }
 .drawer-heading h2 { margin: .25rem 0; color: var(--gold-bright); }
 .drawer-heading button { min-width: 2.75rem; padding: .25rem; font-size: 1.5rem; }
 dl div { display: flex; justify-content: space-between; padding: .8rem 0; border-bottom: 1px solid rgb(216 173 88 / 24%); }

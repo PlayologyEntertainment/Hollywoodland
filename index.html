@@ -174,35 +174,37 @@
             <div><p id="status-name" class="eyebrow">Nobody — yet</p><h2 id="status-title">Your Career</h2></div>
             <button id="close-status" type="button" aria-label="Close career status">×</button>
           </div>
-          <dl>
-            <div><dt>Time</dt><dd id="status-time">Monday · Morning</dd></div>
-            <div><dt>Money</dt><dd id="status-money">$12</dd></div>
-            <div><dt>Energy</dt><dd id="status-energy">100/100</dd></div>
-            <div><dt>Reputation</dt><dd id="status-reputation">0/100</dd></div>
-            <div><dt>Dream</dt><dd>Leading Player</dd></div>
-          </dl>
-          <section class="status-quests">
-            <h3>Quests</h3>
-            <ul id="status-quests-list"></ul>
-          </section>
-          <section class="status-relationships">
-            <h3>Relationships</h3>
-            <ul id="status-relationships-list"></ul>
-          </section>
-          <section class="status-progression">
-            <h3>Progression</h3>
-            <p id="status-level" class="status-level">Level 1</p>
-            <div id="status-xp-bar" class="xp-bar" role="progressbar" aria-labelledby="status-level" aria-valuemin="0" aria-valuemax="100">
-              <div id="status-xp-fill" class="xp-bar-fill"></div>
-            </div>
-            <p id="status-xp-label" class="status-xp-label">0 / 40 XP</p>
-            <ul id="status-talents-list" class="talent-list"></ul>
-          </section>
-          <section class="status-inventory">
-            <h3>Inventory</h3>
-            <ul id="status-inventory-list"></ul>
-          </section>
-          <p class="flavor-copy">One suitcase. One good shirt. One impossible address scribbled on the back of a bus ticket.</p>
+          <div class="drawer-scroll">
+            <dl>
+              <div><dt>Time</dt><dd id="status-time">Monday · Morning</dd></div>
+              <div><dt>Money</dt><dd id="status-money">$12</dd></div>
+              <div><dt>Energy</dt><dd id="status-energy">100/100</dd></div>
+              <div><dt>Reputation</dt><dd id="status-reputation">0/100</dd></div>
+              <div><dt>Dream</dt><dd>Leading Player</dd></div>
+            </dl>
+            <section class="status-quests">
+              <h3>Quests</h3>
+              <ul id="status-quests-list"></ul>
+            </section>
+            <section class="status-relationships">
+              <h3>Relationships</h3>
+              <ul id="status-relationships-list"></ul>
+            </section>
+            <section class="status-progression">
+              <h3>Progression</h3>
+              <p id="status-level" class="status-level">Level 1</p>
+              <div id="status-xp-bar" class="xp-bar" role="progressbar" aria-labelledby="status-level" aria-valuemin="0" aria-valuemax="100">
+                <div id="status-xp-fill" class="xp-bar-fill"></div>
+              </div>
+              <p id="status-xp-label" class="status-xp-label">0 / 40 XP</p>
+              <ul id="status-talents-list" class="talent-list"></ul>
+            </section>
+            <section class="status-inventory">
+              <h3>Inventory</h3>
+              <ul id="status-inventory-list"></ul>
+            </section>
+            <p class="flavor-copy">One suitcase. One good shirt. One impossible address scribbled on the back of a bus ticket.</p>
+          </div>
         </aside>
 
         <dialog id="interaction-dialog" aria-labelledby="interaction-title" class="scene-dialog">
