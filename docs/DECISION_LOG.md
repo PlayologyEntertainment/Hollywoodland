@@ -104,3 +104,4 @@ The exact Phaser/Vite versions, analytics provider, deployment provider, animati
 | Phase 1 visual tweaks | Owner will outline minor tweaks to the approved Phase 1 visual spike | 2026-09-19 |
 | Phase 1 exit | Measured feasibility report and final asset/frame budgets are still needed (`PRODUCTION_ROADMAP.md`) | 2026-09-19 |
 | The alley | The only Boulevard entrance without a scene | 2026-09-19 |
+| Main Menu film slate | Owner review of the new Main Menu: a 1930s film slate replaces the dark panel, and `art/Hollywoodland_Logo.png` replaces the title text. Built on `claude/main-menu-slate`, not committed (`art/prompts/ui-main-menu-slate.md`) | 2026-09-20 |
