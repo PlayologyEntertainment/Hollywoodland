@@ -51,6 +51,8 @@ Frame selection: the four round-3 half-sheets give 32 candidate frames. `tools/b
 
 Foot planting: the stance foot's position is fitted to a straight line at the common stride. Each frame is shifted horizontally to sit on that line, with the correction shared with the torso so the body does not lurch. Result after correction: the planted foot slips at most 14.8 sheet px (6.8 display px, 2.6 display px rms); the body moves at most 12.8 sheet px (5.9 display px) between adjacent frames.
 
+Upper-body smoothing (added after owner feedback that the first version bounced too much): as drawn, the shoulder line jumped up to 38 sheet px (17 display px) between adjacent frames, against a natural walking bob of about 9 sheet px in total. `tools/smooth_upper_body.py` warps each loop frame so the shoulder line follows a gentle two-bobs-per-loop curve (highest at the passing frames, lowest at heel contact, about 4 display px peak to peak) and the torso sits at the cell's horizontal centre. The head and shoulders move rigidly; the shift fades out (smoothstep) over 220 rows down the torso and into the thighs, so the shins and planted feet, the foot-planting fit and the footprint data are untouched (verified: 0 changed pixels in rows 375-479 of every frame). Result: shoulder-height range 39 -> 9 sheet px, frame-to-frame change max 38 -> 6 and mean 15.4 -> 2.8 sheet px (x0.461 for display px), torso x within 1 sheet px of centre. The unsmoothed master is kept as `aspiring-actor-walk-v2-master-unsmoothed.png`.
+
 ```text
 asset_id: aspiring_actor_walk_v2
 asset_type: character walk-cycle sprite sheet, 16 loop frames plus idle, transparent background
@@ -59,8 +61,8 @@ reference_asset_ids: aspiring_actor_walk (original sheet, frames 1 and 4), aspir
 generation_tool_and_version: gpt-image-2 via gg-image (Codex ChatGPT backend), --background transparent, --quality high; local selection, scale normalisation and packing with art/generated/walk-cycle-v2/tools/
 generation_date: 2026-09-20
 raw_source_location: art/generated/walk-cycle-v2/half-v3-{A,B}-take{1,2}.png and idle-take1.png
-human_edits: none to the drawings. Deterministic processing only: frame selection, uniform scaling of each frame so head size matches, horizontal shifts for foot planting, idle frame scaled to 103% of the walk frames' mean height, alpha >= 250 set to 255 and alpha <= 3 set to 0
-master_file: art/generated/walk-cycle-v2/aspiring-actor-walk-v2-master.png (lossless)
+human_edits: none to the drawings. Deterministic processing only: frame selection, uniform scaling of each frame so head size matches, horizontal shifts for foot planting, a vertical and horizontal warp above the knees to smooth the upper body's path (tools/smooth_upper_body.py), idle frame scaled to 103% of the walk frames' mean height, alpha >= 250 set to 255 and alpha <= 3 set to 0
+master_file: art/generated/walk-cycle-v2/aspiring-actor-walk-v2-master.png (lossless, smoothed); aspiring-actor-walk-v2-master-unsmoothed.png is the pre-smoothing master
 review_status: approved by the owner 2026-09-20
 rights_or_license_notes: project-owned development generation; human rights/provenance review required
 runtime_files: public/assets/characters/aspiring-actor-walk.webp (1792x2400 RGBA, lossy quality 90, alpha_quality 100) and public/data/walk-cycle.json
@@ -75,7 +77,7 @@ runtime_files: public/assets/characters/aspiring-actor-walk.webp (1792x2400 RGBA
 
 - **The two steps are near-duplicates in silhouette.** In a side view a left step and a right step look almost identical, so frames 9-16 are 8 distinct drawings, but they read as the same poses. Which leg is nearer the camera cannot be told apart at game size.
 - **Swing-leg timing is only approximately even.** The candidate pool did not contain a clean frame for every slot, so in steps 6 and 7 of each half the swinging foot gets ahead of an ideal even progression. The planted foot, which is what causes visible sliding, is fitted closely.
-- **The body wobbles slightly** (up to about 6 display px between frames) because foot planting was shared with the torso.
+- **Upper-body path is a synthetic curve.** The drawn frames bounced up to 38 sheet px (17 display px) between frames, so the head and torso were warped onto a smooth bob (see Upper-body smoothing). The torso is stretched or squashed by up to about 16% locally, in the torso and upper thigh; it is not visible at game size in review, but watch for it if the sheet is ever shown larger.
 - **28 frame changes per second at 390 px/s** (about 1.74 loops per second). On a 60 Hz display each frame is held 2 or 3 refreshes, so the frame rhythm is uneven. Lowering `WALK_SPEED` slows the cadence without reintroducing sliding, because the animation follows distance.
 - **Stopping snaps to the idle frame** (as the old code did); there is no ease-out.
 - The idle frame's shoes are a single merged print (the near foot covers the far one), so the standing shadow is one print, not two.

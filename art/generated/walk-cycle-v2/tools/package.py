@@ -3,7 +3,7 @@ import sys; sys.path.insert(0, '.')
 from PIL import Image, ImageDraw
 import json, os, numpy as np
 D = 'C:/Hollywoodland/art/generated/walk-cycle-v2/'
-meta = json.load(open('walk-meta-v3.json'))
+meta = json.load(open(D + 'walk-cycle-build-record.json'))
 sheet = Image.open(D + 'aspiring-actor-walk-v2-master.png').convert('RGBA')
 a = np.array(sheet); al = a[..., 3]; al[al >= 250] = 255; al[al <= 3] = 0; a[..., 3] = al
 Image.fromarray(a, 'RGBA').save(D + 'aspiring-actor-walk-v2.webp', quality=90, alpha_quality=100, method=6)
