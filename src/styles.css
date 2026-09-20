@@ -291,7 +291,8 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   border: 1px solid var(--gold); border-radius: .5rem; background: radial-gradient(ellipse at 50% 85%, rgb(216 173 88 / 18%), transparent 70%), #120e0c;
 }
 .creator-portrait {
-  width: 100%; height: 100%; background-image: var(--creator-portrait-src); background-size: 400% 200%; background-position: 0% 0%;
+  width: 100%; aspect-ratio: var(--creator-portrait-aspect, 3 / 4); background-image: var(--creator-portrait-src);
+  background-size: var(--creator-portrait-size, 400% 200%); background-position: var(--creator-portrait-pos, 0% 0%);
   image-rendering: pixelated;
 }
 .creator-plaque { margin: 0; color: var(--gold-bright); font-family: var(--display-font); font-size: 1.1rem; letter-spacing: .08em; }

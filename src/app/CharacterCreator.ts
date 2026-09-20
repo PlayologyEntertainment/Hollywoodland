@@ -1,4 +1,5 @@
 import { ORIGINS, BASE_ATTRIBUTE_VALUE, MAX_ATTRIBUTE_VALUE, type AttributeKey, type Origin } from '../domain/Origins';
+import { DEFAULT_WALK_CYCLE, frameBackground, isWalkCycle, type WalkCycle } from '../game/WalkCycle';
 import { assertElement } from '../shared/assert';
 
 export interface CharacterChoices {
@@ -49,16 +50,30 @@ export class CharacterCreator {
     Object.keys(CYCLER_OPTIONS).map((key) => [key, 0]),
   );
 
+  /** Shows the walk sheet's standing frame as the creator portrait. */
+  private showPortrait(portrait: HTMLElement, cycle: WalkCycle): void {
+    const frame = frameBackground(cycle, cycle.idleFrame);
+    portrait.style.setProperty('--creator-portrait-src', `url(${import.meta.env.BASE_URL}${cycle.sheet})`);
+    portrait.style.setProperty('--creator-portrait-size', frame.size);
+    portrait.style.setProperty('--creator-portrait-pos', frame.position);
+    portrait.style.setProperty('--creator-portrait-aspect', `${cycle.frameWidth} / ${cycle.frameHeight}`);
+  }
+
   public mount(onStartCareer: (choices: CharacterChoices) => void, onBack: () => void): void {
     const nameInput = assertElement('#creator-name', HTMLInputElement);
     const skinRow = assertElement('#creator-skin-tones', HTMLElement);
     const originGrid = assertElement('#creator-origins', HTMLElement);
     const attributeList = assertElement('#creator-attributes', HTMLElement);
     const portrait = assertElement('#creator-portrait', HTMLElement);
-    portrait.style.setProperty(
-      '--creator-portrait-src',
-      `url(${import.meta.env.BASE_URL}assets/characters/aspiring-actor-walk.webp)`,
-    );
+    this.showPortrait(portrait, DEFAULT_WALK_CYCLE);
+    // The sheet's frame size and layout come from data/walk-cycle.json, which is
+    // swapped together with the sheet; the built-in numbers cover a missing file.
+    void fetch(`${import.meta.env.BASE_URL}data/walk-cycle.json`)
+      .then((response) => (response.ok ? (response.json() as Promise<unknown>) : null))
+      .then((loaded) => {
+        if (isWalkCycle(loaded)) this.showPortrait(portrait, loaded);
+      })
+      .catch(() => undefined);
 
     this.buildSkinTones(skinRow);
     this.buildOrigins(originGrid, attributeList);
