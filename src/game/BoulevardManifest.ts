@@ -673,7 +673,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
       enterable: true,
       sign: {
         x: 6755,
-        y: 551,
+        y: 563,
         text: 'MONARCH PICTURES',
         fontSize: 19,
         textColor: '#1e4a3f',
@@ -701,7 +701,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
       enterable: true,
       sign: {
         x: 7350,
-        y: 505,
+        y: 517,
         text: 'SOUND STAGE',
         fontSize: 22,
         textColor: '#1e4a3f',

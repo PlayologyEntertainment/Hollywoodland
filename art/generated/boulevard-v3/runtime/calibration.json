@@ -154,26 +154,26 @@
   "monarch-gate": {
     "master_content_px": [
       1745,
-      823
+      809
     ],
     "display_scale_per_master_px": 0.8676,
     "runtime_size_px": [
       2271,
-      1131
+      1113
     ],
     "display_size_px": [
       1514,
-      714
+      702
     ],
-    "ground_row_runtime_px": 1071,
+    "ground_row_runtime_px": 1053,
     "overlap_runtime_px": 60,
-    "columns_extruded": 1738,
+    "columns_extruded": 16,
     "trim_box_master_px": [
       15,
       27,
       1760,
-      850
+      836
     ],
-    "reference": "guard-booth door leaf 626-845 master px (219) = 190 display px; reworked 2026-09-19 with the studio lot and the sound stage (modules/monarch-gate-v3-wide-master.png); the sound stage side door is 183 px, about 84% of the booth door"
+    "reference": "guard-booth door leaf 626-845 master px (219) = 190 display px; reworked 2026-09-19 (modules/monarch-gate-v3-wide-master.png). The master's ragged, semi-transparent bottom edge (master rows 836-849) is cropped off, so the module stands 12 display px lower than in the first pass; the sound stage side door is 183 px, about 84% of the booth door"
   }
 }
