@@ -140,6 +140,7 @@ h1 {
   box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 75%), inset 0 0 0 .2rem rgb(0 0 0 / 40%);
 }
 .splash-enter { margin-top: .25rem; min-width: 12rem; font-size: 1.15rem; transition: opacity .3s ease; }
+.splash-enter.deco-label { font-size: 1.15rem; }
 .splash-screen.activated .splash-medallion,
 .splash-screen.activated .splash-presents,
 .splash-screen.activated .splash-enter { opacity: 0; pointer-events: none; }
