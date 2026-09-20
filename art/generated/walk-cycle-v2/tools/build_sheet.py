@@ -219,7 +219,7 @@ def main():
     sheet = Image.new('RGBA', (CELL_W * 4, CELL_H * 5), (0, 0, 0, 0))
     for n, fr in enumerate(frames + [idle_cell]):
         sheet.paste(fr, ((n % 4) * CELL_W, (n // 4) * CELL_H))
-    sheet.save(D + 'aspiring-actor-walk-v2-master.png')
+    sheet.save(D + 'aspiring-actor-walk-v2-master-unsmoothed.png')
     heights = [int(pool[i]['m']['h']) for i in chosen]
     meta = {'cellW': CELL_W, 'cellH': CELL_H, 'baseY': BASE_Y, 'strideSource': round(16 * slope, 1),
             'feet': feet, 'idleFeet': ifeet[:2], 'dx': [round(float(d), 1) for d in dxs],
