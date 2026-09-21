@@ -4,6 +4,12 @@ export interface GameSettings {
   readonly reducedMotion: boolean;
   readonly analyticsEnabled: boolean;
   readonly filmEffects: boolean;
+  /** 0 to 1, shaped to a gain by sliderToGain. Music covers the Main Menu, Character Creator, Boulevard and building tracks. */
+  readonly musicVolume: number;
+  readonly musicMuted: boolean;
+  /** The street ambience that plays under the Boulevard music. */
+  readonly ambienceVolume: number;
+  readonly ambienceMuted: boolean;
 }
 
 export const DEFAULT_SETTINGS: GameSettings = Object.freeze({
@@ -12,6 +18,10 @@ export const DEFAULT_SETTINGS: GameSettings = Object.freeze({
   reducedMotion: false,
   analyticsEnabled: true,
   filmEffects: true,
+  musicVolume: 0.6,
+  musicMuted: false,
+  ambienceVolume: 0.5,
+  ambienceMuted: false,
 });
 
 export function normalizeSettings(value: unknown): GameSettings {
@@ -22,6 +32,10 @@ export function normalizeSettings(value: unknown): GameSettings {
     reducedMotion: readBoolean(value.reducedMotion, DEFAULT_SETTINGS.reducedMotion),
     analyticsEnabled: readBoolean(value.analyticsEnabled, DEFAULT_SETTINGS.analyticsEnabled),
     filmEffects: readBoolean(value.filmEffects, DEFAULT_SETTINGS.filmEffects),
+    musicVolume: clampNumber(value.musicVolume, 0, 1, DEFAULT_SETTINGS.musicVolume),
+    musicMuted: readBoolean(value.musicMuted, DEFAULT_SETTINGS.musicMuted),
+    ambienceVolume: clampNumber(value.ambienceVolume, 0, 1, DEFAULT_SETTINGS.ambienceVolume),
+    ambienceMuted: readBoolean(value.ambienceMuted, DEFAULT_SETTINGS.ambienceMuted),
   };
 }
 

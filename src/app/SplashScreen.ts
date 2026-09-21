@@ -15,10 +15,12 @@ const ZOOM_MS = 700;
  * underneath.
  */
 export class SplashScreen {
-  public mount(): void {
+  /** `onEnter` runs inside the click, which is the user gesture browsers require before they will play sound. */
+  public mount(onEnter: () => void = () => undefined): void {
     const splash = assertElement('#splash-screen', HTMLElement);
     const enterButton = assertElement('#splash-enter', HTMLButtonElement);
     enterButton.addEventListener('click', () => {
+      onEnter();
       enterButton.disabled = true;
       splash.classList.add('activated');
       window.setTimeout(() => splash.classList.add('fade-out'), ZOOM_MS);
