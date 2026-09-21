@@ -3,6 +3,8 @@ import type Phaser from 'phaser';
 import { ChapterTitlePage } from './ChapterTitlePage';
 import { FadingNotice } from './FadingNotice';
 import { describeHud } from './HudStats';
+import { chooseObjective, isObjectiveAccomplished, ObjectiveTracker, type Objective } from './Objective';
+import { buildQuestLog } from './QuestLog';
 import { mountDecoOutline } from '../ui/DecoBorder';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
@@ -32,7 +34,6 @@ import type { AuditionCategory, AuditionChoices, AuditionDefinition, AuditionFac
 import { getAuditionById } from '../domain/PerformanceDefinitions';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
 import { canUnlockTalent, isTalentUnlocked, xpRequiredForNextLevel, type ProgressionState, type TalentDefinition } from '../domain/Progression';
-import { getActiveStage, getQuestStatus } from '../domain/Quests';
 import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipDelta, type RelationshipLabel } from '../domain/Relationships';
 import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../domain/RelationshipDefinitions';
 import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
@@ -205,6 +206,7 @@ export class AppShell {
   private settings: GameSettings;
   private toastTimer = 0;
   private promptNotice!: FadingNotice;
+  private objectives!: ObjectiveTracker;
   private toastNotice!: FadingNotice;
   private game: Phaser.Game | undefined;
   private syncBarHeights: () => void = () => undefined;
@@ -244,6 +246,15 @@ export class AppShell {
     mountDecoOutline(screens.statusBar);
     mountDecoOutline(screens.footer);
     this.transition = new ScreenTransition(assertElement('#screen-fade', HTMLElement));
+    this.objectives = new ObjectiveTracker(
+      this.objectiveView(),
+      (state) => chooseObjective(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS),
+      (objective, state) => isObjectiveAccomplished(objective, state, ALL_QUESTS),
+      (message) => this.announce(message),
+      undefined,
+      // A conversation covers the whole picture, so the green "complete" beat waits until it is closed.
+      () => ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'].some((selector) => assertElement(selector, HTMLDialogElement).open),
+    );
     this.promptNotice = new FadingNotice(assertElement('#interaction-prompt', HTMLElement));
     this.toastNotice = new FadingNotice(assertElement('#toast', HTMLElement));
     this.chapterPage = new ChapterTitlePage(assertElement('#chapter-title', HTMLElement));
@@ -349,7 +360,7 @@ export class AppShell {
       if (this.transition.isRunning) return;
       const state = await this.options.onLoad();
       await this.transition.run(async () => {
-        if (state !== undefined) this.renderCareerState(state);
+        if (state !== undefined) this.loadCareerState(state);
         await this.enterGame(screens, state);
       });
       this.toast('Career restored');
@@ -464,7 +475,7 @@ export class AppShell {
         this.chapterPage.hide();
         // Before the game starts, so that its own audio sync picks the Boulevard's music.
         this.onChapterPage = false;
-        this.renderCareerState(state);
+        this.loadCareerState(state);
         await this.enterGame(screens, state);
       }, { fadeInMs: BOULEVARD_REVEAL_FADE_IN_MS });
     } finally {
@@ -693,7 +704,29 @@ export class AppShell {
     return item;
   }
 
+  /** Draws the Objective card: the quest's name above, its current goal as the headline, and the green look for a goal just done. */
+  private objectiveView(): { show(objective: Objective, complete: boolean): void } {
+    const card = assertElement('#objective-card', HTMLElement);
+    const title = assertElement('#objective-title', HTMLElement);
+    const goal = assertElement('#objective-goal', HTMLElement);
+    return {
+      show: (objective, complete) => {
+        title.textContent = objective.title;
+        goal.textContent = objective.goal;
+        card.classList.toggle('objective-complete', complete);
+      },
+    };
+  }
+
+  /** Puts a whole career on screen, having forgotten the one before it: the Objective card must not "complete" goals that a
+   * newly loaded save is simply further along than the previous game was. */
+  private loadCareerState(state: CareerState): void {
+    this.objectives.reset();
+    this.renderCareerState(state);
+  }
+
   private renderCareerState(state: CareerState): void {
+    this.objectives.update(state);
     assertElement('#status-name', HTMLElement).textContent = state.identity.name.length > 0 ? state.identity.name : 'Nobody — yet';
     const hud = describeHud(state);
     // The Status panel.
@@ -722,15 +755,13 @@ export class AppShell {
    * choices without revealing every hidden consequence. */
   private renderQuests(state: CareerState): void {
     const list = assertElement('#status-quests-list', HTMLUListElement);
-    const items = ALL_QUESTS.map((quest) => {
-      const status = getQuestStatus(state, quest, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
-      if (status === 'locked') return undefined;
+    // Open quests first, then completed ones under them, which are drawn green (see .quest-complete).
+    const items = buildQuestLog(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS).map((entry) => {
       const item = document.createElement('li');
-      const stage = status === 'active' ? getActiveStage(state, quest) : undefined;
-      const statusLabel = status === 'completed' ? 'Completed' : (stage?.description ?? 'Available');
-      item.textContent = `${quest.title} — ${statusLabel}`;
+      item.textContent = `${entry.title} — ${entry.label}`;
+      item.classList.toggle('quest-complete', entry.completed);
       return item;
-    }).filter((item): item is HTMLLIElement => item !== undefined);
+    });
     list.replaceChildren(...items);
   }
 
@@ -944,7 +975,7 @@ export class AppShell {
       const state = await this.options.onImport(await file.text());
       await this.refreshContinue();
       await this.transition.run(async () => {
-        this.renderCareerState(state);
+        this.loadCareerState(state);
         await this.enterGame(screens, state);
       });
       this.toast('Save imported and verified');

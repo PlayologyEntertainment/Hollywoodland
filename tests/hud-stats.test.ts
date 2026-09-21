@@ -70,6 +70,12 @@ describe('the header', () => {
     expect(header).not.toContain('hud-stat');
   });
 
+  it('has its Career button (which opens the "Your Career" panel), formerly Status', () => {
+    expect(header).toMatch(/<button id="status-button"[^>]*aria-expanded="false">Career<\/button>/);
+    expect(header).not.toMatch(/>Status</);
+    expect(indexHtml).toContain('<h2 id="status-title">Your Career</h2>');
+  });
+
   it('no longer has the frame-rate readout, or reputation', () => {
     expect(header).not.toContain('fps');
     expect(header).not.toMatch(/reputation|>Rep</i);
