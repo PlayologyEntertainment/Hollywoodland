@@ -224,6 +224,8 @@ export class AppShell {
   private auditionChoices: AuditionChoices = {};
   /** Whether the player is in the menus or in the game, and which building or studio place they are inside, if any. */
   private inGame = false;
+  /** The chapter title page is up: the menu music fades out for it, and stays out until the Boulevard takes over. */
+  private onChapterPage = false;
   private place: PlaceKind | undefined;
   private audioSyncTimer = 0;
 
@@ -436,22 +438,36 @@ export class AppShell {
     sync();
   }
 
-  /** Start Career: dips through black to the Chapter 1 title page, plays its reveal once the fade-in has uncovered it,
+  /** Start (on the Character Creator): dips through black to the Chapter 1 title page, plays its reveal once the fade-in has uncovered it,
    * waits for the player to leave it, then dips through black again into the Boulevard. The Boulevard is only started
    * under that second black screen, so its input and music stay off while the page is up. */
   private async startNewCareer(choices: CharacterChoices, screens: MenuScreens, characterCreator: HTMLElement): Promise<void> {
+    if (this.transition.isRunning) return;
     const state = this.buildInitialState(choices);
-    const shown = await this.transition.run(() => {
-      characterCreator.hidden = true;
-      this.chapterPage.prepare();
-    });
-    if (!shown) return;
-    await this.chapterPage.play();
-    await this.transition.run(async () => {
-      this.chapterPage.hide();
-      this.renderCareerState(state);
-      await this.enterGame(screens, state);
-    }, { fadeInMs: BOULEVARD_REVEAL_FADE_IN_MS });
+    // The music starts fading out the moment the page is asked for, so it is dying away as the screen dips to black.
+    this.onChapterPage = true;
+    this.syncAudio();
+    try {
+      const shown = await this.transition.run(() => {
+        characterCreator.hidden = true;
+        this.chapterPage.prepare();
+      });
+      if (!shown) return;
+      await this.chapterPage.play();
+      await this.transition.run(async () => {
+        this.chapterPage.hide();
+        // Before the game starts, so that its own audio sync picks the Boulevard's music.
+        this.onChapterPage = false;
+        this.renderCareerState(state);
+        await this.enterGame(screens, state);
+      }, { fadeInMs: BOULEVARD_REVEAL_FADE_IN_MS });
+    } finally {
+      // Should anything have gone wrong on the way, do not leave the game silent.
+      if (this.onChapterPage) {
+        this.onChapterPage = false;
+        this.syncAudio();
+      }
+    }
   }
 
   /** Starts the game and resolves once the Boulevard has created its first frame, so a fade-in never shows a blank canvas.
@@ -521,6 +537,7 @@ export class AppShell {
   }
 
   private currentMood(): AudioMood {
+    if (this.onChapterPage) return 'silent';
     if (!this.inGame) return 'menu';
     const inside = ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'].some(
       (selector) => assertElement(selector, HTMLDialogElement).open,

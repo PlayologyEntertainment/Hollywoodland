@@ -115,8 +115,9 @@ describe('the Character Creator screen', () => {
     for (const removed of ['creator-skin-tones', 'data-cycler', 'creator-randomize']) expect(html, removed).not.toContain(removed);
   });
 
-  it('keeps the origin picker, the attributes, and the Back and Start Career buttons', () => {
+  it('keeps the origin picker, the attributes, and the Back and Start buttons', () => {
     for (const id of ['creator-origins', 'creator-attributes', 'creator-back', 'creator-start']) expect(html, id).toContain(`id="${id}"`);
+    expect(html).toMatch(/id="creator-start"[^>]*>Start<\/button>/);
   });
 
   it('shows the full-size portrait in the centre without a box, on the background image', () => {

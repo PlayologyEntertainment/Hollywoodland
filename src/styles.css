@@ -60,7 +60,7 @@ button {
 button:hover:not(:disabled) { border-color: var(--gold-bright); color: #fff; transform: translateY(-1px); }
 button:focus-visible, input:focus-visible, .skip-link:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 button:disabled { cursor: not-allowed; opacity: 0.45; }
-/* Art Deco marquee lettering for the main menu, header, footer and the creator's Back / Start Career buttons. Limelight has one
+/* Art Deco marquee lettering for the main menu, header, footer and the creator's Back / Start buttons. Limelight has one
    weight, so faux bold is off and a primary button stands out by colour and size instead. */
 .deco-label { font-family: var(--deco-font); font-weight: 400; font-synthesis: none; letter-spacing: .02em; }
 .deco-label.primary-button { color: #ffeec6; font-weight: 400; font-size: 1.06em; }
@@ -145,7 +145,7 @@ h1 {
 .splash-screen.activated .splash-presents,
 .splash-screen.activated .splash-enter { opacity: 0; pointer-events: none; }
 .splash-screen.activated .splash-art { animation: splash-zoom 1250ms cubic-bezier(.25, .1, .25, 1) forwards; }
-@keyframes splash-zoom { from { transform: scale(1); } to { transform: scale(1.7); } }
+@keyframes splash-zoom { from { transform: scale(1); } to { transform: scale(2.21); } }
 
 /* Black overlay behind every screen change (ScreenTransition): it sits above everything, including the splash, and while it is
    up it swallows clicks so a second press cannot start a second change. 400ms matches FADE_MS in ScreenTransition.ts. A
