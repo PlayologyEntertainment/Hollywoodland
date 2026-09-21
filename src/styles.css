@@ -43,6 +43,8 @@
   --splash-bg: #000;
   /* The corner radius of a button; the floating notices (the entrance prompt and the toast) use it too, so they match. */
   --button-radius: 0.25rem;
+  /* The green of a completed quest, as a red / green / blue triple so it can take an alpha. */
+  --complete-rgb: 143 209 158;
 }
 
 * { box-sizing: border-box; }
@@ -134,7 +136,8 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
   transform: translate(-50%, -50%); filter: drop-shadow(0 1.25rem 1.5rem rgb(0 0 0 / 55%)); text-align: center;
 }
 .title-panel[hidden] { display: none; }
-.drawer::before, dialog::before { position: absolute; inset: .5rem; border: 1px solid rgb(216 173 88 / 42%); content: ''; pointer-events: none; }
+/* Dialogs keep a fine inner frame. The Status panel does not: its content scrolls, and the frame cut across it. */
+dialog::before { position: absolute; inset: .5rem; border: 1px solid rgb(216 173 88 / 42%); content: ''; pointer-events: none; }
 .eyebrow, .build-label { margin: 0; color: var(--muted); font-family: Arial, sans-serif; font-size: .72em; letter-spacing: .19em; text-transform: uppercase; }
 h1 {
   margin: .12em 0 0; color: var(--gold-bright); font-family: var(--display-font);
@@ -271,6 +274,15 @@ h1 {
 }
 .objective-card strong { color: var(--gold-bright); font-size: 1.2em; }
 .objective-card small { margin-top: .3rem; color: var(--muted); }
+/* When the goal it shows has just been accomplished the card turns green, with a tick, for a few seconds (ObjectiveTracker) before it
+   moves on to the next goal. The tick is decoration, so it has empty alt text; the change is announced to screen readers separately. */
+.objective-card { transition: border-color .4s ease; }
+.objective-card.objective-complete {
+  border-left-color: rgb(var(--complete-rgb));
+  background: linear-gradient(90deg, rgb(10 24 15 / 90%), rgb(10 24 15 / 42%), transparent);
+}
+.objective-card.objective-complete strong, .objective-card.objective-complete .eyebrow { color: rgb(var(--complete-rgb)); }
+.objective-card.objective-complete strong::before { margin-right: .4em; content: '\2713'; content: '\2713' / ''; }
 
 /* The footer is a bar directly below the picture, the same height as the header: Wait at the left, the Playology logo at
    the very centre (a three-column grid, so it is centred whatever the buttons' widths), Menu at the right. */
@@ -298,7 +310,7 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
 .interaction-prompt { padding: .8rem 1.1rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(11 9 11 / 92%); box-shadow: 0 8px 30px #000; text-shadow: 0 2px 5px #000; }
 
 /* The Status panel starts below the header. Its title row stays put and only
-   the body scrolls (the panel itself does not, so its inner border stays fixed). */
+   the body scrolls (the panel itself does not). It has a single edge line, on its left. */
 .drawer {
   position: absolute; z-index: 8; top: var(--header-h); right: 0; bottom: 0; width: min(100%, 29rem); padding: 1.7rem 0 0;
   display: flex; flex-direction: column; border-left: 1px solid var(--gold); background: var(--panel); box-shadow: -1rem 0 3rem rgb(0 0 0 / 65%);
@@ -315,6 +327,12 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
 .drawer-scroll::-webkit-scrollbar-thumb { border-radius: .3rem; background: rgb(216 173 88 / 55%); }
 .drawer-heading h2 { margin: .25rem 0; color: var(--gold-bright); }
 .drawer-heading button { min-width: 2.75rem; padding: .25rem; font-size: 1.5rem; }
+/* The Status panel's Close button is a small square with the header buttons' hairline outline, not the big rounded one. */
+#close-status {
+  display: grid; place-items: center; width: 2rem; height: 2rem; min-width: 0; min-height: 0; padding: 0;
+  border: 1px solid rgb(216 173 88 / 55%); border-radius: 0; background: transparent; box-shadow: none; font-size: 1.15rem; line-height: 1;
+}
+#close-status:hover:not(:disabled) { border-color: var(--gold-bright); background: rgb(216 173 88 / 10%); transform: none; }
 dl div { display: flex; justify-content: space-between; padding: .8rem 0; border-bottom: 1px solid rgb(216 173 88 / 24%); }
 .flavor-copy, .privacy-note { color: var(--muted); font-style: italic; line-height: 1.55; }
 
@@ -322,6 +340,10 @@ dl div { display: flex; justify-content: space-between; padding: .8rem 0; border
 .status-quests h3, .status-relationships h3, .status-progression h3, .status-inventory h3 { margin: 0 0 .5rem; color: var(--gold-bright); font-size: 1rem; }
 .status-quests ul, .status-relationships ul, .status-inventory ul { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
 .status-quests li, .status-relationships li, .status-inventory li { padding: .5rem .7rem; border: 1px solid rgb(216 173 88 / 24%); font-size: .92rem; }
+/* A completed quest is green: green words and edge, a faint green wash and a tick. --complete is a soft green that sits with the
+   gold and teal; high contrast swaps it for a brighter one. */
+.status-quests li.quest-complete { border-color: rgb(var(--complete-rgb) / 55%); background: rgb(var(--complete-rgb) / 12%); color: rgb(var(--complete-rgb)); }
+.status-quests li.quest-complete::before { margin-right: .45em; content: '\2713'; content: '\2713' / ''; }
 .status-relationships li, .status-inventory li { display: grid; gap: .2rem; }
 .status-relationships li small, .status-inventory li small { color: var(--muted); }
 
@@ -545,7 +567,7 @@ body.film-effects-off .film-grain { display: none; }
 @keyframes grain-shift { 0% { transform: translate(-2%, 1%); } 50% { transform: translate(2%, -2%); } 100% { transform: translate(-1%, 2%); } }
 @keyframes exposure { 0%, 100% { opacity: .26; } 52% { opacity: .39; } 55% { opacity: .3; } }
 
-body.high-contrast { --ink: #fff; --muted: #fff; --gold: #ffe100; --gold-bright: #fff200; --panel: #000; --focus: #00e5ff; }
+body.high-contrast { --ink: #fff; --muted: #fff; --gold: #ffe100; --gold-bright: #fff200; --panel: #000; --focus: #00e5ff; --complete-rgb: 96 255 140; }
 body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
 
 /* Narrow windows have no room for the logo between the place and the buttons. */
