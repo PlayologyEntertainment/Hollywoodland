@@ -10,8 +10,13 @@ import { DEFAULT_TIME, type TimeState } from './TimeSystem';
 export interface IdentityState {
   readonly name: string;
   readonly originId: string;
+  /** Left over from the customisable creator; new careers always store 0. Kept so older saves stay valid. */
   readonly skinToneIndex: number;
+  /** Left over from the customisable creator; new careers always store an empty record. Kept so older saves stay valid. */
   readonly appearance: Readonly<Record<string, number>>;
+  /** Which ready-made character the player chose (see PlayerCharacters.ts). Optional so saves made before characters
+   * existed stay valid without a migration; a missing or unknown id means the default character. */
+  readonly characterId?: string;
 }
 
 export const DEFAULT_IDENTITY: IdentityState = Object.freeze({
@@ -101,7 +106,8 @@ function isIdentityState(value: unknown): value is IdentityState {
     typeof value.name === 'string' &&
     typeof value.originId === 'string' &&
     typeof value.skinToneIndex === 'number' &&
-    isRecord(value.appearance)
+    isRecord(value.appearance) &&
+    (value.characterId === undefined || typeof value.characterId === 'string')
   );
 }
 

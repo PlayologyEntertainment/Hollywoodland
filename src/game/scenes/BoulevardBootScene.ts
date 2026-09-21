@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 
 import { DEFAULT_BOULEVARD_MANIFEST, isBoulevardManifest } from '../BoulevardManifest';
 import { DEFAULT_WALK_CYCLE, isWalkCycle } from '../WalkCycle';
+import type { CareerState } from '../../domain/CareerState';
+import { getPlayerCharacter } from '../../domain/PlayerCharacters';
 
 /** Loads data/boulevard-manifest.json before BoulevardSpikeScene starts, so
  * the manifest's plane/prop paths are known before that scene's own
@@ -30,11 +32,15 @@ export class BoulevardBootScene extends Phaser.Scene {
       this.manifestCacheKey,
       `${import.meta.env.BASE_URL}data/boulevard-manifest.json?t=${Date.now()}`,
     );
-    // The walk-cycle numbers (frame size, stride, footprints) ship with the sheet.
+    // The walk-cycle numbers (frame size, stride, footprints) ship with the sheet, and each ready-made character has their
+    // own. The chosen one comes from the career state the game is starting with (none, or an old save, means the default).
+    const state = this.registry.get('initialCareerState') as CareerState | undefined;
+    const character = getPlayerCharacter(state?.identity.characterId);
+    this.registry.set('playerCharacterId', character.id);
     this.walkCycleCacheKey = `walk-cycle-${Date.now()}`;
     this.load.json(
       this.walkCycleCacheKey,
-      `${import.meta.env.BASE_URL}data/walk-cycle.json?t=${Date.now()}`,
+      `${import.meta.env.BASE_URL}${character.walkCycle}?t=${Date.now()}`,
     );
   }
 
@@ -51,7 +57,7 @@ export class BoulevardBootScene extends Phaser.Scene {
     this.cache.json.remove(this.walkCycleCacheKey);
     const walkCycle = isWalkCycle(loadedCycle) ? loadedCycle : DEFAULT_WALK_CYCLE;
     if (walkCycle !== loadedCycle) {
-      console.warn('[Boulevard] data/walk-cycle.json missing or invalid — using the built-in walk cycle.');
+      console.warn(`[Boulevard] ${getPlayerCharacter(this.registry.get('playerCharacterId') as string | undefined).walkCycle} missing or invalid — using the built-in walk cycle.`);
     }
     this.registry.set('walkCycle', walkCycle);
     this.scene.start('BoulevardSpikeScene');

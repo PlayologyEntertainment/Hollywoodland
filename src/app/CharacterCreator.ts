@@ -1,12 +1,12 @@
 import { ORIGINS, BASE_ATTRIBUTE_VALUE, MAX_ATTRIBUTE_VALUE, type AttributeKey, type Origin } from '../domain/Origins';
-import { DEFAULT_WALK_CYCLE, frameBackground, isWalkCycle, type WalkCycle } from '../game/WalkCycle';
+import { PLAYER_CHARACTERS, type PlayerCharacter, type PlayerCharacterId } from '../domain/PlayerCharacters';
 import { assertElement } from '../shared/assert';
 
 export interface CharacterChoices {
   readonly name: string;
   readonly originId: string;
-  readonly skinToneIndex: number;
-  readonly appearance: Readonly<Record<string, number>>;
+  /** Which ready-made character the player picked. */
+  readonly characterId: PlayerCharacterId;
 }
 
 const ATTRIBUTE_LABELS: Record<AttributeKey, string> = {
@@ -17,106 +17,88 @@ const ATTRIBUTE_LABELS: Record<AttributeKey, string> = {
   grit: 'Grit',
 };
 
-const SKIN_TONES: readonly string[] = ['#f5d3ab', '#e0b28c', '#c48a5e', '#8f5a34', '#5b3a22'];
-
-const CYCLER_OPTIONS: Readonly<Record<string, readonly string[]>> = {
-  face: ['Face 1', 'Face 2', 'Face 3'],
-  hair: ['Hair 1', 'Hair 2', 'Hair 3'],
-  eyes: ['Eyes 1', 'Eyes 2', 'Eyes 3'],
-  outfit: ['Outfit 1', 'Outfit 2', 'Outfit 3'],
-  hat: ['None', 'Fedora', 'Newsboy Cap'],
-  accessory: ['None', 'Pocket Watch', 'Scarf'],
-  voice: ['Voice 1', 'Voice 2', 'Voice 3'],
-};
-
-interface CyclerBinding {
-  readonly valueOutput: HTMLOutputElement;
-  readonly prevButton: HTMLButtonElement;
-  readonly nextButton: HTMLButtonElement;
-}
-
 /**
  * The Character Creator screen shown after "Enter Hollywood" and before the
- * Boulevard scene. Visual-only for this pass (per owner direction): choices
- * are collected and handed to onStartCareer, not yet persisted to a save
- * schema. Appearance cyclers (face/hair/eyes/outfit/hat/accessory/voice) are
- * fully interactive but don't yet change the live preview — there's only one
- * character sprite so far; the UI is ready for when more art arrives.
+ * Boulevard scene. The player types a name, picks one of six ready-made
+ * characters from the headshots on the left (the full-size portrait of the
+ * chosen one shows in the centre), and picks an origin on the right. The
+ * character decides the headshot, portrait and walk cycle only; the choices
+ * are collected and handed to onStartCareer.
  */
 export class CharacterCreator {
-  private skinToneIndex = 0;
+  private characterIndex = 0;
   private originIndex = 0;
-  private readonly cyclerIndices: Record<string, number> = Object.fromEntries(
-    Object.keys(CYCLER_OPTIONS).map((key) => [key, 0]),
-  );
-
-  /** Shows the walk sheet's standing frame as the creator portrait. */
-  private showPortrait(portrait: HTMLElement, cycle: WalkCycle): void {
-    const frame = frameBackground(cycle, cycle.idleFrame);
-    portrait.style.setProperty('--creator-portrait-src', `url(${import.meta.env.BASE_URL}${cycle.sheet})`);
-    portrait.style.setProperty('--creator-portrait-size', frame.size);
-    portrait.style.setProperty('--creator-portrait-pos', frame.position);
-    portrait.style.setProperty('--creator-portrait-aspect', `${cycle.frameWidth} / ${cycle.frameHeight}`);
-  }
 
   public mount(onStartCareer: (choices: CharacterChoices) => void, onBack: () => void): void {
     const nameInput = assertElement('#creator-name', HTMLInputElement);
-    const skinRow = assertElement('#creator-skin-tones', HTMLElement);
+    const characterGrid = assertElement('#creator-characters', HTMLElement);
     const originGrid = assertElement('#creator-origins', HTMLElement);
     const attributeList = assertElement('#creator-attributes', HTMLElement);
-    const portrait = assertElement('#creator-portrait', HTMLElement);
-    this.showPortrait(portrait, DEFAULT_WALK_CYCLE);
-    // The sheet's frame size and layout come from data/walk-cycle.json, which is
-    // swapped together with the sheet; the built-in numbers cover a missing file.
-    void fetch(`${import.meta.env.BASE_URL}data/walk-cycle.json`)
-      .then((response) => (response.ok ? (response.json() as Promise<unknown>) : null))
-      .then((loaded) => {
-        if (isWalkCycle(loaded)) this.showPortrait(portrait, loaded);
-      })
-      .catch(() => undefined);
+    const portrait = assertElement('#creator-portrait', HTMLImageElement);
 
-    this.buildSkinTones(skinRow);
+    this.buildCharacters(characterGrid, portrait);
+    this.showCharacter(characterGrid, portrait);
     this.buildOrigins(originGrid, attributeList);
     this.renderAttributes(attributeList);
-    const cyclers = this.buildCyclers();
 
-    assertElement('#creator-randomize', HTMLButtonElement).addEventListener('click', () => {
-      (skinRow.children[Math.floor(Math.random() * SKIN_TONES.length)] as HTMLButtonElement).click();
-      (originGrid.children[Math.floor(Math.random() * ORIGINS.length)] as HTMLButtonElement).click();
-      for (const [key, binding] of Object.entries(cyclers)) {
-        const optionCount = CYCLER_OPTIONS[key]?.length ?? 0;
-        const steps = Math.floor(Math.random() * optionCount);
-        for (let i = 0; i < steps; i += 1) binding.nextButton.click();
-      }
-    });
+    // Fetch the other portraits now, so switching characters does not wait on the network.
+    for (const character of PLAYER_CHARACTERS) {
+      new Image().src = `${import.meta.env.BASE_URL}${character.portrait}`;
+      new Image().src = `${import.meta.env.BASE_URL}${character.reflection}`;
+    }
 
     assertElement('#creator-back', HTMLButtonElement).addEventListener('click', onBack);
     assertElement('#creator-start', HTMLButtonElement).addEventListener('click', () => {
       onStartCareer({
         name: nameInput.value.trim(),
         originId: this.getCurrentOrigin().id,
-        skinToneIndex: this.skinToneIndex,
-        appearance: { ...this.cyclerIndices },
+        characterId: this.getCurrentCharacter().id,
       });
     });
   }
 
-  private buildSkinTones(skinRow: HTMLElement): void {
-    SKIN_TONES.forEach((color, index) => {
+  /** The six headshots, as a radio group: click or press an arrow key to choose. */
+  private buildCharacters(characterGrid: HTMLElement, portrait: HTMLImageElement): void {
+    const choose = (index: number, focus: boolean): void => {
+      this.characterIndex = index;
+      this.showCharacter(characterGrid, portrait);
+      if (focus) (characterGrid.children[index] as HTMLElement | undefined)?.focus();
+    };
+    PLAYER_CHARACTERS.forEach((character, index) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'swatch';
-      button.style.background = color;
+      button.className = 'character-choice';
       button.setAttribute('role', 'radio');
-      button.setAttribute('aria-checked', String(index === this.skinToneIndex));
-      button.setAttribute('aria-label', `Skin tone ${index + 1}`);
-      button.addEventListener('click', () => {
-        this.skinToneIndex = index;
-        for (const child of Array.from(skinRow.children)) child.setAttribute('aria-checked', 'false');
-        button.setAttribute('aria-checked', 'true');
+      button.setAttribute('aria-label', character.label);
+      const image = document.createElement('img');
+      image.src = `${import.meta.env.BASE_URL}${character.headshot}`;
+      image.alt = '';
+      image.draggable = false;
+      button.appendChild(image);
+      button.addEventListener('click', () => choose(index, false));
+      button.addEventListener('keydown', (event) => {
+        const last = PLAYER_CHARACTERS.length - 1;
+        const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
+        if (step === 0) return;
+        event.preventDefault();
+        choose(Math.min(last, Math.max(0, index + step)), true);
       });
-      skinRow.appendChild(button);
+      characterGrid.appendChild(button);
     });
+  }
+
+  /** Marks the chosen headshot and shows that character's full-size portrait. Only the chosen headshot is in the tab order,
+   * as in any radio group. */
+  private showCharacter(characterGrid: HTMLElement, portrait: HTMLImageElement): void {
+    const chosen = this.getCurrentCharacter();
+    Array.from(characterGrid.children).forEach((child, index) => {
+      const selected = index === this.characterIndex;
+      child.setAttribute('aria-checked', String(selected));
+      child.setAttribute('tabindex', selected ? '0' : '-1');
+    });
+    portrait.src = `${import.meta.env.BASE_URL}${chosen.portrait}`;
+    portrait.alt = chosen.label;
+    assertElement('#creator-reflection', HTMLImageElement).src = `${import.meta.env.BASE_URL}${chosen.reflection}`;
   }
 
   private buildOrigins(originGrid: HTMLElement, attributeList: HTMLElement): void {
@@ -141,24 +123,10 @@ export class CharacterCreator {
     });
   }
 
-  private buildCyclers(): Record<string, CyclerBinding> {
-    const bindings: Record<string, CyclerBinding> = {};
-    for (const [key, options] of Object.entries(CYCLER_OPTIONS)) {
-      const row = document.querySelector(`[data-cycler="${key}"]`);
-      if (row === null) continue;
-      const valueOutput = row.querySelector('.cycler-value') as HTMLOutputElement;
-      const prevButton = row.querySelector('.cycler-prev') as HTMLButtonElement;
-      const nextButton = row.querySelector('.cycler-next') as HTMLButtonElement;
-      const setIndex = (index: number): void => {
-        const normalized = (index + options.length) % options.length;
-        this.cyclerIndices[key] = normalized;
-        valueOutput.value = options[normalized] ?? '';
-      };
-      prevButton.addEventListener('click', () => setIndex((this.cyclerIndices[key] ?? 0) - 1));
-      nextButton.addEventListener('click', () => setIndex((this.cyclerIndices[key] ?? 0) + 1));
-      bindings[key] = { valueOutput, prevButton, nextButton };
-    }
-    return bindings;
+  private getCurrentCharacter(): PlayerCharacter {
+    const character = PLAYER_CHARACTERS[this.characterIndex];
+    if (character === undefined) throw new Error(`Invalid character index: ${this.characterIndex}`);
+    return character;
   }
 
   private getCurrentOrigin(): Origin {

@@ -6,7 +6,7 @@ Music and ambience are played by a small system in `src/audio/`, separate from P
 
 | Where the player is | Music | Street ambience |
 |---|---|---|
-| Splash screen (before Enter) | nothing | no |
+| Splash screen (before Play) | nothing | no |
 | Main Menu, Character Creator | `Hollywoodland_Studio_Music` | no |
 | Walking the Boulevard | `Hollywoodland_Main_Boulevard_Music` | **yes** (`Hollywoodland_Outdoor_Background_SFX`) |
 | Inside a building (Bellhaven Rooms, Sunset Casting Exchange, The Gilded Spoon, The Silver Thimble, The Klieg Light, The Celestial Palace) | `Hollywoodland_Building_A_Music` or `_B_`, chosen at random each time | no |
@@ -21,7 +21,7 @@ The files are in `public/assets/audio/`. Every change of music is a **1.0 s cros
 - `AudioDirector.ts`: `setMood(mood)` states the wanted mood and the director starts the cross-fade straight away; nothing waits on anything. Changing your mind mid-fade just starts the next cross-fade from wherever the sound is now, so quick trips in and out of buildings cannot stack tracks or leave silence. A mood requested before sound is allowed is remembered and applied on unlock.
 - `WebAudioEngine.ts`: the browser side. Each track is a streaming `<audio>` element routed through Web Audio gain nodes (fade gain, then a per-channel volume gain). `crossfadeMusic` fades down everything audible except the incoming track while the new one fades up, and stops a track once it is silent. Gain nodes are used so fades are smooth and volume works on iOS Safari, which ignores `element.volume`. MP3s are streamed, not decoded whole into memory.
 - `src/app/AppShell.ts` sets the mood: `startGame` (Boulevard), the Menu button (menu), and each building or studio entry (`openDialogue`). The player counts as inside a place until every dialog belonging to it (interaction, Home Menu, audition) has closed, checked 60 ms later so a hand-over between dialogs does not flick back to street music.
-- `src/main.ts` creates the director, unlocks sound on the player's first click or key press, and starts the Main Menu music from the splash screen's Enter click.
+- `src/main.ts` creates the director, unlocks sound on the player's first click or key press, and starts the Main Menu music from the splash screen's Play click.
 
 ## Volume settings
 
@@ -29,7 +29,7 @@ Settings & Accessibility has **Music volume** and **Ambience volume** sliders, e
 
 ## Browser rules
 
-Browsers only allow sound after the player interacts with the page. Nothing plays before the first click or key press; the splash screen's Enter is normally that. The Studio track's element is created at page load so it buffers during the splash, and the street tracks are fetched once sound is unlocked. A file that fails to load or play is logged once and skipped; the game carries on silently. Sound is suspended while the tab is in the background.
+Browsers only allow sound after the player interacts with the page. Nothing plays before the first click or key press; the splash screen's Play button is normally that. The Studio track's element is created at page load so it buffers during the splash, and the street tracks are fetched once sound is unlocked. A file that fails to load or play is logged once and skipped; the game carries on silently. Sound is suspended while the tab is in the background.
 
 ## Adding to it
 

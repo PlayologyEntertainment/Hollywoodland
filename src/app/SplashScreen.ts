@@ -9,8 +9,8 @@ const ZOOM_MS = 700;
 
 /**
  * The studio-logo-style splash shown before the Main Menu: Playology
- * medallion → "Presents" → the Hollywoodland splash art → an Enter button.
- * Clicking Enter zooms the splash art while the medallion/presents/button
+ * medallion → "Presents" → the Hollywoodland splash art → a Play button.
+ * Clicking Play zooms the splash art while the medallion/presents/button
  * drop away, then fades the whole screen out to reveal the Main Menu
  * underneath.
  */
