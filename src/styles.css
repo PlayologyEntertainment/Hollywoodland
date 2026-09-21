@@ -160,7 +160,6 @@ h1 {
 .splash-content { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; max-width: 90vw; }
 .splash-medallion {
   height: 88px; width: auto; transition: opacity .3s ease;
-  filter: drop-shadow(0 0 10px rgb(255 210 120 / 35%)) drop-shadow(0 0 24px rgb(255 175 60 / 20%));
 }
 .splash-presents {
   margin: 0; color: var(--muted); font-family: Arial, sans-serif; font-size: .8rem; letter-spacing: .24em;

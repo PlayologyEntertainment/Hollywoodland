@@ -243,7 +243,7 @@ describe('the picture, the stage, and the footer below it', () => {
     expect(wait).toBeGreaterThan(-1);
     expect(logo).toBeGreaterThan(wait);
     expect(menu).toBeGreaterThan(logo);
-    expect(footer).toContain('src="/assets/ui/playology-logo.svg"');
+    expect(footer).toContain('src="/assets/ui/playology-logo.webp"');
     expect(footer).toContain('alt="Playology Entertainment"');
     // A grid with equal columns either side of the logo keeps it dead centre whatever the buttons' widths.
     expect(rule('.game-footer')).toContain('grid-template-columns: 1fr auto 1fr');
