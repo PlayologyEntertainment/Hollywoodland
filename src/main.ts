@@ -1,4 +1,6 @@
 import { AppShell } from './app/AppShell';
+import { AudioDirector } from './audio/AudioDirector';
+import { WebAudioEngine } from './audio/WebAudioEngine';
 import { SplashScreen } from './app/SplashScreen';
 import { NoOpAnalyticsClient, type AnalyticsEvent } from './analytics/Analytics';
 import { createDefaultCareerState, type CareerState } from './domain/CareerState';
@@ -14,6 +16,11 @@ const saveRepository = new IndexedDbSaveRepository();
 const domainEvents = new DomainEventBus();
 let settings = settingsRepository.load();
 const analytics = new NoOpAnalyticsClient();
+const audio = new AudioDirector(new WebAudioEngine(import.meta.env.BASE_URL));
+audio.setSettings(settings);
+// Browsers only allow sound after the player has interacted with the page. Enter on the splash screen is the first
+// interaction and starts the Main Menu music; this also covers a player who reaches the menus some other way.
+for (const type of ['pointerdown', 'keydown'] as const) window.addEventListener(type, () => audio.unlock());
 /** The player's analytics setting is the sole consent gate — no event ever
  * reaches the client (currently a no-op; see docs/PRODUCTION_ROADMAP.md
  * Phase 0) while they have it turned off. */
@@ -68,10 +75,12 @@ const makeSave = (): SaveEnvelope<CareerState> => ({
 
 const shell = new AppShell({
   settings,
+  audio,
   domainEvents,
   onSettingsChanged: (nextSettings) => {
     settings = nextSettings;
     settingsRepository.save(nextSettings);
+    audio.setSettings(nextSettings);
     track({ name: 'settings_changed' });
     if (game !== undefined) {
       game.registry.set('settings', nextSettings);
@@ -102,7 +111,10 @@ const shell = new AppShell({
 
 shell.mount();
 void shell.refreshContinue();
-new SplashScreen().mount();
+new SplashScreen().mount(() => {
+  audio.unlock();
+  audio.setMood('menu');
+});
 
 window.addEventListener('beforeunload', () => {
   input.destroy();

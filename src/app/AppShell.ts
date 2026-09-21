@@ -1,6 +1,8 @@
 import type Phaser from 'phaser';
 
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
+import { moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
+import type { AudioController } from '../audio/AudioDirector';
 import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
@@ -100,6 +102,8 @@ interface MenuScreens {
 
 interface AppShellOptions {
   readonly settings: GameSettings;
+  /** Sets what music and ambience should be playing; the shell only says where the player is. */
+  readonly audio: AudioController;
   readonly domainEvents: DomainEventBus;
   readonly onSettingsChanged: (settings: GameSettings) => void;
   /** Creates the Phaser game on first call (deferred until the player
@@ -205,6 +209,10 @@ export class AppShell {
   private pendingAwayResolution: AssignmentResolution | undefined;
   private activeAudition: AuditionDefinition | undefined;
   private auditionChoices: AuditionChoices = {};
+  /** Whether the player is in the menus or in the game, and which building or studio place they are inside, if any. */
+  private inGame = false;
+  private place: PlaceKind | undefined;
+  private audioSyncTimer = 0;
 
   public constructor(private readonly options: AppShellOptions) {
     this.settings = options.settings;
@@ -277,10 +285,12 @@ export class AppShell {
     assertElement('#interaction-dialog', HTMLDialogElement).addEventListener('close', () => {
       this.activeDialogueGraph = undefined;
       this.activeDialogueNodeId = undefined;
+      this.syncAudio();
     });
     assertElement('#audition-dialog', HTMLDialogElement).addEventListener('close', () => {
       this.activeAudition = undefined;
       this.auditionChoices = {};
+      this.syncAudio();
     });
     assertElement('#audition-form', HTMLFormElement).addEventListener('submit', (event) => this.submitAudition(event));
     assertElement('#audition-continue', HTMLButtonElement).addEventListener('click', () => {
@@ -292,6 +302,7 @@ export class AppShell {
     });
     assertElement('#home-hub-close', HTMLButtonElement).addEventListener('click', () => {
       assertElement('#home-hub-dialog', HTMLDialogElement).close();
+      this.syncAudio();
     });
     assertElement('#home-hub-upgrade-housing', HTMLButtonElement).addEventListener('click', () => {
       this.options.domainEvents.emit('housing-upgrade-requested', undefined);
@@ -327,6 +338,9 @@ export class AppShell {
       screens.menuBackdrop.hidden = false;
       screens.statusBar.hidden = true;
       this.options.onStop();
+      this.inGame = false;
+      this.place = undefined;
+      this.syncAudio();
       newCareer.focus();
     });
 
@@ -335,12 +349,25 @@ export class AppShell {
       settingsDialog.showModal();
     });
     settingsDialog.addEventListener('close', () => {
-      if (settingsDialog.returnValue !== 'confirm') return;
+      if (settingsDialog.returnValue !== 'confirm') {
+        this.options.audio.setSettings(this.settings); // undo any volume previewed while the dialog was open
+        return;
+      }
       this.settings = this.readSettingsForm();
       this.applySettings(this.settings);
       this.options.onSettingsChanged(this.settings);
       this.toast('Settings saved');
     });
+    for (const id of ['music-volume', 'ambience-volume'] as const) {
+      assertElement(`#${id}`, HTMLInputElement).addEventListener('input', (event) => {
+        const input = event.currentTarget as HTMLInputElement;
+        assertElement(`#${id}-output`, HTMLOutputElement).value = `${input.value}%`;
+        this.options.audio.setSettings(this.readSettingsForm());
+      });
+    }
+    for (const id of ['music-muted', 'ambience-muted'] as const) {
+      assertElement(`#${id}`, HTMLInputElement).addEventListener('change', () => this.options.audio.setSettings(this.readSettingsForm()));
+    }
     assertElement('#text-scale', HTMLInputElement).addEventListener('input', (event) => {
       const input = event.currentTarget as HTMLInputElement;
       assertElement('#text-scale-output', HTMLOutputElement).value = `${input.value}%`;
@@ -397,6 +424,9 @@ export class AppShell {
     const isFirstStart = this.game === undefined;
     this.game = this.options.onStart(state);
     if (isFirstStart) this.startFpsMeter(this.game);
+    this.inGame = true;
+    this.place = undefined;
+    this.syncAudio();
     this.announce('Hollywood Boulevard. Use A and D or arrow keys to move. Press E near the casting office.');
   }
 
@@ -411,12 +441,32 @@ export class AppShell {
   }
 
   private openDialogue(graph: DialogueGraph, location: string, locationId: string): void {
+    this.place = placeForLocation(locationId) ?? this.place;
     this.activeDialogueGraph = graph;
     this.activeDialogueNodeId = graph.rootNodeId;
     assertElement('#dialogue-location', HTMLElement).textContent = location;
     this.applySceneArt(locationId);
     this.renderDialogueNode();
     assertElement('#interaction-dialog', HTMLDialogElement).showModal();
+    this.syncAudio();
+  }
+
+  /** Where the player is, for the music: the menus, out on the Boulevard, or inside a building or studio place. The player
+   * is inside from the moment they enter until every dialog belonging to that place has closed. That check runs a moment
+   * later, so a place that hands over to another dialog (the landlady's chat to the Home Menu, a dialogue to an audition)
+   * does not flicker back to the street music in between. */
+  private syncAudio(): void {
+    window.clearTimeout(this.audioSyncTimer);
+    this.audioSyncTimer = window.setTimeout(() => this.options.audio.setMood(this.currentMood()), 60);
+  }
+
+  private currentMood(): AudioMood {
+    if (!this.inGame) return 'menu';
+    const inside = ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'].some(
+      (selector) => assertElement(selector, HTMLDialogElement).open,
+    );
+    if (!inside) this.place = undefined;
+    return this.place === undefined ? 'boulevard' : moodForPlace(this.place);
   }
 
   /** Toggles the visual-novel scene layout (background + overlaid character
@@ -857,6 +907,14 @@ export class AppShell {
     assertElement('#reduced-motion', HTMLInputElement).checked = this.settings.reducedMotion;
     assertElement('#film-effects', HTMLInputElement).checked = this.settings.filmEffects;
     assertElement('#analytics-enabled', HTMLInputElement).checked = this.settings.analyticsEnabled;
+    const music = Math.round(this.settings.musicVolume * 100);
+    const ambience = Math.round(this.settings.ambienceVolume * 100);
+    assertElement('#music-volume', HTMLInputElement).value = String(music);
+    assertElement('#music-volume-output', HTMLOutputElement).value = `${music}%`;
+    assertElement('#music-muted', HTMLInputElement).checked = this.settings.musicMuted;
+    assertElement('#ambience-volume', HTMLInputElement).value = String(ambience);
+    assertElement('#ambience-volume-output', HTMLOutputElement).value = `${ambience}%`;
+    assertElement('#ambience-muted', HTMLInputElement).checked = this.settings.ambienceMuted;
   }
 
   private readSettingsForm(): GameSettings {
@@ -866,6 +924,10 @@ export class AppShell {
       reducedMotion: assertElement('#reduced-motion', HTMLInputElement).checked,
       filmEffects: assertElement('#film-effects', HTMLInputElement).checked,
       analyticsEnabled: assertElement('#analytics-enabled', HTMLInputElement).checked,
+      musicVolume: Number(assertElement('#music-volume', HTMLInputElement).value) / 100,
+      musicMuted: assertElement('#music-muted', HTMLInputElement).checked,
+      ambienceVolume: Number(assertElement('#ambience-volume', HTMLInputElement).value) / 100,
+      ambienceMuted: assertElement('#ambience-muted', HTMLInputElement).checked,
     };
   }
 
