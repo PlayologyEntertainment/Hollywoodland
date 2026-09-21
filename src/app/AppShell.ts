@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
+import { FADE_MS, ScreenTransition } from './ScreenTransition';
 import { moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
 import type { AudioController } from '../audio/AudioDirector';
 import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
@@ -93,6 +94,13 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
  * lobby is the landlady's scene, above). */
 const HOME_HUB_BACKGROUND = assetUrl('assets/locations/boarding-house.webp');
 
+/** The most a fade will stay black waiting for the Boulevard to report it has started, so a scene that never does cannot
+ * strand the player on a black screen. */
+const BOULEVARD_READY_TIMEOUT_MS = 8000;
+
+/** The reveal of the Boulevard after the chapter title page lingers: twice as long as the usual fade in. */
+const BOULEVARD_REVEAL_FADE_IN_MS = FADE_MS * 2;
+
 interface MenuScreens {
   readonly titlePanel: HTMLElement;
   readonly playHud: HTMLElement;
@@ -111,6 +119,8 @@ interface AppShellOptions {
   readonly onStart: (state?: CareerState) => Phaser.Game;
   readonly onStop: () => void;
   readonly onSave: () => Promise<void>;
+  /** Saves the career to its own slot, apart from the manual save; called as the player leaves the game for the Main Menu. */
+  readonly onAutosave: () => Promise<void>;
   readonly onLoad: () => Promise<CareerState | undefined>;
   readonly onExport: () => string;
   readonly onImport: (raw: string) => Promise<CareerState>;
@@ -200,6 +210,7 @@ export class AppShell {
   private fpsTimer = 0;
   private game: Phaser.Game | undefined;
   private syncHeaderHeight: () => void = () => undefined;
+  private transition!: ScreenTransition;
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
   private activeDialogueNodeId: string | undefined;
@@ -227,6 +238,7 @@ export class AppShell {
       statusBar: assertElement('#status-bar', HTMLElement),
     };
     this.trackHeaderHeight(screens.statusBar);
+    this.transition = new ScreenTransition(assertElement('#screen-fade', HTMLElement));
     const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
@@ -236,8 +248,7 @@ export class AppShell {
     const fileInput = assertElement('#save-file-input', HTMLInputElement);
 
     this.options.domainEvents.on('interaction-proximity-changed', ({ visible, label }) => {
-      assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
-      assertElement('#interaction-prompt-label', HTMLElement).textContent = label;
+      this.setInteractionPrompt(visible, label);
     });
     this.options.domainEvents.on('casting-office-entered', () => {
       this.openDialogue(CASTING_OFFICE_DIALOGUE, 'Sunset Casting Exchange', 'casting-office');
@@ -309,39 +320,51 @@ export class AppShell {
     });
 
     newCareer.addEventListener('click', () => {
-      screens.titlePanel.hidden = true;
-      screens.menuBackdrop.hidden = true;
-      characterCreator.hidden = false;
+      void this.transition.run(() => {
+        screens.titlePanel.hidden = true;
+        screens.menuBackdrop.hidden = true;
+        characterCreator.hidden = false;
+      });
     });
     new CharacterCreator().mount(
-      (choices) => {
-        characterCreator.hidden = true;
-        const state = this.buildInitialState(choices);
-        this.renderCareerState(state);
-        this.startGame(screens, state);
-      },
+      (choices) => void this.startNewCareer(choices, screens, characterCreator),
       () => {
-        characterCreator.hidden = true;
-        screens.titlePanel.hidden = false;
-        screens.menuBackdrop.hidden = false;
+        void this.transition.run(() => {
+          characterCreator.hidden = true;
+          screens.titlePanel.hidden = false;
+          screens.menuBackdrop.hidden = false;
+          newCareer.focus();
+        });
       },
     );
+    // A player still holding Enter or Space from pressing Start Career would otherwise repeat straight through the title page.
+    assertElement('#chapter-continue', HTMLButtonElement).addEventListener('keydown', (event) => {
+      if (event.repeat) event.preventDefault();
+    });
     continueCareer.addEventListener('click', async () => {
+      if (this.transition.isRunning) return;
       const state = await this.options.onLoad();
-      if (state !== undefined) this.renderCareerState(state);
-      this.startGame(screens, state);
+      await this.transition.run(async () => {
+        if (state !== undefined) this.renderCareerState(state);
+        await this.enterGame(screens, state);
+      });
       this.toast('Career restored');
     });
     assertElement('#return-menu', HTMLButtonElement).addEventListener('click', () => {
-      screens.playHud.hidden = true;
-      screens.titlePanel.hidden = false;
-      screens.menuBackdrop.hidden = false;
-      screens.statusBar.hidden = true;
-      this.options.onStop();
-      this.inGame = false;
-      this.place = undefined;
-      this.syncAudio();
-      newCareer.focus();
+      void this.transition.run(async () => {
+        await this.autosave();
+        // The Boulevard only reports when the prompt changes, so nothing else would take it down once the player has left.
+        this.setInteractionPrompt(false, '');
+        screens.playHud.hidden = true;
+        screens.titlePanel.hidden = false;
+        screens.menuBackdrop.hidden = false;
+        screens.statusBar.hidden = true;
+        this.options.onStop();
+        this.inGame = false;
+        this.place = undefined;
+        this.syncAudio();
+        newCareer.focus();
+      });
     });
 
     assertElement('#open-settings', HTMLButtonElement).addEventListener('click', () => {
@@ -412,6 +435,45 @@ export class AppShell {
     new ResizeObserver(sync).observe(header);
     this.syncHeaderHeight = sync;
     sync();
+  }
+
+  /** Start Career: dips through black to the Chapter 1 title page, waits for the player to dismiss it, then dips through
+   * black again into the Boulevard. The Boulevard is only started under that second black screen, so its input and music
+   * stay off while the page is up. */
+  private async startNewCareer(choices: CharacterChoices, screens: MenuScreens, characterCreator: HTMLElement): Promise<void> {
+    const state = this.buildInitialState(choices);
+    const chapterTitle = assertElement('#chapter-title', HTMLElement);
+    const shown = await this.transition.run(() => {
+      characterCreator.hidden = true;
+      chapterTitle.hidden = false;
+      assertElement('#chapter-continue', HTMLButtonElement).focus();
+    });
+    if (!shown) return;
+    // A click anywhere on the page, including its button, moves on; Enter and Space work through the focused button.
+    await new Promise<void>((resolve) => chapterTitle.addEventListener('click', () => resolve(), { once: true }));
+    await this.transition.run(async () => {
+      chapterTitle.hidden = true;
+      this.renderCareerState(state);
+      await this.enterGame(screens, state);
+    }, { fadeInMs: BOULEVARD_REVEAL_FADE_IN_MS });
+  }
+
+  /** Starts the game and resolves once the Boulevard has created its first frame, so a fade-in never shows a blank canvas.
+   * The scene announces itself by publishing the career state as it starts. */
+  private async enterGame(screens: MenuScreens, state?: CareerState): Promise<void> {
+    const ready = new Promise<void>((resolve) => {
+      const timeout = window.setTimeout(done, BOULEVARD_READY_TIMEOUT_MS);
+      const unsubscribe = this.options.domainEvents.on('career-state-changed', done);
+      function done(): void {
+        window.clearTimeout(timeout);
+        unsubscribe();
+        resolve();
+      }
+    });
+    this.startGame(screens, state);
+    await ready;
+    // The scene draws its first frame right after create(), so wait one frame for it to be on the canvas.
+    await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
   }
 
   private startGame(screens: MenuScreens, state?: CareerState): void {
@@ -839,6 +901,21 @@ export class AppShell {
     }
   }
 
+  private setInteractionPrompt(visible: boolean, label: string): void {
+    assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
+    assertElement('#interaction-prompt-label', HTMLElement).textContent = label;
+  }
+
+  /** Saves where the player is as they head back to the Main Menu, and switches Continue on so it can resume there. */
+  private async autosave(): Promise<void> {
+    try {
+      await this.options.onAutosave();
+      await this.refreshContinue();
+    } catch {
+      this.toast('Autosave unavailable — use Save or Export before closing');
+    }
+  }
+
   private exportSave(): void {
     const blob = new Blob([this.options.onExport()], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -856,8 +933,10 @@ export class AppShell {
     try {
       const state = await this.options.onImport(await file.text());
       await this.refreshContinue();
-      this.renderCareerState(state);
-      this.startGame(screens, state);
+      await this.transition.run(async () => {
+        this.renderCareerState(state);
+        await this.enterGame(screens, state);
+      });
       this.toast('Save imported and verified');
     } catch (error) {
       this.toast(error instanceof Error ? error.message : 'Save import failed');

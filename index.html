@@ -89,6 +89,17 @@
           </footer>
         </section>
 
+        <!-- Placeholder: the real Chapter 1 title page and introduction are designed in a later pass. -->
+        <section id="chapter-title" class="chapter-title" aria-labelledby="chapter-title-heading" hidden>
+          <div class="chapter-title-body">
+            <p class="chapter-number">Chapter 1</p>
+            <h2 id="chapter-title-heading" class="chapter-name">Chapter Title</h2>
+            <p class="chapter-intro">Placeholder introduction. A few lines setting the scene for the player's first days in Hollywood will go here.</p>
+            <button id="chapter-continue" class="primary-button deco-label" type="button">Continue</button>
+            <p class="chapter-hint">Click anywhere or press Enter to continue</p>
+          </div>
+        </section>
+
         <section id="play-hud" class="play-hud" aria-label="Gameplay controls" hidden>
           <div class="objective-card">
             <span class="eyebrow">First objective</span>
@@ -227,6 +238,7 @@
         </dialog>
 
         <input id="save-file-input" type="file" accept="application/json,.json" hidden />
+        <div id="screen-fade" class="screen-fade" aria-hidden="true"></div>
         <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
         <div id="announcer" class="sr-only" aria-live="polite"></div>
       </section>

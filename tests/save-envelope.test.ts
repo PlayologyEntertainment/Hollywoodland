@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createDefaultCareerState } from '../src/domain/CareerState';
-import { migrateSaveEnvelope, parseSave, SAVE_SCHEMA_VERSION, serializeSave, type SaveEnvelope } from '../src/save/SaveEnvelope';
+import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, SAVE_SCHEMA_VERSION, serializeSave, type SaveEnvelope } from '../src/save/SaveEnvelope';
 import type { CareerState } from '../src/domain/CareerState';
 
 const validSave: SaveEnvelope<CareerState> = {
@@ -13,6 +13,39 @@ const validSave: SaveEnvelope<CareerState> = {
   playtimeSeconds: 90,
   state: createDefaultCareerState(),
 };
+
+describe('newestSave', () => {
+  const at = (saveId: string, savedAt: string): SaveEnvelope<CareerState> => ({ ...validSave, saveId, savedAt });
+
+  it('gives the autosave when it is newer than the manual save, and the manual save when it is newer', () => {
+    const manual = at(MANUAL_SAVE_ID, '2026-09-20T10:00:00.000Z');
+    const autosave = at(AUTOSAVE_ID, '2026-09-21T10:00:00.000Z');
+    expect(newestSave([manual, autosave])).toBe(autosave);
+    expect(newestSave([autosave, at(MANUAL_SAVE_ID, '2026-09-22T10:00:00.000Z')])?.saveId).toBe(MANUAL_SAVE_ID);
+  });
+
+  it('uses whichever save exists when the other slot is empty', () => {
+    const autosave = at(AUTOSAVE_ID, '2026-09-21T10:00:00.000Z');
+    expect(newestSave([undefined, autosave])).toBe(autosave);
+    expect(newestSave([autosave, undefined])).toBe(autosave);
+  });
+
+  it('gives nothing when there are no saves, so Continue stays off', () => {
+    expect(newestSave([undefined, undefined])).toBeUndefined();
+    expect(newestSave([])).toBeUndefined();
+  });
+
+  it('treats an unreadable date as the oldest', () => {
+    const broken = at(MANUAL_SAVE_ID, 'not a date');
+    const autosave = at(AUTOSAVE_ID, '2026-09-21T10:00:00.000Z');
+    expect(newestSave([broken, autosave])).toBe(autosave);
+    expect(newestSave([autosave, broken])).toBe(autosave);
+  });
+
+  it('keeps the two slots distinct', () => {
+    expect(AUTOSAVE_ID).not.toBe(MANUAL_SAVE_ID);
+  });
+});
 
 describe('save envelope', () => {
   it('round-trips valid data', () => { expect(parseSave(serializeSave(validSave))).toEqual(validSave); });

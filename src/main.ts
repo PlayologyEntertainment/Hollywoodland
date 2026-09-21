@@ -8,7 +8,7 @@ import { DomainEventBus } from './domain/DomainEventBus';
 import { createGame } from './game/createGame';
 import { InputController } from './input/InputController';
 import { IndexedDbSaveRepository } from './save/IndexedDbSaveRepository';
-import { migrateSaveEnvelope, parseSave, SAVE_SCHEMA_VERSION, serializeSave, type SaveEnvelope } from './save/SaveEnvelope';
+import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, SAVE_SCHEMA_VERSION, serializeSave, type SaveEnvelope } from './save/SaveEnvelope';
 import { BrowserSettingsRepository } from './settings/SettingsRepository';
 
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
@@ -63,11 +63,11 @@ function ensureGame(initialState?: CareerState): ReturnType<typeof createGame> {
   return game;
 }
 
-const makeSave = (): SaveEnvelope<CareerState> => ({
+const makeSave = (saveId: string = MANUAL_SAVE_ID, label = 'Hollywood Boulevard'): SaveEnvelope<CareerState> => ({
   schemaVersion: SAVE_SCHEMA_VERSION,
   contentVersion: 'phase-2-core-systems',
-  saveId: 'phase-1-manual',
-  label: 'Hollywood Boulevard',
+  saveId,
+  label,
   savedAt: new Date().toISOString(),
   playtimeSeconds: Math.round((performance.now() - startedAt) / 1000),
   state: latestState,
@@ -97,13 +97,16 @@ const shell = new AppShell({
   },
   onStop: () => input.setGameplayActive(false),
   onSave: async () => { await saveRepository.put(makeSave()); },
+  onAutosave: async () => { await saveRepository.put(makeSave(AUTOSAVE_ID, 'Autosave')); },
+  // Continue resumes whichever of the manual save and the autosave is newer.
   onLoad: async () => {
-    const save = await saveRepository.get('phase-1-manual');
+    const save = newestSave(await Promise.all([saveRepository.get(MANUAL_SAVE_ID), saveRepository.get(AUTOSAVE_ID)]));
     return save === undefined ? undefined : migrateSaveEnvelope(save).state;
   },
   onExport: () => serializeSave(makeSave()),
   onImport: async (raw) => {
-    const save = parseSave(raw);
+    // Stamped as saved now, so Continue treats the import as the latest save rather than an older autosave outranking it.
+    const save = { ...parseSave(raw), savedAt: new Date().toISOString() };
     await saveRepository.put(save);
     return save.state;
   },
