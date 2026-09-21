@@ -38,6 +38,6 @@ Browsers only allow sound after the player interacts with the page. Nothing play
 
 ## Known limits
 
-- Loops are the raw MP3 files, so a very short gap at the loop point is possible; it has not been checked by ear.
-- Provenance and license notes for the five tracks are not recorded in the repo yet (`docs/CONTENT_AND_ASSET_PIPELINE.md` section 7 asks for original or licensed music).
+- The tracks loop as raw MP3 files. The owner checked the loop points by ear on 2026-09-20 and they are clean.
+- The tracks are free AI-generated MP3s from Pixabay (per the owner). What is recorded, and what still needs saving before release (track page URLs, the license terms that applied, a loudness check), is in `docs/AUDIO_PROVENANCE.md`.
 - Phaser creates its own unused audio context; this system deliberately does not use Phaser's sound manager.
