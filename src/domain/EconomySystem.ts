@@ -4,8 +4,8 @@ export interface ResourcesState {
   readonly reputation: number;
 }
 
-const MAX_ENERGY = 100;
-const MAX_REPUTATION = 100;
+export const MAX_ENERGY = 100;
+export const MAX_REPUTATION = 100;
 
 export const DEFAULT_RESOURCES: ResourcesState = Object.freeze({ money: 12, energy: MAX_ENERGY, reputation: 0 });
 

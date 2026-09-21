@@ -127,6 +127,56 @@ export function decoBorderSvg(width: number, height: number, options: Partial<De
   );
 }
 
+export interface DecoOutlineOptions {
+  /** How far the line is from the edge of the box, in px (the gap between the edge and the line, not to its middle). */
+  readonly gap: number;
+  /** The size of the square indent at each corner, in px along each edge. */
+  readonly step: number;
+  /** The line's width, in px. */
+  readonly strokeWidth: number;
+}
+
+/**
+ * The plainest treatment, for a bar: one thin line all the way round, a couple of pixels in from the edge, that steps in at each
+ * corner to make a small square indent. Drawn in `currentColor` as a pure function returning SVG markup, and nothing is drawn if
+ * the box is too small for it. The line's centre is placed half its width past the gap so that, at a whole-pixel box size, it
+ * falls exactly on whole pixels and stays crisp.
+ */
+export function decoOutlineSvg(width: number, height: number, options: Partial<DecoOutlineOptions> = {}): string {
+  const gap = options.gap ?? 2;
+  const step = options.step ?? 4;
+  const strokeWidth = options.strokeWidth ?? 1;
+  const inset = gap + strokeWidth / 2;
+  if (width < 2 * (inset + step) + strokeWidth || height < 2 * (inset + step) + strokeWidth) return '';
+  const w = round(width);
+  const h = round(height);
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true" focusable="false">` +
+    `<path d="${steppedRect(inset, inset, width - inset, height - inset, step)}" fill="none" stroke="currentColor" ` +
+    `stroke-width="${round(strokeWidth)}" stroke-linejoin="miter" shape-rendering="crispEdges"/>` +
+    `</svg>`
+  );
+}
+
+/** Puts the outline inside `host` (which needs a positioned box), behind its other content, and keeps it fitted as the bar is
+ * resized. Its colour comes from CSS (`.deco-outline`). Returns a function that removes it. */
+export function mountDecoOutline(host: HTMLElement, options: Partial<DecoOutlineOptions> = {}): () => void {
+  const layer = document.createElement('div');
+  layer.className = 'deco-outline';
+  layer.setAttribute('aria-hidden', 'true');
+  host.insertAdjacentElement('afterbegin', layer);
+  const draw = (): void => {
+    layer.innerHTML = decoOutlineSvg(layer.clientWidth, layer.clientHeight, options);
+  };
+  const observer = new ResizeObserver(draw);
+  observer.observe(layer);
+  draw();
+  return () => {
+    observer.disconnect();
+    layer.remove();
+  };
+}
+
 /** Puts a border inside `host`, behind its other content, and refits it whenever the host changes size. The host needs a
  * positioned box (`position` other than static). Returns a function that removes the border. */
 export function mountDecoBorder(host: HTMLElement, options: Partial<DecoBorderOptions> = {}): () => void {

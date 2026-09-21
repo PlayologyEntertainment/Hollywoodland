@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { decoBorderSvg, defaultUnit } from '../src/ui/DecoBorder';
+import { decoBorderSvg, decoOutlineSvg, defaultUnit } from '../src/ui/DecoBorder';
 
 /** The `d` of each of the border's four paths, in order: the two rules, the keyline, the corner squares, the diamonds. */
 function paths(svg: string): string[] {
-  return [...svg.matchAll(/<path d="([^"]*)"\/>/g)].map((match) => match[1] ?? '');
+  return [...svg.matchAll(/<path d="([^"]*)"[^>]*\/>/g)].map((match) => match[1] ?? '');
 }
 
 /** Each sub-path (one M... run) as a list of points, closed sub-paths repeating their first point at the end. */
@@ -111,5 +111,74 @@ describe('decoBorderSvg', () => {
     expect(defaultUnit(100, 100)).toBe(10);
     expect(defaultUnit(4000, 4000)).toBe(26);
     expect(defaultUnit(1280, 720)).toBeCloseTo(720 / 28);
+  });
+});
+
+describe('decoOutlineSvg (the plain outline round a bar)', () => {
+  const svg = decoOutlineSvg(1600, 56);
+  const [outline = ''] = paths(svg);
+  const points = subpaths(outline).flat();
+
+  it('is one closed line in currentColor: 1px wide, drawn crisp', () => {
+    expect(svg.startsWith('<svg')).toBe(true);
+    expect(svg).toContain('viewBox="0 0 1600 56"');
+    expect(paths(svg)).toHaveLength(1);
+    expect(subpaths(outline)).toHaveLength(1);
+    expect(outline.endsWith('Z')).toBe(true);
+    expect(svg).toContain('stroke="currentColor"');
+    expect(svg).toContain('fill="none"');
+    expect(svg).toContain('stroke-width="1"');
+    expect(svg).toContain('shape-rendering="crispEdges"');
+  });
+
+  it('is all right angles, with no curves and no diagonals', () => {
+    expect(outline).not.toMatch(/[ACQSTHV]/);
+    expect(isRectilinear(outline)).toBe(true);
+  });
+
+  it('runs 2px in from every edge: the line fills pixels 2 to 3, so its middle is at 2.5', () => {
+    const xs = points.map(([x]) => x);
+    const ys = points.map(([, y]) => y);
+    expect(Math.min(...xs)).toBeCloseTo(2.5);
+    expect(Math.max(...xs)).toBeCloseTo(1600 - 2.5);
+    expect(Math.min(...ys)).toBeCloseTo(2.5);
+    expect(Math.max(...ys)).toBeCloseTo(56 - 2.5);
+  });
+
+  it('steps in at each corner to make a 4px square indent', () => {
+    const has = (x: number, y: number): boolean => points.some(([px, py]) => Math.abs(px - x) < 0.01 && Math.abs(py - y) < 0.01);
+    // Top left: along the top to 4px short of the corner, in 4px, and along to the left edge, then down it.
+    expect(has(2.5 + 4, 2.5)).toBe(true);
+    expect(has(2.5 + 4, 2.5 + 4)).toBe(true);
+    expect(has(2.5, 2.5 + 4)).toBe(true);
+    // And the same at the bottom right.
+    expect(has(1600 - 2.5 - 4, 56 - 2.5)).toBe(true);
+    expect(has(1600 - 2.5 - 4, 56 - 2.5 - 4)).toBe(true);
+    expect(has(1600 - 2.5, 56 - 2.5 - 4)).toBe(true);
+    // Twelve corners in all (three for each of the four bites), and the closing repeat of the first.
+    expect(points).toHaveLength(13);
+  });
+
+  it('is symmetric left to right and top to bottom', () => {
+    const corners = points.slice(0, -1);
+    for (const [x, y] of corners) {
+      expect(corners.some(([mx, my]) => Math.abs(mx - (1600 - x)) < 0.01 && Math.abs(my - y) < 0.01)).toBe(true);
+      expect(corners.some(([mx, my]) => Math.abs(mx - x) < 0.01 && Math.abs(my - (56 - y)) < 0.01)).toBe(true);
+    }
+  });
+
+  it('takes its gap, indent and width from options, and is deterministic', () => {
+    expect(decoOutlineSvg(1600, 56)).toBe(svg);
+    const custom = decoOutlineSvg(1600, 56, { gap: 3, step: 6, strokeWidth: 2 });
+    expect(custom).toContain('stroke-width="2"');
+    const customPoints = subpaths(paths(custom)[0] ?? '').flat();
+    expect(Math.min(...customPoints.map(([x]) => x))).toBeCloseTo(4);
+    expect(customPoints.some(([x, y]) => Math.abs(x - 10) < 0.01 && Math.abs(y - 4) < 0.01)).toBe(true);
+  });
+
+  it('draws nothing when the box is too small to hold it', () => {
+    expect(decoOutlineSvg(0, 0)).toBe('');
+    expect(decoOutlineSvg(10, 56)).toBe('');
+    expect(decoOutlineSvg(1600, 10)).toBe('');
   });
 });

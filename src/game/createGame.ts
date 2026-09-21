@@ -26,7 +26,8 @@ export function createGame(options: CreateGameOptions): Phaser.Game {
     backgroundColor: '#160f16',
     antialias: true,
     roundPixels: true,
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    // Centred side to side only: the picture always sits flush under the header, and any spare height is left below it.
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_HORIZONTALLY },
     scene: [BoulevardBootScene, BoulevardSpikeScene],
   });
   game.registry.set('inputController', options.input);

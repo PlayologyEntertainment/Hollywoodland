@@ -41,6 +41,8 @@
   --display-font: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --deco-font: 'Limelight', 'Playfair Display', Georgia, 'Times New Roman', serif;
   --splash-bg: #000;
+  /* The corner radius of a button; the floating notices (the entrance prompt and the toast) use it too, so they match. */
+  --button-radius: 0.25rem;
 }
 
 * { box-sizing: border-box; }
@@ -50,7 +52,7 @@ button, input { font: inherit; }
 button {
   min-height: 2.75rem;
   border: 1px solid var(--gold);
-  border-radius: 0.25rem;
+  border-radius: var(--button-radius);
   padding: 0.65rem 1rem;
   background: linear-gradient(#30271f, #17120f);
   color: var(--ink);
@@ -67,10 +69,15 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .skip-link { position: fixed; z-index: 100; top: .5rem; left: .5rem; padding: .75rem 1rem; transform: translateY(-180%); background: #000; color: #fff; }
 .skip-link:focus { transform: translateY(0); }
 .app-shell, .game-frame, #game-root, #game-root canvas { width: 100%; height: 100%; }
-/* --header-h is the height of the black status header while it is showing (set
-   from AppShell, 0 when hidden). The game view starts below it. */
-.game-frame { --header-h: 0px; position: relative; isolation: isolate; max-width: 2560px; margin: auto; overflow: hidden; background: var(--splash-bg); }
-#game-root { position: absolute; inset: var(--header-h) 0 0; height: auto; z-index: -2; }
+/* --header-h and --footer-h are the heights of the black header and footer while they are showing (set from AppShell, 0 when
+   hidden). The game view fits in between them. --stage-w is the width of the picture: the game is 16:9, scaled to fit that
+   space, so it is the smaller of the frame's width and 16:9 of the height left between the two bars. (The units are cqw and
+   cqh, of this frame, which is a size container; they are worked out where --stage-w is used, by the frame's children.) */
+.game-frame {
+  --header-h: 0px; --footer-h: 0px; --stage-w: min(100cqw, calc((100cqh - var(--header-h) - var(--footer-h)) * 16 / 9));
+  container-type: size; position: relative; isolation: isolate; max-width: 2560px; margin: auto; overflow: hidden; background: var(--splash-bg);
+}
+#game-root { position: absolute; inset: var(--header-h) 0 var(--footer-h); height: auto; z-index: -2; }
 #game-root canvas { display: block; object-fit: contain; transition: filter .55s ease; }
 
 .menu-backdrop {
@@ -79,15 +86,40 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .menu-backdrop[hidden] { display: none; }
 
 .status-bar {
-  position: absolute; z-index: 4; top: 0; left: 0; display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: .7rem clamp(1rem, 3vw, 3rem); border-bottom: 1px solid rgb(216 173 88 / 32%);
+  position: absolute; z-index: 5; top: 0; left: 0; display: flex; flex-wrap: wrap; width: 100%; align-items: center; justify-content: space-between; gap: .4rem 1rem;
+  min-height: 3.5rem; box-sizing: border-box; padding: .5rem clamp(1rem, 3vw, 3rem);
   background: #000;
 }
 .status-bar[hidden] { display: none; }
-.status-actions, .hud-actions { display: flex; align-items: center; gap: .6rem; }
-.fps-output { min-width: 4.5rem; color: var(--muted); font-family: Arial, sans-serif; font-size: .72em; letter-spacing: .08em; text-align: right; }
-.hud-quickstats { color: var(--muted); font-family: Arial, sans-serif; font-size: .78em; letter-spacing: .04em; text-align: center; }
-.text-button { min-height: auto; border: 0; padding: .35rem .5rem; background: transparent; box-shadow: none; text-decoration: underline; text-underline-offset: .2em; }
+.status-actions { display: flex; align-items: center; gap: .6rem; }
+/* The logo is centred on the header with `left: 50%`, so it does not depend on how wide the place or the buttons are. It starts .5rem
+   below the top of the bar, well clear of the top line, and is 3.4rem tall in a 3.5rem bar, so it hangs .4rem over the bottom line and
+   onto the top of the picture. It is out of the way of clicks, and drawn above the outline. */
+.header-logo { position: absolute; z-index: 1; top: .5rem; left: 50%; display: block; width: auto; height: 3.4rem; transform: translateX(-50%); pointer-events: none; }
+
+/* The header and footer are the same height, and each has a fine outline (DecoBorder.ts, decoOutlineSvg): a 1px line 2px in from
+   the bar's edges, with a 4px square indent at each corner. The layer fills the bar, draws in currentColor, and is out of the
+   way of clicks. */
+.deco-outline { position: absolute; z-index: 0; inset: 0; color: rgb(216 173 88 / 75%); pointer-events: none; }
+.deco-outline svg { display: block; width: 100%; height: 100%; }
+
+/* Header: the place on the left, the view buttons on the right. All Limelight. The career stats are in the row just under it,
+   over the picture (see .hud-top). Each stat is a small label over its value; the stats are simply spaced apart. */
+.hud-place { display: grid; gap: .1rem; font-family: var(--deco-font); font-weight: 400; font-synthesis: none; }
+.hud-place strong { color: var(--gold-bright); font-size: 1.15rem; font-weight: 400; letter-spacing: .03em; white-space: nowrap; }
+.hud-stat {
+  display: grid; gap: .15rem; justify-items: center; padding: .1rem clamp(.6rem, 1.6vw, 1.6rem);
+  font-family: var(--deco-font); font-weight: 400; font-synthesis: none;
+}
+.hud-label { color: var(--muted); font-family: var(--deco-font); font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; }
+.hud-value { display: flex; align-items: center; gap: .45rem; color: var(--ink); font-size: 1.05rem; line-height: 1.2; white-space: nowrap; }
+.hud-stat[data-stat="money"] .hud-value { color: var(--gold-bright); }
+.hud-stat[data-low="true"] .hud-value { color: #f0876a; }
+
+/* View buttons in the header: square, hairline-outlined, in Limelight; pressed or open ones are filled with gold. */
+.text-button { min-height: auto; padding: .3rem .8rem; border: 1px solid rgb(216 173 88 / 55%); border-radius: 0; background: transparent; box-shadow: none; font-size: .82rem; letter-spacing: .06em; }
+.text-button:hover:not(:disabled) { border-color: var(--gold-bright); background: rgb(216 173 88 / 10%); transform: none; }
+.text-button[aria-pressed="true"], .text-button[aria-expanded="true"] { border-color: var(--gold-bright); background: rgb(216 173 88 / 22%); color: #fff; }
 
 /* Main menu: a 1930s film slate. The art (clapper and hand-lettered fields on top, a clear chalkboard below) is a
    nine-slice border image, so the top keeps its proportions and the blank board stretches to fit the menu text (small
@@ -198,13 +230,73 @@ h1 {
 .chapter-intro p { margin: 0; color: var(--ink); font-family: var(--display-font); font-size: var(--intro-size); line-height: 1.6; text-wrap: balance; }
 .chapter-hint { margin: var(--blank-lines) 0 0; color: var(--muted); font-size: .72rem; letter-spacing: .19em; text-transform: uppercase; }
 
-.play-hud { position: absolute; z-index: 4; right: clamp(1rem, 3vw, 3rem); bottom: 1.2rem; left: clamp(1rem, 3vw, 3rem); display: flex; align-items: end; justify-content: space-between; gap: 1rem; text-shadow: 0 2px 5px #000; }
+/* The stage is the game picture's box: 16:9, --stage-w wide, flush under the header and centred side to side (the picture
+   is scaled to fit and top-aligned; see createGame.ts). Everything that hangs over the picture is placed inside it, so it
+   is anchored to the picture, not to the window. It is a container too, so its contents can change layout when the picture
+   is narrow. */
+.stage {
+  position: absolute; z-index: 4; top: var(--header-h); left: 50%; width: var(--stage-w); aspect-ratio: 16 / 9;
+  container: stage / inline-size; transform: translateX(-50%); pointer-events: none;
+}
+/* The gameplay overlay is transparent. Along the top of the picture, just under the header, runs one row: the objective card
+   at the left and the career stats centred (a three-column grid, so the stats stay in the middle whatever the card's width).
+   Being at the top it is over the sky, and never in front of the player. */
+.play-hud { position: absolute; inset: 0; pointer-events: none; text-shadow: 0 2px 5px #000; }
 .play-hud[hidden] { display: none; }
-.objective-card { display: grid; gap: .18rem; padding: .8rem 1rem; border-left: 3px solid var(--gold-bright); background: linear-gradient(90deg, rgb(13 10 12 / 88%), rgb(13 10 12 / 38%), transparent); }
+.hud-top {
+  position: absolute; top: clamp(.4rem, 1.2vh, .8rem); right: clamp(1rem, 3vw, 3rem); left: clamp(1rem, 3vw, 3rem);
+  display: grid; grid-template-columns: 1fr auto 1fr; column-gap: 1rem; align-items: start;
+}
+.objective-card {
+  display: grid; gap: .18rem; justify-self: start; max-width: min(26rem, 100%); padding: .8rem 1.4rem .8rem 1rem;
+  border-left: 3px solid var(--gold-bright); background: linear-gradient(90deg, rgb(13 10 12 / 88%), rgb(13 10 12 / 38%), transparent);
+}
+.hud-stats {
+  display: flex; align-items: center; justify-content: center; grid-column: 2; padding: .3rem 1.2rem;
+  background: linear-gradient(90deg, transparent, rgb(13 10 12 / 82%) 16%, rgb(13 10 12 / 82%) 84%, transparent);
+}
+/* The card and the stats stay side by side, their tops level with each other (each is only as tall as its own content), however
+   narrow the picture: as it narrows they are drawn more compactly, and only on a phone-sized picture do they stack. */
+@container stage (max-width: 1180px) {
+  .hud-stats { padding-inline: .8rem; }
+  .hud-stat { padding-inline: .5rem; }
+  .hud-value { font-size: .95rem; gap: .35rem; }
+  .objective-card { padding: .55rem 1rem .55rem .8rem; }
+  .objective-card strong { font-size: 1.02em; }
+  .objective-card small { margin-top: .15rem; font-size: .8em; }
+}
+@container stage (max-width: 820px) {
+  .hud-top { grid-template-columns: 1fr; row-gap: .5rem; justify-items: center; }
+  .hud-stats { grid-column: 1; order: -1; }
+  .objective-card { justify-self: start; }
+}
 .objective-card strong { color: var(--gold-bright); font-size: 1.2em; }
 .objective-card small { margin-top: .3rem; color: var(--muted); }
+
+/* The footer is a bar directly below the picture, the same height as the header: Wait at the left, the Playology logo at
+   the very centre (a three-column grid, so it is centred whatever the buttons' widths), Menu at the right. */
+.game-footer {
+  position: absolute; z-index: 4; right: 0; left: 0; top: calc(var(--header-h) + var(--stage-w) * 9 / 16);
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 3.5rem; box-sizing: border-box;
+  padding: .5rem clamp(1rem, 3vw, 3rem); background: #000;
+}
+.game-footer[hidden] { display: none; }
+.game-footer button { min-height: 2rem; padding: .2rem 1.1rem; font-size: .95rem; }
+.game-footer #advance-time { justify-self: start; }
+.game-footer #return-menu { justify-self: end; }
+.footer-logo { display: block; width: auto; height: 2.6rem; }
 kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35rem; background: #151116; color: #fff; box-shadow: inset 0 -2px 0 rgb(255 255 255 / 12%); }
-.interaction-prompt { position: absolute; z-index: 6; bottom: 10.5rem; left: 50%; padding: .8rem 1.1rem; transform: translateX(-50%); border: 1px solid var(--gold); background: rgb(11 9 11 / 92%); box-shadow: 0 8px 30px #000; }
+/* Floating notices (the entrance prompt, and the toast) share one stack at the top right, level with the objective card at the top
+   left and the same distance in from the picture's edge, so the two mirror each other. The stack is measured from the picture, not
+   the window: its right edge is the picture's right edge less the card's margin. Notices are right-aligned. When the Status panel is
+   open they slide left of it, and down below the row of stats (3.6rem is a little more than the stats' height) so they do not cover them. */
+.notices {
+  position: absolute; z-index: 9; top: calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem));
+  right: calc((100cqw - var(--stage-w)) / 2 + clamp(1rem, 3vw, 3rem));
+  display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; max-width: min(22rem, 34%); pointer-events: none;
+}
+.game-frame:has(#status-panel:not([hidden])) .notices { top: calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem); right: calc(min(100cqw, 29rem) + 1rem); }
+.interaction-prompt { padding: .8rem 1.1rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(11 9 11 / 92%); box-shadow: 0 8px 30px #000; text-shadow: 0 2px 5px #000; }
 
 /* The Status panel starts below the header. Its title row stays put and only
    the body scrolls (the panel itself does not, so its inner border stays fixed). */
@@ -441,7 +533,10 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .attribute-bar span { position: absolute; inset: 0 auto 0 0; background: var(--gold-bright); }
 .creator-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 
-.toast { position: absolute; z-index: 20; top: 5.2rem; left: 50%; padding: .7rem 1rem; transform: translateX(-50%); border: 1px solid var(--gold); background: rgb(12 9 11 / 94%); box-shadow: 0 8px 30px #000; }
+.toast { padding: .7rem 1rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 94%); box-shadow: 0 8px 30px #000; }
+/* A notice shows at once (nothing here transitions while it is showing) and fades away when FadingNotice adds this class. 600ms
+   matches NOTICE_FADE_MS in FadingNotice.ts. */
+.notice-fading { opacity: 0; transition: opacity 600ms ease; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 .film-grain { position: absolute; z-index: -1; inset: -25%; opacity: 0; pointer-events: none; background-image: repeating-radial-gradient(circle at 30% 20%, transparent 0 2px, rgb(255 255 255 / 9%) 3px, transparent 4px), repeating-linear-gradient(0deg, rgb(0 0 0 / 8%) 0 1px, transparent 1px 4px); mix-blend-mode: overlay; }
@@ -454,15 +549,24 @@ body.film-effects-off .film-grain { display: none; }
 body.high-contrast { --ink: #fff; --muted: #fff; --gold: #ffe100; --gold-bright: #fff200; --panel: #000; --focus: #00e5ff; }
 body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
 
+/* Narrow windows have no room for the logo between the place and the buttons. */
+@media (max-width: 830px) {
+  .header-logo { display: none; }
+}
+
+/* Medium widths: tighten the header so the place and the three buttons stay comfortable in one row. */
+@media (max-width: 1200px) {
+  .status-bar { column-gap: .6rem; padding-inline: 1rem; }
+  .hud-place strong { font-size: 1rem; }
+  .status-actions { gap: .35rem; }
+  .text-button { padding: .3rem .5rem; font-size: .74rem; letter-spacing: .03em; }
+}
+
 @media (max-width: 780px), (max-height: 620px) {
   .title-panel { --slate-w: calc(100vw - 1rem); max-height: calc(100% - 5rem); overflow: auto; }
   .title-panel .menu { grid-template-columns: 1fr; }
   .title-logo { width: calc(var(--slate-w) * .8); }
-  .status-bar { align-items: flex-start; }
-  .status-actions { flex-wrap: wrap; justify-content: end; }
-  .fps-output, .hud-quickstats, .build-label { display: none; }
-  .play-hud { align-items: stretch; flex-direction: column; }
-  .hud-actions { justify-content: end; }
+  .build-label { display: none; }
   .splash-medallion { height: 64px; }
   .splash-art { border-radius: 1rem; }
   .creator-body { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-rows: auto; align-content: start; overflow: auto; }

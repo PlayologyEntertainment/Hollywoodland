@@ -1,6 +1,9 @@
 import type Phaser from 'phaser';
 
 import { ChapterTitlePage } from './ChapterTitlePage';
+import { FadingNotice } from './FadingNotice';
+import { describeHud } from './HudStats';
+import { mountDecoOutline } from '../ui/DecoBorder';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
 import { moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
@@ -33,7 +36,6 @@ import { getActiveStage, getQuestStatus } from '../domain/Quests';
 import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipDelta, type RelationshipLabel } from '../domain/Relationships';
 import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../domain/RelationshipDefinitions';
 import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
-import { weekdayForDay } from '../domain/TimeSystem';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
 
@@ -107,6 +109,7 @@ interface MenuScreens {
   readonly playHud: HTMLElement;
   readonly menuBackdrop: HTMLElement;
   readonly statusBar: HTMLElement;
+  readonly footer: HTMLElement;
 }
 
 interface AppShellOptions {
@@ -119,19 +122,11 @@ interface AppShellOptions {
    * actually enters play) and reuses it on subsequent calls. */
   readonly onStart: (state?: CareerState) => Phaser.Game;
   readonly onStop: () => void;
-  readonly onSave: () => Promise<void>;
-  /** Saves the career to its own slot, apart from the manual save; called as the player leaves the game for the Main Menu. */
+  /** Saves the career to its own slot; called as the player leaves the game for the Main Menu. */
   readonly onAutosave: () => Promise<void>;
   readonly onLoad: () => Promise<CareerState | undefined>;
-  readonly onExport: () => string;
   readonly onImport: (raw: string) => Promise<CareerState>;
 }
-
-const TIME_SLOT_LABELS: Record<CareerState['time']['slot'], string> = {
-  morning: 'Morning',
-  afternoon: 'Afternoon',
-  evening: 'Evening',
-};
 
 const AUDITION_OUTCOME_LABELS: Record<AuditionOutcome, string> = {
   breakthrough: 'Breakthrough',
@@ -208,9 +203,11 @@ function formatTalentRequirement(talent: TalentDefinition): string {
 
 export class AppShell {
   private settings: GameSettings;
-  private fpsTimer = 0;
+  private toastTimer = 0;
+  private promptNotice!: FadingNotice;
+  private toastNotice!: FadingNotice;
   private game: Phaser.Game | undefined;
-  private syncHeaderHeight: () => void = () => undefined;
+  private syncBarHeights: () => void = () => undefined;
   private transition!: ScreenTransition;
   private chapterPage!: ChapterTitlePage;
   private careerState: CareerState = createDefaultCareerState();
@@ -240,9 +237,15 @@ export class AppShell {
       playHud: assertElement('#play-hud', HTMLElement),
       menuBackdrop: assertElement('#menu-backdrop', HTMLElement),
       statusBar: assertElement('#status-bar', HTMLElement),
+      footer: assertElement('#game-footer', HTMLElement),
     };
-    this.trackHeaderHeight(screens.statusBar);
+    this.trackBarHeights(screens.statusBar, screens.footer);
+    // A fine outline round each bar.
+    mountDecoOutline(screens.statusBar);
+    mountDecoOutline(screens.footer);
     this.transition = new ScreenTransition(assertElement('#screen-fade', HTMLElement));
+    this.promptNotice = new FadingNotice(assertElement('#interaction-prompt', HTMLElement));
+    this.toastNotice = new FadingNotice(assertElement('#toast', HTMLElement));
     this.chapterPage = new ChapterTitlePage(assertElement('#chapter-title', HTMLElement));
     const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
@@ -355,8 +358,9 @@ export class AppShell {
       void this.transition.run(async () => {
         await this.autosave();
         // The Boulevard only reports when the prompt changes, so nothing else would take it down once the player has left.
-        this.setInteractionPrompt(false, '');
+        this.promptNotice.hideNow();
         screens.playHud.hidden = true;
+        screens.footer.hidden = true;
         screens.titlePanel.hidden = false;
         screens.menuBackdrop.hidden = false;
         screens.statusBar.hidden = true;
@@ -404,8 +408,6 @@ export class AppShell {
     assertElement('#film-mode', HTMLButtonElement).addEventListener('click', (event) => this.toggleFilmMode(event.currentTarget as HTMLButtonElement));
     assertElement('#fullscreen', HTMLButtonElement).addEventListener('click', () => void this.toggleFullscreen());
     assertElement('#advance-time', HTMLButtonElement).addEventListener('click', () => this.options.domainEvents.emit('advance-time-requested', undefined));
-    assertElement('#manual-save', HTMLButtonElement).addEventListener('click', () => void this.save());
-    assertElement('#export-save', HTMLButtonElement).addEventListener('click', () => this.exportSave());
     assertElement('#import-save', HTMLButtonElement).addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => void this.importSave(fileInput, screens));
   }
@@ -418,23 +420,27 @@ export class AppShell {
     }
   }
 
-  /** Publishes the black status header's height as `--header-h` on the game
-   * frame (0 while the header is hidden), so the game view and the Status
-   * panel can start below it instead of under it. A ResizeObserver keeps it
-   * right when the header wraps or the text scale changes. */
-  private trackHeaderHeight(header: HTMLElement): void {
+  /** Publishes the heights of the black header and footer as `--header-h` and `--footer-h` on the game frame (0 while a bar is
+   * hidden), so the game view fits between them and the Status panel can start below the header. A ResizeObserver keeps
+   * them right when the header wraps or the text scale changes. */
+  private trackBarHeights(header: HTMLElement, footer: HTMLElement): void {
     const frame = assertElement('#game-frame', HTMLElement);
     const sync = (): void => {
-      const height = header.hidden ? 0 : Math.round(header.getBoundingClientRect().height);
-      const value = `${height}px`;
-      if (frame.style.getPropertyValue('--header-h') === value) return;
-      frame.style.setProperty('--header-h', value);
+      let changed = false;
+      for (const [name, bar] of [['--header-h', header], ['--footer-h', footer]] as const) {
+        const value = `${bar.hidden ? 0 : Math.round(bar.getBoundingClientRect().height)}px`;
+        if (frame.style.getPropertyValue(name) === value) continue;
+        frame.style.setProperty(name, value);
+        changed = true;
+      }
       // Phaser fits its canvas to its parent when it boots and on window resize,
       // not when the parent changes size on its own, so re-fit it here.
-      this.game?.scale.refresh();
+      if (changed) this.game?.scale.refresh();
     };
-    new ResizeObserver(sync).observe(header);
-    this.syncHeaderHeight = sync;
+    const observer = new ResizeObserver(sync);
+    observer.observe(header);
+    observer.observe(footer);
+    this.syncBarHeights = sync;
     sync();
   }
 
@@ -493,11 +499,10 @@ export class AppShell {
     screens.playHud.hidden = false;
     screens.menuBackdrop.hidden = true;
     screens.statusBar.hidden = false;
-    // Publish the header's height before the game boots, so Phaser measures the shorter game area.
-    this.syncHeaderHeight();
-    const isFirstStart = this.game === undefined;
+    screens.footer.hidden = false;
+    // Publish the bars' heights before the game boots, so Phaser measures the shorter game area.
+    this.syncBarHeights();
     this.game = this.options.onStart(state);
-    if (isFirstStart) this.startFpsMeter(this.game);
     this.inGame = true;
     this.place = undefined;
     this.syncAudio();
@@ -690,13 +695,20 @@ export class AppShell {
 
   private renderCareerState(state: CareerState): void {
     assertElement('#status-name', HTMLElement).textContent = state.identity.name.length > 0 ? state.identity.name : 'Nobody — yet';
-    const timeLabel = `${weekdayForDay(state.time.day)} · ${TIME_SLOT_LABELS[state.time.slot]}`;
-    assertElement('#status-time', HTMLElement).textContent = timeLabel;
-    assertElement('#status-money', HTMLElement).textContent = `$${state.resources.money}`;
-    assertElement('#status-energy', HTMLElement).textContent = `${state.resources.energy}/100`;
-    assertElement('#status-reputation', HTMLElement).textContent = `${state.resources.reputation}/100`;
-    assertElement('#hud-quickstats', HTMLOutputElement).value =
-      `${timeLabel} · $${state.resources.money} · Energy ${state.resources.energy}/100 · Rep ${state.resources.reputation}/100`;
+    const hud = describeHud(state);
+    // The Status panel.
+    assertElement('#status-time', HTMLElement).textContent = `${hud.weekday} · ${hud.slotLabel}`;
+    assertElement('#status-money', HTMLElement).textContent = hud.money;
+    assertElement('#status-energy', HTMLElement).textContent = `${hud.energy}/100`;
+    assertElement('#status-reputation', HTMLElement).textContent = `${hud.reputation}/100`;
+    // The header.
+    assertElement('#hud-day-number', HTMLElement).textContent = hud.dayNumber;
+    assertElement('#hud-weekday', HTMLElement).textContent = hud.weekday;
+    assertElement('#hud-time', HTMLElement).textContent = hud.slotLabel;
+    assertElement('#hud-money', HTMLElement).textContent = hud.money;
+    assertElement('#hud-energy', HTMLElement).textContent = String(hud.energy);
+    assertElement('#hud-energy-stat', HTMLElement).dataset.low = String(hud.energyLow);
+    assertElement('#hud-quickstats', HTMLOutputElement).value = hud.spoken;
     this.renderQuests(state);
     this.renderRelationships(state);
     this.renderProgression(state);
@@ -904,19 +916,15 @@ export class AppShell {
     return item;
   }
 
-  private async save(): Promise<void> {
-    try {
-      await this.options.onSave();
-      await this.refreshContinue();
-      this.toast('Career saved locally');
-    } catch {
-      this.toast('Save unavailable — export a copy instead');
-    }
-  }
-
+  /** The entrance prompt appears at once and fades away gently. Its words stay while it fades (the game reports an empty label
+   * when there is nothing to enter, and clearing the words would make them blink out before the rest). */
   private setInteractionPrompt(visible: boolean, label: string): void {
-    assertElement('#interaction-prompt', HTMLElement).hidden = !visible;
+    if (!visible) {
+      this.promptNotice.hide();
+      return;
+    }
     assertElement('#interaction-prompt-label', HTMLElement).textContent = label;
+    this.promptNotice.show();
   }
 
   /** Saves where the player is as they head back to the Main Menu, and switches Continue on so it can resume there. */
@@ -925,19 +933,8 @@ export class AppShell {
       await this.options.onAutosave();
       await this.refreshContinue();
     } catch {
-      this.toast('Autosave unavailable — use Save or Export before closing');
+      this.toast('Autosave unavailable — this browser is not letting the game save');
     }
-  }
-
-  private exportSave(): void {
-    const blob = new Blob([this.options.onExport()], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'hollywoodland-phase-2-save.json';
-    anchor.click();
-    URL.revokeObjectURL(url);
-    this.toast('Save exported');
   }
 
   private async importSave(fileInput: HTMLInputElement, screens: MenuScreens): Promise<void> {
@@ -973,13 +970,6 @@ export class AppShell {
     } catch {
       this.toast('Fullscreen is unavailable in this browser');
     }
-  }
-
-  private startFpsMeter(game: Phaser.Game): void {
-    window.setInterval(() => {
-      const fps = Math.round(game.loop.actualFps);
-      assertElement('#fps-output', HTMLOutputElement).value = `${Number.isFinite(fps) ? fps : '--'} FPS`;
-    }, 500);
   }
 
   private openStatus(panel: HTMLElement, button: HTMLButtonElement): void {
@@ -1033,11 +1023,10 @@ export class AppShell {
   }
 
   private toast(message: string): void {
-    const toast = assertElement('#toast', HTMLElement);
-    toast.textContent = message;
-    toast.hidden = false;
-    window.clearTimeout(this.fpsTimer);
-    this.fpsTimer = window.setTimeout(() => { toast.hidden = true; }, 2400);
+    assertElement('#toast', HTMLElement).textContent = message;
+    this.toastNotice.show();
+    window.clearTimeout(this.toastTimer);
+    this.toastTimer = window.setTimeout(() => this.toastNotice.hide(), 2400);
   }
 
   private announce(message: string): void {

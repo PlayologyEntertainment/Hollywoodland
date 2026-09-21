@@ -24,16 +24,18 @@ describe('the black status header', () => {
     expect(block).not.toContain('gradient');
   });
 
-  it('gets its own row: the game area starts below it and is not 100% tall', () => {
+  it('gets its own row: the game area starts below it (and above the footer) and is not 100% tall', () => {
     const block = rule('#game-root');
-    expect(block).toContain('inset: var(--header-h) 0 0');
+    expect(block).toContain('inset: var(--header-h) 0 var(--footer-h)');
     // The shared `height: 100%` rule would otherwise win over `bottom: 0` and push the game 54 px past the frame.
     expect(block).toContain('height: auto');
   });
 
-  it('publishes its height to the game frame before the game boots, and re-fits Phaser when it changes', () => {
-    expect(appShell).toContain("frame.style.setProperty('--header-h'");
-    expect(appShell).toMatch(/screens\.statusBar\.hidden = false;[\s\S]*?this\.syncHeaderHeight\(\);[\s\S]*?this\.options\.onStart\(state\)/);
+  it('publishes its height (and the footer\'s) to the game frame before the game boots, and re-fits Phaser when it changes', () => {
+    expect(appShell).toContain("frame.style.setProperty(name, value)");
+    expect(appShell).toContain("['--header-h', header]");
+    expect(appShell).toContain("['--footer-h', footer]");
+    expect(appShell).toMatch(/screens\.statusBar\.hidden = false;[\s\S]*?this\.syncBarHeights\(\);[\s\S]*?this\.options\.onStart\(state\)/);
     expect(appShell).toContain('this.game?.scale.refresh()');
   });
 });
