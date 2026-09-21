@@ -142,6 +142,22 @@ describe('AudioDirector', () => {
     expect(engine.log).toEqual(['music:none', 'ambience:off']);
   });
 
+  it('fades the menu music out to nothing over the usual cross-fade, as the chapter title page does', () => {
+    const { engine, director } = inMenu();
+    director.setMood('silent');
+    // There is no street ambience in the menus, so only the music fades.
+    expect(engine.log).toEqual(['music:none']);
+    expect(engine.seconds).toEqual([CROSSFADE_SECONDS]);
+  });
+
+  it('brings the Boulevard music up from silence when the chapter title page hands over to the game', () => {
+    const { engine, director } = inMenu();
+    director.setMood('silent');
+    engine.log.length = 0;
+    director.setMood('boulevard');
+    expect(engine.log).toEqual(['music:boulevard', 'ambience:on']);
+  });
+
   it('passes volume settings straight to the engine, before or after unlocking', () => {
     const { engine, director } = setup();
     director.setSettings({
