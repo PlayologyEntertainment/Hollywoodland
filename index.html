@@ -22,7 +22,7 @@
             <img class="splash-medallion" src="/assets/ui/playology-logo.svg" alt="" aria-hidden="true" />
             <p class="splash-presents">Playology Entertainment<br />Presents</p>
             <img class="splash-art" src="/assets/ui/hollywoodland-splash.webp" alt="Hollywoodland" />
-            <button id="splash-enter" class="primary-button splash-enter deco-label" type="button">Enter</button>
+            <button id="splash-enter" class="primary-button splash-enter deco-label" type="button">Play</button>
           </div>
         </div>
 
@@ -49,12 +49,12 @@
         </section>
 
         <section id="character-creator" class="creator" aria-labelledby="creator-title" hidden>
-          <header class="creator-header">
-            <p class="eyebrow">Hollywoodland</p>
-            <h2 id="creator-title">Character Creator</h2>
-          </header>
+          <h2 id="creator-title" class="sr-only">Character Creator</h2>
 
           <div class="creator-body">
+            <h3 class="creator-title creator-title-left">Character</h3>
+            <h3 class="creator-title creator-title-right">Origin</h3>
+
             <div class="creator-panel creator-form">
               <label class="creator-field">
                 <span>Name</span>
@@ -62,76 +62,16 @@
               </label>
 
               <div class="creator-field">
-                <span>Skin Tone</span>
-                <div id="creator-skin-tones" class="swatch-row" role="radiogroup" aria-label="Skin tone"></div>
+                <span id="creator-character-label">Character</span>
+                <div id="creator-characters" class="character-grid" role="radiogroup" aria-labelledby="creator-character-label"></div>
               </div>
-
-              <div class="creator-cycler" data-cycler="face">
-                <span>Face</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous face">‹</button>
-                  <output class="cycler-value">Face 1</output>
-                  <button type="button" class="cycler-next" aria-label="Next face">›</button>
-                </div>
-              </div>
-              <div class="creator-cycler" data-cycler="hair">
-                <span>Hair</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous hair">‹</button>
-                  <output class="cycler-value">Hair 1</output>
-                  <button type="button" class="cycler-next" aria-label="Next hair">›</button>
-                </div>
-              </div>
-              <div class="creator-cycler" data-cycler="eyes">
-                <span>Eyes</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous eyes">‹</button>
-                  <output class="cycler-value">Eyes 1</output>
-                  <button type="button" class="cycler-next" aria-label="Next eyes">›</button>
-                </div>
-              </div>
-              <div class="creator-cycler" data-cycler="outfit">
-                <span>Outfit</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous outfit">‹</button>
-                  <output class="cycler-value">Outfit 1</output>
-                  <button type="button" class="cycler-next" aria-label="Next outfit">›</button>
-                </div>
-              </div>
-              <div class="creator-cycler" data-cycler="hat">
-                <span>Hat</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous hat">‹</button>
-                  <output class="cycler-value">None</output>
-                  <button type="button" class="cycler-next" aria-label="Next hat">›</button>
-                </div>
-              </div>
-              <div class="creator-cycler" data-cycler="accessory">
-                <span>Accessories</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous accessory">‹</button>
-                  <output class="cycler-value">None</output>
-                  <button type="button" class="cycler-next" aria-label="Next accessory">›</button>
-                </div>
-              </div>
-              <div class="creator-cycler" data-cycler="voice">
-                <span>Voice</span>
-                <div class="cycler-control">
-                  <button type="button" class="cycler-prev" aria-label="Previous voice">‹</button>
-                  <output class="cycler-value">Voice 1</output>
-                  <button type="button" class="cycler-next" aria-label="Next voice">›</button>
-                </div>
-              </div>
-
-              <button id="creator-randomize" type="button" class="creator-randomize">🎲 Randomize</button>
             </div>
 
             <div class="creator-panel creator-preview">
-              <div class="creator-pedestal">
-                <div id="creator-portrait" class="creator-portrait" aria-hidden="true"></div>
+              <div class="creator-stage">
+                <img id="creator-portrait" class="creator-portrait" alt="" />
+                <div class="creator-reflection" aria-hidden="true"><img id="creator-reflection" alt="" /></div>
               </div>
-              <p class="creator-plaque">Dream · Audition · Belong</p>
-              <p class="creator-preview-note">Full character art arrives with the next asset pass — today's choices are saved for then.</p>
             </div>
 
             <div class="creator-panel creator-origin">

@@ -434,8 +434,10 @@ export class AppShell {
     const identity: IdentityState = {
       name: choices.name,
       originId: choices.originId,
-      skinToneIndex: choices.skinToneIndex,
-      appearance: choices.appearance,
+      // The customisable-creator fields are gone; the chosen ready-made character replaces them.
+      skinToneIndex: 0,
+      appearance: {},
+      characterId: choices.characterId,
     };
     return createInitialCareerState(identity, deriveAttributes(choices.originId));
   }

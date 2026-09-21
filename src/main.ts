@@ -18,7 +18,7 @@ let settings = settingsRepository.load();
 const analytics = new NoOpAnalyticsClient();
 const audio = new AudioDirector(new WebAudioEngine(import.meta.env.BASE_URL));
 audio.setSettings(settings);
-// Browsers only allow sound after the player has interacted with the page. Enter on the splash screen is the first
+// Browsers only allow sound after the player has interacted with the page. Play on the splash screen is the first
 // interaction and starts the Main Menu music; this also covers a player who reaches the menus some other way.
 for (const type of ['pointerdown', 'keydown'] as const) window.addEventListener(type, () => audio.unlock());
 /** The player's analytics setting is the sole consent gate — no event ever

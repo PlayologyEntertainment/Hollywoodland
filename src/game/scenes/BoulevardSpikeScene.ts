@@ -101,6 +101,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Sprite;
   private playerShadow!: Phaser.GameObjects.Graphics;
   private walkCycle: WalkCycle = DEFAULT_WALK_CYCLE;
+  /** The texture key of the chosen character's walk sheet. Each character has their own key, so choosing a different one
+   * on a later career loads their sheet instead of finding the previous character's in Phaser's cache. */
+  private playerTextureKey = 'player:white-male';
   /** Total world px walked, driving the frame shown; see WalkCycle.ts. */
   private walkDistance = 0;
   private walking = false;
@@ -132,7 +135,8 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.load.image(propKey(prop.id), assetUrl(prop.path));
     }
     this.walkCycle = (this.registry.get('walkCycle') as WalkCycle | undefined) ?? DEFAULT_WALK_CYCLE;
-    this.load.spritesheet('aspiring-actor', assetUrl(this.walkCycle.sheet), {
+    this.playerTextureKey = `player:${(this.registry.get('playerCharacterId') as string | undefined) ?? 'white-male'}`;
+    this.load.spritesheet(this.playerTextureKey, assetUrl(this.walkCycle.sheet), {
       frameWidth: this.walkCycle.frameWidth,
       frameHeight: this.walkCycle.frameHeight,
     });
@@ -464,7 +468,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const cycle = this.walkCycle;
     this.playerShadow = this.add.graphics().setDepth(28);
     this.player = this.add
-      .sprite(DEFAULT_PLAYER_X, this.groundY + PLAYER_SOLE_OFFSET, 'aspiring-actor', cycle.idleFrame)
+      .sprite(DEFAULT_PLAYER_X, this.groundY + PLAYER_SOLE_OFFSET, this.playerTextureKey, cycle.idleFrame)
       .setOrigin(0.5, cycle.soleY / cycle.frameHeight)
       .setScale(cycle.displayScale)
       .setDepth(30);
