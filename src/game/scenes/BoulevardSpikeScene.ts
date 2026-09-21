@@ -147,6 +147,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.settings = this.registry.get('settings') as GameSettings;
     this.domainEvents = this.registry.get('domainEvents') as DomainEventBus;
     this.careerState = createDefaultCareerState();
+    // Phaser reuses this scene object when the game restarts it (Continue, a new career), so forget the last prompt: the
+    // page has taken it down, and it must be announced again if the player is standing at an entrance.
+    this.promptVisible = false;
+    this.promptLabel = '';
     this.worldWidth = this.manifest.worldWidth;
     this.groundY = this.manifest.groundY;
     this.cameras.main.setBackgroundColor('#68b9ef');

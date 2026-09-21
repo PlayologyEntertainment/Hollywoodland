@@ -17,6 +17,25 @@ import { DEFAULT_RELATIONSHIPS } from '../domain/Relationships';
 
 export const SAVE_SCHEMA_VERSION = 7;
 
+/** The slot the Save button writes to. */
+export const MANUAL_SAVE_ID = 'phase-1-manual';
+/** The slot written automatically when the player leaves the game for the Main Menu, so Save stays a deliberate act. */
+export const AUTOSAVE_ID = 'autosave';
+
+/** The most recently saved of the given saves (ignoring missing ones), which is what Continue should resume. An
+ * unreadable date counts as the oldest, and on a tie the earlier one in the list wins. */
+export function newestSave<T extends { readonly savedAt: string }>(saves: ReadonlyArray<T | undefined>): T | undefined {
+  const time = (save: T): number => {
+    const parsed = Date.parse(save.savedAt);
+    return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
+  };
+  let newest: T | undefined;
+  for (const save of saves) {
+    if (save !== undefined && (newest === undefined || time(save) > time(newest))) newest = save;
+  }
+  return newest;
+}
+
 export interface SaveEnvelope<TState = unknown> {
   readonly schemaVersion: number;
   readonly contentVersion: string;
