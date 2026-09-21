@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 
+import { ChapterTitlePage } from './ChapterTitlePage';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
 import { moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
@@ -211,6 +212,7 @@ export class AppShell {
   private game: Phaser.Game | undefined;
   private syncHeaderHeight: () => void = () => undefined;
   private transition!: ScreenTransition;
+  private chapterPage!: ChapterTitlePage;
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
   private activeDialogueNodeId: string | undefined;
@@ -239,6 +241,7 @@ export class AppShell {
     };
     this.trackHeaderHeight(screens.statusBar);
     this.transition = new ScreenTransition(assertElement('#screen-fade', HTMLElement));
+    this.chapterPage = new ChapterTitlePage(assertElement('#chapter-title', HTMLElement));
     const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
@@ -337,10 +340,6 @@ export class AppShell {
         });
       },
     );
-    // A player still holding Enter or Space from pressing Start Career would otherwise repeat straight through the title page.
-    assertElement('#chapter-continue', HTMLButtonElement).addEventListener('keydown', (event) => {
-      if (event.repeat) event.preventDefault();
-    });
     continueCareer.addEventListener('click', async () => {
       if (this.transition.isRunning) return;
       const state = await this.options.onLoad();
@@ -437,22 +436,19 @@ export class AppShell {
     sync();
   }
 
-  /** Start Career: dips through black to the Chapter 1 title page, waits for the player to dismiss it, then dips through
-   * black again into the Boulevard. The Boulevard is only started under that second black screen, so its input and music
-   * stay off while the page is up. */
+  /** Start Career: dips through black to the Chapter 1 title page, plays its reveal once the fade-in has uncovered it,
+   * waits for the player to leave it, then dips through black again into the Boulevard. The Boulevard is only started
+   * under that second black screen, so its input and music stay off while the page is up. */
   private async startNewCareer(choices: CharacterChoices, screens: MenuScreens, characterCreator: HTMLElement): Promise<void> {
     const state = this.buildInitialState(choices);
-    const chapterTitle = assertElement('#chapter-title', HTMLElement);
     const shown = await this.transition.run(() => {
       characterCreator.hidden = true;
-      chapterTitle.hidden = false;
-      assertElement('#chapter-continue', HTMLButtonElement).focus();
+      this.chapterPage.prepare();
     });
     if (!shown) return;
-    // A click anywhere on the page, including its button, moves on; Enter and Space work through the focused button.
-    await new Promise<void>((resolve) => chapterTitle.addEventListener('click', () => resolve(), { once: true }));
+    await this.chapterPage.play();
     await this.transition.run(async () => {
-      chapterTitle.hidden = true;
+      this.chapterPage.hide();
       this.renderCareerState(state);
       await this.enterGame(screens, state);
     }, { fadeInMs: BOULEVARD_REVEAL_FADE_IN_MS });
