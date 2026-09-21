@@ -81,7 +81,48 @@ describe('screen fade markup', () => {
     const chapter = indexHtml.match(/<section id="chapter-title"[\s\S]*?<\/section>/)?.[0];
     expect(chapter).toContain('hidden');
     expect(chapter).toContain('Chapter 1');
-    expect(chapter).toContain('id="chapter-continue"');
+  });
+
+  it('builds the chapter page for a staged reveal, with no button and every element timed', () => {
+    const chapter = indexHtml.match(/<section id="chapter-title"[\s\S]*?<\/section>/)?.[0] ?? '';
+    expect(chapter).toContain('tabindex="-1"');
+    expect(chapter).not.toContain('<button');
+    expect(chapter).toContain('aria-describedby="chapter-hint"');
+    const times = [...chapter.matchAll(/data-reveal="(\d+)"/g)].map((match) => Number(match[1]));
+    expect(times.length).toBeGreaterThanOrEqual(6);
+    expect(times[0]).toBe(0);
+    // The hint on how to move on comes last, after all the copy.
+    expect(Number(chapter.match(/id="chapter-hint"[^>]*data-reveal="(\d+)"/)?.[1])).toBe(Math.max(...times));
+  });
+
+  it('sets the chapter page in Limelight, except the intro paragraphs, which use the plain display serif', () => {
+    const block = css.slice(css.indexOf('.chapter-title {'), css.indexOf('.chapter-hint'));
+    expect(block).toMatch(/\.chapter-title \{[^}]*font-family: var\(--deco-font\)/);
+    // The one other face on the page is the intro paragraphs'.
+    expect(block).toMatch(/\.chapter-intro p \{[^}]*font-family: var\(--display-font\)/);
+    expect([...block.matchAll(/font-family:\s*([^;]+);/g)].map((match) => match[1])).toEqual(['var(--deco-font)', 'var(--display-font)']);
+  });
+
+  it('never shows a scrollbar on the chapter page, and sizes its text from the window height so it fits a short window', () => {
+    const body = css.match(/\.chapter-title-body \{[^}]*\}/)?.[0] ?? '';
+    expect(body).toContain('scrollbar-width: none');
+    expect(css).toContain('.chapter-title-body::-webkit-scrollbar { display: none; }');
+    expect(body).toMatch(/padding: clamp\([^)]*vh/);
+    expect(css).toMatch(/\.chapter-title-body \{[^}]*--intro-size: clamp\([^;]*vh/);
+    expect(css).toMatch(/\.chapter-intro p \{[^}]*font-size: var\(--intro-size\)/);
+  });
+
+  it('leaves room above and below the chapter text, inside the border', () => {
+    expect(css).toMatch(/\.chapter-title \{[^}]*padding-block: clamp\([^)]*vh/);
+  });
+
+  it('puts two blank lines of the intro text above the intro and above the hint', () => {
+    // A line is 1.6 times the intro size, so two are 3.2 times it, less the ordinary gap already between the items.
+    expect(css).toMatch(/\.chapter-title-body \{[^}]*--blank-lines: calc\(var\(--intro-size\) \* 3\.2 - var\(--chapter-gap\)\)/);
+    expect(css).toMatch(/\.chapter-intro p \{[^}]*line-height: 1\.6/);
+    expect(css).toMatch(/\.chapter-intro \{[^}]*margin-top: var\(--blank-lines\)/);
+    expect(css).toMatch(/\.chapter-hint \{[^}]*margin: var\(--blank-lines\) 0 0/);
+    expect(css).toMatch(/\.chapter-title-body \{[^}]*gap: var\(--chapter-gap\)/);
   });
 
   it('keeps the CSS fade the same length as FADE_MS', () => {
