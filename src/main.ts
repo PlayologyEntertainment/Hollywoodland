@@ -8,7 +8,7 @@ import { DomainEventBus } from './domain/DomainEventBus';
 import { createGame } from './game/createGame';
 import { InputController } from './input/InputController';
 import { IndexedDbSaveRepository } from './save/IndexedDbSaveRepository';
-import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, SAVE_SCHEMA_VERSION, serializeSave, type SaveEnvelope } from './save/SaveEnvelope';
+import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, SAVE_SCHEMA_VERSION, type SaveEnvelope } from './save/SaveEnvelope';
 import { BrowserSettingsRepository } from './settings/SettingsRepository';
 
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
@@ -96,14 +96,12 @@ const shell = new AppShell({
     return activeGame;
   },
   onStop: () => input.setGameplayActive(false),
-  onSave: async () => { await saveRepository.put(makeSave()); },
   onAutosave: async () => { await saveRepository.put(makeSave(AUTOSAVE_ID, 'Autosave')); },
   // Continue resumes whichever of the manual save and the autosave is newer.
   onLoad: async () => {
     const save = newestSave(await Promise.all([saveRepository.get(MANUAL_SAVE_ID), saveRepository.get(AUTOSAVE_ID)]));
     return save === undefined ? undefined : migrateSaveEnvelope(save).state;
   },
-  onExport: () => serializeSave(makeSave()),
   onImport: async (raw) => {
     // Stamped as saved now, so Continue treats the import as the latest save rather than an older autosave outranking it.
     const save = { ...parseSave(raw), savedAt: new Date().toISOString() };

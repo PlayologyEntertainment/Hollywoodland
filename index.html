@@ -27,10 +27,13 @@
         </div>
 
         <header id="status-bar" class="status-bar" aria-label="Career status" hidden>
-          <span><b>1935</b> · Hollywood Boulevard</span>
-          <output id="hud-quickstats" class="hud-quickstats" aria-label="Time, money, energy, and reputation">Monday · Morning · $12 · Energy 100/100 · Rep 0/100</output>
+          <div class="hud-place">
+            <span class="hud-label">1935</span>
+            <strong>Hollywood Boulevard</strong>
+          </div>
+          <!-- The game's logo at the very centre of the header: clear of the top line, and hanging a little over the bottom one. -->
+          <img class="header-logo" src="/assets/ui/hollywoodland-logo.webp" alt="Hollywoodland" />
           <div class="status-actions">
-            <output id="fps-output" class="fps-output" aria-label="Frame rate">-- FPS</output>
             <button id="film-mode" class="text-button deco-label" type="button" aria-pressed="false">Film Look</button>
             <button id="fullscreen" class="text-button deco-label" type="button">Fullscreen</button>
             <button id="status-button" class="text-button deco-label" type="button" aria-expanded="false">Status</button>
@@ -106,23 +109,46 @@
           </div>
         </section>
 
-        <section id="play-hud" class="play-hud" aria-label="Gameplay controls" hidden>
-          <div class="objective-card">
-            <span class="eyebrow">First objective</span>
-            <strong>Find the casting office</strong>
-            <small><kbd>A</kbd>/<kbd>D</kbd> Move · <kbd>E</kbd> Interact</small>
-          </div>
-          <div class="hud-actions">
-            <button id="advance-time" class="deco-label" type="button">Wait</button>
-            <button id="manual-save" class="deco-label" type="button">Save</button>
-            <button id="export-save" class="deco-label" type="button">Export</button>
-            <button id="return-menu" class="deco-label" type="button">Menu</button>
-          </div>
-        </section>
-
-        <div id="interaction-prompt" class="interaction-prompt" hidden>
-          <kbd>E</kbd> <span id="interaction-prompt-label">Enter casting office</span>
+        <!-- The stage is exactly the size and place of the game picture (see .stage in styles.css), so everything that hangs
+             over the picture - the objective card, the Wait and Menu buttons, the entrance prompt - is anchored to the picture. -->
+        <div id="stage" class="stage">
+          <section id="play-hud" class="play-hud" aria-label="Gameplay status" hidden>
+            <div class="hud-top">
+              <div class="objective-card">
+                <span class="eyebrow">First objective</span>
+                <strong>Find the casting office</strong>
+                <small><kbd>A</kbd>/<kbd>D</kbd> Move · <kbd>E</kbd> Interact</small>
+              </div>
+              <div class="hud-stats" role="group" aria-label="Career stats">
+                <div class="hud-stat">
+                  <span id="hud-day-number" class="hud-label">Day 1</span>
+                  <span id="hud-weekday" class="hud-value">Monday</span>
+                </div>
+                <div class="hud-stat">
+                  <span class="hud-label">Time</span>
+                  <span id="hud-time" class="hud-value">Morning</span>
+                </div>
+                <div class="hud-stat" data-stat="money">
+                  <span class="hud-label">Money</span>
+                  <span id="hud-money" class="hud-value">$12</span>
+                </div>
+                <div id="hud-energy-stat" class="hud-stat" data-low="false">
+                  <span class="hud-label">Energy</span>
+                  <span id="hud-energy" class="hud-value">100</span>
+                </div>
+              </div>
+              <!-- The stats above are a picture; this says the same thing to screen readers, who are told when it changes. -->
+              <output id="hud-quickstats" class="sr-only" aria-label="Day, time, money, and energy"></output>
+            </div>
+          </section>
         </div>
+
+        <!-- Permanent footer, directly below the picture: Wait on the left, the Playology logo at the centre, Menu on the right. -->
+        <footer id="game-footer" class="game-footer" aria-label="Game controls" hidden>
+          <button id="advance-time" class="deco-label" type="button">Wait</button>
+          <img class="footer-logo" src="/assets/ui/playology-logo.svg" alt="Playology Entertainment" />
+          <button id="return-menu" class="deco-label" type="button">Menu</button>
+        </footer>
 
         <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
           <div class="drawer-heading">
@@ -245,7 +271,13 @@
 
         <input id="save-file-input" type="file" accept="application/json,.json" hidden />
         <div id="screen-fade" class="screen-fade" aria-hidden="true"></div>
-        <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+        <!-- Floating notices, stacked at the top right, mirroring the objective card at the top left: the entrance prompt, then any toast. -->
+        <div id="notices" class="notices">
+          <div id="interaction-prompt" class="interaction-prompt" hidden>
+            <kbd>E</kbd> <span id="interaction-prompt-label">Enter casting office</span>
+          </div>
+          <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+        </div>
         <div id="announcer" class="sr-only" aria-live="polite"></div>
       </section>
     </main>
