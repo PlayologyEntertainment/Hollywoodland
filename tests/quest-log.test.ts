@@ -100,6 +100,19 @@ describe('the Status panel redesign, first pass', () => {
     expect(appShell).toMatch(/settingsDialog\.addEventListener\('click', \(event\) => \{\s*if \(event\.target === settingsDialog\) settingsDialog\.close\(\);/);
   });
 
+  it('scrolls .settings-form, not the <dialog> itself, so the inner frame line never drifts from the outer border', () => {
+    // dialog::before draws the inner frame line, absolutely positioned within <dialog>. If <dialog> were the element that
+    // scrolled, that line would scroll away with the content once the window got too short for it. Scrolling .settings-form
+    // instead, capped at the same height as <dialog> (one shared variable, so the two can't drift apart), keeps <dialog>
+    // itself static, so both lines always resize and move together.
+    const dialogBlock = css.match(/\ndialog \{([^}]*)\}/)?.[1] ?? '';
+    expect(dialogBlock).toMatch(/--dialog-max-h:\s*90vh/);
+    expect(dialogBlock).toMatch(/max-height:\s*var\(--dialog-max-h\)/);
+    const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/)?.[1] ?? '';
+    expect(formBlock).toMatch(/max-height:\s*var\(--dialog-max-h\)/);
+    expect(formBlock).toMatch(/overflow-y:\s*auto/);
+  });
+
   it('draws a completed quest green, with a tick, and takes a brighter green in high contrast', () => {
     expect(css).toMatch(/:root \{[^}]*--complete-rgb: 143 209 158;/);
     expect(css).toMatch(/body\.high-contrast \{[^}]*--complete-rgb: 96 255 140;/);
