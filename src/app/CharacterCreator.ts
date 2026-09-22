@@ -57,17 +57,27 @@ export class CharacterCreator {
     });
   }
 
-  /** The six headshots, as a radio group: click or press an arrow key to choose. */
+  /** The six headshots, as a radio group: click or press an arrow key to choose. Characters without a walk cycle drawn to
+   * match their own portrait are disabled, since picking one would put an unmatched body on the Boulevard; arrow-key
+   * navigation skips over them. */
   private buildCharacters(characterGrid: HTMLElement, portrait: HTMLImageElement): void {
     const choose = (index: number, focus: boolean): void => {
       this.characterIndex = index;
       this.showCharacter(characterGrid, portrait);
       if (focus) (characterGrid.children[index] as HTMLElement | undefined)?.focus();
     };
+    /** The next available (hasInGameArt) index at or beyond `index` in the given direction, or `index` itself if none is. */
+    const nextAvailable = (index: number, step: 1 | -1): number => {
+      for (let candidate = index; candidate >= 0 && candidate < PLAYER_CHARACTERS.length; candidate += step) {
+        if (PLAYER_CHARACTERS[candidate]?.hasInGameArt === true) return candidate;
+      }
+      return index;
+    };
     PLAYER_CHARACTERS.forEach((character, index) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'character-choice';
+      button.disabled = !character.hasInGameArt;
       button.setAttribute('role', 'radio');
       button.setAttribute('aria-label', character.label);
       const image = document.createElement('img');
@@ -77,24 +87,24 @@ export class CharacterCreator {
       button.appendChild(image);
       button.addEventListener('click', () => choose(index, false));
       button.addEventListener('keydown', (event) => {
-        const last = PLAYER_CHARACTERS.length - 1;
         const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
         if (step === 0) return;
         event.preventDefault();
-        choose(Math.min(last, Math.max(0, index + step)), true);
+        const next = nextAvailable(index + step, step);
+        if (PLAYER_CHARACTERS[next]?.hasInGameArt === true) choose(next, true);
       });
       characterGrid.appendChild(button);
     });
   }
 
   /** Marks the chosen headshot and shows that character's full-size portrait. Only the chosen headshot is in the tab order,
-   * as in any radio group. */
+   * as in any radio group; disabled headshots are never focusable. */
   private showCharacter(characterGrid: HTMLElement, portrait: HTMLImageElement): void {
     const chosen = this.getCurrentCharacter();
     Array.from(characterGrid.children).forEach((child, index) => {
       const selected = index === this.characterIndex;
       child.setAttribute('aria-checked', String(selected));
-      child.setAttribute('tabindex', selected ? '0' : '-1');
+      child.setAttribute('tabindex', selected && PLAYER_CHARACTERS[index]?.hasInGameArt === true ? '0' : '-1');
     });
     portrait.src = `${import.meta.env.BASE_URL}${chosen.portrait}`;
     portrait.alt = chosen.label;

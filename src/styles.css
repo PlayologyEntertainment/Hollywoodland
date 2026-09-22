@@ -314,7 +314,23 @@ h1 {
 .game-footer[hidden] { display: none; }
 .game-footer #advance-time { justify-self: start; }
 .game-footer #return-menu { justify-self: end; }
+/* The centre group is itself a 1fr-auto-1fr grid, the same trick as .game-footer's own: Terms of Service and Privacy Policy
+   sit in the two 1fr tracks flanking the logo, right up against it regardless of how their (different-length) text measures,
+   while the group as a whole -- and so the logo inside it -- stays exactly centred in the footer, unmoved by Wait/Menu's own
+   widths. */
+.footer-center { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: clamp(.6rem, 1.5vw, 1.1rem); }
+#footer-tos { justify-self: end; }
+#footer-privacy { justify-self: start; }
 .footer-logo { display: block; width: auto; height: 2.6rem; }
+/* Terms of Service / Privacy Policy: Limelight, the same size as Wait/Menu (.chrome-button's font-size), the location text's
+   colour (.hud-place strong), but none of the base button's border, fill or shadow -- plain text that happens to be clickable. */
+.footer-legal-link {
+  min-height: 0; border: 0; padding: 0; background: none; box-shadow: none;
+  color: var(--gold-bright); font-size: .95rem; white-space: nowrap;
+}
+.footer-legal-link:hover:not(:disabled), .footer-legal-link:focus-visible {
+  border: 0; color: #fff; text-decoration: underline; transform: none;
+}
 kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35rem; background: #151116; color: #fff; box-shadow: inset 0 -2px 0 rgb(255 255 255 / 12%); }
 /* Floating notices (the entrance prompt, and the toast) share one stack at the top right, level with the objective card at the top
    left and the same distance in from the picture's edge, so the two mirror each other. The stack is measured from the picture, not
@@ -423,6 +439,27 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .check-row input { margin-top: .15rem; width: 1.25rem; height: 1.25rem; flex: none; }
 .story-card h2 { margin: 0; color: var(--gold-bright); font-size: 2.4rem; }
 .story-card p, .story-card blockquote { line-height: 1.6; }
+
+/* Terms of Service and Privacy Policy: same drawer-heading/drawer-scroll shell as the Status panel, just inside a <dialog>
+   instead of a slide-in aside -- the dialog itself never scrolls (avoiding the border-drift dialog::before would otherwise
+   suffer, per the .settings-form comment above); .legal-body, the scroll container, does. */
+.legal-dialog { width: min(92vw, 46rem); max-height: var(--dialog-max-h); padding: 1.7rem 0 0; overflow: hidden; }
+/* display: flex only while open -- unconditional would override the UA stylesheet's dialog:not([open]) { display: none }
+   and leave the dialog visible (behind other stacked content, but still on screen) even when closed. */
+.legal-dialog[open] { display: flex; flex-direction: column; }
+/* Qualified by .drawer-heading (matching .drawer-heading button's own specificity, so this wins by appearing later) --
+   .legal-close alone would lose its width/height/padding to .drawer-heading button's min-width: 2.75rem and font-size: 1.5rem,
+   which is what made the box a wide, uneven rectangle instead of a square snug around the glyph. */
+.drawer-heading .legal-close {
+  display: flex; align-items: center; justify-content: center; width: 1.7rem; height: 1.7rem; min-width: 0; min-height: 0; padding: 0;
+  border: 1px solid rgb(216 173 88 / 55%); border-radius: 0; background: transparent; box-shadow: none; font-size: 1.05rem; line-height: 1;
+}
+.legal-close:hover:not(:disabled) { border-color: var(--gold-bright); background: rgb(216 173 88 / 10%); transform: none; }
+.legal-updated { margin: 0 0 1rem; color: var(--muted); font-style: italic; }
+.legal-body p { margin: 0 0 .8rem; line-height: 1.6; }
+.legal-body ul { margin: 0 0 .8rem; padding-left: 1.4rem; line-height: 1.6; }
+.legal-body section + section { margin-top: 1.1rem; }
+.legal-body h3 { margin: 0 0 .5rem; color: var(--gold-bright); font-size: 1.05rem; }
 /* Home Menu assignments: each row is a Start button on the left, with the
    title above its description on the right. The button stays after the text
    in the DOM (so a screen reader hears the assignment first); the grid only
@@ -581,6 +618,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 }
 .character-choice img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 .character-choice:hover:not(:disabled) { transform: none; border-color: var(--gold); }
+.character-choice:disabled { cursor: default; opacity: .35; filter: grayscale(65%); }
 .character-choice[aria-checked='true'] { border-color: var(--gold-bright); box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--gold-bright), 0 0 1rem rgb(255 220 139 / 35%); }
 .creator-preview {
   display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); justify-items: center; min-height: 0; text-align: center;

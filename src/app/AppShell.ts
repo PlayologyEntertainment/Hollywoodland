@@ -426,6 +426,8 @@ export class AppShell {
     assertElement('#advance-time', HTMLButtonElement).addEventListener('click', () => this.options.domainEvents.emit('advance-time-requested', undefined));
     assertElement('#import-save', HTMLButtonElement).addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => void this.importSave(fileInput, screens));
+    this.mountLegalDialog('#footer-tos', '#legal-terms-dialog', '#legal-terms-close');
+    this.mountLegalDialog('#footer-privacy', '#legal-privacy-dialog', '#legal-privacy-close');
   }
 
   public async refreshContinue(): Promise<void> {
@@ -989,6 +991,17 @@ export class AppShell {
     } finally {
       fileInput.value = '';
     }
+  }
+
+  /** Wires a footer link (Terms of Service / Privacy Policy) to open its dialog, and the dialog's own Close button and
+   * backdrop click (same "click outside closes it" pattern as the Settings dialog) to close it again. */
+  private mountLegalDialog(linkSelector: string, dialogSelector: string, closeSelector: string): void {
+    const dialog = assertElement(dialogSelector, HTMLDialogElement);
+    assertElement(linkSelector, HTMLButtonElement).addEventListener('click', () => dialog.showModal());
+    assertElement(closeSelector, HTMLButtonElement).addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
   }
 
   private toggleFilmMode(button: HTMLButtonElement): void {

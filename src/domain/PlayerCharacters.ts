@@ -1,9 +1,9 @@
 /** The six ready-made characters a player chooses between in the Character Creator. Pure data, so the choice, its saved id
  * and its art paths are unit-tested without a browser.
  *
- * The choice is cosmetic: it decides the headshot, the full-size portrait and the walk cycle used on the Boulevard. The order
- * is the order shown (the three men, then the three women) and is also the default-selection order, so add new characters to
- * the end and never reuse an id: it is stored in saves. */
+ * The choice is cosmetic: it decides the headshot, the full-size portrait and the walk cycle used on the Boulevard. The array
+ * order is the order shown and the default-selection order: characters with hasInGameArt precede those without, so the
+ * choices a player can actually make sit first. Never reuse an id, since it is stored in saves. */
 
 export type PlayerCharacterId = 'white-male' | 'asian-male' | 'black-male' | 'white-female' | 'asian-female' | 'black-female';
 
@@ -19,6 +19,10 @@ export interface PlayerCharacter {
   readonly reflection: string;
   /** Path under public/ of this character's walk-cycle config (sheet, stride and footprints); see WalkCycle.ts. */
   readonly walkCycle: string;
+  /** Whether this character has a walk cycle drawn to match their own portrait, rather than falling back to another
+   * character's sheet. The Character Creator disables headshots where this is false, since picking them would put an
+   * unmatched body on the Boulevard. Flip to true once a dedicated walk cycle for that character ships. */
+  readonly hasInGameArt: boolean;
 }
 
 const art = (id: PlayerCharacterId, kind: 'headshot' | 'portrait' | 'reflection'): string => `assets/characters/player/${id}-${kind}.webp`;
@@ -31,22 +35,7 @@ export const PLAYER_CHARACTERS: readonly PlayerCharacter[] = [
     portrait: art('white-male', 'portrait'),
     reflection: art('white-male', 'reflection'),
     walkCycle: 'data/walk-cycle.json',
-  },
-  {
-    id: 'asian-male',
-    label: 'Man with a neat side part, a sage-green shirt and tan suspenders',
-    headshot: art('asian-male', 'headshot'),
-    portrait: art('asian-male', 'portrait'),
-    reflection: art('asian-male', 'reflection'),
-    walkCycle: 'data/walk-cycle.json',
-  },
-  {
-    id: 'black-male',
-    label: 'Man with short tapered hair, a terracotta shirt and dark suspenders',
-    headshot: art('black-male', 'headshot'),
-    portrait: art('black-male', 'portrait'),
-    reflection: art('black-male', 'reflection'),
-    walkCycle: 'data/walk-cycle.json',
+    hasInGameArt: true,
   },
   {
     id: 'white-female',
@@ -55,6 +44,25 @@ export const PLAYER_CHARACTERS: readonly PlayerCharacter[] = [
     portrait: art('white-female', 'portrait'),
     reflection: art('white-female', 'reflection'),
     walkCycle: 'data/walk-cycle-white-female.json',
+    hasInGameArt: true,
+  },
+  {
+    id: 'asian-male',
+    label: 'Man with a neat side part, a sage-green shirt and tan suspenders',
+    headshot: art('asian-male', 'headshot'),
+    portrait: art('asian-male', 'portrait'),
+    reflection: art('asian-male', 'reflection'),
+    walkCycle: 'data/walk-cycle.json',
+    hasInGameArt: false,
+  },
+  {
+    id: 'black-male',
+    label: 'Man with short tapered hair, a terracotta shirt and dark suspenders',
+    headshot: art('black-male', 'headshot'),
+    portrait: art('black-male', 'portrait'),
+    reflection: art('black-male', 'reflection'),
+    walkCycle: 'data/walk-cycle.json',
+    hasInGameArt: false,
   },
   {
     id: 'asian-female',
@@ -63,6 +71,7 @@ export const PLAYER_CHARACTERS: readonly PlayerCharacter[] = [
     portrait: art('asian-female', 'portrait'),
     reflection: art('asian-female', 'reflection'),
     walkCycle: 'data/walk-cycle.json',
+    hasInGameArt: false,
   },
   {
     id: 'black-female',
@@ -71,6 +80,7 @@ export const PLAYER_CHARACTERS: readonly PlayerCharacter[] = [
     portrait: art('black-female', 'portrait'),
     reflection: art('black-female', 'reflection'),
     walkCycle: 'data/walk-cycle.json',
+    hasInGameArt: false,
   },
 ];
 

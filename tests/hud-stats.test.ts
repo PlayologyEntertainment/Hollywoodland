@@ -280,18 +280,60 @@ describe('the picture, the stage, and the footer below it', () => {
     expect(menu).toBeGreaterThan(logo);
     expect(footer).toContain('src="/assets/ui/playology-logo.webp"');
     expect(footer).toContain('alt="Playology Entertainment"');
-    // A grid with equal columns either side of the logo keeps it dead centre whatever the buttons' widths.
+    // A grid with equal columns either side of the centre group keeps it dead centre whatever Wait/Menu's own widths are.
     expect(rule('.game-footer')).toContain('grid-template-columns: 1fr auto 1fr');
     expect(css).toContain('.game-footer #advance-time { justify-self: start; }');
     expect(css).toContain('.game-footer #return-menu { justify-self: end; }');
   });
 
-  it('has only Wait and Menu as buttons: Save and Export are gone', () => {
-    expect(footer.match(/<button/g)).toHaveLength(2);
+  it('has only Wait, Menu, Terms of Service and Privacy Policy as buttons: Save and Export are gone', () => {
+    expect(footer.match(/<button/g)).toHaveLength(4);
     expect(indexHtml).not.toContain('id="manual-save"');
     expect(indexHtml).not.toContain('id="export-save"');
     expect(appShell).not.toContain('#manual-save');
     expect(appShell).not.toContain('#export-save');
+  });
+
+  it('puts Terms of Service and Privacy Policy directly against the logo, straddling it inside their own centred group', () => {
+    const wait = footer.indexOf('id="advance-time"');
+    const tos = footer.indexOf('id="footer-tos"');
+    const logo = footer.indexOf('class="footer-logo"');
+    const privacy = footer.indexOf('id="footer-privacy"');
+    const menu = footer.indexOf('id="return-menu"');
+    expect(wait).toBeLessThan(tos);
+    expect(tos).toBeLessThan(logo);
+    expect(logo).toBeLessThan(privacy);
+    expect(privacy).toBeLessThan(menu);
+    expect(footer).toContain('>Terms of Service</button>');
+    expect(footer).toContain('>Privacy Policy</button>');
+    // The centre group is its own 1fr-auto-1fr grid: Terms of Service and Privacy Policy sit right against the logo
+    // (justify-self end/start pulls each toward it) regardless of their different text lengths, while the group as a whole
+    // -- and so the logo -- stays centred in the footer, unmoved by Wait/Menu's own widths.
+    expect(footer).toMatch(/<div class="footer-center">\s*<button id="footer-tos"/);
+    expect(rule('.footer-center')).toContain('grid-template-columns: 1fr auto 1fr');
+    expect(css).toContain('#footer-tos { justify-self: end; }');
+    expect(css).toContain('#footer-privacy { justify-self: start; }');
+  });
+
+  it('sets Terms of Service and Privacy Policy in Limelight, at Wait/Menu\'s size, in the location text\'s colour, with no button chrome', () => {
+    expect(footer).toContain('id="footer-tos" class="footer-legal-link deco-label"');
+    expect(footer).toContain('id="footer-privacy" class="footer-legal-link deco-label"');
+    const link = rule('.footer-legal-link');
+    expect(link).toContain('font-size: .95rem');
+    expect(rule('.chrome-button')).toContain('font-size: .95rem');
+    expect(link).toContain('color: var(--gold-bright)');
+    expect(rule('.hud-place strong')).toContain('color: var(--gold-bright)');
+    expect(link).toMatch(/border:\s*0/);
+    expect(link).toContain('background: none');
+    expect(link).toContain('box-shadow: none');
+  });
+
+  it('opens a Terms of Service / Privacy Policy dialog from the footer links, closeable by its own button or its backdrop', () => {
+    expect(indexHtml).toContain('id="legal-terms-dialog" class="legal-dialog"');
+    expect(indexHtml).toContain('id="legal-privacy-dialog" class="legal-dialog"');
+    expect(appShell).toContain("this.mountLegalDialog('#footer-tos', '#legal-terms-dialog', '#legal-terms-close')");
+    expect(appShell).toContain("this.mountLegalDialog('#footer-privacy', '#legal-privacy-dialog', '#legal-privacy-close')");
+    expect(appShell).toMatch(/dialog\.addEventListener\('click', \(event\) => \{\s*if \(event\.target === dialog\) dialog\.close\(\);/);
   });
 
   it('shows and hides with the game, and its height is published beside the header\'s', () => {

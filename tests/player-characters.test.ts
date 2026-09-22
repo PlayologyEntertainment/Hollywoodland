@@ -25,11 +25,12 @@ function rules(css: string, selector: string): string {
   return blocks.join('\n');
 }
 
-const EXPECTED: readonly PlayerCharacterId[] = ['white-male', 'asian-male', 'black-male', 'white-female', 'asian-female', 'black-female'];
+const EXPECTED: readonly PlayerCharacterId[] = ['white-male', 'white-female', 'asian-male', 'black-male', 'asian-female', 'black-female'];
 
 describe('the six player characters', () => {
-  it('are the three men then the three women, in the agreed order', () => {
+  it('put the characters with their own in-game art first, in the agreed order', () => {
     expect(PLAYER_CHARACTERS.map((c) => c.id)).toEqual(EXPECTED);
+    expect(PLAYER_CHARACTERS.filter((c) => c.hasInGameArt).map((c) => c.id)).toEqual(['white-male', 'white-female']);
   });
 
   it('give every character a unique id and a unique screen-reader description', () => {

@@ -149,10 +149,15 @@
           </section>
         </div>
 
-        <!-- Permanent footer, directly below the picture: Wait on the left, the Playology logo at the centre, Menu on the right. -->
+        <!-- Permanent footer, directly below the picture: Wait on the left, Menu on the right, and a centre group -- Terms of
+             Service, the Playology logo, Privacy Policy -- straddling the logo so both legal links sit right against it. -->
         <footer id="game-footer" class="game-footer" aria-label="Game controls" hidden>
           <button id="advance-time" class="chrome-button deco-label" type="button">Wait</button>
-          <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" />
+          <div class="footer-center">
+            <button id="footer-tos" class="footer-legal-link deco-label" type="button">Terms of Service</button>
+            <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" />
+            <button id="footer-privacy" class="footer-legal-link deco-label" type="button">Privacy Policy</button>
+          </div>
           <button id="return-menu" class="chrome-button deco-label" type="button">Menu</button>
         </footer>
 
@@ -275,6 +280,131 @@
             <p class="privacy-note">No player name, dialogue text, or save data is collected.</p>
             <button class="primary-button" value="confirm">Save</button>
           </form>
+        </dialog>
+
+        <dialog id="legal-terms-dialog" class="legal-dialog" aria-labelledby="legal-terms-title">
+          <div class="drawer-heading">
+            <h2 id="legal-terms-title">Terms of Service</h2>
+            <button id="legal-terms-close" type="button" class="legal-close" aria-label="Close Terms of Service">×</button>
+          </div>
+          <div class="drawer-scroll legal-body">
+            <p class="legal-updated">Last updated: September 22, 2026</p>
+            <p>These Terms of Service ("Terms") govern your access to and use of Hollywoodland (the "Game"), a free, single-player browser game operated by Playology Entertainment ("Playology," "we," "us," or "our"). By accessing or playing the Game, you agree to these Terms. If you do not agree, please do not use the Game.</p>
+            <section>
+              <h3>Eligibility</h3>
+              <p>The Game is intended for a general audience. If you are under the age of majority in your jurisdiction, you may only use the Game with the involvement and consent of a parent or legal guardian.</p>
+            </section>
+            <section>
+              <h3>The Service</h3>
+              <p>Hollywoodland is a free, single-player browser game. There is no account registration, username, or password: your career — the character you create and your progress — is stored locally in your browser. You may export a save file to your device and import it later, including in a different browser or on a different device, to carry your progress with you.</p>
+            </section>
+            <section>
+              <h3>License to Use</h3>
+              <p>We grant you a limited, non-exclusive, non-transferable, revocable license to access and play the Game for your personal, non-commercial entertainment, subject to these Terms. All rights not expressly granted to you are reserved by Playology.</p>
+            </section>
+            <section>
+              <h3>No Purchases</h3>
+              <p>The Game is free to play and, as of this writing, offers no virtual currency, purchases, or paid content. If that changes, these Terms will be updated accordingly.</p>
+            </section>
+            <section>
+              <h3>User Conduct</h3>
+              <p>When using the Game, you agree not to:</p>
+              <ul>
+                <li>Cheat, exploit bugs, or use unauthorized third-party software to gain an unfair advantage.</li>
+                <li>Interfere with, disrupt, or attempt to gain unauthorized access to the Game or the systems that serve it.</li>
+                <li>Use the Game for any unlawful purpose.</li>
+                <li>Reverse engineer, decompile, or attempt to extract the source code of the Game, except where permitted by law.</li>
+              </ul>
+            </section>
+            <section>
+              <h3>AI-Generated Content and Character Likeness</h3>
+              <p>Many of the characters, portraits, backgrounds, and other visual assets in Hollywoodland are generated using artificial intelligence tools as part of the Game's creative production process. Any resemblance between an in-game character or asset and any real person, living or deceased, is purely coincidental and unintentional. No in-game character is based on, modeled after, or intended to depict any actual individual.</p>
+              <p>If you believe an in-game asset resembles you or another identifiable individual, please contact us using the information in the Contact Us section below so we can review the matter.</p>
+            </section>
+            <section>
+              <h3>Intellectual Property</h3>
+              <p>The Game, including its software, artwork, writing, and all other content, is owned by Playology Entertainment or its licensors and is protected by intellectual property laws. Except for the limited license granted above, nothing in these Terms transfers any ownership rights to you.</p>
+            </section>
+            <section>
+              <h3>Save Data and Loss</h3>
+              <p>Your save data is stored in your browser's local storage and exists only on the device and browser you played on. Clearing your browser's site data, switching browsers or devices, or playing in a private/incognito window can make earlier progress inaccessible unless you exported a save file beforehand. We are not responsible for progress lost this way.</p>
+            </section>
+            <section>
+              <h3>Termination</h3>
+              <p>We may discontinue or modify the Game at any time. You may stop using the Game at any time.</p>
+            </section>
+            <section>
+              <h3>Disclaimers</h3>
+              <p>The Game is provided "as is" and "as available," without warranties of any kind, whether express or implied, including warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not guarantee that the Game will be uninterrupted, error-free, or secure.</p>
+            </section>
+            <section>
+              <h3>Limitation of Liability</h3>
+              <p>To the fullest extent permitted by law, Playology Entertainment shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, arising out of or related to your use of the Game.</p>
+            </section>
+            <section>
+              <h3>Changes to These Terms</h3>
+              <p>We may update these Terms from time to time. Changes will be reflected by an updated "Last updated" date above. Continued use of the Game after changes take effect constitutes acceptance of the revised Terms.</p>
+            </section>
+            <section>
+              <h3>Contact Us</h3>
+              <p>If you have questions about these Terms, please contact Playology Entertainment at serdar@playologyentertainment.com.</p>
+            </section>
+          </div>
+        </dialog>
+
+        <dialog id="legal-privacy-dialog" class="legal-dialog" aria-labelledby="legal-privacy-title">
+          <div class="drawer-heading">
+            <h2 id="legal-privacy-title">Privacy Policy</h2>
+            <button id="legal-privacy-close" type="button" class="legal-close" aria-label="Close Privacy Policy">×</button>
+          </div>
+          <div class="drawer-scroll legal-body">
+            <p class="legal-updated">Last updated: September 22, 2026</p>
+            <p>This Privacy Policy explains what information Hollywoodland (the "Game"), operated by Playology Entertainment ("Playology," "we," "us," or "our"), collects and how it is used. We designed the Game to collect as little information as possible.</p>
+            <section>
+              <h3>Information We Collect</h3>
+              <p>The Game requires no account, name, email address, or password to play. Your career — the name you give your character, the origin and character you choose, and your progress — is stored only in your browser's local storage (IndexedDB) and is never sent to our servers automatically.</p>
+              <p>If you choose to export a save file, that file is saved to your own device; we only receive it if you voluntarily send it to us, for example to report a bug.</p>
+              <p>The Settings menu includes an optional toggle to share anonymous, aggregate performance analytics; it does not send your character's name, dialogue, or save data, and you can turn it off at any time.</p>
+            </section>
+            <section>
+              <h3>Information We Do Not Collect</h3>
+              <p>The Game does not:</p>
+              <ul>
+                <li>Require account registration with personal information.</li>
+                <li>Display third-party advertising.</li>
+                <li>Use advertising trackers or cross-site tracking analytics.</li>
+                <li>Process real-money payments — the Game is free and currently offers no purchases.</li>
+              </ul>
+            </section>
+            <section>
+              <h3>How We Use Information</h3>
+              <p>Any information described above is used solely to operate and improve the Game — for example, to keep your career and saved progress in your browser, and to understand overall usage of the Game through aggregate analytics, if you choose to leave that setting on.</p>
+            </section>
+            <section>
+              <h3>How We Store and Protect Information</h3>
+              <p>Your career and save data live in your browser's own storage, under your control; a save file you export is a plain file on your device. We take reasonable measures to protect any information we do receive, but no method of electronic storage or transmission is completely secure.</p>
+            </section>
+            <section>
+              <h3>Data Sharing</h3>
+              <p>We do not sell your information. We do not share it with third parties, except with service providers who help us operate the Game (such as hosting or analytics infrastructure) or if required to do so by law.</p>
+            </section>
+            <section>
+              <h3>Children's Privacy</h3>
+              <p>The Game is intended for a general audience and does not knowingly collect personal information from children. Playing the Game does not require a name, email address, or any other personal information.</p>
+            </section>
+            <section>
+              <h3>Your Choices</h3>
+              <p>Because your progress is stored only in your browser, clearing your browser's site data or switching to a different browser or device will make it inaccessible unless you exported a save file first. You can turn off anonymous analytics sharing at any time in Settings.</p>
+            </section>
+            <section>
+              <h3>Changes to This Policy</h3>
+              <p>We may update this Privacy Policy from time to time. Changes will be reflected by an updated "Last updated" date above. Continued use of the Game after changes take effect constitutes acceptance of the revised policy.</p>
+            </section>
+            <section>
+              <h3>Contact Us</h3>
+              <p>If you have questions about this Privacy Policy, please contact Playology Entertainment at serdar@playologyentertainment.com.</p>
+            </section>
+          </div>
         </dialog>
 
         <input id="save-file-input" type="file" accept="application/json,.json" hidden />
