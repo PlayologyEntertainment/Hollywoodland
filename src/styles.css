@@ -361,13 +361,20 @@ dl div { display: flex; justify-content: space-between; padding: .8rem 0; border
 .talent-list .talent-summary small { color: var(--muted); }
 .talent-unlock-button { min-height: 2.1rem; padding: .35rem .7rem; font-size: .82rem; }
 
-dialog { position: relative; width: min(92vw, 39rem); max-height: 90vh; border: 1px solid var(--gold); padding: 0; overflow: auto; background: var(--panel); color: var(--ink); box-shadow: 0 1.5rem 5rem #000; }
+/* --dialog-max-h is shared with .settings-form below: that form, not this element, does the scrolling for the Settings dialog,
+   so both need the same cap (a shared variable, not two copies of "90vh", so they can't drift apart). */
+dialog { --dialog-max-h: 90vh; position: relative; width: min(92vw, 39rem); max-height: var(--dialog-max-h); border: 1px solid var(--gold); padding: 0; overflow: auto; background: var(--panel); color: var(--ink); box-shadow: 0 1.5rem 5rem #000; }
 dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .story-card { display: grid; gap: 1.2rem; padding: 1.7rem; }
 /* The Settings dialog has no Close button (clicking the backdrop closes it, see AppShell), so its heading needs no room for
    one, and its own padding replaces the double inset that button's row used to need. Kept tighter than .story-card's so the
-   whole dialog is more compact: two columns of checkboxes below the sliders, rather than one long list. */
-.settings-form { display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; }
+   whole dialog is more compact: two columns of checkboxes below the sliders, rather than one long list.
+   This form, not the <dialog> itself, is what scrolls once the window is too short for it (same cap, --dialog-max-h, so the
+   form is never taller than the dialog's own box): dialog::before draws the thin inner frame line, positioned absolute within
+   <dialog>, so if <dialog> were the scroll container that line would scroll along with the content and drift away from the
+   dialog's own (fixed) border as the window shrinks. Scrolling this inner element instead keeps <dialog> itself static, so
+   both border lines always resize and move together. */
+.settings-form { display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; max-height: var(--dialog-max-h); overflow-y: auto; }
 .settings-form .drawer-heading { margin: 0 -1.7rem .2rem; padding: 0 1.7rem .6rem; }
 .settings-form label:not(.check-row) { display: grid; grid-template-columns: 1fr auto; gap: .6rem; }
 .settings-form input[type='range'] { grid-column: 1 / -1; width: 100%; }
