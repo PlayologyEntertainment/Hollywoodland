@@ -109,26 +109,33 @@ describe('the Status panel redesign, first pass', () => {
     expect(dialogBlock).toMatch(/--dialog-max-h:\s*90vh/);
     expect(dialogBlock).toMatch(/--dialog-border:\s*1px/);
     expect(dialogBlock).toMatch(/max-height:\s*var\(--dialog-max-h\)/);
-    const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/)?.[1] ?? '';
-    // .settings-form fills <dialog>'s content box exactly, so its own cap has to stop short of --dialog-max-h by <dialog>'s
-    // own top and bottom border (2 * --dialog-border) — otherwise it is 2 borders taller than the room <dialog> actually has
-    // for it, and <dialog> grows a second, all-but-empty scrollbar of its own alongside the form's real one.
-    expect(formBlock).toMatch(/max-height:\s*calc\(var\(--dialog-max-h\)\s*-\s*2\s*\*\s*var\(--dialog-border\)\)/);
+    const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/s)?.[1] ?? '';
+    // .settings-form fills <dialog>'s content box, less its own margin (--settings-gap, see the next test), so its own cap
+    // has to stop short of --dialog-max-h by both <dialog>'s top+bottom border and .settings-form's own top+bottom margin —
+    // otherwise it is that much taller than the room <dialog> actually has for it, and <dialog> grows a second, all-but-empty
+    // scrollbar of its own alongside the form's real one.
+    expect(formBlock).toMatch(/max-height:\s*calc\(var\(--dialog-max-h\)\s*-\s*2\s*\*\s*var\(--dialog-border\)\s*-\s*2\s*\*\s*var\(--settings-gap\)\)/);
     // overflow-y alone would silently promote overflow-x to auto too (CSS's visible/non-visible axis rule), a second, latent
     // scrollbar waiting for anything to overflow sideways.
     expect(formBlock).toMatch(/overflow:\s*hidden auto/);
   });
 
-  it('keeps .settings-form\'s scrollbar off the inner frame line: a thin styled scrollbar, and a wider right inset to clear it regardless of how wide "thin" renders', () => {
-    // .settings-form's default (unstyled) scrollbar would have been wide enough to cross dialog::before's .5rem inset, exactly
-    // the "frame cut across it" problem the comment above dialog::before says the Status panel was designed to avoid.
-    const overrideBlock = css.match(/\n#settings-dialog::before \{([^}]*)\}/)?.[1] ?? '';
-    expect(overrideBlock).toMatch(/inset:\s*\.5rem 1\.25rem \.5rem \.5rem/);
-    const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/)?.[1] ?? '';
+  it('keeps .settings-form\'s scrollbar and its scrolled content off the inner frame line, alike on all 4 sides', () => {
+    // A scrollbar only ever occupies space inside its own element's box, and overflow clipping only ever happens at that
+    // element's own edge — so .settings-form (not just its scrollbar) needs a real MARGIN pulling its own box clear of
+    // dialog::before's .5rem line, on every side alike, or a checkbox row straddling that edge mid-scroll looks like it
+    // crosses the line just as much as an unstyled scrollbar would. An earlier attempt only widened the line's right inset
+    // (for the scrollbar alone) and left the other 3 sides unfixed and asymmetric; this margin fixes all 4 sides the same way.
+    const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/s)?.[1] ?? '';
+    expect(formBlock).toMatch(/--settings-gap:\s*\.75rem/);
+    expect(formBlock).toMatch(/margin:\s*var\(--settings-gap\)/);
     expect(formBlock).toMatch(/scrollbar-width:\s*thin/);
     expect(formBlock).toMatch(/scrollbar-color:\s*rgb\(216 173 88 \/ 55%\) transparent/);
     expect(css).toMatch(/\n\.settings-form::-webkit-scrollbar \{ width: \.55rem; \}/);
     expect(css).toMatch(/\n\.settings-form::-webkit-scrollbar-thumb \{[^}]*background: rgb\(216 173 88 \/ 55%\);/);
+    // The generic frame line itself is untouched (uniform .5rem, same as the other 3 dialogs) — no #settings-dialog::before
+    // override left over from the asymmetric attempt.
+    expect(css).not.toContain('#settings-dialog::before');
   });
 
   it('draws a completed quest green, with a tick, and takes a brighter green in high contrast', () => {
