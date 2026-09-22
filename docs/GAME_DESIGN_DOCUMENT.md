@@ -71,13 +71,17 @@ The origin is mechanically meaningful. It modifies initial attributes, starting 
 
 Approved origins (September 18, 2026). Each trades a benefit for a cost and connects to one cast member:
 
+Widened from an original ±1 to ±3 (September 21, 2026) once that subtler
+swing left every origin's final attributes too close to read as distinct
+builds; see `docs/DRAFT_TRACK_B_CANON_PROPOSAL.md` §3 and `src/domain/Origins.ts`.
+
 | Origin | Trade | Starting contact |
 |---|---|---|
-| Small-Town Hopeful | +1 Grit, -1 Wit | Gus Albrecht (a family friend wrote ahead) |
-| Vaudeville Trouper | +1 Craft, -1 Grit | Corinne Lake (crossed paths on a bill) |
-| Runaway Society Name | +1 Presence, -1 starting money | Nick Ferro (recognizes the name and offers an uneasy trade of discretion for a future story) |
-| Immigrant Striver | +1 Grit, -1 Presence | Odalys Bellhaven (shared home community; discounted first week's rent) |
-| Studio-Lot Hand-Me-Down | +1 Wit, -1 Nerve | Ola Whitfield (unlocks the wardrobe-department route past the casting-office gatekeeper) |
+| Small-Town Hopeful | +3 Grit, -3 Wit | Gus Albrecht (a family friend wrote ahead) |
+| Vaudeville Trouper | +3 Craft, -3 Grit | Corinne Lake (crossed paths on a bill) |
+| Runaway Society Name | +3 Presence, -3 Wit | Nick Ferro (recognizes the name and offers an uneasy trade of discretion for a future story) |
+| Immigrant Striver | +3 Grit, -3 Presence | Odalys Bellhaven (shared home community; discounted first week's rent) |
+| Studio-Lot Hand-Me-Down | +3 Wit, -3 Nerve | Ola Whitfield (unlocks the wardrobe-department route past the casting-office gatekeeper) |
 
 Wardrobe is a cosmetic collection rather than numerical armor. Clothing expresses identity, films completed, achievements, and housing displays; quest requirements may ask for a costume or dress code, but items do not carry rarity tiers or general stat bonuses.
 

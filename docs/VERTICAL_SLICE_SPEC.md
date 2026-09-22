@@ -155,7 +155,7 @@ The slice is approval-ready when:
 
 Resolved September 18, 2026 (see `DECISION_LOG.md` and `DRAFT_TRACK_B_CANON_PROPOSAL.md`):
 
-- Origin list: five origins, each with a +1/-1 trade and one starting contact.
+- Origin list: five origins, each with a +3/-3 trade and one starting contact.
 - Names, visual briefs, and relationship boundaries for the nine recurring characters.
 - Fictional studio, film, theater, diner, casting office, boarding house, and tabloid names.
 - Screen-test genre and scene premise.
