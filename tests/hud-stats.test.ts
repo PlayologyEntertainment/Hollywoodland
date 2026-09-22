@@ -79,14 +79,16 @@ describe('the header', () => {
   it('shows Film Look and Fullscreen as icon-only buttons, each with an accessible name and a matching tooltip', () => {
     // Both keep the accessible name in aria-label (not visible text), and the CSS tooltip reads that same attribute via
     // attr(), so there is one source of truth: AppShell only ever has to update aria-label, never a separate tooltip copy.
-    expect(header).toMatch(/<button id="film-mode" class="text-button icon-button"[^>]*aria-label="Film Look" title="Film Look">/);
+    // Neither has a `title`: that would draw the browser's own plain tooltip on top of the on-theme CSS one below.
+    expect(header).toMatch(/<button id="film-mode" class="text-button icon-button"[^>]*aria-label="Film Look">/);
     expect(header).toContain('<img src="/assets/ui/icon-film-look.webp" alt="" />');
-    expect(header).toMatch(/<button id="fullscreen" class="text-button icon-button"[^>]*aria-label="Fullscreen" title="Fullscreen">/);
+    expect(header).toMatch(/<button id="fullscreen" class="text-button icon-button"[^>]*aria-label="Fullscreen">/);
     expect(header).toContain('<img src="/assets/ui/icon-fullscreen.webp" alt="" />');
+    for (const id of ['film-mode', 'fullscreen']) expect(header, id).not.toMatch(new RegExp(`id="${id}"[^>]*title=`));
     expect(rule('.icon-button')).toMatch(/width:\s*2rem.*height:\s*2rem/);
     expect(rule('.icon-button::after')).toContain('content: attr(aria-label)');
-    expect(appShell).toMatch(/button\.setAttribute\('aria-label', label\)/);
-    expect(appShell).toMatch(/button\.title = label/);
+    expect(appShell).toMatch(/button\.setAttribute\('aria-label', active \? 'Return to Color' : 'Film Look'\)/);
+    expect(appShell).not.toContain('button.title');
   });
 
   it('sizes Career to match the footer\'s rounded-rectangle buttons (.chrome-button), not the square icon buttons', () => {

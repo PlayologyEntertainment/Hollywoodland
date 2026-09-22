@@ -131,9 +131,8 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .icon-button img { width: 1.3rem; height: 1.3rem; display: block; pointer-events: none; }
 /* A small dark/gold tooltip below each icon button, shown on hover or keyboard focus. It reads its text straight from
    aria-label (via attr()), so there is one source of truth for the label: AppShell's Film Look toggle updates aria-label
-   between states and the tooltip follows automatically, with no separate copy of the text to keep in sync. The native
-   `title` attribute (set alongside aria-label in the markup) is a plain-text fallback for anyone whose browser or
-   assistive tech doesn't use this CSS tooltip. */
+   between states and the tooltip follows automatically, with no separate copy of the text to keep in sync. There is
+   deliberately no `title` attribute on these buttons: it would draw the browser's own plain tooltip on top of this one. */
 .icon-button::after {
   content: attr(aria-label); position: absolute; z-index: 20; top: calc(100% + .5rem); left: 50%; transform: translateX(-50%);
   padding: .35rem .6rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 96%);
