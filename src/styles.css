@@ -138,6 +138,11 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .title-panel[hidden] { display: none; }
 /* Dialogs keep a fine inner frame. The Status panel does not: its content scrolls, and the frame cut across it. */
 dialog::before { position: absolute; inset: .5rem; border: 1px solid rgb(216 173 88 / 42%); content: ''; pointer-events: none; }
+/* The Settings dialog has the same problem the Status panel avoided above: .settings-form scrolls (see below), and its
+   scrollbar sits flush against the dialog's right edge. A thin, styled scrollbar keeps it narrow, but "thin" isn't an exact
+   pixel width in every browser, so the right inset is widened enough to clear it regardless, rather than trimmed to match
+   one browser's rendering of "thin" exactly. */
+#settings-dialog::before { inset: .5rem 1.25rem .5rem .5rem; }
 .eyebrow, .build-label { margin: 0; color: var(--muted); font-family: Arial, sans-serif; font-size: .72em; letter-spacing: .19em; text-transform: uppercase; }
 h1 {
   margin: .12em 0 0; color: var(--gold-bright); font-family: var(--display-font);
@@ -376,8 +381,16 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
    dialog's own (fixed) border as the window shrinks. Scrolling this inner element instead keeps <dialog> itself static, so
    both border lines always resize and move together. */
 /* overflow-y alone would compute overflow-x to auto too (declaring one non-visible axis promotes the other from its default
-   'visible'), a second, latent scrollbar waiting for anything to overflow sideways; pin it to hidden instead. */
-.settings-form { display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; max-height: calc(var(--dialog-max-h) - 2 * var(--dialog-border)); overflow: hidden auto; }
+   'visible'), a second, latent scrollbar waiting for anything to overflow sideways; pin it to hidden instead.
+   The scrollbar itself is thinned and styled like .drawer-scroll's, below, so it reads as part of the frame rather than a
+   generic browser control cutting across the inner border line (see #settings-dialog::before above). */
+.settings-form {
+  display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; max-height: calc(var(--dialog-max-h) - 2 * var(--dialog-border));
+  overflow: hidden auto; scrollbar-width: thin; scrollbar-color: rgb(216 173 88 / 55%) transparent;
+}
+.settings-form::-webkit-scrollbar { width: .55rem; }
+.settings-form::-webkit-scrollbar-track { background: transparent; }
+.settings-form::-webkit-scrollbar-thumb { border-radius: .3rem; background: rgb(216 173 88 / 55%); }
 .settings-form .drawer-heading { margin: 0 -1.7rem .2rem; padding: 0 1.7rem .6rem; }
 .settings-form label:not(.check-row) { display: grid; grid-template-columns: 1fr auto; gap: .6rem; }
 .settings-form input[type='range'] { grid-column: 1 / -1; width: 100%; }
