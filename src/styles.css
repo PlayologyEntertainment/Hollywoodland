@@ -118,10 +118,34 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .hud-stat[data-stat="money"] .hud-value { color: var(--gold-bright); }
 .hud-stat[data-low="true"] .hud-value { color: #f0876a; }
 
-/* View buttons in the header: square, hairline-outlined, in Limelight; pressed or open ones are filled with gold. */
+/* View buttons in the header: square, hairline-outlined; pressed ones are filled with gold. Film Look and Fullscreen are
+   icon-only (see .icon-button below); Career is a .chrome-button instead (see below), not one of these. */
 .text-button { min-height: auto; padding: .3rem .8rem; border: 1px solid rgb(216 173 88 / 55%); border-radius: 0; background: transparent; box-shadow: none; font-size: .82rem; letter-spacing: .06em; }
 .text-button:hover:not(:disabled) { border-color: var(--gold-bright); background: rgb(216 173 88 / 10%); transform: none; }
 .text-button[aria-pressed="true"], .text-button[aria-expanded="true"] { border-color: var(--gold-bright); background: rgb(216 173 88 / 22%); color: #fff; }
+/* Film Look and Fullscreen: a small square icon button (2rem, matching .chrome-button's height below) instead of a text
+   label. The icon is gold line-art on its own, so it just needs centering and a little breathing room from the button's
+   hairline edge; the pressed/open highlight above still applies since these keep the .text-button class too. Positioned,
+   so the tooltip below (::after) can anchor to it. */
+.icon-button { position: relative; width: 2rem; height: 2rem; min-height: 2rem; padding: 0; display: grid; place-items: center; }
+.icon-button img { width: 1.3rem; height: 1.3rem; display: block; pointer-events: none; }
+/* A small dark/gold tooltip below each icon button, shown on hover or keyboard focus. It reads its text straight from
+   aria-label (via attr()), so there is one source of truth for the label: AppShell's Film Look toggle updates aria-label
+   between states and the tooltip follows automatically, with no separate copy of the text to keep in sync. The native
+   `title` attribute (set alongside aria-label in the markup) is a plain-text fallback for anyone whose browser or
+   assistive tech doesn't use this CSS tooltip. */
+.icon-button::after {
+  content: attr(aria-label); position: absolute; z-index: 20; top: calc(100% + .5rem); left: 50%; transform: translateX(-50%);
+  padding: .35rem .6rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 96%);
+  color: var(--ink); font-family: Arial, sans-serif; font-size: .74rem; letter-spacing: .02em; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .15s ease; box-shadow: 0 4px 15px rgb(0 0 0 / 35%);
+}
+.icon-button:hover::after, .icon-button:focus-visible::after { opacity: 1; }
+/* The small rounded-rectangle chrome button: the footer's Wait/Menu, and the header's Career button, all the same size
+   and style (the base button's gold border and gradient fill, just shorter). Career additionally highlights like the
+   .text-button group above while its panel is open, since it used to be one of them. */
+.chrome-button { min-height: 2rem; padding: .2rem 1.1rem; font-size: .95rem; }
+.chrome-button[aria-expanded="true"] { border-color: var(--gold-bright); background: linear-gradient(#4a3520, #241809); color: #fff; }
 
 /* Main menu: a 1930s film slate. The art (clapper and hand-lettered fields on top, a clear chalkboard below) is a
    nine-slice border image, so the top keeps its proportions and the blank board stretches to fit the menu text (small
@@ -292,7 +316,6 @@ h1 {
   padding: .5rem clamp(1rem, 3vw, 3rem); background: #000;
 }
 .game-footer[hidden] { display: none; }
-.game-footer button { min-height: 2rem; padding: .2rem 1.1rem; font-size: .95rem; }
 .game-footer #advance-time { justify-self: start; }
 .game-footer #return-menu { justify-self: end; }
 .footer-logo { display: block; width: auto; height: 2.6rem; }
@@ -639,7 +662,8 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .status-bar { column-gap: .6rem; padding-inline: 1rem; }
   .hud-place strong { font-size: 1rem; }
   .status-actions { gap: .35rem; }
-  .text-button { padding: .3rem .5rem; font-size: .74rem; letter-spacing: .03em; }
+  /* .text-button is only ever used together with .icon-button now (Film Look, Fullscreen), which stay a fixed 2rem square
+     regardless of width, so there is no narrower-only padding/font-size to apply here any more. */
 }
 
 @media (max-width: 780px), (max-height: 620px) {

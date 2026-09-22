@@ -995,7 +995,11 @@ export class AppShell {
     const active = !document.body.classList.contains('film-mode');
     document.body.classList.toggle('film-mode', active);
     button.setAttribute('aria-pressed', String(active));
-    button.textContent = active ? 'Return to Color' : 'Film Look';
+    // The button is icon-only now: aria-label is both its accessible name and (via the CSS tooltip's attr(aria-label)) its
+    // on-screen tooltip text, so updating just this one attribute keeps both in sync.
+    const label = active ? 'Return to Color' : 'Film Look';
+    button.setAttribute('aria-label', label);
+    button.title = label;
     this.toast(active ? 'Black-and-white living-film treatment' : 'Hollywood color restored');
   }
 

@@ -34,9 +34,13 @@
           <!-- The game's logo at the very centre of the header: clear of the top line, and hanging a little over the bottom one. -->
           <img class="header-logo" src="/assets/ui/hollywoodland-logo.webp" alt="Hollywoodland" />
           <div class="status-actions">
-            <button id="film-mode" class="text-button deco-label" type="button" aria-pressed="false">Film Look</button>
-            <button id="fullscreen" class="text-button deco-label" type="button">Fullscreen</button>
-            <button id="status-button" class="text-button deco-label" type="button" aria-expanded="false">Career</button>
+            <button id="film-mode" class="text-button icon-button" type="button" aria-pressed="false" aria-label="Film Look" title="Film Look">
+              <img src="/assets/ui/icon-film-look.webp" alt="" />
+            </button>
+            <button id="fullscreen" class="text-button icon-button" type="button" aria-label="Fullscreen" title="Fullscreen">
+              <img src="/assets/ui/icon-fullscreen.webp" alt="" />
+            </button>
+            <button id="status-button" class="chrome-button deco-label" type="button" aria-expanded="false">Career</button>
           </div>
         </header>
 
@@ -147,9 +151,9 @@
 
         <!-- Permanent footer, directly below the picture: Wait on the left, the Playology logo at the centre, Menu on the right. -->
         <footer id="game-footer" class="game-footer" aria-label="Game controls" hidden>
-          <button id="advance-time" class="deco-label" type="button">Wait</button>
+          <button id="advance-time" class="chrome-button deco-label" type="button">Wait</button>
           <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" />
-          <button id="return-menu" class="deco-label" type="button">Menu</button>
+          <button id="return-menu" class="chrome-button deco-label" type="button">Menu</button>
         </footer>
 
         <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
