@@ -361,9 +361,10 @@ dl div { display: flex; justify-content: space-between; padding: .8rem 0; border
 .talent-list .talent-summary small { color: var(--muted); }
 .talent-unlock-button { min-height: 2.1rem; padding: .35rem .7rem; font-size: .82rem; }
 
-/* --dialog-max-h is shared with .settings-form below: that form, not this element, does the scrolling for the Settings dialog,
-   so both need the same cap (a shared variable, not two copies of "90vh", so they can't drift apart). */
-dialog { --dialog-max-h: 90vh; position: relative; width: min(92vw, 39rem); max-height: var(--dialog-max-h); border: 1px solid var(--gold); padding: 0; overflow: auto; background: var(--panel); color: var(--ink); box-shadow: 0 1.5rem 5rem #000; }
+/* --dialog-max-h and --dialog-border are shared with .settings-form below: that form, not this element, does the scrolling for
+   the Settings dialog, and it needs to stop 2 borders short of this cap (top and bottom), or it overflows this element by
+   exactly that sliver and this element grows a second, all-but-empty scrollbar of its own alongside the form's. */
+dialog { --dialog-max-h: 90vh; --dialog-border: 1px; position: relative; width: min(92vw, 39rem); max-height: var(--dialog-max-h); border: var(--dialog-border) solid var(--gold); padding: 0; overflow: auto; background: var(--panel); color: var(--ink); box-shadow: 0 1.5rem 5rem #000; }
 dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .story-card { display: grid; gap: 1.2rem; padding: 1.7rem; }
 /* The Settings dialog has no Close button (clicking the backdrop closes it, see AppShell), so its heading needs no room for
@@ -374,7 +375,9 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
    <dialog>, so if <dialog> were the scroll container that line would scroll along with the content and drift away from the
    dialog's own (fixed) border as the window shrinks. Scrolling this inner element instead keeps <dialog> itself static, so
    both border lines always resize and move together. */
-.settings-form { display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; max-height: var(--dialog-max-h); overflow-y: auto; }
+/* overflow-y alone would compute overflow-x to auto too (declaring one non-visible axis promotes the other from its default
+   'visible'), a second, latent scrollbar waiting for anything to overflow sideways; pin it to hidden instead. */
+.settings-form { display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; max-height: calc(var(--dialog-max-h) - 2 * var(--dialog-border)); overflow: hidden auto; }
 .settings-form .drawer-heading { margin: 0 -1.7rem .2rem; padding: 0 1.7rem .6rem; }
 .settings-form label:not(.check-row) { display: grid; grid-template-columns: 1fr auto; gap: .6rem; }
 .settings-form input[type='range'] { grid-column: 1 / -1; width: 100%; }
