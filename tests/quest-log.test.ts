@@ -119,6 +119,18 @@ describe('the Status panel redesign, first pass', () => {
     expect(formBlock).toMatch(/overflow:\s*hidden auto/);
   });
 
+  it('keeps .settings-form\'s scrollbar off the inner frame line: a thin styled scrollbar, and a wider right inset to clear it regardless of how wide "thin" renders', () => {
+    // .settings-form's default (unstyled) scrollbar would have been wide enough to cross dialog::before's .5rem inset, exactly
+    // the "frame cut across it" problem the comment above dialog::before says the Status panel was designed to avoid.
+    const overrideBlock = css.match(/\n#settings-dialog::before \{([^}]*)\}/)?.[1] ?? '';
+    expect(overrideBlock).toMatch(/inset:\s*\.5rem 1\.25rem \.5rem \.5rem/);
+    const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/)?.[1] ?? '';
+    expect(formBlock).toMatch(/scrollbar-width:\s*thin/);
+    expect(formBlock).toMatch(/scrollbar-color:\s*rgb\(216 173 88 \/ 55%\) transparent/);
+    expect(css).toMatch(/\n\.settings-form::-webkit-scrollbar \{ width: \.55rem; \}/);
+    expect(css).toMatch(/\n\.settings-form::-webkit-scrollbar-thumb \{[^}]*background: rgb\(216 173 88 \/ 55%\);/);
+  });
+
   it('draws a completed quest green, with a tick, and takes a brighter green in high contrast', () => {
     expect(css).toMatch(/:root \{[^}]*--complete-rgb: 143 209 158;/);
     expect(css).toMatch(/body\.high-contrast \{[^}]*--complete-rgb: 96 255 140;/);
