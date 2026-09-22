@@ -107,10 +107,16 @@ describe('the Status panel redesign, first pass', () => {
     // itself static, so both lines always resize and move together.
     const dialogBlock = css.match(/\ndialog \{([^}]*)\}/)?.[1] ?? '';
     expect(dialogBlock).toMatch(/--dialog-max-h:\s*90vh/);
+    expect(dialogBlock).toMatch(/--dialog-border:\s*1px/);
     expect(dialogBlock).toMatch(/max-height:\s*var\(--dialog-max-h\)/);
     const formBlock = css.match(/\n\.settings-form \{([^}]*)\}/)?.[1] ?? '';
-    expect(formBlock).toMatch(/max-height:\s*var\(--dialog-max-h\)/);
-    expect(formBlock).toMatch(/overflow-y:\s*auto/);
+    // .settings-form fills <dialog>'s content box exactly, so its own cap has to stop short of --dialog-max-h by <dialog>'s
+    // own top and bottom border (2 * --dialog-border) — otherwise it is 2 borders taller than the room <dialog> actually has
+    // for it, and <dialog> grows a second, all-but-empty scrollbar of its own alongside the form's real one.
+    expect(formBlock).toMatch(/max-height:\s*calc\(var\(--dialog-max-h\)\s*-\s*2\s*\*\s*var\(--dialog-border\)\)/);
+    // overflow-y alone would silently promote overflow-x to auto too (CSS's visible/non-visible axis rule), a second, latent
+    // scrollbar waiting for anything to overflow sideways.
+    expect(formBlock).toMatch(/overflow:\s*hidden auto/);
   });
 
   it('draws a completed quest green, with a tick, and takes a brighter green in high contrast', () => {
