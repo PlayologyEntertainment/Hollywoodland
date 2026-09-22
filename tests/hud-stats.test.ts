@@ -76,6 +76,28 @@ describe('the header', () => {
     expect(indexHtml).toContain('<h2 id="status-title">Your Career</h2>');
   });
 
+  it('shows Film Look and Fullscreen as icon-only buttons, each with an accessible name and a matching tooltip', () => {
+    // Both keep the accessible name in aria-label (not visible text), and the CSS tooltip reads that same attribute via
+    // attr(), so there is one source of truth: AppShell only ever has to update aria-label, never a separate tooltip copy.
+    expect(header).toMatch(/<button id="film-mode" class="text-button icon-button"[^>]*aria-label="Film Look" title="Film Look">/);
+    expect(header).toContain('<img src="/assets/ui/icon-film-look.webp" alt="" />');
+    expect(header).toMatch(/<button id="fullscreen" class="text-button icon-button"[^>]*aria-label="Fullscreen" title="Fullscreen">/);
+    expect(header).toContain('<img src="/assets/ui/icon-fullscreen.webp" alt="" />');
+    expect(rule('.icon-button')).toMatch(/width:\s*2rem.*height:\s*2rem/);
+    expect(rule('.icon-button::after')).toContain('content: attr(aria-label)');
+    expect(appShell).toMatch(/button\.setAttribute\('aria-label', label\)/);
+    expect(appShell).toMatch(/button\.title = label/);
+  });
+
+  it('sizes Career to match the footer\'s rounded-rectangle buttons (.chrome-button), not the square icon buttons', () => {
+    expect(header).toContain('<button id="status-button" class="chrome-button deco-label"');
+    expect(header).not.toContain('id="status-button" class="text-button');
+    const footer = indexHtml.match(/<footer id="game-footer"[\s\S]*?<\/footer>/)?.[0] ?? '';
+    expect(footer).toContain('id="advance-time" class="chrome-button');
+    expect(footer).toContain('id="return-menu" class="chrome-button');
+    expect(rule('.chrome-button')).toMatch(/min-height:\s*2rem/);
+  });
+
   it('no longer has the frame-rate readout, or reputation', () => {
     expect(header).not.toContain('fps');
     expect(header).not.toMatch(/reputation|>Rep</i);
