@@ -98,33 +98,38 @@ sets in the Creator — rather than hard-coded straight/gay, matching the GDD's
 
 ## 3. Protagonist creator: origins (proposed list of five)
 
-Each origin nudges two attributes (+1/−1, never a flat bonus with no
-tradeoff), grants one starting contact from the cast above, flavors the
-arrival sequence, and unlocks a small amount of unique dialogue.
+Each origin nudges two attributes (+3/−3 on a base of 5, 0–10 scale — widened
+from an original +1/−1 once the owner found that swing too subtle to read as
+distinct builds; never a flat bonus with no tradeoff), grants one starting
+contact from the cast above, flavors the arrival sequence, and unlocks a
+small amount of unique dialogue.
 
-1. **Small-Town Hopeful** — left a Midwest county for the first time. +1
-   Grit, −1 Wit (less street-smart, more stubborn). Starting contact: Gus
+1. **Small-Town Hopeful** — left a Midwest county for the first time. +3
+   Grit, −3 Wit (less street-smart, more stubborn). Starting contact: Gus
    Albrecht (a family friend wrote ahead). Arrival flavor: homesickness beats,
    wide-eyed reaction dialogue to the city.
 2. **Vaudeville Trouper** — grew up in a touring stage family, act folded
-   when the circuit dried up. +1 Craft, −1 Grit (trained performer, worn
+   when the circuit dried up. +3 Craft, −3 Grit (trained performer, worn
    thin from the road). Starting contact: Corinne Lake (crossed paths on a
    bill years ago). Arrival flavor: knows stage terms, unfazed by
    backstage chaos.
 3. **Runaway Society Name** — walked out on a wealthy, controlling family.
-   +1 Presence, −1 starting money (cut off, had to sell jewelry for the
-   ticket). Starting contact: Nick Ferro (recognizes her name, offers an
-   uneasy trade of discretion for a future story). Arrival flavor: table
-   manners and diction that read as out of place among extras.
+   +3 Presence, −3 Wit (raised in a bubble with people to handle everything,
+   no street-smarts of her own). Starting contact: Nick Ferro (recognizes her
+   name, offers an uneasy trade of discretion for a future story). Arrival
+   flavor: table manners and diction that read as out of place among extras.
+   (The original draft's second cost was "−1 starting money"; the origin
+   system has no money field, so this was changed to an attribute cost like
+   every other origin's, rather than left as the only one-attribute origin.)
 4. **Immigrant Striver** — arrived by ship and rail from overseas, several
-   months before the story opens, still finding footing. +1 Grit, −1
+   months before the story opens, still finding footing. +3 Grit, −3
    Presence (guarded, translating internally before speaking). Starting
    contact: Odalys Bellhaven (shares a home community; discounted first
    week's rent). Arrival flavor: unique dialogue tag threading language and
    distance from family throughout.
 5. **Studio-Lot Hand-Me-Down** — has been ushering and mending costumes on
    the Monarch lot for a year, finally working up the nerve to audition
-   in front of a camera instead of behind one. +1 Wit, −1 Nerve (knows the
+   in front of a camera instead of behind one. +3 Wit, −3 Nerve (knows the
    machine, still scared to be looked at). Starting contact: Ola Whitfield
    (unlocks the wardrobe-department alternate route into extra work,
    bypassing part of Pruitt's gatekeeping).
