@@ -387,6 +387,11 @@ export class AppShell {
       this.populateSettingsForm();
       settingsDialog.showModal();
     });
+    // The dialog has no Close button: clicking its backdrop (the only way a click event's target can be the <dialog> itself,
+    // since the frame's own padding is 0 and its form fills it) closes it, same as Escape — unsaved changes are discarded.
+    settingsDialog.addEventListener('click', (event) => {
+      if (event.target === settingsDialog) settingsDialog.close();
+    });
     settingsDialog.addEventListener('close', () => {
       if (settingsDialog.returnValue !== 'confirm') {
         this.options.audio.setSettings(this.settings); // undo any volume previewed while the dialog was open

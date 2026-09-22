@@ -363,11 +363,20 @@ dl div { display: flex; justify-content: space-between; padding: .8rem 0; border
 
 dialog { position: relative; width: min(92vw, 39rem); max-height: 90vh; border: 1px solid var(--gold); padding: 0; overflow: auto; background: var(--panel); color: var(--ink); box-shadow: 0 1.5rem 5rem #000; }
 dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
-.settings-form, .story-card { display: grid; gap: 1.2rem; padding: 1.7rem; }
+.story-card { display: grid; gap: 1.2rem; padding: 1.7rem; }
+/* The Settings dialog has no Close button (clicking the backdrop closes it, see AppShell), so its heading needs no room for
+   one, and its own padding replaces the double inset that button's row used to need. Kept tighter than .story-card's so the
+   whole dialog is more compact: two columns of checkboxes below the sliders, rather than one long list. */
+.settings-form { display: grid; gap: .8rem; padding: 1.3rem 1.7rem 1.5rem; }
+.settings-form .drawer-heading { margin: 0 -1.7rem .2rem; padding: 0 1.7rem .6rem; }
 .settings-form label:not(.check-row) { display: grid; grid-template-columns: 1fr auto; gap: .6rem; }
 .settings-form input[type='range'] { grid-column: 1 / -1; width: 100%; }
-.check-row { display: flex; align-items: start; gap: .65rem; }
-.check-row input { width: 1.25rem; height: 1.25rem; }
+.settings-checks { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.2rem; row-gap: .6rem; }
+/* Same shape as .audition-option: align-items: start (not center) so a row that wraps to two lines still has its box beside the
+   first line, not sunk to the middle of the whole label; the small margin-top instead nudges the box down to sit level with
+   that first line's text rather than the top of its line box, which is what was slightly off before. */
+.check-row { display: flex; align-items: start; gap: .65rem; line-height: 1.4; }
+.check-row input { margin-top: .15rem; width: 1.25rem; height: 1.25rem; flex: none; }
 .story-card h2 { margin: 0; color: var(--gold-bright); font-size: 2.4rem; }
 .story-card p, .story-card blockquote { line-height: 1.6; }
 /* Home Menu assignments: each row is a Start button on the left, with the
