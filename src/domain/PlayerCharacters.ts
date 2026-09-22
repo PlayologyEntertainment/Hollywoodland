@@ -54,7 +54,7 @@ export const PLAYER_CHARACTERS: readonly PlayerCharacter[] = [
     headshot: art('white-female', 'headshot'),
     portrait: art('white-female', 'portrait'),
     reflection: art('white-female', 'reflection'),
-    walkCycle: 'data/walk-cycle.json',
+    walkCycle: 'data/walk-cycle-white-female.json',
   },
   {
     id: 'asian-female',
