@@ -132,6 +132,15 @@ describe('the Character Creator screen', () => {
     expect(block).toMatch(/background:\s*none/);
   });
 
+  it('sizes the headshots to the room under the Name field, in whichever of 1, 2, 3 or 6 columns makes them largest', () => {
+    const css = read('../src/styles.css');
+    expect(html).toMatch(/class="character-picker">\s*<div id="creator-characters" class="character-grid"/);
+    expect(rules(css, '.character-picker')).toContain('container-type: size');
+    const grid = rules(css, '.character-grid');
+    expect(grid).toContain('grid-template-columns: repeat(auto-fill, var(--tile))');
+    expect(grid).toMatch(/--tile:[^;]*\bmax\(/);
+  });
+
   it('has no "Hollywoodland" line or three-word subtitle, and keeps a hidden heading so the screen still has a name', () => {
     const section = html.slice(html.indexOf('id="character-creator"'), html.indexOf('</section>', html.indexOf('id="character-creator"')));
     expect(section).not.toContain('Hollywoodland');

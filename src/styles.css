@@ -471,8 +471,17 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 }
 .creator[hidden] { display: none; }
 .creator-body {
+  /* The left pane is as wide as the headshots need, so they cover about two-thirds of the room under the Name field even in a
+     tall, narrow window such as 4:3. The room is roughly the stage height less the pane's padding and the Name field (7.5rem);
+     six squares in two columns cover ~69% of it when it is .46 of that tall plus two gaps (1.4rem) and the pane's own padding
+     and border (2.325rem). It never goes below 14rem or above 26rem, and never takes more than the centre column can spare
+     (down to 90% of the width the full-height portrait wants), so a very tall, narrow window keeps the old widths and the picker
+     falls back to one column. */
+  --centre-want: calc(var(--stage-h) * 2 / 3 + 1rem);
+  --left-want: calc((var(--stage-h) - 7.5rem) * .46 + 3.725rem);
+  --left-min: max(14rem, min(var(--left-want), 26rem, calc(100% - 18.5rem - var(--centre-want) * .9)));
   display: grid; flex: 1; min-height: 0; column-gap: 1.25rem; row-gap: .5rem;
-  grid-template-columns: minmax(14rem, 26rem) minmax(min(calc(var(--stage-h) * 2 / 3 + 1rem), calc(100% - 32.5rem)), 1fr) minmax(16rem, 30rem);
+  grid-template-columns: minmax(var(--left-min), 26rem) minmax(min(var(--centre-want), calc(100% - var(--left-min) - 18.5rem)), 1fr) minmax(16rem, 30rem);
   grid-template-rows: auto minmax(0, 1fr);
 }
 /* Column titles in Limelight, one over each side pane. Both use the same size and colour. */
@@ -490,13 +499,29 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   padding: 1.1rem; overflow: auto; border: 1px solid rgb(216 173 88 / 40%); border-radius: .35rem;
   background: rgb(14 10 8 / 62%); backdrop-filter: blur(6px); box-shadow: 0 .5rem 2rem rgb(0 0 0 / 35%);
 }
-.creator-form { display: grid; gap: .85rem; align-content: start; }
+.creator-form { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: .85rem; }
 .creator-field { display: grid; gap: .35rem; font-size: .92rem; }
 /* The small sub-titles inside the panes: "Name" and "Character" on the left, "Choose an Origin" and "Attributes" on the right. One
    rule, so the two sides always match (.6624rem is the .72em these labels have always had inside the .92rem field). */
 .creator-field span, .creator-origin h3 { color: var(--muted); font-family: Arial, sans-serif; font-size: .6624rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
 .creator-field input[type='text'] { border: 1px solid var(--gold); border-radius: .2rem; padding: .55rem .7rem; background: #17120f; color: var(--ink); }
-.character-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; }
+/* The headshots fill the room under the Name field: .character-field takes all the height left in the pane, and .character-picker
+   (a size container) is that room. The grid then uses whichever of 1, 2, 3 or 6 columns lets the six squares grow largest in it,
+   so they scale with the window's shape instead of sitting at a fixed size. Each term is the biggest square that fits its column
+   count (limited by the width or by the height, whichever bites first); --tile is the best of them, less half a pixel so rounding
+   never pushes a column off the row. The floor keeps a very small pane from collapsing them to nothing (the pane scrolls). */
+.character-field { grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
+.character-picker { container-type: size; min-height: 0; }
+.character-grid {
+  --pick-gap: .7rem;
+  --tile: max(3rem, calc(max(
+    min(100cqw, (100cqh - 5 * var(--pick-gap)) / 6),
+    min((100cqw - var(--pick-gap)) / 2, (100cqh - 2 * var(--pick-gap)) / 3),
+    min((100cqw - 2 * var(--pick-gap)) / 3, (100cqh - var(--pick-gap)) / 2),
+    min((100cqw - 5 * var(--pick-gap)) / 6, 100cqh)) - .5px));
+  display: grid; grid-template-columns: repeat(auto-fill, var(--tile)); grid-auto-rows: var(--tile); gap: var(--pick-gap);
+  justify-content: center; align-content: start;
+}
 .character-choice {
   display: block; aspect-ratio: 1; min-height: 0; padding: 0; overflow: hidden; border: 2px solid rgb(216 173 88 / 35%); border-radius: .35rem;
   background: radial-gradient(ellipse at 50% 90%, rgb(216 173 88 / 16%), transparent 72%), #120e0c; cursor: pointer;
@@ -602,6 +627,13 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .creator-stage { height: 15rem; }
   .creator { --reflection-h: 2.5rem; }
   .creator-preview { margin-bottom: 2.75rem; }   /* room for the reflection before the Origin title */
-  .character-grid { grid-template-columns: repeat(6, 1fr); gap: .3rem; }
+  /* Stacked, the pane's height comes from its content, so only the width is the room: the headshots fill it three across (two
+     rows), or six across in one row once the pane is wide enough. Tiles stop growing at 9rem. */
+  .creator-form, .character-field { grid-template-rows: none; }
+  .character-picker { container-type: inline-size; }
+  .character-grid { --pick-gap: .5rem; --tile: min((100cqw - 2 * var(--pick-gap)) / 3 - .5px, 9rem); grid-template-columns: repeat(3, var(--tile)); }
+  @container (min-width: 40rem) {
+    .character-grid { --tile: min((100cqw - 5 * var(--pick-gap)) / 6 - .5px, 9rem); grid-template-columns: repeat(6, var(--tile)); }
+  }
   .character-choice { border-width: 1px; }
 }
