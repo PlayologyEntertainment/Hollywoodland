@@ -93,9 +93,11 @@ describe('the Status panel redesign, first pass', () => {
     expect(indexHtml).toContain('aria-label="Close career status"');
   });
 
-  it('leaves the Settings dialog\'s own close button alone until that page is redesigned', () => {
-    expect(css).toMatch(/\n\.drawer-heading button \{[^}]*min-width: 2\.75rem[^}]*font-size: 1\.5rem/);
-    expect(indexHtml).toMatch(/<h2 id="settings-title">[^<]*<\/h2><button value="cancel"/);
+  it('titles the Settings dialog just "Settings", with no Close button (the backdrop click closes it instead)', () => {
+    expect(indexHtml).toMatch(/<div class="drawer-heading"><h2 id="settings-title">Settings<\/h2><\/div>/);
+    const section = indexHtml.slice(indexHtml.indexOf('id="settings-dialog"'), indexHtml.indexOf('</dialog>', indexHtml.indexOf('id="settings-dialog"')));
+    expect(section).not.toContain('<button value="cancel"');
+    expect(appShell).toMatch(/settingsDialog\.addEventListener\('click', \(event\) => \{\s*if \(event\.target === settingsDialog\) settingsDialog\.close\(\);/);
   });
 
   it('draws a completed quest green, with a tick, and takes a brighter green in high contrast', () => {
