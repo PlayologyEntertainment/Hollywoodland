@@ -80,24 +80,29 @@ describe('the header', () => {
     // Both keep the accessible name in aria-label (not visible text), and the CSS tooltip reads that same attribute via
     // attr(), so there is one source of truth: AppShell only ever has to update aria-label, never a separate tooltip copy.
     // Neither has a `title`: that would draw the browser's own plain tooltip on top of the on-theme CSS one below.
-    expect(header).toMatch(/<button id="film-mode" class="text-button icon-button"[^>]*aria-label="Film Look">/);
+    expect(header).toMatch(/<button id="film-mode" class="chrome-button icon-button"[^>]*aria-label="Film Look">/);
     expect(header).toContain('<img src="/assets/ui/icon-film-look.webp" alt="" />');
-    expect(header).toMatch(/<button id="fullscreen" class="text-button icon-button"[^>]*aria-label="Fullscreen">/);
+    expect(header).toMatch(/<button id="fullscreen" class="chrome-button icon-button"[^>]*aria-label="Fullscreen">/);
     expect(header).toContain('<img src="/assets/ui/icon-fullscreen.webp" alt="" />');
     for (const id of ['film-mode', 'fullscreen']) expect(header, id).not.toMatch(new RegExp(`id="${id}"[^>]*title=`));
-    expect(rule('.icon-button')).toMatch(/width:\s*2rem.*height:\s*2rem/);
+    expect(rule('.chrome-button.icon-button')).toMatch(/width:\s*2rem.*height:\s*2rem/);
     expect(rule('.icon-button::after')).toContain('content: attr(aria-label)');
     expect(appShell).toMatch(/button\.setAttribute\('aria-label', active \? 'Return to Color' : 'Film Look'\)/);
     expect(appShell).not.toContain('button.title');
   });
 
-  it('sizes Career to match the footer\'s rounded-rectangle buttons (.chrome-button), not the square icon buttons', () => {
+  it('gives Career, Film Look and Fullscreen (and the footer\'s Wait/Menu) the same rounded-rectangle .chrome-button style', () => {
+    // .text-button (a separate square, hairline-outlined, sharp-cornered look) is gone entirely: every one of these five
+    // buttons is now a .chrome-button, so Film Look and Fullscreen are rounded rectangles matching Career right next to
+    // them, not a visually distinct square control.
+    expect(css).not.toContain('text-button');
     expect(header).toContain('<button id="status-button" class="chrome-button deco-label"');
-    expect(header).not.toContain('id="status-button" class="text-button');
     const footer = indexHtml.match(/<footer id="game-footer"[\s\S]*?<\/footer>/)?.[0] ?? '';
     expect(footer).toContain('id="advance-time" class="chrome-button');
     expect(footer).toContain('id="return-menu" class="chrome-button');
     expect(rule('.chrome-button')).toMatch(/min-height:\s*2rem/);
+    // Film Look highlights the same way Career does while its state is "on" (aria-pressed rather than aria-expanded).
+    expect(rule('.chrome-button[aria-pressed="true"], .chrome-button[aria-expanded="true"]')).toMatch(/border-color:\s*var\(--gold-bright\)/);
   });
 
   it('no longer has the frame-rate readout, or reputation', () => {
