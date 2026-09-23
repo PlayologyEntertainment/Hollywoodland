@@ -36,6 +36,10 @@ export interface AssignmentStartRequestedPayload {
   readonly assignmentId: string;
 }
 
+export interface LevelUpPayload {
+  readonly level: number;
+}
+
 export interface DomainEventMap {
   readonly 'career-state-changed': CareerState;
   readonly 'restore-career-state': CareerState;
@@ -63,6 +67,13 @@ export interface DomainEventMap {
    * `resolvePendingAssignment`. */
   readonly 'assignment-resolved-away': AssignmentResolution;
   readonly 'housing-upgrade-requested': undefined;
+  /** Fired once from BoulevardSpikeScene.emitState when progression.level rises — the raw fact of a level-up,
+   * which may happen mid-dialogue. See 'level-up-celebration' for the moment it's actually safe to show it. */
+  readonly 'level-up': LevelUpPayload;
+  /** AppShell's "go" signal once a pending level-up can actually be celebrated: the player is in game, out on the
+   * open Boulevard, and no dialog is covering the screen. The scene's confetti burst listens for this (not
+   * 'level-up'), so the VFX, the overlay and the SFX all land at the same moment. */
+  readonly 'level-up-celebration': undefined;
 }
 
 type DomainEventListener<K extends keyof DomainEventMap> = (payload: DomainEventMap[K]) => void;

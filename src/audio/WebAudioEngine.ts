@@ -119,6 +119,18 @@ export class WebAudioEngine implements AudioEngine {
     return this.ambience;
   }
 
+  /** A fresh, independent element per call, outside the music/ambience gain graph entirely — this is fire-and-
+   * forget, not a voice that needs to be found and faded again later. A missing or blocked file just warns once
+   * and is otherwise silent, the same posture every other audio path here takes. */
+  public playSfx(path: string): void {
+    const element = new Audio(`${this.baseUrl}${path}`);
+    element.volume = 0.8;
+    element.addEventListener('error', () => this.warn(`could not load ${path}`));
+    void element.play().catch((error: unknown) => {
+      this.warn(error instanceof Error ? error.message : `${path} playback was blocked`);
+    });
+  }
+
   private element(path: string, preload: 'auto' | 'none'): HTMLAudioElement {
     let element = this.elements.get(path);
     if (element === undefined) {

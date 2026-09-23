@@ -22,6 +22,9 @@ class FakeEngine implements AudioEngine {
   public setVolumes(): void {
     this.log.push('volumes');
   }
+  public playSfx(path: string): void {
+    this.log.push(`sfx:${path}`);
+  }
 }
 
 function setup(random = 0.1): { engine: FakeEngine; director: AudioDirector } {
@@ -172,5 +175,11 @@ describe('AudioDirector', () => {
       ambienceMuted: true,
     });
     expect(engine.log).toEqual(['volumes']);
+  });
+
+  it('passes a one-shot sound effect straight through to the engine', () => {
+    const { engine, director } = setup();
+    director.playSfx('assets/audio/Hollywoodland_LevelUp_SFX.mp3');
+    expect(engine.log).toEqual(['sfx:assets/audio/Hollywoodland_LevelUp_SFX.mp3']);
   });
 });

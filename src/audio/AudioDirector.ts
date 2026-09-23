@@ -11,12 +11,15 @@ export interface AudioEngine {
   /** Fades the street ambience up (starting it) or down (stopping it) over `seconds`. */
   fadeAmbience(on: boolean, seconds: number): void;
   setVolumes(settings: Pick<GameSettings, 'musicVolume' | 'musicMuted' | 'ambienceVolume' | 'ambienceMuted'>): void;
+  /** Plays a one-shot sound effect once, independent of the looping music/ambience voices — fire and forget. */
+  playSfx(path: string): void;
 }
 
 /** The part of the director the rest of the app talks to. */
 export interface AudioController {
   setMood(mood: AudioMood): void;
   setSettings(settings: GameSettings): void;
+  playSfx(path: string): void;
 }
 
 /** Chooses what plays and cross-fades between tracks.
@@ -51,6 +54,10 @@ export class AudioDirector implements AudioController {
 
   public setSettings(settings: GameSettings): void {
     this.engine.setVolumes(settings);
+  }
+
+  public playSfx(path: string): void {
+    this.engine.playSfx(path);
   }
 
   private apply(): void {

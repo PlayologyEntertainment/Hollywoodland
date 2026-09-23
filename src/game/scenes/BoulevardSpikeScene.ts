@@ -45,6 +45,11 @@ const FOOTPRINT_ALPHA = 0.34;
 /** A faint contact shadow under the torso ties the two prints together. */
 const TORSO_SHADOW = { width: 44, height: 12, alpha: 0.12 };
 
+/** The level-up confetti burst: a generated texture key (no art asset needed for the bits themselves) and the
+ * game's own gold/cream/deco-red palette. */
+const CONFETTI_TEXTURE_KEY = 'confetti-particle';
+const CONFETTI_COLORS = [0xd8ad58, 0xf5e2ab, 0xc0392b, 0xffffff];
+
 function planeKey(id: string): string {
   return `plane:${id}`;
 }
@@ -114,6 +119,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private interactionPoints: readonly InteractionPoint[] = [];
   private unsubscribers: Array<() => void> = [];
   private stateClock = 0;
+  /** The progression level last reported via 'level-up', kept in step with `careerState` at every point it is set
+   * fresh (a new career, a restore) rather than mutated — see emitState. */
+  private lastEmittedLevel = 1;
 
   public constructor() {
     super('BoulevardSpikeScene');
@@ -147,6 +155,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.settings = this.registry.get('settings') as GameSettings;
     this.domainEvents = this.registry.get('domainEvents') as DomainEventBus;
     this.careerState = createDefaultCareerState();
+    this.lastEmittedLevel = this.careerState.progression.level;
     // Phaser reuses this scene object when the game restarts it (Continue, a new career), so forget the last prompt: the
     // page has taken it down, and it must be announced again if the player is standing at an entrance.
     this.promptVisible = false;
@@ -156,6 +165,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#68b9ef');
     this.createRenderedEnvironment();
     this.createPlayer();
+    this.ensureConfettiTexture();
 
     this.cameras.main.setBounds(0, 0, this.worldWidth, 1080);
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
@@ -182,6 +192,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('audition-submitted', this.onAuditionSubmitted),
       this.domainEvents.on('assignment-start-requested', this.onAssignmentStartRequested),
       this.domainEvents.on('housing-upgrade-requested', this.onHousingUpgradeRequested),
+      this.domainEvents.on('level-up-celebration', this.onLevelUpCelebration),
     ];
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const unsubscribe of this.unsubscribers) unsubscribe();
@@ -509,6 +520,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private emitState(): void {
     this.careerState = { ...this.careerState, playerX: Math.round(this.player.x) };
     this.applyBuildingStates();
+    const level = this.careerState.progression.level;
+    if (level > this.lastEmittedLevel) this.domainEvents.emit('level-up', { level });
+    this.lastEmittedLevel = level;
     this.domainEvents.emit('career-state-changed', this.careerState);
   }
 
@@ -540,6 +554,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.player.x = Phaser.Math.Clamp(migratedX, 110, this.worldWidth - 110);
     this.drawPlayerShadow();
     this.careerState = state;
+    this.lastEmittedLevel = state.progression.level;
     this.resolvePendingAssignment();
     this.cameras.main.centerOn(this.player.x, this.player.y);
     this.emitState();
@@ -588,6 +603,48 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.careerState = purchaseHousingUpgrade(this.careerState);
     this.emitState();
   };
+
+  /** AppShell's "safe to celebrate" signal (see DomainEventBus): the confetti burst, not the raw 'level-up' fact,
+   * so it lands at the same moment as the overlay and the SFX even when the level-up itself happened mid-dialogue. */
+  private readonly onLevelUpCelebration = (): void => {
+    if (this.settings.reducedMotion) return;
+    this.burstConfetti();
+  };
+
+  /** Generated once (idempotent across scene restarts, which re-run create()) so the burst needs no art asset of
+   * its own: a small rectangle, tinted per-particle from CONFETTI_COLORS. */
+  private ensureConfettiTexture(): void {
+    if (this.textures.exists(CONFETTI_TEXTURE_KEY)) return;
+    const graphics = this.add.graphics();
+    graphics.fillStyle(0xffffff, 1);
+    graphics.fillRect(0, 0, 8, 14);
+    graphics.generateTexture(CONFETTI_TEXTURE_KEY, 8, 14);
+    graphics.destroy();
+  }
+
+  /** Screen-space (scrollFactor 0), above the vignette, so it reads as a burst over the whole view rather than a
+   * puff tied to one spot in the world. Self-destroys once every particle's lifespan has run out. */
+  private burstConfetti(): void {
+    const width = this.cameras.main.width;
+    const emitter = this.add
+      .particles(0, 0, CONFETTI_TEXTURE_KEY, {
+        x: { min: 0, max: width },
+        y: -20,
+        lifespan: 2200,
+        speedY: { min: 220, max: 420 },
+        speedX: { min: -60, max: 60 },
+        angle: { min: 0, max: 360 },
+        rotate: { min: 0, max: 360 },
+        scale: { min: 0.6, max: 1.1 },
+        gravityY: 260,
+        tint: CONFETTI_COLORS,
+        emitting: false,
+      })
+      .setScrollFactor(0)
+      .setDepth(60);
+    emitter.explode(113);
+    this.time.delayedCall(2400, () => emitter.destroy());
+  }
 
   /** No randomness in `resolveAudition` (see Performance.ts), so the debrief
    * this emits is exactly what committing `applyAuditionOutcome` below

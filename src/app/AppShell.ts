@@ -8,7 +8,7 @@ import { buildQuestLog } from './QuestLog';
 import { mountDecoOutline } from '../ui/DecoBorder';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
-import { moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
+import { LEVEL_UP_SFX_FILE, moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
 import type { AudioController } from '../audio/AudioDirector';
 import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
@@ -105,6 +105,11 @@ const BOULEVARD_READY_TIMEOUT_MS = 8000;
 
 /** The reveal of the Boulevard after the chapter title page lingers: twice as long as the usual fade in. */
 const BOULEVARD_REVEAL_FADE_IN_MS = FADE_MS * 2;
+
+/** How long the level-up banner stays fully visible, and how long each of its fades takes — matches the
+ * `.level-up-banner` CSS transition duration. */
+const LEVEL_UP_HOLD_MS = 2200;
+const LEVEL_UP_FADE_MS = 500;
 
 interface MenuScreens {
   readonly titlePanel: HTMLElement;
@@ -288,6 +293,9 @@ export class AppShell {
   private onChapterPage = false;
   private place: PlaceKind | undefined;
   private audioSyncTimer = 0;
+  /** A level-up happened (possibly mid-dialogue) and hasn't been celebrated yet — see maybeCelebrateLevelUp. */
+  private pendingLevelUp = false;
+  private levelUpHideTimer = 0;
 
   public constructor(private readonly options: AppShellOptions) {
     this.settings = options.settings;
@@ -371,6 +379,10 @@ export class AppShell {
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
       this.renderCareerState(state);
+    });
+    this.options.domainEvents.on('level-up', () => {
+      this.pendingLevelUp = true;
+      this.maybeCelebrateLevelUp();
     });
     this.options.domainEvents.on('assignment-resolved-away', (resolution) => {
       this.toast(`${resolution.definition.title} finished while you were away — ${describeAssignmentRewards(resolution.definition.rewards)}`);
@@ -650,7 +662,12 @@ export class AppShell {
    * does not flicker back to the street music in between. */
   private syncAudio(): void {
     window.clearTimeout(this.audioSyncTimer);
-    this.audioSyncTimer = window.setTimeout(() => this.options.audio.setMood(this.currentMood()), 60);
+    this.audioSyncTimer = window.setTimeout(() => {
+      this.options.audio.setMood(this.currentMood());
+      // currentMood() just recomputed `this.place`, so this is the right moment to check whether a level-up that
+      // happened mid-dialogue can now be celebrated on the clear Boulevard.
+      this.maybeCelebrateLevelUp();
+    }, 60);
   }
 
   private currentMood(): AudioMood {
@@ -661,6 +678,35 @@ export class AppShell {
     );
     if (!inside) this.place = undefined;
     return this.place === undefined ? 'boulevard' : moodForPlace(this.place);
+  }
+
+  /** Fires the celebration (confetti, SFX, the fading banner) the moment it's actually safe to: in game, out on
+   * the open Boulevard, no dialog covering the screen. A level-up granted mid-dialogue waits here, quietly, until
+   * syncAudio's next settle tick finds the coast clear. */
+  private maybeCelebrateLevelUp(): void {
+    if (!this.pendingLevelUp || !this.inGame || this.place !== undefined || this.onChapterPage) return;
+    this.pendingLevelUp = false;
+    this.playLevelUpCelebration();
+  }
+
+  /** Plays the SFX, tells the scene to burst its confetti, and fades the banner art in, holds it, then fades it
+   * back out. The fade-in needs a forced reflow between unhiding and adding the --visible class, or the browser
+   * coalesces both style changes into one paint and the opacity jumps straight to 1 instead of transitioning. */
+  private playLevelUpCelebration(): void {
+    this.options.audio.playSfx(LEVEL_UP_SFX_FILE);
+    this.options.domainEvents.emit('level-up-celebration', undefined);
+    const banner = assertElement('#level-up-banner', HTMLElement);
+    window.clearTimeout(this.levelUpHideTimer);
+    banner.hidden = false;
+    banner.classList.remove('level-up-banner--visible');
+    void banner.offsetWidth;
+    banner.classList.add('level-up-banner--visible');
+    this.levelUpHideTimer = window.setTimeout(() => {
+      banner.classList.remove('level-up-banner--visible');
+      this.levelUpHideTimer = window.setTimeout(() => {
+        banner.hidden = true;
+      }, LEVEL_UP_FADE_MS);
+    }, LEVEL_UP_HOLD_MS);
   }
 
   /** Toggles the visual-novel scene layout (background + overlaid character

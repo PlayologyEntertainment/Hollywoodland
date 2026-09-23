@@ -19,6 +19,10 @@ export const MUSIC_FILES: Readonly<Record<MusicTrackId, string>> = {
 
 export const AMBIENCE_FILE = 'assets/audio/Hollywoodland_Outdoor_Background_SFX.mp3';
 
+/** Owner-sourced; not yet delivered as of this writing. Played once as part of the level-up celebration (see
+ * AppShell.playLevelUpCelebration) — until the file exists, WebAudioEngine.playSfx just warns once and moves on. */
+export const LEVEL_UP_SFX_FILE = 'assets/audio/Hollywoodland_LevelUp_SFX.mp3';
+
 /** Every change of music is a cross-fade: the old track fades down while the new one fades up over this long, on an
  * equal-power curve so the loudness does not dip in the middle. The street ambience fades in or out alongside. */
 export const CROSSFADE_SECONDS = 1.0;

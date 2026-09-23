@@ -276,6 +276,14 @@ h1 {
    Being at the top it is over the sky, and never in front of the player. */
 .play-hud { position: absolute; inset: 0; pointer-events: none; text-shadow: 0 2px 5px #000; }
 .play-hud[hidden] { display: none; }
+/* The level-up celebration's banner art: centred over the play view, modest rather than full-screen, fading in
+   and out (see AppShell.playLevelUpCelebration for the timing) rather than appearing/disappearing abruptly. */
+.level-up-banner {
+  position: absolute; top: 50%; left: 50%; z-index: 10; transform: translate(-50%, -50%);
+  width: min(45vw, 19.5rem); height: auto; opacity: 0; transition: opacity .5s ease;
+  filter: drop-shadow(0 1rem 2.5rem rgb(0 0 0 / 55%));
+}
+.level-up-banner.level-up-banner--visible { opacity: 1; }
 .hud-top {
   position: absolute; top: clamp(.4rem, 1.2vh, .8rem); right: clamp(1rem, 3vw, 3rem); left: clamp(1rem, 3vw, 3rem);
   display: grid; grid-template-columns: 1fr auto 1fr; column-gap: 1rem; align-items: start;
