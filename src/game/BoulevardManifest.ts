@@ -320,7 +320,7 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
     {
       id: 'sky',
       label: 'Plane 1 — Sky',
-      path: 'assets/environments/boulevard-v3/sky.webp',
+      path: 'assets/environments/boulevard-v3/sky-blur.webp',
       offsetX: 0,
       offsetY: 0,
       scale: 1,
