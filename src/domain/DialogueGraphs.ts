@@ -49,12 +49,16 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
         },
         {
           id: 'ask-for-screen-test',
-          label: 'You mentioned a screen test.',
+          label: 'You mentioned a screen test. (-10 Energy)',
           next: 'screen-test-called',
-          conditions: [{ kind: 'quest-status', questId: 'screen-test', status: 'available' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'screen-test', status: 'available' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'start', questId: 'screen-test' },
             { kind: 'quest-action', action: 'complete-stage', questId: 'screen-test', stageId: 'attend' },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
       ],
@@ -105,12 +109,16 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
         },
         {
           id: 'ask-about-audition',
-          label: 'Any word on the audition?',
+          label: 'Any word on the audition? (-10 Energy)',
           next: 'farewell-landed',
-          conditions: [{ kind: 'quest-status', questId: 'first-audition', status: 'active' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'first-audition', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'first-audition', stageId: 'callback' },
             { kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { trust: 3 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
@@ -239,12 +247,16 @@ export const DINER_DIALOGUE: DialogueGraph = {
       choices: [
         {
           id: 'ask-about-town',
-          label: 'What is the real story on this town?',
+          label: 'What is the real story on this town? (-10 Energy)',
           next: 'gossip-reply',
-          conditions: [{ kind: 'quest-status', questId: 'diner-introductions', status: 'active' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'diner-introductions', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'diner-introductions', stageId: 'earned-trust' },
             { kind: 'relationship-delta', characterId: DINER_CONFIDANT.id, delta: { trust: 3 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
@@ -321,24 +333,32 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
       choices: [
         {
           id: 'reassure-generic',
-          label: 'I am good for it — steady work is coming.',
+          label: 'I am good for it — steady work is coming. (-10 Energy)',
           next: null,
           opensHomeHub: true,
-          conditions: [{ kind: 'quest-status', questId: 'making-rent', status: 'active' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'making-rent', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'settled-in' },
             { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
           id: 'show-callback-slip',
-          label: 'Show her the callback slip from your last audition.',
+          label: 'Show her the callback slip from your last audition. (-10 Energy)',
           next: null,
           opensHomeHub: true,
-          conditions: [{ kind: 'item-owned', itemId: 'first-callback-slip' }],
+          conditions: [
+            { kind: 'item-owned', itemId: 'first-callback-slip' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'making-rent', stageId: 'settled-in' },
             { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 4 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         { id: 'say-nothing', label: 'Just nod and head upstairs.', next: null, opensHomeHub: true },
@@ -396,22 +416,30 @@ export const RIVAL_DIALOGUE: DialogueGraph = {
       choices: [
         {
           id: 'wish-her-luck',
-          label: 'May the best actress win.',
+          label: 'May the best actress win. (-10 Energy)',
           next: null,
-          conditions: [{ kind: 'quest-status', questId: 'backlot-rivalry', status: 'active' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'backlot-rivalry', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'backlot-rivalry', stageId: 'earned-respect' },
             { kind: 'relationship-delta', characterId: RIVAL.id, delta: { trust: 3 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
           id: 'flirt-back',
-          label: 'Careful — I don\'t lose easily.',
+          label: 'Careful — I don\'t lose easily. (-10 Energy)',
           next: null,
-          conditions: [{ kind: 'talent-unlocked', talentId: 'charm-1' }],
+          conditions: [
+            { kind: 'talent-unlocked', talentId: 'charm-1' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'backlot-rivalry', stageId: 'earned-respect' },
             { kind: 'relationship-delta', characterId: RIVAL.id, delta: { attraction: 4, tension: 1 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         { id: 'stay-cold', label: 'Say nothing and walk away.', next: null },
@@ -471,24 +499,32 @@ export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
       choices: [
         {
           id: 'ask-about-the-shot',
-          label: 'Ask what today\'s call actually needs from the extras.',
+          label: 'Ask what today\'s call actually needs from the extras. (-10 Energy)',
           next: null,
-          conditions: [{ kind: 'quest-status', questId: 'extras-call', status: 'active' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'extras-call', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'extras-call', stageId: 'cleared-for-call' },
             { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 3 } },
             { kind: 'item-grant', itemId: 'background-extra-voucher' },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
           id: 'show-callback-slip',
-          label: 'Mention the callback slip from the casting office.',
+          label: 'Mention the callback slip from the casting office. (-10 Energy)',
           next: null,
-          conditions: [{ kind: 'item-owned', itemId: 'first-callback-slip' }],
+          conditions: [
+            { kind: 'item-owned', itemId: 'first-callback-slip' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'extras-call', stageId: 'cleared-for-call' },
             { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 4 } },
             { kind: 'item-grant', itemId: 'background-extra-voucher' },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         { id: 'wait-for-the-wave', label: 'Say nothing and wait for the wave-in.', next: null },
@@ -549,31 +585,41 @@ export const SCENE_PARTNER_DIALOGUE: DialogueGraph = {
       choices: [
         {
           id: 'commit-to-the-scene',
-          label: 'Play it exactly as blocked — no surprises.',
+          label: 'Play it exactly as blocked — no surprises. (-10 Energy)',
           next: null,
-          conditions: [{ kind: 'quest-status', questId: 'scene-rehearsal', status: 'active' }],
+          conditions: [
+            { kind: 'quest-status', questId: 'scene-rehearsal', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'found-the-rhythm' },
             { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 3 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
           id: 'dig-into-motivation',
-          label: 'Dig into what your characters actually want from each other.',
+          label: 'Dig into what your characters actually want from each other. (-10 Energy)',
           next: null,
-          conditions: [{ kind: 'talent-unlocked', talentId: 'drama-1' }],
+          conditions: [
+            { kind: 'talent-unlocked', talentId: 'drama-1' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'found-the-rhythm' },
             { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 5 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
           id: 'lean-into-the-chemistry',
-          label: 'Tell her you could get used to rehearsing with her.',
+          label: 'Tell her you could get used to rehearsing with her. (-10 Energy)',
           next: null,
+          conditions: [{ kind: 'resource-at-least', resource: 'energy', minimum: 10 }],
           effects: [
             { kind: 'quest-action', action: 'complete-stage', questId: 'scene-rehearsal', stageId: 'found-the-rhythm' },
             { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { attraction: 4, trust: 1 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
       ],
