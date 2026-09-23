@@ -621,18 +621,41 @@ export class AppShell {
     list.replaceChildren(...node.choices.map((choice) => this.buildDialogueChoiceElement(node, choice)));
   }
 
+  /** A quest-completing choice's label ends with its energy cost, e.g. "...steady work is coming. (-10 Energy)" —
+   * matched here so that suffix alone can be picked out and coloured. */
+  private static readonly ENERGY_COST_LABEL = /^(.*)(\s\(-\d+ Energy\))$/;
+
   private buildDialogueChoiceElement(node: DialogueNode, choice: DialogueChoice): HTMLLIElement {
     const item = document.createElement('li');
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'dialogue-choice';
-    button.textContent = choice.label;
     const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
+    // Disabled for a reason other than "not enough energy" (a locked quest, a missing item, ...) keeps the plain
+    // label: highlighting the energy cost there would point at the wrong prerequisite.
+    const energyLabel = !available && this.lacksRequiredEnergy(choice) ? choice.label.match(AppShell.ENERGY_COST_LABEL) : null;
+    if (energyLabel !== null) {
+      const cost = document.createElement('span');
+      cost.className = 'dialogue-choice-energy-cost';
+      cost.textContent = energyLabel[2] ?? '';
+      button.append(energyLabel[1] ?? '', cost);
+    } else {
+      button.textContent = choice.label;
+    }
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
     if (available) button.addEventListener('click', () => this.selectDialogueChoice(node, choice));
     item.appendChild(button);
     return item;
+  }
+
+  private lacksRequiredEnergy(choice: DialogueChoice): boolean {
+    return (choice.conditions ?? []).some(
+      (condition) =>
+        condition.kind === 'resource-at-least' &&
+        condition.resource === 'energy' &&
+        this.careerState.resources.energy < condition.minimum,
+    );
   }
 
   private selectDialogueChoice(node: DialogueNode, choice: DialogueChoice): void {

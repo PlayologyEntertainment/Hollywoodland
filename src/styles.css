@@ -500,6 +500,10 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .dialogue-choices { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
 .dialogue-choices li { margin: 0; }
 .dialogue-choice { width: 100%; text-align: left; }
+/* A disabled choice's "(-N Energy)" suffix turns the same red as the HUD's low-energy state, but only when energy
+   is specifically why it's disabled (see AppShell's lacksRequiredEnergy) -- a choice locked by some other
+   unmet condition (a quest not yet active, a missing item, ...) keeps its plain dimmed label. */
+.dialogue-choice-energy-cost { color: #f0876a; }
 
 /* Visual-novel scene layout: location art fills the frame, the character
    portrait overlays it on the left, and the dialogue/choices panel sits on
