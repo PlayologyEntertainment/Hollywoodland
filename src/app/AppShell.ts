@@ -300,6 +300,7 @@ export class AppShell {
 
   public mount(): void {
     this.applySettings(this.settings);
+    this.preloadSceneArt();
     const screens: MenuScreens = {
       titlePanel: assertElement('#title-panel', HTMLElement),
       playHud: assertElement('#play-hud', HTMLElement),
@@ -712,11 +713,46 @@ export class AppShell {
   private applySceneArt(locationId: string): void {
     const art = LOCATION_SCENE_ART[locationId];
     assertElement('#interaction-dialog', HTMLDialogElement).classList.toggle('has-scene-art', art !== undefined);
-    assertElement('#scene-background', HTMLElement).style.backgroundImage = art !== undefined ? `url(${art.background})` : '';
+    const background = assertElement('#scene-background', HTMLElement);
+    if (art === undefined) {
+      background.style.backgroundImage = '';
+    } else {
+      // Same stale-bitmap problem as the portrait below: hold the layer back until the new background has decoded.
+      background.style.visibility = 'hidden';
+      background.style.backgroundImage = `url(${art.background})`;
+      const backgroundSrc = art.background;
+      const preload = new Image();
+      preload.src = backgroundSrc;
+      const revealBackground = (): void => {
+        if (background.style.backgroundImage.includes(backgroundSrc)) background.style.visibility = '';
+      };
+      preload.decode().then(revealBackground, revealBackground);
+    }
     const character = assertElement('#scene-character', HTMLImageElement);
-    character.src = art?.character?.src ?? '';
     character.alt = art?.character?.alt ?? '';
     character.hidden = art?.character === undefined;
+    const nextSrc = art?.character?.src;
+    if (nextSrc === undefined) {
+      character.removeAttribute('src');
+      return;
+    }
+    // Swapping src in place keeps painting the previous building's character until the new bitmap decodes, which shows
+    // as a blink-in. Hide the portrait, and reveal it only once the new image is decoded.
+    character.style.visibility = 'hidden';
+    character.src = nextSrc;
+    const reveal = (): void => {
+      if (character.getAttribute('src') === nextSrc) character.style.visibility = '';
+    };
+    character.decode().then(reveal, reveal);
+  }
+
+  /** Warms the browser cache with every scene portrait so the reveal in applySceneArt() is effectively instant. */
+  private preloadSceneArt(): void {
+    for (const art of Object.values(LOCATION_SCENE_ART)) {
+      if (art === undefined) continue;
+      new Image().src = art.background;
+      if (art.character !== undefined) new Image().src = art.character.src;
+    }
   }
 
   private renderDialogueNode(): void {
