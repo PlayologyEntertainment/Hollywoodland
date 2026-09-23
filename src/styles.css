@@ -284,8 +284,8 @@ h1 {
 /* Same look as .hud-stat, narrower and gold-accented (like .hud-stat[data-stat="money"]) so an in-progress assignment
    reads as a small badge under the main stats rather than a fifth stat competing with them. */
 .hud-assignment-timer {
-  display: grid; gap: .1rem; justify-items: center; padding: .15rem .9rem;
-  background: rgb(13 10 12 / 82%); border: 1px solid rgb(216 173 88 / 45%); border-radius: var(--button-radius);
+  display: grid; gap: .1rem; justify-items: center; padding: .15rem 1.2rem;
+  background: linear-gradient(90deg, transparent, rgb(13 10 12 / 82%) 16%, rgb(13 10 12 / 82%) 84%, transparent);
   font-family: var(--deco-font); font-weight: 400; font-synthesis: none;
 }
 .hud-assignment-timer[hidden] { display: none; }
