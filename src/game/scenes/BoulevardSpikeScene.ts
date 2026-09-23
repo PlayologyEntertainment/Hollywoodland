@@ -16,7 +16,12 @@ import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../d
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
-import type { AssignmentStartRequestedPayload, AuditionSubmittedPayload, DomainEventBus } from '../../domain/DomainEventBus';
+import type {
+  AssignmentStartRequestedPayload,
+  AuditionSubmittedPayload,
+  DomainEventBus,
+  StatusPanelVisibilityChangedPayload,
+} from '../../domain/DomainEventBus';
 import { ALL_ITEMS } from '../../domain/InventoryDefinitions';
 import { applyAuditionOutcome, resolveAudition } from '../../domain/Performance';
 import { getAuditionById } from '../../domain/PerformanceDefinitions';
@@ -35,6 +40,9 @@ const WALK_SPEED = 390;
 /** Reduced motion slows the walk itself (not just the animation) so the feet
  * stay planted on the street. */
 const REDUCED_MOTION_WALK_FACTOR = 0.78;
+/** A click-to-move target within this many px of the player counts as arrived, rather than the walk oscillating
+ * forever around a target it can only approach in speed-sized steps. */
+const CLICK_ARRIVAL_THRESHOLD = 6;
 /** How far below the manifest's ground line the character's soles rest. */
 const PLAYER_SOLE_OFFSET = 14;
 /** Shoe-print shadow: the print is a shoe seen from above on the street, so it
@@ -127,6 +135,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private skyDriftX = 0;
   private skyTiles: Phaser.GameObjects.Image[] = [];
   private skyTileWidth = 0;
+  /** Click-to-move's target, or undefined when nothing is pending — see update(). */
+  private clickTargetX: number | undefined;
+  /** The Career panel covers only part of the screen and isn't a native <dialog>, so unlike every other panel a
+   * click can still land on the still-visible street while it's open — this suppresses that. */
+  private statusPanelOpen = false;
 
   public constructor() {
     super('BoulevardSpikeScene');
@@ -198,10 +211,13 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('assignment-start-requested', this.onAssignmentStartRequested),
       this.domainEvents.on('housing-upgrade-requested', this.onHousingUpgradeRequested),
       this.domainEvents.on('level-up-celebration', this.onLevelUpCelebration),
+      this.domainEvents.on('status-panel-visibility-changed', this.onStatusPanelVisibilityChanged),
     ];
+    this.input.on('pointerdown', this.onPointerDown);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const unsubscribe of this.unsubscribers) unsubscribe();
       this.unsubscribers = [];
+      this.input.off('pointerdown', this.onPointerDown);
     });
     this.applyMotionSettings();
     const initialState = this.registry.get('initialCareerState') as CareerState | undefined;
@@ -212,9 +228,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   public override update(_time: number, delta: number): void {
     if (!this.settings.reducedMotion) this.skyDriftX += SKY_DRIFT_PX_PER_SEC * (delta / 1000);
     this.applySkyTileLayout();
-    const direction =
-      Number(this.inputController.isDown('moveRight')) -
-      Number(this.inputController.isDown('moveLeft'));
+    const direction = this.currentDirection();
     const speed = this.settings.reducedMotion ? WALK_SPEED * REDUCED_MOTION_WALK_FACTOR : WALK_SPEED;
     const previousX = this.player.x;
     this.player.x = Phaser.Math.Clamp(
@@ -259,6 +273,24 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.resolvePendingAssignment();
       this.emitState();
     }
+  }
+
+  /** Keyboard always wins and cancels any pending click-walk; otherwise steers toward clickTargetX (arriving
+   * clears it); otherwise stands still. Produces the same -1/0/1 direction keyboard input always has, so every
+   * downstream use (speed, animation, world-bounds clamp) needs no click-to-move-specific handling at all. */
+  private currentDirection(): number {
+    const keyboardDirection = Number(this.inputController.isDown('moveRight')) - Number(this.inputController.isDown('moveLeft'));
+    if (keyboardDirection !== 0) {
+      this.clickTargetX = undefined;
+      return keyboardDirection;
+    }
+    if (this.clickTargetX === undefined) return 0;
+    const distanceToTarget = this.clickTargetX - this.player.x;
+    if (Math.abs(distanceToTarget) < CLICK_ARRIVAL_THRESHOLD) {
+      this.clickTargetX = undefined;
+      return 0;
+    }
+    return Math.sign(distanceToTarget);
   }
 
   private enterLocation(id: string): void {
@@ -655,6 +687,19 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private readonly onLevelUpCelebration = (): void => {
     if (this.settings.reducedMotion) return;
     this.burstConfetti();
+  };
+
+  private readonly onStatusPanelVisibilityChanged = ({ open }: StatusPanelVisibilityChangedPayload): void => {
+    this.statusPanelOpen = open;
+  };
+
+  /** Click-to-move: sets clickTargetX for update()'s currentDirection() to steer toward. Ignored while the
+   * Career panel covers part of the screen (see statusPanelOpen); every other panel is a native <dialog>, already
+   * modal to pointer events over the whole page, so no other guard is needed here. */
+  private readonly onPointerDown = (pointer: Phaser.Input.Pointer): void => {
+    if (this.statusPanelOpen) return;
+    const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+    this.clickTargetX = Phaser.Math.Clamp(worldPoint.x, 110, this.worldWidth - 110);
   };
 
   /** Generated once (idempotent across scene restarts, which re-run create()) so the burst needs no art asset of

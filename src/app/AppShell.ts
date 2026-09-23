@@ -1308,12 +1308,14 @@ export class AppShell {
     panel.hidden = false;
     button.setAttribute('aria-expanded', 'true');
     assertElement('#close-status', HTMLButtonElement).focus();
+    this.options.domainEvents.emit('status-panel-visibility-changed', { open: true });
   }
 
   private closeStatus(panel: HTMLElement, button: HTMLButtonElement): void {
     panel.hidden = true;
     button.setAttribute('aria-expanded', 'false');
     button.focus();
+    this.options.domainEvents.emit('status-panel-visibility-changed', { open: false });
   }
 
   /** Pre-fills the New Save label with the current time, editable before the player submits it. */

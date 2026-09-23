@@ -40,6 +40,10 @@ export interface LevelUpPayload {
   readonly level: number;
 }
 
+export interface StatusPanelVisibilityChangedPayload {
+  readonly open: boolean;
+}
+
 export interface DomainEventMap {
   readonly 'career-state-changed': CareerState;
   readonly 'restore-career-state': CareerState;
@@ -74,6 +78,11 @@ export interface DomainEventMap {
    * open Boulevard, and no dialog is covering the screen. The scene's confetti burst listens for this (not
    * 'level-up'), so the VFX, the overlay and the SFX all land at the same moment. */
   readonly 'level-up-celebration': undefined;
+  /** The Career panel opening/closing. Unlike the interaction/audition/Home Hub/Settings dialogs (native <dialog>
+   * elements, already modal to pointer events over the whole page per the HTML spec), the status panel is a plain
+   * <aside> covering only part of the screen — the Boulevard scene needs telling explicitly so a click on the
+   * still-visible street doesn't move the player while it's open. */
+  readonly 'status-panel-visibility-changed': StatusPanelVisibilityChangedPayload;
 }
 
 type DomainEventListener<K extends keyof DomainEventMap> = (payload: DomainEventMap[K]) => void;
