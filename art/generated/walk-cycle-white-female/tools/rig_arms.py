@@ -1,5 +1,17 @@
 """Replace the drawn arms of the walk cycle with a rigged pair of arms on a smooth pendulum.
 
+STATUS (2026-09-23): no longer run as part of the build. Even after the two hole-detection
+fixes below (bounding the patch to the erase margin, and donor-copying real texture instead of
+a flat fill), the erase-and-repaint approach kept producing visible per-frame torso artifacts in
+review -- the owner's "missing shirt" / "lack of continuity" feedback on a round that used this
+step. The AI-drawn arms this was built to replace turned out not to need it: checked directly
+against `white-female-walk-master-smoothed.png` (this file's own input, i.e. before this script
+ever touches it), her raw arms swing naturally frame to frame with no torso damage at all, unlike
+the male character's original art (see the paragraph below) which motivated writing this in the
+first place. The current build copies the smoothed master straight through as the final master,
+skipping this file. Kept for reference and in case a future take-sheet regeneration reintroduces
+genuinely jittery arms that need rigging.
+
 Reads  white-female-walk-master-smoothed.png  (output of smooth_upper_body.py)
 Writes white-female-walk-master.png
 
