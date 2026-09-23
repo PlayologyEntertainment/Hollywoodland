@@ -227,9 +227,8 @@ describe('the sub-titles and attribute rows inside the side panes', () => {
     expect(shared).toContain('text-transform: uppercase');
   });
 
-  it('draw no divider lines between the attributes, even though the general `dl div` rule draws one', () => {
-    expect(rules(css, 'dl div')).toContain('border-bottom');
-    expect(rules(css, '.attribute-list > div')).toMatch(/border-bottom:\s*0/);
+  it('draw no divider lines between the attributes', () => {
+    expect(rules(css, '.attribute-list > div')).toContain('display: contents');
     expect(rules(css, '.attribute-bar')).toMatch(/border:\s*0/);
   });
 
