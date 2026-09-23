@@ -1,0 +1,76 @@
+# Deploy the static game to Hostinger (manual).
+#
+# Hollywoodland is client-only, so this ships the Vite build over FTP to
+# https://www.playologyentertainment.com/Hollywoodland/. Manual only (workflow_dispatch): a push to main
+# never publishes to the live site, every release is an explicit click in the Actions tab.
+#
+# Secrets required (Settings > Secrets and variables > Actions): FTP_SERVER, FTP_USERNAME, FTP_PASSWORD.
+# These are per-repo, so this repo needs its own copies even though OtakuPalace has the same ones.
+#
+# client_dir is the FTP path of the game folder, relative to the FTP login's root. If the login lands inside
+# public_html the default `Hollywoodland/` is right; if it lands above it, use `public_html/Hollywoodland/`.
+# It must point at the game's own folder, never the web root: the deploy action deletes files it finds
+# missing from the build in that folder.
+
+name: Deploy to Hostinger
+
+on:
+  workflow_dispatch:
+    inputs:
+      client_dir:
+        description: 'FTP path of the Hollywoodland folder on Hostinger'
+        required: true
+        default: 'Hollywoodland/'
+
+# One live deploy at a time; a newer run supersedes an in-flight one.
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build & FTP upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify FTP secrets are configured
+        run: |
+          missing=()
+          [ -z "$FTP_SERVER" ] && missing+=("FTP_SERVER")
+          [ -z "$FTP_USERNAME" ] && missing+=("FTP_USERNAME")
+          [ -z "$FTP_PASSWORD" ] && missing+=("FTP_PASSWORD")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing repo secret(s): ${missing[*]}. Add them under Settings > Secrets and variables > Actions, then re-run."
+            exit 1
+          fi
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+      - name: Build
+        # VITE_BUILD_ID is appended to every public/ asset URL (src/shared/assetUrl.ts) so a redeploy
+        # can't be shadowed by cached art whose filename didn't change.
+        run: npm run build
+        env:
+          VITE_BUILD_ID: ${{ github.sha }}
+
+      - name: Deploy dist/ over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ${{ github.event.inputs.client_dir }}

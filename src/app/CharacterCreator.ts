@@ -1,6 +1,7 @@
 import { ORIGINS, BASE_ATTRIBUTE_VALUE, MAX_ATTRIBUTE_VALUE, type AttributeKey, type Origin } from '../domain/Origins';
 import { PLAYER_CHARACTERS, type PlayerCharacter, type PlayerCharacterId } from '../domain/PlayerCharacters';
 import { assertElement } from '../shared/assert';
+import { assetUrl } from '../shared/assetUrl';
 
 export interface CharacterChoices {
   readonly name: string;
@@ -43,8 +44,8 @@ export class CharacterCreator {
 
     // Fetch the other portraits now, so switching characters does not wait on the network.
     for (const character of PLAYER_CHARACTERS) {
-      new Image().src = `${import.meta.env.BASE_URL}${character.portrait}`;
-      new Image().src = `${import.meta.env.BASE_URL}${character.reflection}`;
+      new Image().src = assetUrl(character.portrait);
+      new Image().src = assetUrl(character.reflection);
     }
 
     assertElement('#creator-back', HTMLButtonElement).addEventListener('click', onBack);
@@ -81,7 +82,7 @@ export class CharacterCreator {
       button.setAttribute('role', 'radio');
       button.setAttribute('aria-label', character.label);
       const image = document.createElement('img');
-      image.src = `${import.meta.env.BASE_URL}${character.headshot}`;
+      image.src = assetUrl(character.headshot);
       image.alt = '';
       image.draggable = false;
       button.appendChild(image);
@@ -106,9 +107,9 @@ export class CharacterCreator {
       child.setAttribute('aria-checked', String(selected));
       child.setAttribute('tabindex', selected && PLAYER_CHARACTERS[index]?.hasInGameArt === true ? '0' : '-1');
     });
-    portrait.src = `${import.meta.env.BASE_URL}${chosen.portrait}`;
+    portrait.src = assetUrl(chosen.portrait);
     portrait.alt = chosen.label;
-    assertElement('#creator-reflection', HTMLImageElement).src = `${import.meta.env.BASE_URL}${chosen.reflection}`;
+    assertElement('#creator-reflection', HTMLImageElement).src = assetUrl(chosen.reflection);
   }
 
   private buildOrigins(originGrid: HTMLElement, attributeList: HTMLElement): void {

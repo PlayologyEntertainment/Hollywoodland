@@ -7,7 +7,7 @@ Baseline verified: September 2026
 
 - **Language:** TypeScript with strict compiler settings.
 - **Game framework:** Phaser 4, pinned to a reviewed stable release at implementation start.
-- **Build tool:** Vite, configured with the production base path `/hollywoodland/`.
+- **Build tool:** Vite, configured with the production base path `/Hollywoodland/`.
 - **UI:** Semantic HTML/CSS overlays for menus, dialogue, journal, settings, and accessibility-critical controls; Phaser renders the game world.
 - **Content:** Versioned JSON validated against TypeScript-derived schemas during development and CI.
 - **Persistence:** IndexedDB behind a repository-owned save adapter; downloadable JSON backup with integrity metadata.
@@ -172,7 +172,7 @@ Every change must pass formatting, linting, type checking, unit tests, content v
 
 ## 13. Deployment
 
-Build with `/hollywoodland/` as the base path. The deployment artifact contains immutable hashed assets plus an entry HTML file and suitable cache headers. Do not cache the entry HTML indefinitely. Provide a version file and a friendly refresh prompt when a new build is available; never update in the middle of a session.
+Build with `/Hollywoodland/` as the base path. The deployment artifact contains immutable hashed assets plus an entry HTML file and suitable cache headers. Do not cache the entry HTML indefinitely. Provide a version file and a friendly refresh prompt when a new build is available; never update in the middle of a session.
 
 The exact playologyentertainment.com hosting provider and deployment credentials remain **Owner approval required** before deployment automation is added.
 

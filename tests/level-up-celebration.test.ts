@@ -84,7 +84,7 @@ describe('the one-shot SFX capability', () => {
 
   it('plays a fresh, independent element outside the music/ambience gain graph', () => {
     expect(webAudioEngine).toContain('public playSfx(path: string): void {');
-    expect(webAudioEngine).toMatch(/new Audio\(`\$\{this\.baseUrl\}\$\{path\}`\)/);
+    expect(webAudioEngine).toMatch(/new Audio\(assetUrl\(path\)\)/);
   });
 
   it('names the not-yet-delivered file at the same path convention as the music/ambience files', () => {

@@ -24,7 +24,7 @@ Exit: Written owner approval and an immutable design baseline tag.
 
 Deliverables:
 
-- Phaser/TypeScript/Vite skeleton at `/hollywoodland/` base path.
+- Phaser/TypeScript/Vite skeleton at `/Hollywoodland/` base path.
 - Input abstraction, DOM overlay proof, scaling/fullscreen proof, and Chrome/Safari smoke test.
 - IndexedDB save/export/import proof.
 - Representative traditional sprite animation test.

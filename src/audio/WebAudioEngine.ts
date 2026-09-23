@@ -1,4 +1,5 @@
 import type { GameSettings } from '../settings/Settings';
+import { assetUrl } from '../shared/assetUrl';
 import { AMBIENCE_FILE, MUSIC_FILES, sliderToGain, type MusicTrackId } from './AudioCues';
 import type { AudioEngine } from './AudioDirector';
 
@@ -30,7 +31,7 @@ export class WebAudioEngine implements AudioEngine {
   private volumes: Pick<GameSettings, 'musicVolume' | 'musicMuted' | 'ambienceVolume' | 'ambienceMuted'> | undefined;
   private warned = false;
 
-  public constructor(private readonly baseUrl: string) {
+  public constructor() {
     // The Main Menu music starts the instant the player clicks Enter, so it is fetched while the splash is showing.
     this.element(MUSIC_FILES.studio, 'auto');
   }
@@ -123,7 +124,7 @@ export class WebAudioEngine implements AudioEngine {
    * forget, not a voice that needs to be found and faded again later. A missing or blocked file just warns once
    * and is otherwise silent, the same posture every other audio path here takes. */
   public playSfx(path: string): void {
-    const element = new Audio(`${this.baseUrl}${path}`);
+    const element = new Audio(assetUrl(path));
     element.volume = 0.8;
     element.addEventListener('error', () => this.warn(`could not load ${path}`));
     void element.play().catch((error: unknown) => {
@@ -134,7 +135,7 @@ export class WebAudioEngine implements AudioEngine {
   private element(path: string, preload: 'auto' | 'none'): HTMLAudioElement {
     let element = this.elements.get(path);
     if (element === undefined) {
-      element = new Audio(`${this.baseUrl}${path}`);
+      element = new Audio(assetUrl(path));
       element.loop = true;
       element.preload = preload;
       element.addEventListener('error', () => this.warn(`could not load ${path}`));

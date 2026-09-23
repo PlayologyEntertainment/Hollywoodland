@@ -40,10 +40,7 @@ import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
 import { AUTOSAVE_ID, type SaveEnvelope } from '../save/SaveEnvelope';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
-
-function assetUrl(path: string): string {
-  return `${import.meta.env.BASE_URL}${path}`;
-}
+import { assetUrl } from '../shared/assetUrl';
 
 interface LocationSceneArt {
   readonly background: string;

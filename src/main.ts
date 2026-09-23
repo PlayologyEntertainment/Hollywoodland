@@ -16,7 +16,7 @@ const saveRepository = new IndexedDbSaveRepository();
 const domainEvents = new DomainEventBus();
 let settings = settingsRepository.load();
 const analytics = new NoOpAnalyticsClient();
-const audio = new AudioDirector(new WebAudioEngine(import.meta.env.BASE_URL));
+const audio = new AudioDirector(new WebAudioEngine());
 audio.setSettings(settings);
 // Browsers only allow sound after the player has interacted with the page. Play on the splash screen is the first
 // interaction and starts the Main Menu music; this also covers a player who reaches the menus some other way.

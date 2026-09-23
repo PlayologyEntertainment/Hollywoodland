@@ -52,7 +52,7 @@ npm run dev
 
 ## 2. Open the tool
 
-Visit **http://localhost:5173/hollywoodland/tools/art-director/index.html**
+Visit **http://localhost:5173/Hollywoodland/tools/art-director/index.html**
 in Chrome, Edge, or another Chromium browser (it uses the File System
 Access API, which needs a secure context — `localhost` counts, `file://`
 mostly doesn't, and Firefox/Safari don't support it yet).
@@ -223,7 +223,7 @@ the main menu and start/continue a career in the game to see the change.
 ## 6. The preview pane
 
 The right-hand pane is a plain iframe pointed at your local dev server
-(defaults to `http://127.0.0.1:5173/hollywoodland/`) with **Load** and a
+(defaults to `http://127.0.0.1:5173/Hollywoodland/`) with **Load** and a
 refresh button — not a live drag surface, just a fast way to flip over and
 check a save without alt-tabbing. Drag the divider to resize it.
 

@@ -84,7 +84,7 @@ itself tries to fix.
 ## 1. Opening the tool
 
 Same shape as Art Director: `npm run dev`, then visit
-`http://localhost:5173/hollywoodland/tools/walk-cycle-director/index.html` in
+`http://localhost:5173/Hollywoodland/tools/walk-cycle-director/index.html` in
 a Chromium browser, click **Open Project Folder…**, and pick the repository
 root. From there, a project picker lists the 6 characters with their current
 `walkCycle` path:

@@ -4,6 +4,7 @@ import { DEFAULT_BOULEVARD_MANIFEST, isBoulevardManifest } from '../BoulevardMan
 import { DEFAULT_WALK_CYCLE, isWalkCycle } from '../WalkCycle';
 import type { CareerState } from '../../domain/CareerState';
 import { getPlayerCharacter } from '../../domain/PlayerCharacters';
+import { assetUrl } from '../../shared/assetUrl';
 
 /** Loads data/boulevard-manifest.json before BoulevardSpikeScene starts, so
  * the manifest's plane/prop paths are known before that scene's own
@@ -30,7 +31,7 @@ export class BoulevardBootScene extends Phaser.Scene {
     this.manifestCacheKey = `boulevard-manifest-${Date.now()}`;
     this.load.json(
       this.manifestCacheKey,
-      `${import.meta.env.BASE_URL}data/boulevard-manifest.json?t=${Date.now()}`,
+      assetUrl('data/boulevard-manifest.json'),
     );
     // The walk-cycle numbers (frame size, stride, footprints) ship with the sheet, and each ready-made character has their
     // own. The chosen one comes from the career state the game is starting with (none, or an old save, means the default).
@@ -40,7 +41,7 @@ export class BoulevardBootScene extends Phaser.Scene {
     this.walkCycleCacheKey = `walk-cycle-${Date.now()}`;
     this.load.json(
       this.walkCycleCacheKey,
-      `${import.meta.env.BASE_URL}${character.walkCycle}?t=${Date.now()}`,
+      assetUrl(character.walkCycle),
     );
   }
 

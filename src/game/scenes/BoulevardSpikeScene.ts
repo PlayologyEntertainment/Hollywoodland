@@ -31,6 +31,7 @@ import { ALL_RELATIONSHIP_CHARACTERS } from '../../domain/RelationshipDefinition
 import { getTalentById } from '../../domain/TalentDefinitions';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
+import { assetUrl } from '../../shared/assetUrl';
 
 /** Pre-manifest world width, retained only to migrate a save's `playerX`
  * from that era forward (see restoreState) — the live world width now
@@ -83,10 +84,6 @@ interface DynamicBuilding {
   readonly activeKey: string;
   readonly rule: BoulevardActiveRule;
   active: boolean;
-}
-
-function assetUrl(path: string): string {
-  return `${import.meta.env.BASE_URL}${path}`;
 }
 
 /** A single interactable point along the Boulevard: proximity radius,
