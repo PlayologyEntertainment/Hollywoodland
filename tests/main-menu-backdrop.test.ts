@@ -26,11 +26,11 @@ describe('main menu buttons', () => {
     expect(labels).toEqual(['Enter Hollywood', 'Continue', 'Save Options', 'Settings']);
   });
 
-  it('keeps the same buttons behind the new names, so the pages work as before', () => {
-    expect(menu).toMatch(/id="import-save"[^>]*>Save Options</);
+  it('opens a dialog for each: Save Options and Settings', () => {
+    expect(menu).toMatch(/id="open-save-options"[^>]*>Save Options</);
     expect(menu).toMatch(/id="open-settings"[^>]*>Settings</);
-    // The pages themselves are unchanged until they are redesigned.
     expect(indexHtml).toContain('id="settings-dialog"');
+    expect(indexHtml).toContain('id="save-options-dialog"');
     expect(indexHtml).toContain('id="save-file-input"');
   });
 });

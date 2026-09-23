@@ -37,6 +37,7 @@ import { canUnlockTalent, isTalentUnlocked, xpRequiredForNextLevel, type Progres
 import { deriveRelationshipLabel, type RelationshipAxes, type RelationshipDelta, type RelationshipLabel } from '../domain/Relationships';
 import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../domain/RelationshipDefinitions';
 import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
+import { AUTOSAVE_ID, type SaveEnvelope } from '../save/SaveEnvelope';
 import type { GameSettings } from '../settings/Settings';
 import { assertElement } from '../shared/assert';
 
@@ -126,7 +127,15 @@ interface AppShellOptions {
   /** Saves the career to its own slot; called as the player leaves the game for the Main Menu. */
   readonly onAutosave: () => Promise<void>;
   readonly onLoad: () => Promise<CareerState | undefined>;
-  readonly onImport: (raw: string) => Promise<CareerState>;
+  /** Parses, migrates and stores an imported save under a fresh slot id; never returns the state directly — the
+   * player reviews it in the Save Options list and picks Load, rather than it loading instantly. */
+  readonly onImport: (raw: string) => Promise<void>;
+  readonly onListSaves: () => Promise<readonly SaveEnvelope<CareerState>[]>;
+  readonly onSaveNew: (label: string) => Promise<SaveEnvelope<CareerState>>;
+  readonly onRenameSave: (saveId: string, label: string) => Promise<void>;
+  readonly onDeleteSave: (saveId: string) => Promise<void>;
+  readonly onLoadSave: (saveId: string) => Promise<CareerState | undefined>;
+  readonly onExportSave: (saveId: string) => Promise<string>;
 }
 
 const AUDITION_OUTCOME_LABELS: Record<AuditionOutcome, string> = {
@@ -163,6 +172,32 @@ function formatItemCategory(category: InventoryItemDefinition['category']): stri
 function formatAssignmentDuration(minutes: number): string {
   const hours = minutes / 60;
   return Number.isInteger(hours) ? `${hours}h` : `${minutes}m`;
+}
+
+/** "2h 05m" (or "5m" under an hour) for a save slot's playtime. */
+function formatPlaytime(seconds: number): string {
+  const totalMinutes = Math.round(seconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
+}
+
+/** "Sep 23, 2026, 10:15 AM" for a save slot's timestamp, in the player's own locale. */
+function formatSavedAt(iso: string): string {
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return iso;
+  return parsed.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+/** Triggers a browser "Save As" download of a small text file — used to export a save slot. The object URL is
+ * revoked right after the click since the download has already been handed off by then. */
+function downloadTextFile(filename: string, contents: string): void {
+  const url = URL.createObjectURL(new Blob([contents], { type: 'application/json' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 /** A live mm:ss (or h:mm:ss past an hour) countdown for the header's
@@ -388,11 +423,7 @@ export class AppShell {
     continueCareer.addEventListener('click', async () => {
       if (this.transition.isRunning) return;
       const state = await this.options.onLoad();
-      await this.transition.run(async () => {
-        if (state !== undefined) this.loadCareerState(state);
-        await this.enterGame(screens, state);
-      });
-      this.toast('Career restored');
+      await this.resumeCareer(screens, state, 'Career restored');
     });
     assertElement('#return-menu', HTMLButtonElement).addEventListener('click', () => {
       void this.transition.run(async () => {
@@ -453,7 +484,30 @@ export class AppShell {
     assertElement('#film-mode', HTMLButtonElement).addEventListener('click', (event) => this.toggleFilmMode(event.currentTarget as HTMLButtonElement));
     assertElement('#fullscreen', HTMLButtonElement).addEventListener('click', () => void this.toggleFullscreen());
     assertElement('#advance-time', HTMLButtonElement).addEventListener('click', () => this.options.domainEvents.emit('advance-time-requested', undefined));
-    assertElement('#import-save', HTMLButtonElement).addEventListener('click', () => fileInput.click());
+
+    const saveOptionsDialog = assertElement('#save-options-dialog', HTMLDialogElement);
+    assertElement('#open-save-options', HTMLButtonElement).addEventListener('click', () => {
+      this.populateSaveNewLabel();
+      void this.renderSaveSlots(screens);
+      saveOptionsDialog.showModal();
+    });
+    assertElement('#save-options-close', HTMLButtonElement).addEventListener('click', () => saveOptionsDialog.close());
+    saveOptionsDialog.addEventListener('click', (event) => {
+      if (event.target === saveOptionsDialog) saveOptionsDialog.close();
+    });
+    assertElement('#save-new-form', HTMLFormElement).addEventListener('submit', (event) => {
+      event.preventDefault();
+      const labelInput = assertElement('#save-new-label', HTMLInputElement);
+      const label = labelInput.value.trim();
+      if (label.length === 0) return;
+      void this.options.onSaveNew(label).then(async () => {
+        await this.refreshContinue();
+        await this.renderSaveSlots(screens);
+        this.populateSaveNewLabel();
+        this.toast('Career saved');
+      });
+    });
+    assertElement('#save-import-button', HTMLButtonElement).addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => void this.importSave(fileInput, screens));
     this.mountLegalDialog('#footer-tos', '#legal-terms-dialog', '#legal-terms-close');
     this.mountLegalDialog('#footer-privacy', '#legal-privacy-dialog', '#legal-privacy-close');
@@ -465,6 +519,17 @@ export class AppShell {
     } catch {
       assertElement('#continue-career', HTMLButtonElement).disabled = true;
     }
+  }
+
+  /** The shared "load this state and step into the game" sequence behind Continue and a Save Options slot's Load
+   * button: a no-op (defensively) if the state has already gone missing by the time the click resolves. */
+  private async resumeCareer(screens: MenuScreens, state: CareerState | undefined, toastMessage: string): Promise<void> {
+    if (state === undefined) return;
+    await this.transition.run(async () => {
+      this.loadCareerState(state);
+      await this.enterGame(screens, state);
+    });
+    this.toast(toastMessage);
   }
 
   /** Publishes the heights of the black header and footer as `--header-h` and `--footer-h` on the game frame (0 while a bar is
@@ -1053,22 +1118,113 @@ export class AppShell {
     }
   }
 
+  /** Lands the file as a new slot (never loading it directly) and re-renders the list so the player sees it. */
   private async importSave(fileInput: HTMLInputElement, screens: MenuScreens): Promise<void> {
     const file = fileInput.files?.[0];
     if (file === undefined) return;
     try {
-      const state = await this.options.onImport(await file.text());
+      await this.options.onImport(await file.text());
       await this.refreshContinue();
-      await this.transition.run(async () => {
-        this.loadCareerState(state);
-        await this.enterGame(screens, state);
-      });
-      this.toast('Save imported and verified');
+      await this.renderSaveSlots(screens);
+      this.toast('Save imported — find it below');
     } catch (error) {
       this.toast(error instanceof Error ? error.message : 'Save import failed');
     } finally {
       fileInput.value = '';
     }
+  }
+
+  /** Rebuilds the Save Options dialog's slot list, newest save first. */
+  private async renderSaveSlots(screens: MenuScreens): Promise<void> {
+    const list = assertElement('#save-slot-list', HTMLUListElement);
+    try {
+      const saves = [...(await this.options.onListSaves())].sort((a, b) => Date.parse(b.savedAt) - Date.parse(a.savedAt));
+      list.replaceChildren(...saves.map((save) => this.buildSaveSlotRow(save, screens)));
+      assertElement('#save-slot-empty', HTMLElement).hidden = saves.length > 0;
+    } catch {
+      list.replaceChildren();
+      this.toast('Could not read saves — this browser is not letting the game read save storage');
+    }
+  }
+
+  private buildSaveSlotRow(save: SaveEnvelope<CareerState>, screens: MenuScreens): HTMLLIElement {
+    const item = document.createElement('li');
+    item.className = 'save-slot';
+
+    const label = document.createElement('input');
+    label.type = 'text';
+    label.className = 'save-slot-label';
+    label.value = save.label;
+    label.maxLength = 80;
+    label.setAttribute('aria-label', `Rename "${save.label}"`);
+    label.addEventListener('change', () => {
+      const nextLabel = label.value.trim();
+      if (nextLabel.length === 0 || nextLabel === save.label) {
+        label.value = save.label;
+        return;
+      }
+      void this.options.onRenameSave(save.saveId, nextLabel).then(() => this.toast('Save renamed'));
+    });
+
+    const meta = document.createElement('small');
+    meta.className = 'save-slot-meta';
+    meta.textContent = `${formatSavedAt(save.savedAt)} · ${formatPlaytime(save.playtimeSeconds)}`;
+    if (save.saveId === AUTOSAVE_ID) {
+      const tag = document.createElement('span');
+      tag.className = 'save-slot-tag';
+      tag.textContent = 'Autosave';
+      meta.append(' · ', tag);
+    }
+
+    const load = document.createElement('button');
+    load.type = 'button';
+    load.textContent = 'Load';
+    load.addEventListener('click', () => void this.loadSaveSlot(save.saveId, screens));
+
+    const exportButton = document.createElement('button');
+    exportButton.type = 'button';
+    exportButton.textContent = 'Export';
+    exportButton.addEventListener('click', () => void this.exportSaveSlot(save));
+
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'danger-button';
+    deleteButton.textContent = 'Delete';
+    deleteButton.addEventListener('click', () => void this.deleteSaveSlot(save.saveId, screens));
+
+    const actions = document.createElement('div');
+    actions.className = 'save-slot-actions';
+    actions.append(load, exportButton, deleteButton);
+
+    item.append(label, meta, actions);
+    return item;
+  }
+
+  private async loadSaveSlot(saveId: string, screens: MenuScreens): Promise<void> {
+    const state = await this.options.onLoadSave(saveId);
+    if (state === undefined) {
+      this.toast('That save could not be loaded');
+      return;
+    }
+    assertElement('#save-options-dialog', HTMLDialogElement).close();
+    await this.resumeCareer(screens, state, 'Career restored');
+  }
+
+  private async exportSaveSlot(save: SaveEnvelope<CareerState>): Promise<void> {
+    try {
+      const raw = await this.options.onExportSave(save.saveId);
+      const filename = `${save.label.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'hollywoodland-save'}.json`;
+      downloadTextFile(filename, raw);
+    } catch (error) {
+      this.toast(error instanceof Error ? error.message : 'Save export failed');
+    }
+  }
+
+  private async deleteSaveSlot(saveId: string, screens: MenuScreens): Promise<void> {
+    await this.options.onDeleteSave(saveId);
+    await this.refreshContinue();
+    await this.renderSaveSlots(screens);
+    this.toast('Save deleted');
   }
 
   /** Wires a footer link (Terms of Service / Privacy Policy) to open its dialog, and the dialog's own Close button and
@@ -1112,6 +1268,11 @@ export class AppShell {
     panel.hidden = true;
     button.setAttribute('aria-expanded', 'false');
     button.focus();
+  }
+
+  /** Pre-fills the New Save label with the current time, editable before the player submits it. */
+  private populateSaveNewLabel(): void {
+    assertElement('#save-new-label', HTMLInputElement).value = formatSavedAt(new Date().toISOString());
   }
 
   private populateSettingsForm(): void {

@@ -295,8 +295,9 @@ describe('the Objective card in the app', () => {
   it('is updated whenever the career changes, and forgets the last game when a whole career is loaded', () => {
     expect(appShell).toMatch(/private renderCareerState\(state: CareerState\): void \{\s*this\.objectives\.update\(state\);/);
     expect(appShell).toMatch(/private loadCareerState\(state: CareerState\): void \{\s*this\.objectives\.reset\(\);\s*this\.renderCareerState\(state\);/);
-    // Every way of loading a whole career goes through it: Continue, Start and Import.
-    expect(appShell.match(/this\.loadCareerState\(state\)/g)).toHaveLength(3);
+    // Every way of loading a whole career goes through it: Start, and resumeCareer (shared by Continue and a
+    // Save Options slot's Load button — Import itself only stores a new slot now, it doesn't load one).
+    expect(appShell.match(/this\.loadCareerState\(state\)/g)).toHaveLength(2);
     expect(appShell).not.toMatch(/if \(state !== undefined\) this\.renderCareerState\(state\)/);
   });
 

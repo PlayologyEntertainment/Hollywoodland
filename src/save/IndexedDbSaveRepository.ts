@@ -19,6 +19,10 @@ export class IndexedDbSaveRepository {
     const database = await this.open();
     await this.transaction(database, (store) => store.put(save));
   }
+  public async delete(saveId: string): Promise<void> {
+    const database = await this.open();
+    await this.transaction(database, (store) => store.delete(saveId));
+  }
 
   private open(): Promise<IDBDatabase> {
     this.databasePromise ??= new Promise((resolve, reject) => {

@@ -485,6 +485,31 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .legal-body ul { margin: 0 0 .8rem; padding-left: 1.4rem; line-height: 1.6; }
 .legal-body section + section { margin-top: 1.1rem; }
 .legal-body h3 { margin: 0 0 .5rem; color: var(--gold-bright); font-size: 1.05rem; }
+
+/* Save Options: same .legal-dialog shell (heading + close button, scrolling body) as the legal pages, plus a New
+   Save mini-form, an Import button, and the slot list itself. */
+/* Top margin, not 0: .drawer-scroll has no top padding, so with none here the focus outline's top edge (which
+   extends past the input's own border via outline-offset) would be clipped by the scroll container above it. */
+.save-new-form { display: flex; gap: .6rem; margin: .4rem 0 .8rem; }
+.save-new-form input { flex: 1; min-width: 0; }
+.save-slot-list { display: grid; gap: .7rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.save-slot {
+  display: grid; grid-template-columns: 1fr auto; column-gap: .8rem; row-gap: .5rem; align-items: center;
+  padding: .8rem .9rem; border: 1px solid rgb(216 173 88 / 24%);
+}
+.save-slot-label { grid-column: 1; grid-row: 1; }
+.save-slot-meta { grid-column: 1; grid-row: 2; color: var(--muted); }
+.save-slot-tag {
+  padding: .05rem .4rem; border: 1px solid rgb(216 173 88 / 45%); border-radius: 999px;
+  color: var(--gold-bright); font-family: Arial, sans-serif; font-size: .68rem; letter-spacing: .02em;
+}
+.save-slot-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: .5rem; }
+.danger-button { border-color: rgb(240 135 106 / 55%); color: #f0876a; }
+.danger-button:hover:not(:disabled) { border-color: #f0876a; color: #fff; }
+@media (max-width: 640px) {
+  .save-slot { grid-template-columns: 1fr; }
+  .save-slot-actions { grid-column: 1; grid-row: 3; }
+}
 /* Home Menu assignments: each row is a Start button on the left, with the
    title above its description on the right. The button stays after the text
    in the DOM (so a screen reader hears the assignment first); the grid only

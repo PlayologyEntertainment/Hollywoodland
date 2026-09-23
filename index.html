@@ -49,7 +49,7 @@
           <nav id="main-menu" class="menu" aria-label="Main menu">
             <button id="new-career" class="primary-button deco-label" type="button">Enter Hollywood</button>
             <button id="continue-career" class="deco-label" type="button" disabled>Continue</button>
-            <button id="import-save" class="deco-label" type="button">Save Options</button>
+            <button id="open-save-options" class="deco-label" type="button">Save Options</button>
             <button id="open-settings" class="deco-label" type="button">Settings</button>
           </nav>
           <p class="build-label">Phase 1 · Visual gameplay spike</p>
@@ -287,6 +287,23 @@
             <p class="privacy-note">No player name, dialogue text, or save data is collected.</p>
             <button class="primary-button" value="confirm">Save</button>
           </form>
+        </dialog>
+
+        <dialog id="save-options-dialog" class="legal-dialog save-options-dialog" aria-labelledby="save-options-title">
+          <div class="drawer-heading">
+            <h2 id="save-options-title">Save Options</h2>
+            <button id="save-options-close" type="button" class="legal-close" aria-label="Close Save Options">×</button>
+          </div>
+          <div class="drawer-scroll">
+            <form id="save-new-form" class="save-new-form">
+              <label for="save-new-label" class="sr-only">Save name</label>
+              <input id="save-new-label" type="text" maxlength="80" />
+              <button type="submit" class="primary-button">New Save</button>
+            </form>
+            <button id="save-import-button" class="chrome-button" type="button">Import Save</button>
+            <p id="save-slot-empty" class="flavor-copy">No saves yet — play a bit, then save your progress here.</p>
+            <ul id="save-slot-list" class="save-slot-list"></ul>
+          </div>
         </dialog>
 
         <dialog id="legal-terms-dialog" class="legal-dialog" aria-labelledby="legal-terms-title">

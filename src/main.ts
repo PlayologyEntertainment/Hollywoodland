@@ -8,7 +8,7 @@ import { DomainEventBus } from './domain/DomainEventBus';
 import { createGame } from './game/createGame';
 import { InputController } from './input/InputController';
 import { IndexedDbSaveRepository } from './save/IndexedDbSaveRepository';
-import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, SAVE_SCHEMA_VERSION, type SaveEnvelope } from './save/SaveEnvelope';
+import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, serializeSave, SAVE_SCHEMA_VERSION, type SaveEnvelope } from './save/SaveEnvelope';
 import { BrowserSettingsRepository } from './settings/SettingsRepository';
 
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
@@ -97,16 +97,49 @@ const shell = new AppShell({
   },
   onStop: () => input.setGameplayActive(false),
   onAutosave: async () => { await saveRepository.put(makeSave(AUTOSAVE_ID, 'Autosave')); },
-  // Continue resumes whichever of the manual save and the autosave is newer.
+  // Continue resumes whichever save slot — autosave, a manual save, or an import — is newest.
   onLoad: async () => {
-    const save = newestSave(await Promise.all([saveRepository.get(MANUAL_SAVE_ID), saveRepository.get(AUTOSAVE_ID)]));
+    const save = newestSave(await saveRepository.list());
     return save === undefined ? undefined : migrateSaveEnvelope(save).state;
   },
+  // Lands the import as its own new slot (never reusing the file's own saveId, so it can never silently overwrite
+  // an existing one) rather than loading it immediately — the player reviews and picks "Load" from Save Options.
   onImport: async (raw) => {
-    // Stamped as saved now, so Continue treats the import as the latest save rather than an older autosave outranking it.
-    const save = { ...parseSave(raw), savedAt: new Date().toISOString() };
+    const save = { ...parseSave(raw), saveId: `imported-${crypto.randomUUID()}`, savedAt: new Date().toISOString() };
     await saveRepository.put(save);
-    return save.state;
+  },
+  // A save that fails to migrate (corrupt or from an unsupported future version) is left out rather than crashing
+  // the whole list — the rest of the player's saves should still be usable.
+  onListSaves: async () => {
+    const saves: SaveEnvelope<CareerState>[] = [];
+    for (const save of await saveRepository.list()) {
+      try {
+        saves.push(migrateSaveEnvelope(save));
+      } catch {
+        // skip
+      }
+    }
+    return saves;
+  },
+  onSaveNew: async (label) => {
+    const save = makeSave(`manual-${crypto.randomUUID()}`, label);
+    await saveRepository.put(save);
+    return save;
+  },
+  onRenameSave: async (saveId, label) => {
+    const save = await saveRepository.get(saveId);
+    if (save === undefined) return;
+    await saveRepository.put({ ...save, label });
+  },
+  onDeleteSave: (saveId) => saveRepository.delete(saveId),
+  onLoadSave: async (saveId) => {
+    const save = await saveRepository.get(saveId);
+    return save === undefined ? undefined : migrateSaveEnvelope(save).state;
+  },
+  onExportSave: async (saveId) => {
+    const save = await saveRepository.get(saveId);
+    if (save === undefined) throw new Error('Save not found.');
+    return serializeSave(migrateSaveEnvelope(save));
   },
 });
 
