@@ -124,15 +124,17 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
    open, or Film Look active). */
 .chrome-button { min-height: 2rem; padding: .2rem 1.1rem; font-size: .95rem; }
 .chrome-button[aria-pressed="true"], .chrome-button[aria-expanded="true"] { border-color: var(--gold-bright); background: linear-gradient(#4a3520, #241809); color: #fff; }
-/* Wait's reward badge: a small pill pinned to the button's top-right corner, so the energy it restores reads at a
-   glance without competing with the "Wait" label itself. Positioned, so the badge (position: absolute) anchors to it. */
+/* Wait's reward tooltip: same look as the icon buttons' hover tooltip below, but opens upward -- Wait sits in the
+   footer at the very bottom of the screen, so a downward tooltip would run off-screen. Positioned, so the tooltip
+   (position: absolute) anchors to it. */
 #advance-time { position: relative; }
-.wait-energy-badge {
-  position: absolute; top: -.6rem; right: -.55rem; padding: .1rem .4rem;
-  border: 1px solid rgb(216 173 88 / 55%); border-radius: 999px; background: rgb(13 10 12 / 92%);
-  color: var(--gold-bright); font-family: Arial, sans-serif; font-size: .6rem; font-weight: 700;
-  letter-spacing: .02em; white-space: nowrap; pointer-events: none;
+#advance-time::after {
+  content: '+20 Energy'; position: absolute; z-index: 20; bottom: calc(100% + .5rem); left: 50%; transform: translateX(-50%);
+  padding: .35rem .6rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 96%);
+  color: var(--ink); font-family: Arial, sans-serif; font-size: .74rem; letter-spacing: .02em; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .15s ease; box-shadow: 0 4px 15px rgb(0 0 0 / 35%);
 }
+#advance-time:hover::after, #advance-time:focus-visible::after { opacity: 1; }
 /* Film Look and Fullscreen: a small square icon button (2rem, matching .chrome-button's own height) instead of a text
    label, so a combined selector overrides .chrome-button's own auto-width padding -- specificity settles it regardless of
    which rule happens to sit later in the file. The icon is gold line-art on its own, so it just needs centering and a
