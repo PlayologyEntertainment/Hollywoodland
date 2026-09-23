@@ -172,7 +172,8 @@ describe('the career stats, in the row just under the header', () => {
 
   it('sit in the middle column of a three-column row, so they stay centred whatever the card\'s width', () => {
     expect(rule('.hud-top')).toContain('grid-template-columns: 1fr auto 1fr');
-    expect(rule('.hud-stats')).toContain('grid-column: 2');
+    // .hud-center (the stats pill plus the assignment countdown below it) is what actually sits in the middle column.
+    expect(rule('.hud-center')).toContain('grid-column: 2');
     // Close under the header: measured from the top of the picture, which is flush under it.
     expect(rule('.hud-top')).toMatch(/top: clamp\(/);
   });
@@ -200,6 +201,31 @@ describe('the career stats, in the row just under the header', () => {
     // The compact tier does not stack them.
     expect(compact).not.toContain('grid-template-columns');
     expect(css).toMatch(/@container stage \(max-width: 820px\) \{[^@]*\.hud-top \{[^}]*grid-template-columns: 1fr;/);
+  });
+});
+
+describe('the assignment countdown', () => {
+  it('sits under the stats pill, hidden until an assignment is active', () => {
+    const overlay = indexHtml.match(/<section id="play-hud"[\s\S]*?<\/section>/)?.[0] ?? '';
+    expect(overlay).toMatch(/<div id="hud-assignment-timer" class="hud-assignment-timer"[^>]* hidden>/);
+    expect(overlay).toContain('id="hud-assignment-label"');
+    expect(overlay).toContain('id="hud-assignment-countdown"');
+    // Nested in .hud-center alongside .hud-stats, not a sibling of .hud-top's own three columns.
+    const center = overlay.match(/<div class="hud-center">([\s\S]*?)<\/div>\s*<!-- The stats above/)?.[1] ?? '';
+    expect(center).toContain('class="hud-stats"');
+    expect(center).toContain('id="hud-assignment-timer"');
+    expect(rule('.hud-assignment-timer[hidden]')).toContain('display: none');
+  });
+
+  it('is rendered from state.assignments.active on every career-state-changed, not a separate timer', () => {
+    expect(appShell).toContain('private renderAssignmentCountdown(state: CareerState): void');
+    expect(appShell).toMatch(/renderCareerState[\s\S]*?this\.renderAssignmentCountdown\(state\);\s*\}/);
+    expect(appShell).toContain('state.assignments.active');
+  });
+
+  it('toasts when an assignment resolves away from the Home Hub screen', () => {
+    expect(appShell).toContain("this.options.domainEvents.on('assignment-resolved-away'");
+    expect(appShell).toMatch(/assignment-resolved-away'[\s\S]{0,200}this\.toast\(/);
   });
 });
 
