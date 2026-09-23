@@ -154,4 +154,13 @@ describe('the Status panel redesign, first pass', () => {
     expect(appShell).toContain("item.classList.toggle('quest-complete', entry.completed)");
     expect(appShell).toContain('${entry.title} — ${entry.label}');
   });
+
+  it('gives an unlocked talent the same green/tick treatment as a completed quest', () => {
+    const block = css.match(/\n\.talent-list li\.talent-unlocked \{([^}]*)\}/)?.[1] ?? '';
+    expect(block).toContain('color: rgb(var(--complete-rgb))');
+    expect(block).toContain('border-color: rgb(var(--complete-rgb) / 55%)');
+    expect(block).toContain('background: rgb(var(--complete-rgb) / 12%)');
+    expect(css).toMatch(/\.talent-list li\.talent-unlocked::before \{[^}]*content: '\\2713' \/ '';/);
+    expect(appShell).toContain("if (unlocked) item.classList.add('talent-unlocked');");
+  });
 });

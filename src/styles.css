@@ -424,9 +424,18 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
   display: flex; align-items: center; justify-content: space-between; gap: .6rem;
   padding: .5rem .7rem; border: 1px solid rgb(216 173 88 / 24%); font-size: .92rem;
 }
-.talent-list li.talent-unlocked { border-color: rgb(216 173 88 / 55%); }
+/* Same green/check treatment as a completed quest (see .status-quests li.quest-complete): an unlocked talent is
+   done, the same way a quest is. Its Unlock button is gone (see buildTalentListItem), leaving the tick and the
+   summary as the row's only two flex children -- space-between would shove them to opposite edges, so pull the
+   row back to a normal left-aligned flow instead. */
+.talent-list li.talent-unlocked {
+  justify-content: flex-start; border-color: rgb(var(--complete-rgb) / 55%); background: rgb(var(--complete-rgb) / 12%);
+  color: rgb(var(--complete-rgb));
+}
+.talent-list li.talent-unlocked::before { margin-right: .45em; content: '\2713'; content: '\2713' / ''; }
 .talent-list .talent-summary { display: grid; gap: .15rem; }
 .talent-list .talent-summary small { color: var(--muted); }
+.talent-list li.talent-unlocked .talent-summary small { color: inherit; }
 .talent-unlock-button { min-height: 2.1rem; padding: .35rem .7rem; font-size: .82rem; }
 
 /* --dialog-max-h and --dialog-border are shared with .settings-form below: that form, not this element, does the scrolling for
