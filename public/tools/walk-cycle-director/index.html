@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hollywoodland — Walk-Cycle Director</title>
+<style>
+  :root {
+    --bg: #16110c; --panel: #201a13; --panel-2: #291f15; --border: #4a3a24;
+    --cream: #f2e6c9; --tan: #d2b48c; --amber: #c9903f; --green: #5f9666;
+    --red: #c9503f; --slate: #8a9092; --blue: #6f9bd0;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--cream); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--border); flex: none; }
+  header h1 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: 0.03em; white-space: nowrap; }
+  header .spacer { flex: 1; }
+  header .status { font-size: 12px; color: var(--tan); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  button, select, input[type="text"], input[type="number"] { font-family: inherit; }
+  button { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--amber); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.primary { background: var(--green); border-color: #3f6b45; color: #fff; font-weight: 600; }
+  button.primary:hover:not(:disabled) { filter: brightness(1.08); }
+  button.danger { background: var(--red); border-color: #7a2f24; color: #fff; }
+  button.active { background: var(--amber); border-color: var(--amber); color: #241a0e; font-weight: 700; }
+  main { flex: 1; display: flex; min-height: 0; }
+  #picker { flex: 1; overflow-y: auto; padding: 24px; }
+  #picker .hint { max-width: 640px; color: var(--tan); font-size: 13px; margin-bottom: 18px; line-height: 1.5; }
+  .roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; max-width: 1100px; }
+  .roster-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .roster-card h3 { margin: 0 0 4px; font-size: 14px; }
+  .roster-card .sub { font-size: 11px; color: var(--slate); margin-bottom: 10px; word-break: break-all; }
+  .roster-card .actions { display: flex; flex-direction: column; gap: 6px; }
+  .badge { display: inline-block; font-size: 9px; padding: 1px 6px; border-radius: 999px; margin-bottom: 8px; }
+  .badge.own { background: #2c4a30; color: #b8e0be; }
+  .badge.shared { background: #4a3a20; color: var(--amber); }
+  #scratch-row { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  #workspace { flex: 1; display: none; min-height: 0; }
+  #filmstrip { width: 220px; flex: none; background: var(--panel); border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+  .fs-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid #2b2114; cursor: pointer; }
+  .fs-row:hover { background: var(--panel-2); }
+  .fs-row.active { background: #3a2c17; }
+  .fs-thumb { width: 40px; height: 40px; flex: none; border-radius: 3px; background: #0c0906; border: 1px dashed #55442e; position: relative; overflow: hidden; }
+  .fs-thumb.filled { border-style: solid; border-color: var(--green); }
+  .fs-thumb canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+  .fs-meta { flex: 1; min-width: 0; }
+  .fs-label { font-size: 11px; }
+  .fs-pill { font-size: 8px; padding: 1px 5px; border-radius: 999px; background: #33363c; color: var(--slate); }
+  .fs-pill.filled { background: #2c4a30; color: #b8e0be; }
+  #editor { flex: 1; overflow-y: auto; padding: 16px 20px; min-width: 0; }
+  #editor .empty { color: var(--slate); font-size: 13px; padding: 40px; text-align: center; }
+  fieldset { border: 1px solid var(--border); border-radius: 6px; margin: 0 0 14px; padding: 10px 12px; }
+  legend { font-size: 12px; color: var(--tan); padding: 0 6px; }
+  .field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+  .field-grid label { font-size: 10px; color: var(--tan); display: flex; flex-direction: column; gap: 3px; }
+  .field-grid input { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 5px 6px; }
+  .zoom-row { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+  #frame-canvas-wrap { border: 1px solid var(--border); background: #000; max-width: 100%; max-height: 55vh; overflow: auto; touch-action: none; display: inline-block; }
+  #frame-canvas { display: block; cursor: grab; background-image: linear-gradient(45deg,#2a2a2a 25%,transparent 25%),linear-gradient(-45deg,#2a2a2a 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#2a2a2a 75%),linear-gradient(-45deg,transparent 75%,#2a2a2a 75%); background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0; }
+  .foot-fields { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .foot-fields .grp { display: flex; gap: 8px; align-items: center; }
+  .foot-fields .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot.rear { background: var(--blue); } .dot.front { background: var(--red); }
+  #pane-divider { width: 6px; flex: none; background: var(--border); }
+  #preview-pane { width: 360px; flex: none; border-left: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; overflow-y: auto; }
+  #preview-canvas-wrap { padding: 12px; display: flex; justify-content: center; background: #0c0d10; }
+  #preview-canvas { background: linear-gradient(#2a3038, #1c2126); border: 1px solid var(--border); }
+  #preview-controls { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+  #preview-controls .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  #preview-controls select { flex: 1; background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 5px; }
+  #preview-controls input[type=range] { flex: 1; }
+  .toast { position: fixed; bottom: 16px; right: 16px; background: #2c4a30; color: #d8f0da; border: 1px solid #3f6b45; border-radius: 6px; padding: 10px 14px; font-size: 12px; z-index: 50; max-width: 420px; }
+  .toast.error { background: #4a2320; color: #f0d0c8; border-color: #7a3a2c; }
+  .warning-banner { background: #4a3a20; border: 1px solid var(--amber); color: var(--amber); border-radius: 4px; padding: 8px 10px; font-size: 12px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎬 Walk-Cycle Director</h1>
+  <span class="status" id="root-status">No project folder open.</span>
+  <div class="spacer"></div>
+  <button id="btn-undo" disabled title="Ctrl+Z">↶ Undo</button>
+  <button id="btn-redo" disabled title="Ctrl+Shift+Z">↷ Redo</button>
+  <button id="btn-back-to-picker" style="display:none;">← Characters</button>
+  <button id="btn-save" class="primary" style="display:none;">Save to project</button>
+  <button id="btn-open-root">Open Project Folder…</button>
+</header>
+<main>
+  <div id="picker">
+    <div class="hint">
+      Open your Hollywoodland project folder (repo root) to start. Requires Chrome, Edge, or another
+      Chromium browser, served over <code>http://localhost</code> (e.g. <code>npm run dev</code>) — the
+      File System Access API needs a secure context.
+    </div>
+    <div id="roster-grid" class="roster-grid"></div>
+    <div id="scratch-row" style="display:none;">
+      <button id="btn-scratch">➕ New cycle from scratch…</button>
+    </div>
+  </div>
+
+  <div id="workspace">
+    <div id="filmstrip"></div>
+    <div id="editor"><div class="empty">Pick a frame from the filmstrip.</div></div>
+    <div id="pane-divider"></div>
+    <div id="preview-pane">
+      <div id="preview-canvas-wrap"><canvas id="preview-canvas" width="300" height="360"></canvas></div>
+      <div id="preview-controls"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // =================================================================
+  // Ported math — verbatim from src/game/WalkCycle.ts. Keep in sync by
+  // hand (no build step here to import it directly); a Vitest drift
+  // guard is planned per docs/dev/walk-cycle-director-tool.md Phase 5.
+  // =================================================================
+  function isRecord(v) { return typeof v === 'object' && v !== null && !Array.isArray(v); }
+  const isPositive = (v) => typeof v === 'number' && Number.isFinite(v) && v > 0;
+  const isFiniteNumber = (v) => typeof v === 'number' && Number.isFinite(v);
+  function isFoot(v) { return isRecord(v) && isFiniteNumber(v.x) && isFiniteNumber(v.lift) && v.lift >= 0; }
+  function isFootPair(v) { return Array.isArray(v) && v.length === 2 && isFoot(v[0]) && isFoot(v[1]); }
+  function isWalkCycle(value) {
+    if (
+      !isRecord(value) || typeof value.sheet !== 'string' ||
+      !isPositive(value.columns) || !Number.isInteger(value.columns) ||
+      !isPositive(value.frameWidth) || !isPositive(value.frameHeight) ||
+      !isPositive(value.frameCount) || !Number.isInteger(value.frameCount) ||
+      !isFiniteNumber(value.idleFrame) || !Number.isInteger(value.idleFrame) || value.idleFrame < 0 ||
+      !isPositive(value.displayScale) || !isPositive(value.soleY) || !isPositive(value.strideWorld) ||
+      !Array.isArray(value.feet) || value.idleFeet === undefined
+    ) return false;
+    if (value.idleFrame > value.frameCount) return false;
+    if (value.feet.length !== 0 && value.feet.length !== value.frameCount) return false;
+    if (value.idleFeet !== null && !isFootPair(value.idleFeet)) return false;
+    return value.feet.every(isFootPair);
+  }
+  function walkFrameAt(cycle, distance) {
+    const phase = distance / cycle.strideWorld;
+    const frame = Math.floor((phase - Math.floor(phase)) * cycle.frameCount);
+    return Math.min(frame, cycle.frameCount - 1);
+  }
+  function distanceForFrame(cycle, frame) {
+    return (frame / cycle.frameCount) * cycle.strideWorld;
+  }
+  const FULL_LIFT_PX = 40;
+  function footprintsForFrame(cycle, frame) {
+    const pair = frame < cycle.frameCount ? cycle.feet[frame] : frame === cycle.idleFrame ? cycle.idleFeet : undefined;
+    if (pair === undefined || pair === null) return [];
+    return pair.map((foot) => ({
+      dx: foot.x * cycle.displayScale,
+      lift: Math.min(1, Math.max(0, foot.lift / FULL_LIFT_PX)),
+    }));
+  }
+
+  // Runtime constants — from src/game/scenes/BoulevardSpikeScene.ts, so the
+  // preview pane matches what the game actually draws.
+  const WALK_SPEED = 390;
+  const REDUCED_MOTION_WALK_FACTOR = 0.78;
+  const FOOTPRINT_LENGTH = 46;
+  const FOOTPRINT_DEPTH = 13;
+  const FOOTPRINT_COLOR = '#160f0c';
+  const FOOTPRINT_ALPHA = 0.34;
+  const TORSO_SHADOW = { width: 44, height: 12, alpha: 0.12 };
+
+  // Roster — hand-copied from src/domain/PlayerCharacters.ts (walkCycle field only).
+  const ROSTER = [
+    { id: 'white-male', label: 'Man with dark wavy hair, a cream shirt and brown suspenders', walkCycle: 'data/walk-cycle.json' },
+    { id: 'white-female', label: 'Woman with auburn waves and a sky-blue blouse', walkCycle: 'data/walk-cycle-white-female.json' },
+    { id: 'asian-male', label: 'Man with a neat side part, a sage-green shirt and tan suspenders', walkCycle: 'data/walk-cycle.json' },
+    { id: 'black-male', label: 'Man with short tapered hair, a terracotta shirt and dark suspenders', walkCycle: 'data/walk-cycle.json' },
+    { id: 'asian-female', label: 'Woman with a black bob and a dusty-rose blouse', walkCycle: 'data/walk-cycle.json' },
+    { id: 'black-female', label: 'Woman with short natural curls and a mustard-yellow blouse', walkCycle: 'data/walk-cycle.json' },
+  ];
+
+  const DEFAULT_GEOMETRY = {
+    columns: 4, frameWidth: 448, frameHeight: 480, frameCount: 16, idleFrame: 16,
+    displayScale: 0.5, soleY: 465, strideWorld: 223.5,
+  };
+
+  // ---------------------------------------------------------------
+  // IndexedDB — persists the picked directory handle.
+  // ---------------------------------------------------------------
+  const DB_NAME = 'hollywoodland-walk-cycle-director';
+  const STORE = 'handles';
+  function idbOpen() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function idbGet(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(key);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function idbSet(key, val) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(val, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // Filesystem helpers, relative to the picked root directory handle.
+  // (Same shape as public/tools/art-director/index.html.)
+  // ---------------------------------------------------------------
+  async function getDirHandle(root, relPath, opts) {
+    const parts = relPath.split('/').filter(Boolean);
+    let dir = root;
+    for (const part of parts) dir = await dir.getDirectoryHandle(part, opts || {});
+    return dir;
+  }
+  async function getFileHandle(root, relFilePath, opts) {
+    const parts = relFilePath.split('/').filter(Boolean);
+    const fileName = parts.pop();
+    const dir = await getDirHandle(root, parts.join('/'), opts);
+    return dir.getFileHandle(fileName, opts || {});
+  }
+  async function readFile(root, relFilePath) {
+    try {
+      const fh = await getFileHandle(root, relFilePath, {});
+      return await fh.getFile();
+    } catch (e) {
+      if (e.name === 'NotFoundError') return null;
+      throw e;
+    }
+  }
+  async function writeFile(root, relFilePath, blob) {
+    const fh = await getFileHandle(root, relFilePath, { create: true });
+    const writable = await fh.createWritable();
+    await writable.write(blob);
+    await writable.close();
+  }
+  async function readJSON(root, relFilePath) {
+    const file = await readFile(root, relFilePath);
+    if (!file) return null;
+    try { return JSON.parse(await file.text()); } catch (e) { return null; }
+  }
+  async function writeJSON(root, relFilePath, obj) {
+    await writeFile(root, relFilePath, new Blob([JSON.stringify(obj, null, 2) + '\n'], { type: 'application/json' }));
+  }
+  async function fileExists(root, relFilePath) {
+    return (await readFile(root, relFilePath)) !== null;
+  }
+
+  // ---------------------------------------------------------------
+  // Small utils
+  // ---------------------------------------------------------------
+  const el = (id) => document.getElementById(id);
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function toast(msg, isError) {
+    const t = document.createElement('div');
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), isError ? 6000 : 3000);
+  }
+  function slugify(s) {
+    return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'character';
+  }
+  function defaultFoot() { return { x: 0, lift: 0 }; }
+  function defaultFeetArray(count) { return Array.from({ length: count }, () => [defaultFoot(), defaultFoot()]); }
+
+  // ---------------------------------------------------------------
+  // App state
+  // ---------------------------------------------------------------
+  let rootHandle = null;
+  let project = null;       // see loadProject() for shape
+  let selected = { type: 'loop', index: 0 }; // {type:'loop', index} | {type:'idle'}
+  let zoom = 1;
+  let history = { stack: [], index: -1 };
+  const preview = {
+    playing: false, walking: true, flip: false, showFootprints: true,
+    distance: 0, speedName: 'real', lastT: null, raf: null,
+  };
+
+  function markDirty() { project.dirty = true; renderStatus(); }
+  function renderStatus() {
+    if (!project) { el('root-status').textContent = rootHandle ? 'Project open — pick a character.' : 'No project folder open.'; return; }
+    el('root-status').textContent = (project.characterId + ' — ' + project.targetJsonPath) + (project.dirty ? ' (unsaved)' : '');
+  }
+
+  // ---------------------------------------------------------------
+  // Root folder open
+  // ---------------------------------------------------------------
+  async function verifyPermission(handle, mode) {
+    const opts = { mode };
+    if ((await handle.queryPermission(opts)) === 'granted') return true;
+    if ((await handle.requestPermission(opts)) === 'granted') return true;
+    return false;
+  }
+  async function openRoot(handle) {
+    if (!(await verifyPermission(handle, 'readwrite'))) {
+      toast('Read/write permission was not granted for that folder.', true);
+      return;
+    }
+    rootHandle = handle;
+    await idbSet('root', handle);
+    if (!(await fileExists(rootHandle, 'public/data/walk-cycle.json'))) {
+      toast('Could not find public/data/walk-cycle.json under that folder — pick the repo root.', true);
+      rootHandle = null;
+      return;
+    }
+    renderStatus();
+    renderRoster();
+  }
+  el('btn-open-root').addEventListener('click', async () => {
+    try {
+      const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      await openRoot(handle);
+    } catch (e) {
+      if (e.name !== 'AbortError') toast(String(e.message || e), true);
+    }
+  });
+  (async function tryAutoReconnect() {
+    try {
+      const handle = await idbGet('root');
+      if (handle) {
+        const granted = (await handle.queryPermission({ mode: 'readwrite' })) === 'granted';
+        el('root-status').textContent = granted ? 'Reconnecting…' : 'Previously opened: ' + (handle.name || '(root)') + ' — click "Open Project Folder…" to reconnect.';
+        if (granted) await openRoot(handle);
+      }
+    } catch (e) { /* idb unavailable or handle stale — ignore */ }
+  })();
+
+  // ---------------------------------------------------------------
+  // Picker: roster grid
+  // ---------------------------------------------------------------
+  function renderRoster() {
+    const grid = el('roster-grid');
+    grid.innerHTML = ROSTER.map((c) => {
+      const shared = c.walkCycle === 'data/walk-cycle.json';
+      return (
+        '<div class="roster-card">' +
+        '<span class="badge ' + (shared ? 'shared' : 'own') + '">' + (shared ? 'shared placeholder' : 'own cycle') + '</span>' +
+        '<h3>' + escapeHtml(c.id) + '</h3>' +
+        '<div class="sub">' + escapeHtml(c.label) + '<br>public/' + escapeHtml(c.walkCycle) + '</div>' +
+        '<div class="actions">' +
+        '<button data-act="edit" data-id="' + c.id + '">' + (shared ? 'Edit shared placeholder' : 'Edit existing cycle') + '</button>' +
+        (shared ? '<button data-act="branch" data-id="' + c.id + '">Branch a new cycle for ' + c.id + '</button>' : '') +
+        '</div></div>'
+      );
+    }).join('');
+    grid.querySelectorAll('button[data-act]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const id = b.dataset.id;
+        const act = b.dataset.act;
+        if (act === 'edit') openProjectFor(id, ROSTER.find((c) => c.id === id).walkCycle === 'data/walk-cycle.json' ? 'shared' : 'existing');
+        else openProjectFor(id, 'branch');
+      });
+    });
+    el('scratch-row').style.display = 'block';
+  }
+  el('btn-scratch').addEventListener('click', () => {
+    const name = window.prompt('Name/slug for the new character (used in file names, e.g. "green-alien"):', '');
+    if (!name) return;
+    openProjectFor(slugify(name), 'scratch');
+  });
+  el('btn-back-to-picker').addEventListener('click', () => {
+    if (project && project.dirty && !confirm('Discard unsaved changes and go back to the character list?')) return;
+    project = null;
+    stopPreview();
+    el('workspace').style.display = 'none';
+    el('picker').style.display = 'block';
+    el('btn-back-to-picker').style.display = 'none';
+    el('btn-save').style.display = 'none';
+    renderStatus();
+  });
+
+  // ---------------------------------------------------------------
+  // Loading a project
+  // ---------------------------------------------------------------
+  async function openProjectFor(characterId, mode) {
+    if (!rootHandle) return;
+    try {
+      const p = await loadProject(characterId, mode);
+      project = p;
+      history = { stack: [snapshotState()], index: 0 };
+      selected = { type: 'loop', index: 0 };
+      zoom = 0;
+      el('picker').style.display = 'none';
+      el('workspace').style.display = 'flex';
+      el('btn-back-to-picker').style.display = '';
+      el('btn-save').style.display = '';
+      renderStatus();
+      renderFilmstrip();
+      renderEditor();
+      renderPreviewControls();
+      resetPreview();
+      renderUndoRedoButtons();
+      if (mode === 'shared') toast('Editing the shared placeholder — saving here affects the 5 characters still using it.');
+      if (mode === 'branch') toast('Branched from the shared placeholder. Saving writes a new dedicated cycle; you\'ll still need to point ' + characterId + '.walkCycle at it in PlayerCharacters.ts.');
+      if (mode === 'scratch') toast('New cycle scaffold created. Per-frame pose art (upload/candidate pool) isn\'t built yet — this sets up geometry and JSON only.');
+    } catch (e) {
+      toast('Could not open that character: ' + (e.message || e), true);
+    }
+  }
+
+  async function loadProject(characterId, mode) {
+    const character = ROSTER.find((c) => c.id === characterId);
+    let slug, targetJsonPath, targetSheetPath, sourceJsonPath;
+    if (mode === 'scratch') {
+      slug = characterId;
+      targetJsonPath = 'data/walk-cycle-' + slug + '.json';
+      targetSheetPath = 'assets/characters/player/' + slug + '-walk.webp';
+      sourceJsonPath = null;
+    } else if (mode === 'branch') {
+      slug = characterId;
+      targetJsonPath = 'data/walk-cycle-' + characterId + '.json';
+      targetSheetPath = 'assets/characters/player/' + characterId + '-walk.webp';
+      sourceJsonPath = character.walkCycle; // the shared placeholder, read-only starting point
+    } else {
+      slug = character.walkCycle === 'data/walk-cycle.json' ? 'shared' : characterId;
+      targetJsonPath = character.walkCycle;
+      targetSheetPath = null; // filled from sourceJson.sheet below
+      sourceJsonPath = character.walkCycle;
+    }
+    const generatedDir = 'art/generated/walk-cycle-' + slug + '/';
+
+    const sourceJson = sourceJsonPath ? await readJSON(rootHandle, 'public/' + sourceJsonPath) : null;
+    let cycle, feetSource, idleFeetSource;
+    if (sourceJson && isWalkCycle(sourceJson)) {
+      cycle = {
+        columns: sourceJson.columns, frameWidth: sourceJson.frameWidth, frameHeight: sourceJson.frameHeight,
+        frameCount: sourceJson.frameCount, idleFrame: sourceJson.idleFrame, displayScale: sourceJson.displayScale,
+        soleY: sourceJson.soleY, strideWorld: sourceJson.strideWorld,
+      };
+      targetSheetPath = targetSheetPath || sourceJson.sheet;
+      feetSource = sourceJson.feet;
+      idleFeetSource = sourceJson.idleFeet;
+    } else {
+      cycle = clone(DEFAULT_GEOMETRY);
+      targetSheetPath = targetSheetPath || ('assets/characters/player/' + slug + '-walk.webp');
+      feetSource = [];
+      idleFeetSource = null;
+    }
+
+    // Prefer a previous session's own workbench file wholesale.
+    const workbench = await readJSON(rootHandle, generatedDir + 'walk-director-project.json');
+    if (workbench && workbench.targetJsonPath === targetJsonPath && workbench.cycle && Array.isArray(workbench.slots)) {
+      const masterBitmap = workbench.masterImagePath ? await loadBitmapAt(workbench.masterImagePath) : null;
+      return {
+        characterId, mode, slug, targetJsonPath, targetSheetPath: workbench.targetSheetPath || targetSheetPath,
+        generatedDir, masterImagePath: workbench.masterImagePath, masterBitmap,
+        cycle: workbench.cycle, slots: workbench.slots, idleSlot: workbench.idleSlot, dirty: false,
+      };
+    }
+
+    // Otherwise prefill from walk-meta.json bookkeeping (feet only — dx/picks
+    // describe how the *already-baked* master was produced, so re-slicing
+    // that master needs no further dx correction) when the committed JSON
+    // had no feet of its own.
+    if ((!feetSource || feetSource.length === 0) && mode !== 'scratch') {
+      const meta = await readJSON(rootHandle, generatedDir + 'walk-meta.json');
+      if (meta && Array.isArray(meta.feet) && meta.feet.length === cycle.frameCount) {
+        feetSource = meta.feet;
+        idleFeetSource = idleFeetSource || meta.idleFeet || null;
+      }
+    }
+
+    let masterImagePath = null, masterBitmap = null;
+    if (mode !== 'scratch') {
+      const candidates = [generatedDir + characterId + '-walk-master.png', 'public/' + targetSheetPath, sourceJson ? 'public/' + sourceJson.sheet : null].filter(Boolean);
+      for (const c of candidates) {
+        const bmp = await loadBitmapAt(c);
+        if (bmp) { masterImagePath = c; masterBitmap = bmp; break; }
+      }
+    }
+
+    const slots = Array.from({ length: cycle.frameCount }, (_, i) => ({
+      offset: { dx: 0, dy: 0 },
+      feet: feetSource && feetSource[i] ? clone(feetSource[i]) : [defaultFoot(), defaultFoot()],
+    }));
+    const idleSlot = { offset: { dx: 0, dy: 0 }, feet: idleFeetSource ? clone(idleFeetSource) : null };
+
+    return { characterId, mode, slug, targetJsonPath, targetSheetPath, generatedDir, masterImagePath, masterBitmap, cycle, slots, idleSlot, dirty: false };
+  }
+
+  async function loadBitmapAt(relPath) {
+    if (!relPath) return null;
+    const file = await readFile(rootHandle, relPath);
+    if (!file) return null;
+    try { return await createImageBitmap(file); } catch (e) { return null; }
+  }
+
+  // ---------------------------------------------------------------
+  // Undo/redo — snapshots of {cycle, slots, idleSlot}. Images are never
+  // mutated after load in this phase, so they don't need to be captured.
+  // ---------------------------------------------------------------
+  function snapshotState() { return clone({ cycle: project.cycle, slots: project.slots, idleSlot: project.idleSlot }); }
+  function pushHistory() {
+    history.stack = history.stack.slice(0, history.index + 1);
+    history.stack.push(snapshotState());
+    if (history.stack.length > 60) history.stack.shift();
+    history.index = history.stack.length - 1;
+    renderUndoRedoButtons();
+  }
+  function applySnapshot(snap) {
+    project.cycle = clone(snap.cycle);
+    project.slots = clone(snap.slots);
+    project.idleSlot = clone(snap.idleSlot);
+    markDirty();
+    renderFilmstrip();
+    renderEditor();
+    renderUndoRedoButtons();
+  }
+  function undo() { if (history.index > 0) { history.index -= 1; applySnapshot(history.stack[history.index]); } }
+  function redo() { if (history.index < history.stack.length - 1) { history.index += 1; applySnapshot(history.stack[history.index]); } }
+  function renderUndoRedoButtons() {
+    el('btn-undo').disabled = !project || history.index <= 0;
+    el('btn-redo').disabled = !project || history.index >= history.stack.length - 1;
+  }
+  el('btn-undo').addEventListener('click', undo);
+  el('btn-redo').addEventListener('click', redo);
+  document.addEventListener('keydown', (e) => {
+    if (!project) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) { e.preventDefault(); redo(); }
+  });
+
+  // ---------------------------------------------------------------
+  // Filmstrip
+  // ---------------------------------------------------------------
+  function totalFrames() { return project.cycle.frameCount + (project.cycle.idleFrame >= project.cycle.frameCount ? 1 : 0); }
+  function cellFor(frameIndex) {
+    const columns = project.cycle.columns;
+    return { col: frameIndex % columns, row: Math.floor(frameIndex / columns) };
+  }
+  function slotAt(sel) {
+    return sel.type === 'idle' ? project.idleSlot : project.slots[sel.index];
+  }
+
+  function renderFilmstrip() {
+    const wrap = el('filmstrip');
+    wrap.innerHTML = '';
+    for (let i = 0; i < project.cycle.frameCount; i += 1) {
+      wrap.appendChild(filmstripRow({ type: 'loop', index: i }, 'Frame ' + i, i));
+    }
+    const idleIsAlias = project.cycle.idleFrame < project.cycle.frameCount;
+    wrap.appendChild(filmstripRow(idleIsAlias ? { type: 'loop', index: project.cycle.idleFrame } : { type: 'idle' }, 'Idle' + (idleIsAlias ? ' (= frame ' + project.cycle.idleFrame + ')' : ''), project.cycle.idleFrame));
+    highlightFilmstrip();
+  }
+  function filmstripRow(sel, label, frameIndexForThumb) {
+    const row = document.createElement('div');
+    row.className = 'fs-row';
+    row.dataset.type = sel.type;
+    row.dataset.index = sel.index === undefined ? '' : sel.index;
+    const filled = !!project.masterBitmap;
+    row.innerHTML =
+      '<div class="fs-thumb' + (filled ? ' filled' : '') + '"><canvas width="40" height="40"></canvas></div>' +
+      '<div class="fs-meta"><div class="fs-label">' + escapeHtml(label) + '</div>' +
+      '<span class="fs-pill' + (filled ? ' filled' : '') + '">' + (filled ? 'filled' : 'empty') + '</span></div>';
+    row.addEventListener('click', () => { selected = sel; zoom = 0; renderEditor(); highlightFilmstrip(); });
+    const canvas = row.querySelector('canvas');
+    drawThumb(canvas, frameIndexForThumb, sel);
+    return row;
+  }
+  function drawThumb(canvas, frameIndex, sel) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!project.masterBitmap) return;
+    const { col, row } = cellFor(frameIndex);
+    const slot = slotAt(sel);
+    const fw = project.cycle.frameWidth, fh = project.cycle.frameHeight;
+    const scale = Math.min(canvas.width / fw, canvas.height / fh);
+    const dw = fw * scale, dh = fh * scale;
+    const dx0 = (canvas.width - dw) / 2, dy0 = (canvas.height - dh) / 2;
+    ctx.imageSmoothingEnabled = true;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(dx0, dy0, dw, dh); ctx.clip();
+    ctx.drawImage(project.masterBitmap, col * fw, row * fh, fw, fh, dx0 + (slot.offset.dx * scale), dy0 + (slot.offset.dy * scale), dw, dh);
+    ctx.restore();
+  }
+  function highlightFilmstrip() {
+    el('filmstrip').querySelectorAll('.fs-row').forEach((row) => {
+      const type = row.dataset.type;
+      const index = row.dataset.index === '' ? undefined : Number(row.dataset.index);
+      const active = type === selected.type && (type === 'idle' || index === selected.index);
+      row.classList.toggle('active', active);
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // Single-frame editor
+  // ---------------------------------------------------------------
+  function frameIndexForSelection() {
+    return selected.type === 'idle' ? project.cycle.idleFrame : selected.index;
+  }
+  function renderEditor() {
+    const host = el('editor');
+    const cycle = project.cycle;
+    const slot = slotAt(selected);
+    const label = selected.type === 'idle' ? 'Idle frame' : 'Frame ' + selected.index;
+    host.innerHTML =
+      (project.mode === 'shared' ? '<div class="warning-banner">Editing the shared placeholder cycle — saving affects every character still using data/walk-cycle.json.</div>' : '') +
+      '<fieldset><legend>Cycle geometry</legend><div class="field-grid">' +
+        numField('g-columns', 'Columns', cycle.columns, 1) +
+        numField('g-frameWidth', 'Frame width', cycle.frameWidth, 1) +
+        numField('g-frameHeight', 'Frame height', cycle.frameHeight, 1) +
+        numField('g-frameCount', 'Frame count', cycle.frameCount, 1) +
+        numField('g-idleFrame', 'Idle frame index', cycle.idleFrame, 1) +
+        numField('g-displayScale', 'Display scale', cycle.displayScale, 0.001) +
+        numField('g-soleY', 'Sole Y', cycle.soleY, 1) +
+        numField('g-strideWorld', 'Stride (world px)', cycle.strideWorld, 0.1) +
+      '</div></fieldset>' +
+      '<fieldset><legend>' + escapeHtml(label) + '</legend>' +
+      '<div class="zoom-row">' +
+        '<button data-zoom="fit">Fit</button><button data-zoom="1">100%</button><button data-zoom="2">200%</button><button data-zoom="4">400%</button>' +
+        '<span style="color:var(--slate);font-size:11px;">Drag the pose to nudge it. Drag a foot dot to move that foot.</span>' +
+      '</div>' +
+      '<div id="frame-canvas-wrap"><canvas id="frame-canvas" tabindex="0"></canvas></div>' +
+      '<div class="field-grid" style="margin-top:10px;">' +
+        numField('o-dx', 'Offset X', slot.offset.dx, 1) +
+        numField('o-dy', 'Offset Y', slot.offset.dy, 1) +
+      '</div>' +
+      footFieldsHtml(slot) +
+      '</fieldset>';
+
+    ['g-columns', 'g-frameWidth', 'g-frameHeight', 'g-frameCount', 'g-idleFrame', 'g-displayScale', 'g-soleY', 'g-strideWorld'].forEach((id) => {
+      el(id).addEventListener('change', onGeometryFieldChange);
+    });
+    host.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => { zoom = b.dataset.zoom === 'fit' ? 0 : Number(b.dataset.zoom); drawFrameCanvas(); }));
+    el('o-dx').addEventListener('change', () => { slotAt(selected).offset.dx = Number(el('o-dx').value) || 0; commitFrameEdit(); });
+    el('o-dy').addEventListener('change', () => { slotAt(selected).offset.dy = Number(el('o-dy').value) || 0; commitFrameEdit(); });
+    wireFootFields(slot);
+    wireFrameCanvas();
+    drawFrameCanvas();
+  }
+  function numField(id, label, value, step) {
+    return '<label>' + escapeHtml(label) + '<input type="number" id="' + id + '" value="' + value + '" step="' + (step || 1) + '"></label>';
+  }
+  function footFieldsHtml(slot) {
+    if (!slot.feet) {
+      return '<div class="foot-fields"><button id="btn-add-idle-feet">Add foot data for this idle frame</button></div>';
+    }
+    return (
+      '<div class="foot-fields">' +
+      '<div class="grp"><span class="dot rear"></span>Rear ' + numField('f-rear-x', 'X', slot.feet[0].x, 0.1) + numField('f-rear-lift', 'Lift', slot.feet[0].lift, 0.1) + '</div>' +
+      '<div class="grp"><span class="dot front"></span>Front ' + numField('f-front-x', 'X', slot.feet[1].x, 0.1) + numField('f-front-lift', 'Lift', slot.feet[1].lift, 0.1) + '</div>' +
+      '</div>'
+    );
+  }
+  function wireFootFields(slot) {
+    if (!slot.feet) {
+      const btn = el('btn-add-idle-feet');
+      if (btn) btn.addEventListener('click', () => { slotAt(selected).feet = [defaultFoot(), defaultFoot()]; commitFrameEdit(); renderEditor(); });
+      return;
+    }
+    const bind = (id, cb) => el(id).addEventListener('change', () => { cb(Number(el(id).value) || 0); commitFrameEdit(); });
+    bind('f-rear-x', (v) => { slotAt(selected).feet[0].x = v; });
+    bind('f-rear-lift', (v) => { slotAt(selected).feet[0].lift = Math.max(0, v); });
+    bind('f-front-x', (v) => { slotAt(selected).feet[1].x = v; });
+    bind('f-front-lift', (v) => { slotAt(selected).feet[1].lift = Math.max(0, v); });
+  }
+  function commitFrameEdit() {
+    markDirty();
+    pushHistory();
+    renderFilmstrip();
+    drawFrameCanvas();
+    syncFrameFields();
+  }
+  function syncFrameFields() {
+    const slot = slotAt(selected);
+    el('o-dx').value = slot.offset.dx; el('o-dy').value = slot.offset.dy;
+    if (slot.feet) {
+      el('f-rear-x').value = slot.feet[0].x; el('f-rear-lift').value = slot.feet[0].lift;
+      el('f-front-x').value = slot.feet[1].x; el('f-front-lift').value = slot.feet[1].lift;
+    }
+  }
+  function onGeometryFieldChange() {
+    const c = project.cycle;
+    const prevCount = c.frameCount;
+    c.columns = Math.max(1, Math.round(Number(el('g-columns').value) || c.columns));
+    c.frameWidth = Math.max(1, Math.round(Number(el('g-frameWidth').value) || c.frameWidth));
+    c.frameHeight = Math.max(1, Math.round(Number(el('g-frameHeight').value) || c.frameHeight));
+    c.frameCount = Math.max(1, Math.round(Number(el('g-frameCount').value) || c.frameCount));
+    c.idleFrame = Math.max(0, Math.round(Number(el('g-idleFrame').value) || 0));
+    c.displayScale = Number(el('g-displayScale').value) || c.displayScale;
+    c.soleY = Number(el('g-soleY').value) || c.soleY;
+    c.strideWorld = Number(el('g-strideWorld').value) || c.strideWorld;
+    if (c.frameCount !== prevCount) {
+      while (project.slots.length < c.frameCount) project.slots.push({ offset: { dx: 0, dy: 0 }, feet: [defaultFoot(), defaultFoot()] });
+      project.slots.length = c.frameCount;
+      if (selected.type === 'loop' && selected.index >= c.frameCount) selected = { type: 'loop', index: c.frameCount - 1 };
+    }
+    markDirty();
+    pushHistory();
+    renderFilmstrip();
+    renderEditor();
+    resetPreview();
+  }
+
+  function wireFrameCanvas() {
+    const canvas = el('frame-canvas');
+    let dragMode = null; // 'pose' | 'rear' | 'front'
+    let dragStart = null;
+    canvas.addEventListener('pointerdown', (e) => {
+      canvas.focus();
+      const p = canvasToSheetPx(e);
+      const slot = slotAt(selected);
+      const z = effectiveZoom();
+      const hitR = 8 / z;
+      if (slot.feet) {
+        const rearPos = footScreenPos(slot.feet[0]);
+        const frontPos = footScreenPos(slot.feet[1]);
+        if (Math.hypot(p.x - rearPos.x, p.y - rearPos.y) < hitR) dragMode = 'rear';
+        else if (Math.hypot(p.x - frontPos.x, p.y - frontPos.y) < hitR) dragMode = 'front';
+      }
+      if (!dragMode) dragMode = 'pose';
+      dragStart = { p, offset: { ...slot.offset }, feet: slot.feet ? clone(slot.feet) : null };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!dragMode) return;
+      const p = canvasToSheetPx(e);
+      const dx = p.x - dragStart.p.x, dy = p.y - dragStart.p.y;
+      const slot = slotAt(selected);
+      if (dragMode === 'pose') {
+        slot.offset.dx = Math.round(dragStart.offset.dx + dx);
+        slot.offset.dy = Math.round(dragStart.offset.dy + dy);
+      } else if (slot.feet) {
+        const i = dragMode === 'rear' ? 0 : 1;
+        slot.feet[i].x = Math.round((dragStart.feet[i].x + dx) * 10) / 10;
+        slot.feet[i].lift = Math.max(0, Math.round((dragStart.feet[i].lift - dy) * 10) / 10);
+      }
+      drawFrameCanvas();
+      syncFrameFields();
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      if (dragMode) { markDirty(); pushHistory(); renderFilmstrip(); }
+      dragMode = null;
+      canvas.releasePointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 5 : 1;
+      const slot = slotAt(selected);
+      let moved = true;
+      if (e.key === 'ArrowLeft') slot.offset.dx -= step;
+      else if (e.key === 'ArrowRight') slot.offset.dx += step;
+      else if (e.key === 'ArrowUp') slot.offset.dy -= step;
+      else if (e.key === 'ArrowDown') slot.offset.dy += step;
+      else moved = false;
+      if (moved) { e.preventDefault(); drawFrameCanvas(); syncFrameFields(); commitFrameEdit(); }
+    });
+  }
+  function canvasToSheetPx(e) {
+    const canvas = el('frame-canvas');
+    const r = canvas.getBoundingClientRect();
+    const z = effectiveZoom();
+    return { x: ((e.clientX - r.left) / r.width) * canvas.width / z, y: ((e.clientY - r.top) / r.height) * canvas.height / z };
+  }
+  function footScreenPos(foot) {
+    return { x: project.cycle.frameWidth / 2 + foot.x, y: project.cycle.soleY - foot.lift };
+  }
+  function effectiveZoom() {
+    if (zoom > 0) return zoom;
+    const wrap = el('frame-canvas-wrap');
+    const availW = (wrap ? wrap.clientWidth : 420) || 420;
+    return Math.max(0.2, Math.min(1, availW / project.cycle.frameWidth));
+  }
+  function drawFrameCanvas() {
+    const canvas = el('frame-canvas');
+    if (!canvas) return;
+    const cycle = project.cycle;
+    const z = effectiveZoom();
+    canvas.width = Math.round(cycle.frameWidth * z);
+    canvas.height = Math.round(cycle.frameHeight * z);
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = z < 1;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const slot = slotAt(selected);
+    if (project.masterBitmap) {
+      const { col, row } = cellFor(frameIndexForSelection());
+      const fw = cycle.frameWidth, fh = cycle.frameHeight;
+      ctx.drawImage(project.masterBitmap, col * fw, row * fh, fw, fh, slot.offset.dx * z, slot.offset.dy * z, fw * z, fh * z);
+    }
+    // Ground line.
+    ctx.strokeStyle = 'rgba(201,144,63,0.85)';
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(0, cycle.soleY * z);
+    ctx.lineTo(canvas.width, cycle.soleY * z);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Foot markers.
+    if (slot.feet) {
+      drawFootMarker(ctx, footScreenPos(slot.feet[0]), z, '#6f9bd0', 'R');
+      drawFootMarker(ctx, footScreenPos(slot.feet[1]), z, '#c9503f', 'F');
+    }
+  }
+  function drawFootMarker(ctx, pos, z, color, label) {
+    const x = pos.x * z, y = pos.y * z;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(label, x, y - 10);
+  }
+
+  // ---------------------------------------------------------------
+  // Full-speed preview pane
+  // ---------------------------------------------------------------
+  const SPEED_PRESETS = {
+    real: WALK_SPEED, reduced: WALK_SPEED * REDUCED_MOTION_WALK_FACTOR,
+    q: WALK_SPEED * 0.25, half: WALK_SPEED * 0.5, double: WALK_SPEED * 2,
+  };
+  function renderPreviewControls() {
+    const host = el('preview-controls');
+    host.innerHTML =
+      '<div class="row">' +
+      '<button id="pv-play" class="primary">▶ Play</button>' +
+      '<button id="pv-step-back">⏮ Frame</button>' +
+      '<button id="pv-step-fwd">Frame ⏭</button>' +
+      '</div>' +
+      '<div class="row">' +
+      '<label style="font-size:11px;color:var(--tan);">Speed</label>' +
+      '<select id="pv-speed">' +
+      '<option value="real">Real (390 px/s)</option>' +
+      '<option value="reduced">Reduced motion (×0.78)</option>' +
+      '<option value="q">0.25×</option>' +
+      '<option value="half">0.5×</option>' +
+      '<option value="double">2×</option>' +
+      '</select>' +
+      '</div>' +
+      '<div class="row"><input type="range" id="pv-scrub" min="0" max="1" step="0.001" value="0"></div>' +
+      '<div class="row">' +
+      '<button id="pv-walk" class="active">Walk</button>' +
+      '<button id="pv-flip">Flip facing</button>' +
+      '<button id="pv-footprints" class="active">Footprints</button>' +
+      '</div>';
+    el('pv-play').addEventListener('click', () => togglePlay());
+    el('pv-step-back').addEventListener('click', () => stepFrame(-1));
+    el('pv-step-fwd').addEventListener('click', () => stepFrame(1));
+    el('pv-speed').addEventListener('change', () => { preview.speedName = el('pv-speed').value; });
+    el('pv-scrub').addEventListener('input', () => {
+      preview.playing = false;
+      updatePlayButton();
+      preview.distance = Number(el('pv-scrub').value) * project.cycle.strideWorld;
+      drawPreview();
+    });
+    el('pv-walk').addEventListener('click', () => {
+      preview.walking = !preview.walking;
+      if (preview.walking) preview.distance = distanceForFrame(project.cycle, project.cycle.idleFrame % project.cycle.frameCount);
+      el('pv-walk').classList.toggle('active', preview.walking);
+      el('pv-walk').textContent = preview.walking ? 'Walk' : 'Idle';
+      drawPreview();
+    });
+    el('pv-flip').addEventListener('click', () => { preview.flip = !preview.flip; el('pv-flip').classList.toggle('active', preview.flip); drawPreview(); });
+    el('pv-footprints').addEventListener('click', () => { preview.showFootprints = !preview.showFootprints; el('pv-footprints').classList.toggle('active', preview.showFootprints); drawPreview(); });
+  }
+  function updatePlayButton() { const b = el('pv-play'); if (b) b.textContent = preview.playing ? '⏸ Pause' : '▶ Play'; }
+  function togglePlay() { preview.playing = !preview.playing; updatePlayButton(); if (preview.playing) runPreviewLoop(); }
+  function stepFrame(dir) {
+    preview.playing = false; updatePlayButton();
+    const cycle = project.cycle;
+    const cur = preview.walking ? walkFrameAt(cycle, preview.distance) : cycle.idleFrame;
+    const next = ((cur + dir) % cycle.frameCount + cycle.frameCount) % cycle.frameCount;
+    preview.distance = distanceForFrame(cycle, next);
+    preview.walking = true;
+    el('pv-walk').classList.add('active'); el('pv-walk').textContent = 'Walk';
+    drawPreview();
+  }
+  function stopPreview() { preview.playing = false; if (preview.raf) cancelAnimationFrame(preview.raf); preview.raf = null; preview.lastT = null; }
+  function resetPreview() { stopPreview(); preview.walking = true; preview.distance = 0; updatePlayButton(); drawPreview(); }
+  function runPreviewLoop() {
+    if (preview.raf) return;
+    const step = (t) => {
+      if (!preview.playing) { preview.raf = null; preview.lastT = null; return; }
+      if (preview.lastT === null) preview.lastT = t;
+      const dt = Math.min(0.05, (t - preview.lastT) / 1000);
+      preview.lastT = t;
+      if (preview.walking) {
+        preview.distance += SPEED_PRESETS[preview.speedName] * dt;
+        preview.distance %= project.cycle.strideWorld * 1000; // keep bounded, harmless multiple of stride
+      }
+      drawPreview();
+      preview.raf = requestAnimationFrame(step);
+    };
+    preview.raf = requestAnimationFrame(step);
+  }
+  function liveCycleForPreview() {
+    return {
+      frameCount: project.cycle.frameCount, idleFrame: project.cycle.idleFrame, displayScale: project.cycle.displayScale,
+      feet: project.slots.map((s) => s.feet), idleFeet: project.idleSlot.feet,
+    };
+  }
+  function drawPreview() {
+    const canvas = el('preview-canvas');
+    if (!canvas || !project) return;
+    const cycle = project.cycle;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const frame = preview.walking ? walkFrameAt(cycle, preview.distance) : cycle.idleFrame;
+    const groundY = canvas.height - 50;
+    const anchorX = canvas.width / 2;
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
+
+    const live = liveCycleForPreview();
+    const prints = preview.showFootprints ? footprintsForFrame(live, frame) : [];
+    const facing = preview.flip ? -1 : 1;
+    ctx.fillStyle = FOOTPRINT_COLOR;
+    ctx.globalAlpha = TORSO_SHADOW.alpha;
+    ellipse(ctx, anchorX, groundY + 1, TORSO_SHADOW.width, TORSO_SHADOW.height);
+    for (const print of prints) {
+      const grow = 1 - 0.3 * print.lift;
+      ctx.globalAlpha = FOOTPRINT_ALPHA * (1 - 0.65 * print.lift);
+      ellipse(ctx, anchorX + facing * print.dx, groundY + 1, FOOTPRINT_LENGTH * grow, FOOTPRINT_DEPTH * grow);
+    }
+    if (prints.length === 0 && preview.showFootprints) {
+      ctx.globalAlpha = FOOTPRINT_ALPHA;
+      ellipse(ctx, anchorX, groundY + 1, FOOTPRINT_LENGTH * 1.6, FOOTPRINT_DEPTH);
+    }
+    ctx.globalAlpha = 1;
+
+    if (project.masterBitmap) {
+      const { col, row } = cellFor(frame);
+      const slot = frame < cycle.frameCount ? project.slots[frame] : project.idleSlot;
+      const fw = cycle.frameWidth, fh = cycle.frameHeight;
+      const scale = cycle.displayScale;
+      const drawW = fw * scale, drawH = fh * scale;
+      const originX = fw / 2 + slot.offset.dx, originY = cycle.soleY - slot.offset.dy;
+      ctx.save();
+      ctx.translate(anchorX, groundY);
+      ctx.scale(facing, 1);
+      ctx.drawImage(project.masterBitmap, col * fw, row * fh, fw, fh, -originX * scale, -originY * scale, drawW, drawH);
+      ctx.restore();
+    }
+  }
+  function ellipse(ctx, x, y, w, h) {
+    ctx.beginPath();
+    ctx.ellipse(x, y, w / 2, h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // ---------------------------------------------------------------
+  // Save — bake, validate, export.
+  // ---------------------------------------------------------------
+  el('btn-save').addEventListener('click', saveProject);
+  async function saveProject() {
+    try {
+      const cycle = project.cycle;
+      const missing = [];
+      for (let i = 0; i < cycle.frameCount; i += 1) if (!project.masterBitmap) missing.push('frame ' + i);
+      if (missing.length && !confirm('No pose art assigned yet for: ' + missing.slice(0, 5).join(', ') + (missing.length > 5 ? '…' : '') + '. Save anyway (an empty sheet)?')) return;
+
+      const total = totalFrames();
+      const rows = Math.ceil(total / cycle.columns);
+      const canvas = document.createElement('canvas');
+      canvas.width = cycle.columns * cycle.frameWidth;
+      canvas.height = rows * cycle.frameHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      if (project.masterBitmap) {
+        for (let i = 0; i < cycle.frameCount; i += 1) {
+          bakeSlotOntoCanvas(ctx, i, project.slots[i]);
+        }
+        if (cycle.idleFrame >= cycle.frameCount) bakeSlotOntoCanvas(ctx, cycle.idleFrame, project.idleSlot);
+      }
+      snapAlpha(ctx, canvas.width, canvas.height);
+
+      const runtimeJson = {
+        sheet: project.targetSheetPath,
+        columns: cycle.columns, frameWidth: cycle.frameWidth, frameHeight: cycle.frameHeight,
+        frameCount: cycle.frameCount, idleFrame: cycle.idleFrame, displayScale: cycle.displayScale,
+        soleY: cycle.soleY, strideWorld: cycle.strideWorld,
+        feet: project.slots.map((s) => s.feet),
+        idleFeet: project.idleSlot.feet,
+      };
+      if (!isWalkCycle(runtimeJson)) { toast('The assembled cycle failed validation — nothing was saved.', true); return; }
+
+      const webpBlob = await new Promise((res) => canvas.toBlob(res, 'image/webp', 0.9));
+      const pngBlob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+      if (!webpBlob || !pngBlob) { toast('Could not encode the sheet — nothing was saved.', true); return; }
+
+      await backupIfExists('public/' + project.targetJsonPath);
+      await backupIfExists('public/' + project.targetSheetPath);
+
+      const workbench = {
+        version: 1, characterId: project.characterId, mode: project.mode, slug: project.slug,
+        targetJsonPath: project.targetJsonPath, targetSheetPath: project.targetSheetPath,
+        masterImagePath: project.generatedDir + project.characterId + '-walk-master-director.png',
+        cycle: project.cycle, slots: project.slots, idleSlot: project.idleSlot, savedAt: new Date().toISOString(),
+      };
+      await writeJSON(rootHandle, project.generatedDir + 'walk-director-project.json', workbench);
+      await writeFile(rootHandle, project.generatedDir + project.characterId + '-walk-master-director.png', pngBlob);
+      await writeFile(rootHandle, 'public/' + project.targetSheetPath, webpBlob);
+      await writeJSON(rootHandle, 'public/' + project.targetJsonPath, runtimeJson);
+
+      project.masterImagePath = workbench.masterImagePath;
+      project.masterBitmap = await createImageBitmap(pngBlob);
+      // Baked frames now sit at (0,0) within their cell; zero the per-slot offsets so re-editing starts clean.
+      project.slots.forEach((s) => { s.offset = { dx: 0, dy: 0 }; });
+      project.idleSlot.offset = { dx: 0, dy: 0 };
+      project.dirty = false;
+      pushHistory();
+      renderStatus();
+      renderFilmstrip();
+      renderEditor();
+
+      let msg = 'Saved public/' + project.targetJsonPath + ' and public/' + project.targetSheetPath + '.';
+      if (project.mode === 'branch' || project.mode === 'scratch') {
+        msg += ' Remember to point ' + project.characterId + '.walkCycle at "' + project.targetJsonPath + '" in src/domain/PlayerCharacters.ts' + (project.mode === 'scratch' ? ' and add it to the roster.' : '.');
+      }
+      toast(msg);
+    } catch (e) {
+      toast('Save failed: ' + (e.message || e), true);
+    }
+  }
+  function bakeSlotOntoCanvas(ctx, frameIndex, slot) {
+    const cycle = project.cycle;
+    const { col, row } = cellFor(frameIndex);
+    const fw = cycle.frameWidth, fh = cycle.frameHeight;
+    const destX = col * fw, destY = row * fh;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(destX, destY, fw, fh); ctx.clip();
+    ctx.drawImage(project.masterBitmap, col * fw, row * fh, fw, fh, destX + slot.offset.dx, destY + slot.offset.dy, fw, fh);
+    ctx.restore();
+  }
+  function snapAlpha(ctx, w, h) {
+    const img = ctx.getImageData(0, 0, w, h);
+    const d = img.data;
+    for (let i = 3; i < d.length; i += 4) {
+      if (d[i] > 250) d[i] = 255;
+      else if (d[i] <= 3) d[i] = 0;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  async function backupIfExists(relPath) {
+    const file = await readFile(rootHandle, relPath);
+    if (!file) return;
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const name = relPath.split('/').pop();
+    await writeFile(rootHandle, project.generatedDir + 'backups/' + stamp + '-' + name, file);
+  }
+
+  window.addEventListener('resize', () => { if (project) drawFrameCanvas(); });
+})();
+</script>
+</body>
+</html>
