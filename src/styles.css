@@ -604,8 +604,21 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 
 /* Read the Room audition: a fixed set of categories answered all at once
    (unlike the linear dialogue tree above), then a debrief that swaps in for
-   the form once the scene resolves. */
-.audition-dialog { width: min(94vw, 44rem); max-height: 90vh; }
+   the form once the scene resolves.
+   Same inner-border-drift fix as .settings-form/.legal-dialog: unlike the interaction and Home Hub dialogs, this
+   one's .story-card has no .scene-panel wrapper already doing the scrolling, so it fell back to the base `dialog`
+   rule's own overflow: auto -- with the <dialog> itself as the scroll container, dialog::before's frame line (an
+   absolutely positioned child of the dialog) scrolled along with a long category list or debrief and drifted away
+   from the dialog's own fixed border. Scrolling .story-card instead keeps <dialog> itself static. */
+.audition-dialog { width: min(94vw, 44rem); max-height: 90vh; overflow: hidden; }
+.audition-dialog[open] { display: flex; flex-direction: column; }
+.audition-dialog .story-card {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: rgb(216 173 88 / 55%) transparent;
+}
+.audition-dialog .story-card::-webkit-scrollbar { width: .55rem; }
+.audition-dialog .story-card::-webkit-scrollbar-track { background: transparent; }
+.audition-dialog .story-card::-webkit-scrollbar-thumb { border-radius: .3rem; background: rgb(216 173 88 / 55%); }
 .audition-categories { display: grid; gap: 1.1rem; margin-bottom: 1.2rem; }
 .audition-category { margin: 0; border: 1px solid rgb(216 173 88 / 24%); padding: .9rem 1rem; }
 .audition-category legend { padding: 0 .4rem; color: var(--gold-bright); font-weight: 700; }

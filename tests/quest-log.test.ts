@@ -138,6 +138,20 @@ describe('the Status panel redesign, first pass', () => {
     expect(css).not.toContain('#settings-dialog::before');
   });
 
+  it('scrolls .audition-dialog\'s .story-card, not the <dialog> itself, so the Screen Test dialog gets the same fix as Settings', () => {
+    // The Screen Test (Read the Room audition) dialog had the same inner-frame-line drift bug as Settings: its
+    // .story-card has no .scene-panel wrapper already handling the scroll (unlike the interaction and Home Hub
+    // dialogs), so it fell back to the base `dialog` rule's own overflow: auto, and dialog::before's frame line
+    // scrolled away with a long category list or debrief instead of staying put on the dialog's own fixed border.
+    const dialogBlock = css.match(/\n\.audition-dialog \{([^}]*)\}/)?.[1] ?? '';
+    expect(dialogBlock).toContain('overflow: hidden');
+    expect(css).toMatch(/\n\.audition-dialog\[open\] \{ display: flex; flex-direction: column; \}/);
+    const cardBlock = css.match(/\n\.audition-dialog \.story-card \{([^}]*)\}/s)?.[1] ?? '';
+    expect(cardBlock).toMatch(/overflow-y:\s*auto/);
+    expect(cardBlock).toMatch(/min-height:\s*0/);
+    expect(cardBlock).toMatch(/scrollbar-width:\s*thin/);
+  });
+
   it('draws a completed quest green, with a tick, and takes a brighter green in high contrast', () => {
     expect(css).toMatch(/:root \{[^}]*--complete-rgb: 143 209 158;/);
     expect(css).toMatch(/body\.high-contrast \{[^}]*--complete-rgb: 96 255 140;/);
