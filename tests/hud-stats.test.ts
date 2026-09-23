@@ -297,19 +297,19 @@ describe('the picture, the stage, and the footer below it', () => {
     expect(css).toMatch(/\.game-footer\[hidden\] \{ display: none; \}/);
   });
 
-  it('puts Wait on the left, the Playology logo at the very centre, and Menu on the right', () => {
-    const wait = footer.indexOf('id="advance-time"');
-    const logo = footer.indexOf('class="footer-logo"');
+  it('puts Menu on the left, the Playology logo at the very centre, and Wait on the right', () => {
     const menu = footer.indexOf('id="return-menu"');
-    expect(wait).toBeGreaterThan(-1);
-    expect(logo).toBeGreaterThan(wait);
-    expect(menu).toBeGreaterThan(logo);
+    const logo = footer.indexOf('class="footer-logo"');
+    const wait = footer.indexOf('id="advance-time"');
+    expect(menu).toBeGreaterThan(-1);
+    expect(logo).toBeGreaterThan(menu);
+    expect(wait).toBeGreaterThan(logo);
     expect(footer).toContain('src="/assets/ui/playology-logo.webp"');
     expect(footer).toContain('alt="Playology Entertainment"');
     // A grid with equal columns either side of the centre group keeps it dead centre whatever Wait/Menu's own widths are.
     expect(rule('.game-footer')).toContain('grid-template-columns: 1fr auto 1fr');
-    expect(css).toContain('.game-footer #advance-time { justify-self: start; }');
-    expect(css).toContain('.game-footer #return-menu { justify-self: end; }');
+    expect(css).toContain('.game-footer #return-menu { justify-self: start; }');
+    expect(css).toContain('.game-footer #advance-time { justify-self: end; }');
   });
 
   it('has only Wait, Menu, Terms of Service and Privacy Policy as buttons: Save and Export are gone', () => {
@@ -321,15 +321,15 @@ describe('the picture, the stage, and the footer below it', () => {
   });
 
   it('puts Terms of Service and Privacy Policy directly against the logo, straddling it inside their own centred group', () => {
-    const wait = footer.indexOf('id="advance-time"');
+    const menu = footer.indexOf('id="return-menu"');
     const tos = footer.indexOf('id="footer-tos"');
     const logo = footer.indexOf('class="footer-logo"');
     const privacy = footer.indexOf('id="footer-privacy"');
-    const menu = footer.indexOf('id="return-menu"');
-    expect(wait).toBeLessThan(tos);
+    const wait = footer.indexOf('id="advance-time"');
+    expect(menu).toBeLessThan(tos);
     expect(tos).toBeLessThan(logo);
     expect(logo).toBeLessThan(privacy);
-    expect(privacy).toBeLessThan(menu);
+    expect(privacy).toBeLessThan(wait);
     expect(footer).toContain('>Terms of Service</button>');
     expect(footer).toContain('>Privacy Policy</button>');
     // The centre group is its own 1fr-auto-1fr grid: Terms of Service and Privacy Policy sit right against the logo

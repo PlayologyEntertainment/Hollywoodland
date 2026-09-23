@@ -344,8 +344,8 @@ h1 {
   padding: .5rem clamp(1rem, 3vw, 3rem); background: #000;
 }
 .game-footer[hidden] { display: none; }
-.game-footer #advance-time { justify-self: start; }
-.game-footer #return-menu { justify-self: end; }
+.game-footer #return-menu { justify-self: start; }
+.game-footer #advance-time { justify-self: end; }
 /* The centre group is itself a 1fr-auto-1fr grid, the same trick as .game-footer's own: Terms of Service and Privacy Policy
    sit in the two 1fr tracks flanking the logo, right up against it regardless of how their (different-length) text measures,
    while the group as a whole -- and so the logo inside it -- stays exactly centred in the footer, unmoved by Wait/Menu's own
