@@ -1,5 +1,16 @@
 """Replace the drawn arms of the walk cycle with a rigged pair of arms on a smooth pendulum.
 
+STATUS (2026-09-23): no longer run as part of the build. Ported this same round's fix from the
+white-female pipeline -- checked her raw drawn arms directly and found they didn't need replacing
+at all -- and re-checked this character's own raw arms (in
+`aspiring-actor-walk-v2-master-smoothed.png`, this file's own input) the same way: the "same
+scissor every frame, hands wandering ~50px" problem described below is not present in the current
+source art (the round-3 pose-table prompt this character's take sheets were generated with,
+documented in docs/dev/... / art/prompts/character-aspiring-actor-walk-cycle-v2.md, appears to
+have already fixed it upstream of this script). The current build copies the smoothed master
+straight through as the final master, skipping this file, the same as the female pipeline. Kept
+for reference and in case a future take-sheet regeneration reintroduces genuinely jittery arms.
+
 Reads  aspiring-actor-walk-v2-master-smoothed.png  (output of smooth_upper_body.py)
 Writes aspiring-actor-walk-v2-master.png
 

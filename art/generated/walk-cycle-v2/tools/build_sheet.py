@@ -26,6 +26,31 @@ def head_px(arr):
     return float(shirt_top - top)
 
 
+def rescale_head(arr, pivot, extra_f, blend_px=24):
+    """Locally rescale just the head+neck region of an RGBA array by `extra_f`, anchored at `pivot` (x, y) =
+    the neck/collar point, fading to no change (identity) over `blend_px` rows below the pivot so the body
+    below is untouched and there is no seam at the collar. Ported from the white-female pipeline's build_sheet.py
+    (same fix, same reasoning): a single uniform scale factor cannot match this character's walk and idle art on
+    both total height and head size at once when their head-to-height ratios differ even slightly, which they
+    do here (idle head measured smaller than the walk frames' -- see the idle-scaling code below)."""
+    if abs(extra_f - 1) < 0.003:
+        return arr
+    h, w = arr.shape[:2]
+    px, py = pivot
+    yy, xx = np.mgrid[0:h, 0:w].astype(float)
+    t = np.clip((yy - py) / blend_px, 0, 1)
+    weight = 1 - (t * t * (3 - 2 * t))          # 1 at/above the pivot row, smoothstep to 0 by blend_px rows below
+    s = 1 + (extra_f - 1) * weight
+    src_y = py + (yy - py) / s
+    src_x = px + (xx - px) / s
+    a = arr[..., 3:4].astype(float) / 255.0
+    pre = np.concatenate([arr[..., :3].astype(float) * a, a * 255.0], axis=2)
+    out = np.stack([ndi.map_coordinates(pre[..., k], [src_y, src_x], order=3, mode='constant', cval=0.0) for k in range(4)], axis=2)
+    alpha = np.clip(out[..., 3], 0, 255)
+    rgb = np.where(alpha[..., None] > 0.5, out[..., :3] / np.maximum(alpha[..., None] / 255.0, 1e-3), 0)
+    return np.rint(np.concatenate([np.clip(rgb, 0, 255), alpha[..., None]], axis=2)).astype(np.uint8)
+
+
 def clean_figure(crop):
     """Keep the figure, drop fragments of neighbouring figures cut off by the cell's top/bottom edge."""
     a = np.array(crop)[:, :, 3]
@@ -199,6 +224,24 @@ def main():
     cm = cream_mask(iarr)[int(h * 0.12):int(h * 0.50)]
     yy, xx = np.where(cm)
     ibody = float(np.median(xx))
+    # Head patch (see rescale_head above): the total-height match just above gets the body right, but idle's own
+    # head-to-height ratio isn't quite identical to the walk frames', so a second, local, collar-anchored warp
+    # grows/shrinks just the head to also match TARGET_HEAD -- matching the white-female pipeline's fix for the
+    # same class of idle/walk head-size mismatch.
+    idle_top = np.where(iarr[:, :, 3] > 24)[0].min()
+    idle_cream = cream_mask(iarr)
+    idle_head_px = np.where(idle_cream.sum(axis=1) > 0.057 * h)[0].min() - idle_top
+    extra_f = TARGET_HEAD / idle_head_px
+    print('idle head patch: head_px %.1f -> target %.1f (extra_f %.3f)' % (idle_head_px, TARGET_HEAD, extra_f))
+    pad = int(np.ceil(idle_head_px * (extra_f - 1))) + 4 if extra_f > 1 else 0
+    if pad:
+        iarr = np.concatenate([np.zeros((pad, iarr.shape[1], 4), np.uint8), iarr], axis=0)
+        idle_top += pad
+    iarr = rescale_head(iarr, (ibody, float(idle_top + idle_head_px)), extra_f)
+    ys3, xs3 = np.where(iarr[:, :, 3] > 24)
+    iarr = iarr[ys3.min():ys3.max() + 1]
+    idle = Image.fromarray(iarr, 'RGBA')
+    h = iarr.shape[0]
     idle_cell = Image.new('RGBA', (CELL_W, CELL_H), (0, 0, 0, 0))
     layer = Image.new('RGBA', (CELL_W, CELL_H), (0, 0, 0, 0))
     layer.paste(idle, (int(round(BODY_X - ibody)), BASE_Y - (h - 1)))
