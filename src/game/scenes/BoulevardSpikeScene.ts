@@ -238,6 +238,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.stateClock += delta;
     if (this.stateClock >= 250) {
       this.stateClock = 0;
+      this.resolvePendingAssignment();
       this.emitState();
     }
   }
@@ -515,6 +516,22 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     for (const tween of this.atmosphericTweens) tween.paused = this.settings.reducedMotion;
   }
 
+  /** Resolves a due idle assignment wherever the player happens to be, not
+   * just at the boarding-house door (see `enterLocation`'s own 'boarding-house'
+   * case, which resolves too, so the Home Hub's away-summary card still shows
+   * for the common "walk straight to the door" case). Safe to call
+   * unconditionally and often: `resolveActiveAssignment` is a cheap no-op
+   * when nothing is active or nothing is due yet. Called on load
+   * (`restoreState`) and on the state-clock heartbeat below so an assignment
+   * finishing while the player is elsewhere on the Boulevard (or the game was
+   * simply closed and reopened later) still pays out and tells the player,
+   * instead of silently waiting for them to specifically re-visit the door. */
+  private resolvePendingAssignment(): void {
+    const { state, resolution } = resolveActiveAssignment(this.careerState, ALL_ASSIGNMENTS, ALL_RELATIONSHIP_CHARACTERS, Date.now());
+    this.careerState = state;
+    if (resolution !== undefined) this.domainEvents.emit('assignment-resolved-away', resolution);
+  }
+
   private readonly restoreState = (state: CareerState): void => {
     const migratedX =
       state.playerX > this.worldWidth
@@ -523,6 +540,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.player.x = Phaser.Math.Clamp(migratedX, 110, this.worldWidth - 110);
     this.drawPlayerShadow();
     this.careerState = state;
+    this.resolvePendingAssignment();
     this.cameras.main.centerOn(this.player.x, this.player.y);
     this.emitState();
   };

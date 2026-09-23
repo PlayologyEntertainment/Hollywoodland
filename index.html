@@ -125,22 +125,29 @@
                 <strong id="objective-goal">Book an audition at the casting office.</strong>
                 <small><kbd>A</kbd>/<kbd>D</kbd> Move · <kbd>E</kbd> Interact</small>
               </div>
-              <div class="hud-stats" role="group" aria-label="Career stats">
-                <div class="hud-stat">
-                  <span id="hud-day-number" class="hud-label">Day 1</span>
-                  <span id="hud-weekday" class="hud-value">Monday</span>
+              <div class="hud-center">
+                <div class="hud-stats" role="group" aria-label="Career stats">
+                  <div class="hud-stat">
+                    <span id="hud-day-number" class="hud-label">Day 1</span>
+                    <span id="hud-weekday" class="hud-value">Monday</span>
+                  </div>
+                  <div class="hud-stat">
+                    <span class="hud-label">Time</span>
+                    <span id="hud-time" class="hud-value">Morning</span>
+                  </div>
+                  <div class="hud-stat" data-stat="money">
+                    <span class="hud-label">Money</span>
+                    <span id="hud-money" class="hud-value">$12</span>
+                  </div>
+                  <div id="hud-energy-stat" class="hud-stat" data-low="false">
+                    <span class="hud-label">Energy</span>
+                    <span id="hud-energy" class="hud-value">100</span>
+                  </div>
                 </div>
-                <div class="hud-stat">
-                  <span class="hud-label">Time</span>
-                  <span id="hud-time" class="hud-value">Morning</span>
-                </div>
-                <div class="hud-stat" data-stat="money">
-                  <span class="hud-label">Money</span>
-                  <span id="hud-money" class="hud-value">$12</span>
-                </div>
-                <div id="hud-energy-stat" class="hud-stat" data-low="false">
-                  <span class="hud-label">Energy</span>
-                  <span id="hud-energy" class="hud-value">100</span>
+                <!-- Shown only while an idle assignment is in progress; see AppShell.renderAssignmentCountdown. -->
+                <div id="hud-assignment-timer" class="hud-assignment-timer" role="status" hidden>
+                  <span id="hud-assignment-label" class="hud-label">Assignment</span>
+                  <span id="hud-assignment-countdown" class="hud-value">0:00</span>
                 </div>
               </div>
               <!-- The stats above are a picture; this says the same thing to screen readers, who are told when it changes. -->

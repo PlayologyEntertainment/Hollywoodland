@@ -56,6 +56,12 @@ export interface DomainEventMap {
   readonly 'audition-submitted': AuditionSubmittedPayload;
   readonly 'audition-resolved': AuditionResolvedPayload;
   readonly 'assignment-start-requested': AssignmentStartRequestedPayload;
+  /** Fired when an idle assignment resolves outside the Home Hub door flow
+   * (a periodic check, or on load) rather than via `home-hub-entered` —
+   * the player needs to be told the reward landed even though they aren't
+   * looking at the Home Hub screen right now. See BoulevardSpikeScene's
+   * `resolvePendingAssignment`. */
+  readonly 'assignment-resolved-away': AssignmentResolution;
   readonly 'housing-upgrade-requested': undefined;
 }
 

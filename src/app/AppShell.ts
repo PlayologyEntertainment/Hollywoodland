@@ -165,6 +165,19 @@ function formatAssignmentDuration(minutes: number): string {
   return Number.isInteger(hours) ? `${hours}h` : `${minutes}m`;
 }
 
+/** A live mm:ss (or h:mm:ss past an hour) countdown for the header's
+ * assignment timer, rounded up so it reads "0:01" rather than "0:00" until
+ * the assignment has actually resolved. */
+function formatCountdown(remainingMs: number): string {
+  const totalSeconds = Math.ceil(remainingMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const paddedSeconds = String(seconds).padStart(2, '0');
+  if (hours > 0) return `${hours}:${String(minutes).padStart(2, '0')}:${paddedSeconds}`;
+  return `${minutes}:${paddedSeconds}`;
+}
+
 function formatRelationshipDelta(delta: RelationshipDelta): string {
   const parts: string[] = [];
   if (delta.trust) parts.push(`${delta.trust > 0 ? '+' : ''}${delta.trust} trust`);
@@ -193,6 +206,14 @@ function describeAssignmentReward(reward: AssignmentReward): string {
   }
   if (reward.kind === 'relationship-pivotal-flag') return 'A memory worth keeping.';
   return '';
+}
+
+/** All of an assignment's rewards as one comma-joined line, for the toast
+ * shown when it resolves away from the Home Hub screen (see
+ * 'assignment-resolved-away'). The away-summary card lists each on its own
+ * line instead — a toast is brief by design (see `toast`'s auto-hide). */
+function describeAssignmentRewards(rewards: readonly AssignmentReward[]): string {
+  return rewards.map(describeAssignmentReward).filter((line) => line !== '').join(', ');
 }
 
 /** A locked talent names its blocker — a same-branch prerequisite, or
@@ -315,6 +336,9 @@ export class AppShell {
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
       this.renderCareerState(state);
+    });
+    this.options.domainEvents.on('assignment-resolved-away', (resolution) => {
+      this.toast(`${resolution.definition.title} finished while you were away — ${describeAssignmentRewards(resolution.definition.rewards)}`);
     });
     this.options.domainEvents.on('audition-resolved', (payload) => this.renderAuditionDebrief(payload));
     assertElement('#interaction-dialog', HTMLDialogElement).addEventListener('close', () => {
@@ -761,6 +785,31 @@ export class AppShell {
     this.renderInventory(state);
     this.renderHomeHubHousing(state);
     this.renderHomeHubAssignments(state);
+    this.renderAssignmentCountdown(state);
+  }
+
+  /** The active assignment's remaining time, shown under the header's Day/
+   * Time/Money/Energy row so it's visible without opening the Home Hub. Reads
+   * straight from `state.assignments.active` + `Date.now()` rather than a
+   * value stored anywhere, so it stays correct across saves, reloads and the
+   * away-resolution paths without any of them needing to update it specially
+   * — the same "derive, don't store" posture `describeHud` takes toward the
+   * rest of the header. Hidden entirely when nothing is active. This is
+   * purely a countdown DISPLAY; resolving the assignment when it reaches
+   * zero is `resolvePendingAssignment`'s job (BoulevardSpikeScene), driven by
+   * the same 250ms heartbeat that calls this. */
+  private renderAssignmentCountdown(state: CareerState): void {
+    const timer = assertElement('#hud-assignment-timer', HTMLElement);
+    const active = state.assignments.active;
+    const definition = active !== null ? ALL_ASSIGNMENTS.find((candidate) => candidate.id === active.assignmentId) : undefined;
+    if (active === null || definition === undefined) {
+      timer.hidden = true;
+      return;
+    }
+    timer.hidden = false;
+    const remainingMs = Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now());
+    assertElement('#hud-assignment-label', HTMLElement).textContent = definition.title;
+    assertElement('#hud-assignment-countdown', HTMLElement).textContent = formatCountdown(remainingMs);
   }
 
   /** Locked quests are omitted entirely rather than shown as "???" —
