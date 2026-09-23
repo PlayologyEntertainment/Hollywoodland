@@ -151,6 +151,11 @@ function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+/** "Jordan's Career" when the player named their character, "Your Career" otherwise. */
+function possessiveTitle(name: string, noun: string): string {
+  return name.length > 0 ? `${name}'s ${noun}` : `Your ${noun}`;
+}
+
 function formatItemCategory(category: InventoryItemDefinition['category']): string {
   return category.split('-').map(capitalize).join(' ');
 }
@@ -734,7 +739,8 @@ export class AppShell {
 
   private renderCareerState(state: CareerState): void {
     this.objectives.update(state);
-    assertElement('#status-name', HTMLElement).textContent = state.identity.name.length > 0 ? state.identity.name : 'Nobody — yet';
+    assertElement('#status-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'Career');
+    assertElement('#home-hub-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'Home');
     const hud = describeHud(state);
     // The Status panel.
     assertElement('#status-time', HTMLElement).textContent = `${hud.weekday} · ${hud.slotLabel}`;
