@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 
-import type { BoulevardActiveRule, BoulevardManifest, BoulevardSign } from '../BoulevardManifest';
+import type { BoulevardActiveRule, BoulevardManifest, BoulevardPlane, BoulevardSign } from '../BoulevardManifest';
 import { isBuildingActive, nearestInteractable } from '../BoulevardStates';
+import { skyTileCount, skyTileLayout, SKY_DRIFT_PX_PER_SEC } from '../SkyDrift';
 import {
   DEFAULT_WALK_CYCLE,
   distanceForFrame,
@@ -122,6 +123,10 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   /** The progression level last reported via 'level-up', kept in step with `careerState` at every point it is set
    * fresh (a new career, a restore) rather than mutated — see emitState. */
   private lastEmittedLevel = 1;
+  /** The sky plane's accumulated drift offset and its pool of alternating-mirror tiles — see SkyDrift.ts. */
+  private skyDriftX = 0;
+  private skyTiles: Phaser.GameObjects.Image[] = [];
+  private skyTileWidth = 0;
 
   public constructor() {
     super('BoulevardSpikeScene');
@@ -205,6 +210,8 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   }
 
   public override update(_time: number, delta: number): void {
+    if (!this.settings.reducedMotion) this.skyDriftX += SKY_DRIFT_PX_PER_SEC * (delta / 1000);
+    this.applySkyTileLayout();
     const direction =
       Number(this.inputController.isDown('moveRight')) -
       Number(this.inputController.isDown('moveLeft'));
@@ -302,6 +309,13 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private createRenderedEnvironment(): void {
     for (const plane of this.manifest.planes) {
       const key = planeKey(plane.id);
+      if (plane.id === 'sky') {
+        // Always drifting on its own clock, independent of the player's position -- a different concern from
+        // repeatX's static world-space tiling below, so it gets its own path regardless of the plane's own
+        // repeatX value. See createSkyTiles/SkyDrift.ts.
+        this.createSkyTiles(plane);
+        continue;
+      }
       if (plane.repeatX) {
         // The ground is one seamless, mirrored tile repeated across the world.
         // Separate images rather than a TileSprite: the texture is not a power
@@ -379,6 +393,38 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
     const vignette = this.add.graphics().setScrollFactor(0).setDepth(50);
     vignette.lineStyle(100, 0x261713, 0.12).strokeRect(-32, -32, 1984, 1144);
+  }
+
+  /** Builds the sky's pool of alternating-mirror tiles (see SkyDrift.ts) and places them once, so there is no
+   * one-frame flash at the wrong position before the first update(). Re-run in full every create() (the scene is
+   * reused across Continue/a new career), so the drift offset and the tile pool both reset with it. */
+  private createSkyTiles(plane: BoulevardPlane): void {
+    const key = planeKey(plane.id);
+    this.skyDriftX = 0;
+    this.skyTileWidth = this.textures.get(key).getSourceImage().width * plane.scale;
+    this.skyTiles = Array.from({ length: skyTileCount(this.skyTileWidth, this.cameras.main.width) }, () =>
+      this.add
+        .image(0, plane.offsetY, key)
+        .setOrigin(0)
+        .setScale(plane.scale)
+        .setScrollFactor(plane.scrollFactor)
+        .setDepth(plane.depth)
+        // The drift is deliberately sub-pixel-per-frame (SKY_DRIFT_PX_PER_SEC is slow), so the game's global
+        // roundPixels snapping (createGame.ts) would hold each tile at the same rounded position for several
+        // frames, then jump it a whole pixel — the "jittery, not smooth" motion. Every other GameObject in the
+        // scene still wants that crisp snapping; only these tiles need real sub-pixel motion to look smooth.
+        .setVertexRoundMode('off'),
+    );
+    this.applySkyTileLayout();
+  }
+
+  private applySkyTileLayout(): void {
+    const layout = skyTileLayout(this.skyDriftX, this.skyTileWidth, this.skyTiles.length);
+    this.skyTiles.forEach((tile, index) => {
+      const placement = layout[index];
+      if (placement === undefined) return;
+      tile.setX(placement.x).setFlipX(placement.flipped);
+    });
   }
 
   /** The soft pulsing glow behind a hanging sign — factored out once round
