@@ -187,22 +187,28 @@ def main():
             fs = [fs[0], dict(fs[0])]
         fs.sort(key=lambda f: f['x'])
         feet.append(fs[:2])
+    heights = [int(pool[i]['m']['h']) for i in chosen]
 
-    # idle frame: same head size as the walk frames, torso centred, soles on the ground line. Scaled to match
-    # TARGET_HEAD directly (this character's walk half-sheets turned out to be drawn with a bigger head-to-height
-    # ratio than her idle reference -- 22-23% versus the idle's own 19.3% -- so matching by *total height*, as
-    # the male pipeline did (its idle and walk art agreed closely enough that this amounted to the same thing),
-    # left her head visibly larger mid-stride than standing still. Matching head *size* directly guarantees the
-    # head never jumps between the two, regardless of any such mismatch in the source art's body proportions.
+    # idle frame: torso centred, soles on the ground line, scaled to match the WALK frames' mean total height
+    # (not head size -- see below), then cropped and placed like the loop frames.
+    #
+    # Earlier this matched head size directly (TARGET_HEAD / idle_head_px), reasoning that the walk half-sheets'
+    # head-to-height ratio (22-23%) differs from the idle reference's own (19.3%), so matching by total height
+    # would leave one of the two visibly bigger. That reasoning was correct about the mismatch but wrong about
+    # which jump reads worse: matching head *pixel size* forces the idle figure's total height, and therefore
+    # her whole silhouette, to be about 13% taller than every walk frame (432px vs 374-384px measured on the
+    # committed sheet) -- and because the sprite is anchored at the soles (see WalkCycle.ts), that stretch
+    # extends upward from the fixed feet, so the head visibly pops both bigger AND higher every time she starts
+    # or stops walking. That read as exactly the "head size shifts between frames" bug this fixes. Matching
+    # total height instead keeps the whole figure's on-screen size constant across the walk/idle transition
+    # (the only thing that changes is a few percent of head-to-body ratio, invisible at gameplay scale); the
+    # residual is a genuine source-art proportion difference this pipeline cannot invent away without new art.
+    target_total_height = float(np.mean(heights))
     idle = load_rgba(D + 'idle-take1-clean.png')
     ia = np.array(idle)[:, :, 3] > 24
     ys, xs2 = np.where(ia)
     idle = idle.crop((xs2.min(), ys.min(), xs2.max() + 1, ys.max() + 1))
-    idle_arr = np.array(idle)
-    idle_top = np.where(idle_arr[:, :, 3] > 24)[0].min()
-    idle_cream = cream_mask(idle_arr)
-    idle_head_px = np.where(idle_cream.sum(axis=1) > 0.057 * idle.height)[0].min() - idle_top
-    f = TARGET_HEAD / idle_head_px
+    f = target_total_height / idle.height
     idle = idle.resize((int(round(idle.width * f)), int(round(idle.height * f))), Image.LANCZOS)
     iarr = np.array(idle)
     h = iarr.shape[0]
@@ -230,7 +236,6 @@ def main():
     for n, fr in enumerate(frames + [idle_cell]):
         sheet.paste(fr, ((n % 4) * CELL_W, (n // 4) * CELL_H))
     sheet.save(D + 'white-female-walk-master-unsmoothed.png')
-    heights = [int(pool[i]['m']['h']) for i in chosen]
     meta = {'cellW': CELL_W, 'cellH': CELL_H, 'baseY': BASE_Y, 'strideSource': round(16 * slope, 1),
             'feet': feet, 'idleFeet': ifeet[:2], 'dx': [round(float(d), 1) for d in dxs],
             'picks': [{'sheet': pool[i]['sheet'], 'idx': pool[i]['idx']} for i in chosen], 'heights': heights,

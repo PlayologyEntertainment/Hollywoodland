@@ -217,7 +217,7 @@ class ArmSprites:
         return out
 
 
-def rebuild_torso(body, orig, erased, removed, far, y_s, y_w, tx, pivot):
+def rebuild_torso(body, orig, erased, removed, far, y_s, y_w, tx, pivot, donor=None, donor_ref=None, donor_bad=None):
     """Repaint what the old arms hid. Simplified from the male pipeline's version: that one fit polygons to a
     suspender strap crossing the whole torso diagonally, because erasing his arms tore a large hole through it.
     This character wears a plain blouse and a thin belt with no strap crossing the shoulder, so the erased-arm
@@ -225,7 +225,12 @@ def rebuild_torso(body, orig, erased, removed, far, y_s, y_w, tx, pivot):
     margin (same idea as the male version's step 1, plus her belt's own brown, which is a different colour
     from her trousers) leaves, in practice, only small gaps near the shoulder and sleeve, which nearest-colour
     infill (from this frame's own surviving torso pixels) closes cleanly. See the build log for the visual
-    check that motivated this simplification instead of porting the male version's polygon fit unchanged."""
+    check that motivated this simplification instead of porting the male version's polygon fit unchanged.
+
+    `donor`/`donor_ref` (an RGBA cell and its own (tx, y_s), typically the idle frame) are an unobstructed torso
+    to copy real pixels -- belt buckle, fold shading -- from for whatever hole is left, instead of only ever
+    falling back to a flat median colour (see the two fixes below for why the flat fill alone read as an "art
+    issue": a visibly flat, texture-less belt/shirt patch)."""
     o = orig.astype(int)
     yy, xx = np.mgrid[0:CH, 0:CW]
     dark_trouser = (o[..., 3] > 200) & (o[..., 0] < 105) & (o[..., 1] < 95) & (o[..., 2] < 90) & (abs(o[..., 0] - o[..., 1]) < 14)
@@ -247,28 +252,49 @@ def rebuild_torso(body, orig, erased, removed, far, y_s, y_w, tx, pivot):
     body[restore] = orig[restore]
 
     # Whatever hole is left immediately next to the torso itself (genuinely erased torso pixels, not just erase
-    # margin) is filled with the nearest surviving drawn colour from this same frame -- a flat infill rather
-    # than a hand-authored shirt/belt redraw, appropriate to how small this hole actually is here. At a wide
-    # swing angle the erased zone is the whole original drawn arm, hand included, reaching well past the torso
-    # into space with nothing body-related to reconstruct there (the rigged arm sprite covers it instead, drawn
-    # on top by the caller). A flat x-distance bound does not exclude that reach on its own -- a swung arm's
-    # hand can still land within it -- so the fillable area is restricted to within 18 px of the *surviving*
-    # torso silhouette itself (a dilation of it), not just within some distance of the torso's centre x.
-    hole = (body[..., 3] == 0) & erased
-    solid = body[..., 3] > 128
-    near_torso = ndi.binary_dilation(solid, iterations=18)
-    hole &= near_torso
+    # margin) needs filling. FIX 1 (phantom flap): the hole is now bounded to the erase MARGIN only (`erased &
+    # ~removed`, the same ring `restore` above already searches) that also had real garment content in the
+    # ORIGINAL, undamaged drawing (`orig[..., 3] > 200`) -- not "near some surviving solid pixel" (a dilation of
+    # what's left standing, which is what the old `near_torso` mask was). Two failure modes that combination
+    # fixes: (a) the old dilation could not tell "a notch cut into real fabric" from "erased background next to
+    # the fabric the swung-away arm used to cover" (a hand resting beside, not on, the leg erases a patch of
+    # open air next to the trouser silhouette, which the dilation still counted as "near torso" and painted a
+    # trouser-coloured flap into; `orig[..., 3] > 200` excludes it, since that patch was never part of the
+    # drawn character); (b) without `~removed`, the hole also covered the erased arm's own bulk (obviously
+    # "real content" in `orig`, since it's a drawn arm) rather than just the thin margin around it, so the
+    # donor-copy fix below pasted the idle's own torso across the whole former-sleeve shape instead of just
+    # patching the true gap.
+    hole = (body[..., 3] == 0) & erased & ~removed & (orig[..., 3] > 200)
     if hole.any():
-        # A nearest-*surviving*-pixel search, whether over the whole torso or split by garment zone, kept
-        # landing on something darker than the garment's own typical fill: an outline fragment, a shaded fold,
-        # or (once those were excluded) a stray dark cranny -- because a hole's nearest surviving neighbour is,
-        # almost by definition, right at a silhouette edge, exactly where the art's own shading and outline
-        # pixels concentrate. The owner read the result as "a black scarf or belt hanging". Each of the three
-        # bands a hole can fall in (blouse above the belt, the belt band itself, trousers below it) is instead
-        # filled with that garment's own colour measured as one flat median over this whole frame -- not
-        # searched for spatially at all -- which sidesteps the problem entirely: holes here are small enough
-        # that a flat fill reads fine, and a frame-wide median colour is dominated by each garment's ordinary
-        # fill, not the comparatively rare edge/fold/outline pixels.
+        # FIX 2 (flat, texture-less patch): before falling back to a flat median colour, try copying real
+        # pixels -- belt buckle, fold shading, collar stitching -- from `donor` (the idle frame, whose arm never
+        # covers the belt), positionally aligned by each frame's own torso reference (tx, y_s) so the donor's
+        # collar/belt/hem lines up with this frame's. This is what actually fixes the "flat, texture-less belt
+        # patch" complaint; the flat per-zone median fill below is now only the last-resort fallback for
+        # whatever the donor itself has no pixels for (e.g. a hole that reaches outside the donor's own crop).
+        if donor is not None and hole.any():
+            dtx, dy_s = donor_ref
+            dyy = np.clip(np.rint(yy - y_s + dy_s).astype(int), 0, CH - 1)
+            dxx = np.clip(np.rint(xx - tx + dtx).astype(int), 0, CW - 1)
+            donor_px = donor[dyy, dxx]
+            donor_ok = hole & (donor_px[..., 3] > 200)
+            if donor_bad is not None:
+                donor_ok &= ~donor_bad[dyy, dxx]
+            body[donor_ok] = donor_px[donor_ok]
+            body[donor_ok, 3] = 255
+            hole &= ~donor_ok
+
+    if hole.any():
+        # Last-resort fallback: a nearest-*surviving*-pixel search, whether over the whole torso or split by
+        # garment zone, kept landing on something darker than the garment's own typical fill: an outline
+        # fragment, a shaded fold, or (once those were excluded) a stray dark cranny -- because a hole's nearest
+        # surviving neighbour is, almost by definition, right at a silhouette edge, exactly where the art's own
+        # shading and outline pixels concentrate. The owner read the result as "a black scarf or belt hanging".
+        # Each of the three bands a hole can fall in (blouse above the belt, the belt band itself, trousers
+        # below it) is instead filled with that garment's own colour measured as one flat median over this
+        # whole frame -- not searched for spatially at all -- which sidesteps the problem entirely: holes here
+        # are small enough that a flat fill reads fine, and a frame-wide median colour is dominated by each
+        # garment's ordinary fill, not the comparatively rare edge/fold/outline pixels.
         belt_band = (yy >= y_w - 6) & (yy <= y_w + 10)
         blouse_zone = ~belt_band & (yy < y_w)
         trouser_zone = ~belt_band & (yy >= y_w)
@@ -336,6 +362,15 @@ def main(preview=None):
     idle = cell(sheet, 16)
     sprites = ArmSprites(idle)
     print('idle: shoulder', np.round(sprites.shoulder, 1), 'elbow', np.round(sprites.elbow, 1), 'torso length', sprites.torso_len)
+    # The idle frame's own torso is the donor for rebuild_torso's texture patch (see FIX 2 there): her idle
+    # pose's arm hangs at her side and never covers the belt or shirt front. `donor_bad` is the idle frame's
+    # OWN arm silhouette (skin and sleeve), excluded from what can be copied -- without this, a hole that maps
+    # into where the idle's own hand rests near her hip pastes skin-tone pixels into the belt/blouse instead of
+    # fabric (seen on frame 5 of this build: a band of idle-hand skin tone across the waist).
+    donor_y_s = shirt_row(idle)
+    donor_tx = torso_x(idle, donor_y_s)
+    donor_ref = (donor_tx, donor_y_s)
+    donor_bad = ndi.binary_dilation(split(idle, donor_y_s)['near'] | split(idle, donor_y_s)['far'], iterations=4)
     out = sheet.copy()
     frames = range(LOOP) if preview is None else preview
     yy, xx = np.mgrid[0:CH, 0:CW]
@@ -356,7 +391,7 @@ def main(preview=None):
         removed = (parts['near'] & ~cap) | parts['far']
         body = erase(c, removed, grow=5)
         erased = ndi.binary_dilation(removed, iterations=5)  # matches erase()'s own grow=5 above, so the restore/infill zone covers everywhere erase() actually cleared
-        body = rebuild_torso(body, c, erased, ndi.binary_dilation(removed, iterations=0) | removed, parts['far'], y_s, y_w, tx, pivot)
+        body = rebuild_torso(body, c, erased, removed, parts['far'], y_s, y_w, tx, pivot, donor=idle, donor_ref=donor_ref, donor_bad=donor_bad)
         th_n, th_f = swing(n % LOOP)
         s = (y_w - y_s) / sprites.torso_len
         far = place_arm(sprites, th_f, ref, s, FAR_ARM_SHADE)
