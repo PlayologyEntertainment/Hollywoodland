@@ -1,6 +1,7 @@
 # White-male (shared placeholder) walk cycle: same pipeline fixes (2026-09-23)
 
-Status: **fixed locally in `art/generated/walk-cycle-v2/`, promoted to `public/`.**
+Status: **head-scale fix kept and promoted; the arm-rig skip was reverted after the owner
+checked it in game -- see "Round 2" below.**
 
 Companion to `character-white-female-walk-cycle-fix.md` -- same class of fixes, applied to
 `art/generated/walk-cycle-v2/` (the shared placeholder cycle used by `white-male`, and by
@@ -42,14 +43,36 @@ at its top.
 ## What changed
 
 - `art/generated/walk-cycle-v2/tools/build_sheet.py` -- added `rescale_head()`, applied to the
-  idle frame after its existing total-height match.
-- `art/generated/walk-cycle-v2/tools/rig_arms.py` -- marked unused at the top (kept for
-  reference); no longer run.
+  idle frame after its existing total-height match. Kept.
+- `art/generated/walk-cycle-v2/tools/rig_arms.py` -- marked unused at the top; no longer run.
 - Reran the pipeline (`build_sheet.py` -> `smooth_upper_body.py` -> skip `rig_arms.py` ->
   `package.py`) on the same take sheets and same frame picks (verified identical against the
   previously committed `walk-cycle-build-record.json`) -- no new AI generation, `strideWorld`/
   `displayScale`/`feet` all unchanged, only pixel content and the idle scale changed.
 - Verified all 17 frames on `review-contact-sheet.png`: no head/body size pop, suspenders and
-  shirt intact and consistent throughout.
+  shirt intact and consistent throughout on a static sheet.
 - Promoted `public/assets/characters/aspiring-actor-walk.webp`; `public/data/walk-cycle.json` was
   byte-identical to the regenerated one, so it didn't need re-copying.
+
+## Round 2: the arm-rig skip was wrong for this character
+
+The owner checked the no-rig version in the running game and reported the arms "not moving
+naturally" and "very jittery" -- exactly the failure mode `rig_arms.py` was originally written to
+fix (see its own docstring: the take sheets' raw arms repeat nearly the same pose every frame with
+the hand wandering up to ~50px between frames). That jitter is a *motion* defect: invisible on a
+static contact sheet (each frame looks like a plausible walking pose on its own), only visible
+once the frames play in sequence at game speed. The lower-confidence call flagged above turned out
+wrong specifically because contact-sheet review can't catch it -- unlike white-female, where the
+complaint (missing shirt, bad continuity) was visible frame-by-frame too.
+
+Fix: reran `rig_arms.py` on the already-idle-corrected smoothed master (so the head-scale fix is
+kept) and repackaged. `public/assets/characters/aspiring-actor-walk.webp` now has the rigged,
+mechanically-smooth pendulum arms again, exactly as before this round of changes, plus the small
+idle head-size correction. `walk-cycle.json` is unchanged (feet/geometry never depended on which
+arm version was composited).
+
+**Lesson for white-female**: her own arm-rig skip was checked and approved by the owner in the
+running game (their "Much better" after round 2), so the same jitter risk was checked and did not
+apply to her -- her raw arms really were smooth motion, not just a clean static frame. This
+male/female difference is the reason `rig_arms.py` existed for him in the first place and never
+existed as a documented problem for her.
