@@ -96,6 +96,9 @@ const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
  * lobby is the landlady's scene, above). */
 const HOME_HUB_BACKGROUND = assetUrl('assets/locations/boarding-house.webp');
 
+/** The longest entering a building waits for its scene art to decode before opening the dialog anyway. */
+const SCENE_ART_MAX_WAIT_MS = 1500;
+
 /** The most a fade will stay black waiting for the Boulevard to report it has started, so a scene that never does cannot
  * strand the player on a black screen. */
 const BOULEVARD_READY_TIMEOUT_MS = 8000;
@@ -648,10 +651,12 @@ export class AppShell {
     this.activeDialogueGraph = graph;
     this.activeDialogueNodeId = graph.rootNodeId;
     assertElement('#dialogue-location', HTMLElement).textContent = location;
-    this.applySceneArt(locationId);
     this.renderDialogueNode();
-    assertElement('#interaction-dialog', HTMLDialogElement).showModal();
-    this.syncAudio();
+    void this.applySceneArt(locationId).then(() => {
+      const dialog = assertElement('#interaction-dialog', HTMLDialogElement);
+      if (!dialog.open) dialog.showModal();
+      this.syncAudio();
+    });
   }
 
   /** Where the player is, for the music: the menus, out on the Boulevard, or inside a building or studio place. The player
@@ -709,49 +714,48 @@ export class AppShell {
 
   /** Toggles the visual-novel scene layout (background + overlaid character
    * to its left, dialogue panel to the right) for locations with approved
-   * runtime art; other locations keep the plain text-only dialogue card. */
-  private applySceneArt(locationId: string): void {
+   * runtime art; other locations keep the plain text-only dialogue card.
+   * Resolves once the art has decoded, so the caller can open the dialog with everything already paintable
+   * (a dialog that opens first shows an empty frame, then the art popping in). */
+  private applySceneArt(locationId: string): Promise<void> {
     const art = LOCATION_SCENE_ART[locationId];
     assertElement('#interaction-dialog', HTMLDialogElement).classList.toggle('has-scene-art', art !== undefined);
-    const background = assertElement('#scene-background', HTMLElement);
-    if (art === undefined) {
-      background.style.backgroundImage = '';
-    } else {
-      // Same stale-bitmap problem as the portrait below: hold the layer back until the new background has decoded.
-      background.style.visibility = 'hidden';
-      background.style.backgroundImage = `url(${art.background})`;
-      const backgroundSrc = art.background;
-      const preload = new Image();
-      preload.src = backgroundSrc;
-      const revealBackground = (): void => {
-        if (background.style.backgroundImage.includes(backgroundSrc)) background.style.visibility = '';
-      };
-      preload.decode().then(revealBackground, revealBackground);
-    }
+    assertElement('#scene-background', HTMLElement).style.backgroundImage = art !== undefined ? `url(${art.background})` : '';
     const character = assertElement('#scene-character', HTMLImageElement);
     character.alt = art?.character?.alt ?? '';
     character.hidden = art?.character === undefined;
-    const nextSrc = art?.character?.src;
-    if (nextSrc === undefined) {
+    if (art === undefined) return Promise.resolve();
+    const pending = [this.decodeSceneImage(art.background)];
+    if (art.character !== undefined) {
+      character.src = art.character.src;
+      pending.push(character.decode().catch(() => undefined));
+    } else {
       character.removeAttribute('src');
-      return;
     }
-    // Swapping src in place keeps painting the previous building's character until the new bitmap decodes, which shows
-    // as a blink-in. Hide the portrait, and reveal it only once the new image is decoded.
-    character.style.visibility = 'hidden';
-    character.src = nextSrc;
-    const reveal = (): void => {
-      if (character.getAttribute('src') === nextSrc) character.style.visibility = '';
-    };
-    character.decode().then(reveal, reveal);
+    // A slow or failed load must not keep the player from entering the building.
+    const giveUp = new Promise<void>((resolve) => window.setTimeout(resolve, SCENE_ART_MAX_WAIT_MS));
+    return Promise.race([Promise.all(pending).then(() => undefined), giveUp]);
   }
 
-  /** Warms the browser cache with every scene portrait so the reveal in applySceneArt() is effectively instant. */
+  private readonly sceneImages = new Map<string, HTMLImageElement>();
+
+  /** Loads and decodes an image once, keeping the element alive so its decoded bitmap stays cached. */
+  private decodeSceneImage(src: string): Promise<void> {
+    let image = this.sceneImages.get(src);
+    if (image === undefined) {
+      image = new Image();
+      image.src = src;
+      this.sceneImages.set(src, image);
+    }
+    return image.decode().catch(() => undefined);
+  }
+
+  /** Loads and decodes every scene image up front so entering a building rarely waits at all. */
   private preloadSceneArt(): void {
     for (const art of Object.values(LOCATION_SCENE_ART)) {
       if (art === undefined) continue;
-      new Image().src = art.background;
-      if (art.character !== undefined) new Image().src = art.character.src;
+      void this.decodeSceneImage(art.background);
+      if (art.character !== undefined) void this.decodeSceneImage(art.character.src);
     }
   }
 
