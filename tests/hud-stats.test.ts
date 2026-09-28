@@ -5,10 +5,11 @@ import { describe, expect, it } from 'vitest';
 
 import { describeHud, LOW_ENERGY_AT } from '../src/app/HudStats';
 import { createDefaultCareerState, type CareerState } from '../src/domain/CareerState';
+import { plainHtml } from './helpers/plainHtml';
 
 const read = (path: string): string => (readFileSync(new URL(path, import.meta.url), 'utf8') as string).replace(/\r\n/g, '\n');
 const css = read('../src/styles.css');
-const indexHtml = read('../index.html');
+const indexHtml = plainHtml(read('../index.html'));
 const appShell = read('../src/app/AppShell.ts');
 const createGame = read('../src/game/createGame.ts');
 
@@ -87,7 +88,7 @@ describe('the header', () => {
     for (const id of ['film-mode', 'fullscreen']) expect(header, id).not.toMatch(new RegExp(`id="${id}"[^>]*title=`));
     expect(rule('.chrome-button.icon-button')).toMatch(/width:\s*2rem.*height:\s*2rem/);
     expect(rule('.icon-button::after')).toContain('content: attr(aria-label)');
-    expect(appShell).toMatch(/button\.setAttribute\('aria-label', active \? 'Return to Color' : 'Film Look'\)/);
+    expect(appShell).toMatch(/button\.setAttribute\('aria-label', active \? t\('filmMode\.returnToColor'\) : t\('filmMode\.filmLook'\)\)/);
     expect(appShell).not.toContain('button.title');
   });
 

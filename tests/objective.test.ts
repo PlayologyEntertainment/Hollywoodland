@@ -16,10 +16,11 @@ import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import { completeQuestStage, startQuest, type QuestDef } from '../src/domain/Quests';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
+import { plainHtml } from './helpers/plainHtml';
 
 const read = (path: string): string => (readFileSync(new URL(path, import.meta.url), 'utf8') as string).replace(/\r\n/g, '\n');
 const css = read('../src/styles.css');
-const indexHtml = read('../index.html');
+const indexHtml = plainHtml(read('../index.html'));
 const appShell = read('../src/app/AppShell.ts');
 
 const quest = (id: string) => ALL_QUESTS.find((candidate) => candidate.id === id) as QuestDef;

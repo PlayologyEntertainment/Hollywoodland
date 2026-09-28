@@ -6,10 +6,11 @@ import { describe, expect, it } from 'vitest';
 import { buildQuestLog } from '../src/app/QuestLog';
 import { createDefaultCareerState, type CareerState } from '../src/domain/CareerState';
 import { completeQuestStage, startQuest, type QuestDef } from '../src/domain/Quests';
+import { plainHtml } from './helpers/plainHtml';
 
 const read = (path: string): string => (readFileSync(new URL(path, import.meta.url), 'utf8') as string).replace(/\r\n/g, '\n');
 const css = read('../src/styles.css');
-const indexHtml = read('../index.html');
+const indexHtml = plainHtml(read('../index.html'));
 const appShell = read('../src/app/AppShell.ts');
 
 const quest = (id: string, title: string, stages = 1, prerequisites?: QuestDef['prerequisites']): QuestDef => ({

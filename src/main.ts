@@ -10,7 +10,7 @@ import { InputController } from './input/InputController';
 import { IndexedDbSaveRepository } from './save/IndexedDbSaveRepository';
 import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, serializeSave, SAVE_SCHEMA_VERSION, type SaveEnvelope } from './save/SaveEnvelope';
 import { BrowserSettingsRepository } from './settings/SettingsRepository';
-import { I18n, type Catalog } from './i18n/I18n';
+import { i18n } from './i18n';
 import { resolveLocale } from './i18n/locales';
 import { applyStaticTranslations } from './i18n/staticText';
 
@@ -19,19 +19,13 @@ const saveRepository = new IndexedDbSaveRepository();
 const domainEvents = new DomainEventBus();
 let settings = settingsRepository.load();
 
-// Each language's strings are their own chunk, fetched only when that language is chosen (English at startup).
-const catalogLoaders = import.meta.glob<Catalog>('./locales/*.json', { import: 'default' });
-const i18n = new I18n((locale) => {
-  const load = catalogLoaders[`./locales/${locale}.json`];
-  return load === undefined ? Promise.reject(new Error(`No catalog for ${locale}`)) : load();
-});
 const applyLanguage = (language: string): Promise<void> => i18n.setLocale(resolveLocale(language, navigator.languages));
 i18n.onChange((locale) => {
   document.documentElement.lang = locale;
   applyStaticTranslations(document, i18n);
   domainEvents.emit('locale-changed', { locale });
 });
-void i18n.init().then(() => applyLanguage(settings.language));
+void applyLanguage(settings.language);
 const analytics = new NoOpAnalyticsClient();
 const audio = new AudioDirector(new WebAudioEngine());
 audio.setSettings(settings);

@@ -13,25 +13,23 @@ type LocaleListener = (locale: string) => void;
  *
  * `t(key, params, fallback)` tries the active locale, then English, then the caller's own inline `fallback` (the English
  * that authored content carries beside its ids), and finally the key itself, so a missing translation shows English
- * rather than breaking anything. English is loaded up front; other locales load when chosen. Engine-independent: no DOM,
- * no Phaser, so domain code and tests can use it directly. */
+ * rather than breaking anything. English is handed in up front (it is bundled, so there is never a moment with no text);
+ * other locales load when chosen. Engine-independent: no DOM, no Phaser, so domain code and tests can use it directly. */
 export class I18n {
-  private active: Catalog = {};
-  private source: Catalog = {};
+  private active: Catalog;
   private current = SOURCE_LOCALE;
   private readonly listeners = new Set<LocaleListener>();
   private requestId = 0;
 
-  public constructor(private readonly loader: CatalogLoader) {}
+  public constructor(
+    private readonly loader: CatalogLoader,
+    private readonly source: Catalog,
+  ) {
+    this.active = source;
+  }
 
   public get locale(): string {
     return this.current;
-  }
-
-  /** Loads English so lookups work before any other language is chosen. Call once at startup. */
-  public async init(): Promise<void> {
-    this.source = await this.loader(SOURCE_LOCALE);
-    if (this.current === SOURCE_LOCALE) this.active = this.source;
   }
 
   /** Switches language and tells listeners once the new catalog is in place. An unsupported code is ignored. A catalog

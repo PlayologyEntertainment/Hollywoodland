@@ -1,5 +1,6 @@
 import { ORIGINS, BASE_ATTRIBUTE_VALUE, MAX_ATTRIBUTE_VALUE, type AttributeKey, type Origin } from '../domain/Origins';
 import { PLAYER_CHARACTERS, type PlayerCharacter, type PlayerCharacterId } from '../domain/PlayerCharacters';
+import { t } from '../i18n';
 import { assertElement } from '../shared/assert';
 import { assetUrl } from '../shared/assetUrl';
 
@@ -10,13 +11,7 @@ export interface CharacterChoices {
   readonly characterId: PlayerCharacterId;
 }
 
-const ATTRIBUTE_LABELS: Record<AttributeKey, string> = {
-  presence: 'Presence',
-  craft: 'Craft',
-  wit: 'Wit',
-  nerve: 'Nerve',
-  grit: 'Grit',
-};
+const ATTRIBUTE_KEYS: readonly AttributeKey[] = ['presence', 'craft', 'wit', 'nerve', 'grit'];
 
 /**
  * The Character Creator screen shown after "Enter Hollywood" and before the
@@ -149,11 +144,11 @@ export class CharacterCreator {
   private renderAttributes(container: HTMLElement): void {
     const origin = this.getCurrentOrigin();
     container.replaceChildren();
-    for (const key of Object.keys(ATTRIBUTE_LABELS) as AttributeKey[]) {
+    for (const key of ATTRIBUTE_KEYS) {
       const value = BASE_ATTRIBUTE_VALUE + (origin.deltas[key] ?? 0);
       const row = document.createElement('div');
       const dt = document.createElement('dt');
-      dt.textContent = ATTRIBUTE_LABELS[key];
+      dt.textContent = t(`attribute.${key}`);
       const bar = document.createElement('div');
       bar.className = 'attribute-bar';
       const fill = document.createElement('span');

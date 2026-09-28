@@ -2,8 +2,9 @@
 import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
+import { plainHtml } from './helpers/plainHtml';
 
-const indexHtml = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const indexHtml = plainHtml(readFileSync(new URL('../index.html', import.meta.url), 'utf8') as string);
 const appShell = readFileSync(new URL('../src/app/AppShell.ts', import.meta.url), 'utf8') as string;
 
 describe('the Save Options dialog', () => {
@@ -40,11 +41,12 @@ describe('Save Options wiring', () => {
   });
 
   it('asks for an inline confirmation before deleting a slot', () => {
-    expect(appShell).toContain("prompt.textContent = `Delete \"${save.label}\"? This can't be undone.`;");
+    expect(appShell).toContain("prompt.textContent = t('save.deleteConfirm', { label: save.label });");
+    expect(JSON.parse(readFileSync(new URL('../src/locales/en.json', import.meta.url), 'utf8') as string)['save.deleteConfirm']).toBe("Delete \"{label}\"? This can't be undone.");
     // The row's Delete button only opens the prompt; deleteSaveSlot is reached from the confirm button alone.
     expect(appShell.match(/this\.deleteSaveSlot\(/g)).toHaveLength(1);
     expect(appShell).toMatch(/confirmDelete\.addEventListener\('click', \(\) => void this\.deleteSaveSlot\(save\.saveId, screens\)\)/);
-    expect(appShell).toMatch(/keep\.textContent = 'Keep';/);
+    expect(appShell).toContain("keep.textContent = t('save.keep');");
   });
 
   it('imports a file as a brand new slot rather than loading it directly', () => {
