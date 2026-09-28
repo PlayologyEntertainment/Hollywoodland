@@ -8,16 +8,19 @@ export interface LocaleInfo {
    * can still find theirs. */
   readonly nativeName: string;
   readonly status: LocaleStatus;
+  /** Whether a qualified reviewer has signed off this language's legal text (the Terms and Privacy Policy), which is tracked
+   * apart from the rest. A language cannot be `reviewed` until this is true. English is the source, so it is true. */
+  readonly legalReviewed: boolean;
 }
 
 export const SOURCE_LOCALE = 'en';
 
 export const LOCALES: readonly LocaleInfo[] = Object.freeze([
-  { code: 'en', nativeName: 'English', status: 'source' },
-  { code: 'es', nativeName: 'Español', status: 'beta' },
-  { code: 'fr', nativeName: 'Français', status: 'beta' },
-  { code: 'de', nativeName: 'Deutsch', status: 'beta' },
-  { code: 'pt-BR', nativeName: 'Português (Brasil)', status: 'beta' },
+  { code: 'en', nativeName: 'English', status: 'source', legalReviewed: true },
+  { code: 'es', nativeName: 'Español', status: 'beta', legalReviewed: false },
+  { code: 'fr', nativeName: 'Français', status: 'beta', legalReviewed: false },
+  { code: 'de', nativeName: 'Deutsch', status: 'beta', legalReviewed: false },
+  { code: 'pt-BR', nativeName: 'Português (Brasil)', status: 'beta', legalReviewed: false },
 ]);
 
 /** The value of the language setting that follows the browser rather than naming a language. */
