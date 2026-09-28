@@ -32,6 +32,7 @@ import { getTalentById } from '../../domain/TalentDefinitions';
 import type { InputController } from '../../input/InputController';
 import type { GameSettings } from '../../settings/Settings';
 import { assetUrl } from '../../shared/assetUrl';
+import { locationPrompt } from '../../i18n/content';
 
 /** Pre-manifest world width, retained only to migrate a save's `playerX`
  * from that era forward (see restoreState) — the live world width now
@@ -194,7 +195,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       .map((location) => ({
         x: location.x,
         radius: location.radius,
-        label: location.promptLabel,
+        label: locationPrompt(location),
         onEnter: () => this.enterLocation(location.id),
       }));
 

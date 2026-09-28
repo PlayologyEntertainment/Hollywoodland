@@ -45,6 +45,8 @@ import { AUTO_LANGUAGE, LOCALES } from '../i18n/locales';
 import { formatDateTime } from '../i18n/format';
 import { assertElement } from '../shared/assert';
 import { assetUrl } from '../shared/assetUrl';
+import { assignmentDescription, assignmentTitle, auditionOptionLabel, auditionPrompt, auditionTitle, characterRole, dialogueChoiceLabel, dialogueSpeaker, dialogueText, housingTierLabel, itemDescription, itemName, sceneArtAlt, talentDescription, talentName } from '../i18n/content';
+import { SCENE_ART_ALT } from '../game/SceneArtText';
 
 interface LocationSceneArt {
   readonly background: string;
@@ -60,39 +62,39 @@ interface LocationSceneArt {
 const LOCATION_SCENE_ART: Partial<Record<string, LocationSceneArt>> = {
   'casting-office': {
     background: assetUrl('assets/locations/casting-office.webp'),
-    character: { src: assetUrl('assets/characters/casting-gatekeeper.webp'), alt: 'The casting-office clerk' },
+    character: { src: assetUrl('assets/characters/casting-gatekeeper.webp'), alt: SCENE_ART_ALT['casting-office'] as string },
   },
   'boarding-house': {
     background: assetUrl('assets/locations/boarding-house-lobby.webp'),
-    character: { src: assetUrl('assets/characters/landlady.webp'), alt: 'The Bellhaven Rooms landlady' },
+    character: { src: assetUrl('assets/characters/landlady.webp'), alt: SCENE_ART_ALT['boarding-house'] as string },
   },
   diner: {
     background: assetUrl('assets/locations/diner.webp'),
-    character: { src: assetUrl('assets/characters/diner-confidant.webp'), alt: 'The counter girl at The Gilded Spoon' },
+    character: { src: assetUrl('assets/characters/diner-confidant.webp'), alt: SCENE_ART_ALT['diner'] as string },
   },
   'backlot-gate': {
     background: assetUrl('assets/locations/backlot-gate.webp'),
-    character: { src: assetUrl('assets/characters/rival.webp'), alt: 'The rival at the Monarch Pictures gate' },
+    character: { src: assetUrl('assets/characters/rival.webp'), alt: SCENE_ART_ALT['backlot-gate'] as string },
   },
   'extras-corral': {
     background: assetUrl('assets/locations/extras-corral.webp'),
-    character: { src: assetUrl('assets/characters/production-coordinator.webp'), alt: 'The production coordinator' },
+    character: { src: assetUrl('assets/characters/production-coordinator.webp'), alt: SCENE_ART_ALT['extras-corral'] as string },
   },
   soundstage: {
     background: assetUrl('assets/locations/soundstage.webp'),
-    character: { src: assetUrl('assets/characters/scene-partner.webp'), alt: 'The scene partner' },
+    character: { src: assetUrl('assets/characters/scene-partner.webp'), alt: SCENE_ART_ALT['soundstage'] as string },
   },
   'costume-shop': {
     background: assetUrl('assets/locations/costume-shop.webp'),
-    character: { src: assetUrl('assets/characters/wardrobe-mentor.webp'), alt: 'The wardrobe mistress at The Silver Thimble' },
+    character: { src: assetUrl('assets/characters/wardrobe-mentor.webp'), alt: SCENE_ART_ALT['costume-shop'] as string },
   },
   'klieg-light-office': {
     background: assetUrl('assets/locations/klieg-light-office.webp'),
-    character: { src: assetUrl('assets/characters/reporter.webp'), alt: 'The newspaper stringer at The Klieg Light' },
+    character: { src: assetUrl('assets/characters/reporter.webp'), alt: SCENE_ART_ALT['klieg-light-office'] as string },
   },
   'celestial-palace': {
     background: assetUrl('assets/locations/celestial-palace.webp'),
-    character: { src: assetUrl('assets/characters/house-manager.webp'), alt: 'The house manager of The Celestial Palace' },
+    character: { src: assetUrl('assets/characters/house-manager.webp'), alt: SCENE_ART_ALT['celestial-palace'] as string },
   },
 };
 
@@ -239,7 +241,7 @@ function describeAssignmentReward(reward: AssignmentReward): string {
   }
   if (reward.kind === 'relationship-delta') {
     const character = ALL_RELATIONSHIP_CHARACTERS.find((candidate) => candidate.id === reward.characterId);
-    return t('reward.relationship', { delta: formatRelationshipDelta(reward.delta), role: character?.role ?? reward.characterId });
+    return t('reward.relationship', { delta: formatRelationshipDelta(reward.delta), role: character !== undefined ? characterRole(character) : reward.characterId });
   }
   if (reward.kind === 'relationship-pivotal-flag') return t('reward.memory');
   return '';
@@ -260,7 +262,7 @@ function describeAssignmentRewards(rewards: readonly AssignmentReward[]): string
 function formatTalentRequirement(talent: TalentDefinition): string {
   if (talent.prerequisiteId !== null) {
     const prerequisite = getTalentById(talent.prerequisiteId);
-    return t('talent.requires', { name: prerequisite?.name ?? talent.prerequisiteId });
+    return t('talent.requires', { name: prerequisite !== undefined ? talentName(prerequisite) : talent.prerequisiteId });
   }
   return t('talent.cost', { cost: talent.cost });
 }
@@ -387,13 +389,14 @@ export class AppShell {
       );
       if (assertElement('#save-options-dialog', HTMLDialogElement).open) void this.renderSaveSlots(screens);
       this.populateLanguageSelect();
+      this.renderDialogueNode();
     });
     this.options.domainEvents.on('level-up', () => {
       this.pendingLevelUp = true;
       this.maybeCelebrateLevelUp();
     });
     this.options.domainEvents.on('assignment-resolved-away', (resolution) => {
-      this.toast(t('toast.assignmentFinished', { title: resolution.definition.title, rewards: describeAssignmentRewards(resolution.definition.rewards) }));
+      this.toast(t('toast.assignmentFinished', { title: assignmentTitle(resolution.definition), rewards: describeAssignmentRewards(resolution.definition.rewards) }));
     });
     this.options.domainEvents.on('audition-resolved', (payload) => this.renderAuditionDebrief(payload));
     assertElement('#interaction-dialog', HTMLDialogElement).addEventListener('close', () => {
@@ -729,7 +732,7 @@ export class AppShell {
     assertElement('#interaction-dialog', HTMLDialogElement).classList.toggle('has-scene-art', art !== undefined);
     assertElement('#scene-background', HTMLElement).style.backgroundImage = art !== undefined ? `url(${art.background})` : '';
     const character = assertElement('#scene-character', HTMLImageElement);
-    character.alt = art?.character?.alt ?? '';
+    character.alt = art?.character !== undefined ? sceneArtAlt(locationId, art.character.alt) : '';
     character.hidden = art?.character === undefined;
     if (art === undefined) return Promise.resolve();
     const pending = [this.decodeSceneImage(art.background)];
@@ -770,15 +773,16 @@ export class AppShell {
     if (this.activeDialogueGraph === undefined || this.activeDialogueNodeId === undefined) return;
     const node = this.activeDialogueGraph.nodes.find((candidate) => candidate.id === this.activeDialogueNodeId);
     if (node === undefined) return;
-    assertElement('#interaction-title', HTMLElement).textContent = node.speaker;
-    assertElement('#dialogue-line', HTMLElement).textContent = node.text;
+    const graphId = this.activeDialogueGraph.id;
+    assertElement('#interaction-title', HTMLElement).textContent = dialogueSpeaker(graphId, node);
+    assertElement('#dialogue-line', HTMLElement).textContent = dialogueText(graphId, node);
     const list = assertElement('#dialogue-choices', HTMLUListElement);
     list.replaceChildren(...node.choices.map((choice) => this.buildDialogueChoiceElement(node, choice)));
   }
 
   /** A quest-completing choice's label ends with its energy cost, e.g. "...steady work is coming. (-10 Energy)" —
    * matched here so that suffix alone can be picked out and coloured. */
-  private static readonly ENERGY_COST_LABEL = /^(.*)(\s\(-\d+ Energy\))$/;
+  private static readonly ENERGY_COST_LABEL = /^(.*)(\s\(-\d+ [^)]+\))$/;
 
   private buildDialogueChoiceElement(node: DialogueNode, choice: DialogueChoice): HTMLLIElement {
     const item = document.createElement('li');
@@ -788,14 +792,15 @@ export class AppShell {
     const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
     // Disabled for a reason other than "not enough energy" (a locked quest, a missing item, ...) keeps the plain
     // label: highlighting the energy cost there would point at the wrong prerequisite.
-    const energyLabel = !available && this.lacksRequiredEnergy(choice) ? choice.label.match(AppShell.ENERGY_COST_LABEL) : null;
+    const label = dialogueChoiceLabel(this.activeDialogueGraph?.id ?? '', node, choice);
+    const energyLabel = !available && this.lacksRequiredEnergy(choice) ? label.match(AppShell.ENERGY_COST_LABEL) : null;
     if (energyLabel !== null) {
       const cost = document.createElement('span');
       cost.className = 'dialogue-choice-energy-cost';
       cost.textContent = energyLabel[2] ?? '';
       button.append(energyLabel[1] ?? '', cost);
     } else {
-      button.textContent = choice.label;
+      button.textContent = label;
     }
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
@@ -851,7 +856,7 @@ export class AppShell {
     if (definition === undefined) return;
     this.activeAudition = definition;
     this.auditionChoices = {};
-    assertElement('#audition-title', HTMLElement).textContent = definition.title;
+    assertElement('#audition-title', HTMLElement).textContent = auditionTitle(definition);
     this.renderAuditionCategories(definition);
     assertElement('#audition-form', HTMLFormElement).hidden = false;
     assertElement('#audition-debrief', HTMLElement).hidden = true;
@@ -868,7 +873,7 @@ export class AppShell {
     const fieldset = document.createElement('fieldset');
     fieldset.className = 'audition-category';
     const legend = document.createElement('legend');
-    legend.textContent = category.prompt;
+    legend.textContent = auditionPrompt(this.activeAudition ?? { id: '' }, category);
     fieldset.appendChild(legend);
     for (const option of category.options) {
       const label = document.createElement('label');
@@ -881,7 +886,7 @@ export class AppShell {
         this.auditionChoices = { ...this.auditionChoices, [category.kind]: option.id };
         if (this.activeAudition !== undefined) this.updateAuditionSubmitEnabled(this.activeAudition);
       });
-      label.append(input, document.createTextNode(option.label));
+      label.append(input, document.createTextNode(auditionOptionLabel(this.activeAudition ?? { id: '' }, option)));
       fieldset.appendChild(label);
     }
     return fieldset;
@@ -986,7 +991,7 @@ export class AppShell {
     }
     timer.hidden = false;
     const remainingMs = Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now());
-    assertElement('#hud-assignment-label', HTMLElement).textContent = definition.title;
+    assertElement('#hud-assignment-label', HTMLElement).textContent = assignmentTitle(definition);
     assertElement('#hud-assignment-countdown', HTMLElement).textContent = formatCountdown(remainingMs);
   }
 
@@ -1025,7 +1030,7 @@ export class AppShell {
     if (axes === undefined) return undefined;
     const item = document.createElement('li');
     const summary = document.createElement('span');
-    summary.textContent = `${character.role} — ${capitalizeRelationshipLabel(deriveRelationshipLabel(axes))}`;
+    summary.textContent = `${characterRole(character)} — ${capitalizeRelationshipLabel(deriveRelationshipLabel(axes))}`;
     const detail = document.createElement('small');
     detail.textContent = formatRelationshipAxes(axes);
     item.append(summary, detail);
@@ -1059,9 +1064,9 @@ export class AppShell {
     const summary = document.createElement('div');
     summary.className = 'talent-summary';
     const name = document.createElement('span');
-    name.textContent = t('talent.nameWithBranch', { name: talent.name, branch: t(`talent.branch.${talent.branch}`) });
+    name.textContent = t('talent.nameWithBranch', { name: talentName(talent), branch: t(`talent.branch.${talent.branch}`) });
     const detail = document.createElement('small');
-    detail.textContent = unlocked ? talent.description : t('talent.detailLocked', { description: talent.description, requirement: formatTalentRequirement(talent) });
+    detail.textContent = unlocked ? talentDescription(talent) : t('talent.detailLocked', { description: talentDescription(talent), requirement: formatTalentRequirement(talent) });
     summary.append(name, detail);
     item.appendChild(summary);
     if (unlocked) return item;
@@ -1097,9 +1102,9 @@ export class AppShell {
   private buildInventoryListItem(item: InventoryItemDefinition): HTMLLIElement {
     const listItem = document.createElement('li');
     const summary = document.createElement('span');
-    summary.textContent = t('item.nameWithCategory', { name: item.name, category: formatItemCategory(item.category) });
+    summary.textContent = t('item.nameWithCategory', { name: itemName(item), category: formatItemCategory(item.category) });
     const detail = document.createElement('small');
-    detail.textContent = item.description;
+    detail.textContent = itemDescription(item);
     listItem.append(summary, detail);
     return listItem;
   }
@@ -1123,7 +1128,7 @@ export class AppShell {
     }
     section.hidden = false;
     assertElement('#home-hub-away-headline', HTMLElement).textContent =
-      t('assignments.awayHeadline', { title: resolution.definition.title, duration: formatAssignmentDuration(resolution.awayMinutes) });
+      t('assignments.awayHeadline', { title: assignmentTitle(resolution.definition), duration: formatAssignmentDuration(resolution.awayMinutes) });
     const list = assertElement('#home-hub-away-rewards', HTMLUListElement);
     list.replaceChildren(
       ...resolution.definition.rewards.map((reward) => {
@@ -1135,7 +1140,8 @@ export class AppShell {
   }
 
   private renderHomeHubHousing(state: CareerState): void {
-    const tierLabel = HOUSING_TIERS.find((definition) => definition.tier === state.housing.tier)?.label ?? state.housing.tier;
+    const currentTier = HOUSING_TIERS.find((definition) => definition.tier === state.housing.tier);
+    const tierLabel = currentTier !== undefined ? housingTierLabel(currentTier) : state.housing.tier;
     assertElement('#home-hub-housing-tier', HTMLElement).textContent = t('housing.current', { tier: tierLabel });
     const next = nextHousingTierDefinition(state.housing.tier);
     const upgradeButton = assertElement('#home-hub-upgrade-housing', HTMLButtonElement);
@@ -1144,7 +1150,7 @@ export class AppShell {
       return;
     }
     upgradeButton.hidden = false;
-    upgradeButton.textContent = t('housing.moveTo', { tier: next.label, cost: next.upgradeCost });
+    upgradeButton.textContent = t('housing.moveTo', { tier: housingTierLabel(next), cost: next.upgradeCost });
     const affordable = canAffordHousingUpgrade(state.housing, state.resources);
     upgradeButton.disabled = !affordable;
     upgradeButton.setAttribute('aria-disabled', String(!affordable));
@@ -1164,7 +1170,7 @@ export class AppShell {
       assertElement('#home-hub-active-assignment-label', HTMLElement).textContent =
         definition !== undefined
           ? t('assignments.inProgress', {
-              title: definition.title,
+              title: assignmentTitle(definition),
               time: formatCountdown(Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now())),
             })
           : t('assignments.inProgressUnknown');
@@ -1179,14 +1185,14 @@ export class AppShell {
   private buildAssignmentListItem(definition: AssignmentDefinition): HTMLLIElement {
     const item = document.createElement('li');
     const summary = document.createElement('span');
-    summary.textContent = t('assignments.titleWithDuration', { title: definition.title, duration: formatAssignmentDuration(definition.durationMinutes) });
+    summary.textContent = t('assignments.titleWithDuration', { title: assignmentTitle(definition), duration: formatAssignmentDuration(definition.durationMinutes) });
     const detail = document.createElement('small');
-    detail.textContent = definition.description;
+    detail.textContent = assignmentDescription(definition);
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = t('assignments.start');
     // The button sits left of its text, so several identical "Start" buttons need a name.
-    button.setAttribute('aria-label', t('assignments.startNamed', { title: definition.title }));
+    button.setAttribute('aria-label', t('assignments.startNamed', { title: assignmentTitle(definition) }));
     button.addEventListener('click', () =>
       this.options.domainEvents.emit('assignment-start-requested', { assignmentId: definition.id }),
     );

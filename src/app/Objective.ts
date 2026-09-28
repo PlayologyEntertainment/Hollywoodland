@@ -2,6 +2,8 @@ import type { CareerState } from '../domain/CareerState';
 import type { InventoryItemDefinition } from '../domain/Inventory';
 import { getActiveStage, getActiveStageIndex, getQuestStatus, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
+import { t } from '../i18n';
+import { questStageDescription, questTitle } from '../i18n/content';
 
 /** What the Objective card is telling the player to do. */
 export interface Objective {
@@ -15,6 +17,7 @@ export interface Objective {
   readonly goal: string;
 }
 
+/** The English idle objective: what `idleObjective()` returns before any translation. */
 export const IDLE_OBJECTIVE: Objective = Object.freeze({
   kind: 'idle',
   questId: undefined,
@@ -22,6 +25,11 @@ export const IDLE_OBJECTIVE: Objective = Object.freeze({
   title: 'All caught up',
   goal: 'Explore the Boulevard',
 });
+
+/** The idle objective in the active language. */
+function idleObjective(): Objective {
+  return Object.freeze({ ...IDLE_OBJECTIVE, title: t('objective.idle.title'), goal: t('objective.idle.goal') });
+}
 
 /**
  * The objective to show: the first quest that is in progress (in the quests' own order), or, when none has been started, the
@@ -38,10 +46,10 @@ export function chooseObjective(
     .map((quest) => ({ quest, status: getQuestStatus(state, quest, quests, roster, items) }))
     .filter(({ status }) => status === 'active' || status === 'available');
   const chosen = open.find(({ status }) => status === 'active') ?? open[0];
-  if (chosen === undefined) return IDLE_OBJECTIVE;
+  if (chosen === undefined) return idleObjective();
   const stage = (chosen.status === 'active' ? getActiveStage(state, chosen.quest) : undefined) ?? chosen.quest.stages[0];
-  if (stage === undefined) return IDLE_OBJECTIVE;
-  return { kind: 'quest', questId: chosen.quest.id, stageId: stage.id, title: chosen.quest.title, goal: stage.description };
+  if (stage === undefined) return idleObjective();
+  return { kind: 'quest', questId: chosen.quest.id, stageId: stage.id, title: questTitle(chosen.quest), goal: questStageDescription(chosen.quest, stage) };
 }
 
 /** Whether the goal `objective` described has been accomplished: its stage is now complete, whether or not the quest goes on. */
