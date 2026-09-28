@@ -164,6 +164,7 @@ describe('AudioDirector', () => {
   it('passes volume settings straight to the engine, before or after unlocking', () => {
     const { engine, director } = setup();
     director.setSettings({
+      language: 'auto',
       textScale: 1,
       highContrast: false,
       reducedMotion: false,

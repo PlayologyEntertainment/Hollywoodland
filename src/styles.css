@@ -478,6 +478,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .settings-form::-webkit-scrollbar-thumb { border-radius: .3rem; background: rgb(216 173 88 / 55%); }
 .settings-form .drawer-heading { margin: 0 -.95rem .2rem; padding: 0 .95rem .6rem; }
 .settings-form label:not(.check-row) { display: grid; grid-template-columns: 1fr auto; gap: .6rem; }
+.settings-form select { min-width: 12rem; border: 1px solid var(--gold); border-radius: .2rem; padding: .35rem .5rem; background: #17120f; color: var(--ink); font: inherit; }
 .settings-form input[type='range'] { grid-column: 1 / -1; width: 100%; }
 .settings-checks { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.2rem; row-gap: .6rem; }
 /* Same shape as .audition-option: align-items: start (not center) so a row that wraps to two lines still has its box beside the
