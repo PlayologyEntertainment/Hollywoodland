@@ -1273,11 +1273,37 @@ export class AppShell {
     deleteButton.type = 'button';
     deleteButton.className = 'danger-button';
     deleteButton.textContent = 'Delete';
-    deleteButton.addEventListener('click', () => void this.deleteSaveSlot(save.saveId, screens));
 
     const actions = document.createElement('div');
     actions.className = 'save-slot-actions';
     actions.append(load, exportButton, deleteButton);
+
+    // Delete is destructive and can't be undone, so it first swaps the row's actions for an inline confirmation; Keep
+    // (focused by default) restores them.
+    deleteButton.addEventListener('click', () => {
+      const prompt = document.createElement('span');
+      prompt.className = 'save-slot-confirm-text';
+      prompt.setAttribute('role', 'alert');
+      prompt.textContent = `Delete "${save.label}"? This can't be undone.`;
+
+      const confirmDelete = document.createElement('button');
+      confirmDelete.type = 'button';
+      confirmDelete.className = 'danger-button';
+      confirmDelete.textContent = 'Delete';
+      confirmDelete.addEventListener('click', () => void this.deleteSaveSlot(save.saveId, screens));
+
+      const keep = document.createElement('button');
+      keep.type = 'button';
+      keep.textContent = 'Keep';
+      keep.addEventListener('click', () => {
+        actions.replaceChildren(load, exportButton, deleteButton);
+        deleteButton.focus();
+      });
+
+      actions.classList.add('is-confirming');
+      actions.replaceChildren(prompt, confirmDelete, keep);
+      keep.focus();
+    });
 
     item.append(label, meta, actions);
     return item;

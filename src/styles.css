@@ -521,6 +521,8 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   color: var(--gold-bright); font-family: Arial, sans-serif; font-size: .68rem; letter-spacing: .02em;
 }
 .save-slot-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: .5rem; }
+.save-slot-actions.is-confirming { flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+.save-slot-confirm-text { flex-basis: 100%; text-align: right; color: #f0876a; }
 .danger-button { border-color: rgb(240 135 106 / 55%); color: #f0876a; }
 .danger-button:hover:not(:disabled) { border-color: #f0876a; color: #fff; }
 @media (max-width: 640px) {
