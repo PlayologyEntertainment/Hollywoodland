@@ -3,6 +3,7 @@ import { PLAYER_CHARACTERS, type PlayerCharacter, type PlayerCharacterId } from 
 import { t } from '../i18n';
 import { assertElement } from '../shared/assert';
 import { assetUrl } from '../shared/assetUrl';
+import { originBlurb, originName, playerCharacterLabel } from '../i18n/content';
 
 export interface CharacterChoices {
   readonly name: string;
@@ -75,7 +76,7 @@ export class CharacterCreator {
       button.className = 'character-choice';
       button.disabled = !character.hasInGameArt;
       button.setAttribute('role', 'radio');
-      button.setAttribute('aria-label', character.label);
+      button.setAttribute('aria-label', playerCharacterLabel(character));
       const image = document.createElement('img');
       image.src = assetUrl(character.headshot);
       image.alt = '';
@@ -103,7 +104,7 @@ export class CharacterCreator {
       child.setAttribute('tabindex', selected && PLAYER_CHARACTERS[index]?.hasInGameArt === true ? '0' : '-1');
     });
     portrait.src = assetUrl(chosen.portrait);
-    portrait.alt = chosen.label;
+    portrait.alt = playerCharacterLabel(chosen);
     assertElement('#creator-reflection', HTMLImageElement).src = assetUrl(chosen.reflection);
   }
 
@@ -115,9 +116,9 @@ export class CharacterCreator {
       card.setAttribute('role', 'radio');
       card.setAttribute('aria-checked', String(index === this.originIndex));
       const name = document.createElement('strong');
-      name.textContent = origin.name;
+      name.textContent = originName(origin);
       const blurb = document.createElement('span');
-      blurb.textContent = origin.blurb;
+      blurb.textContent = originBlurb(origin);
       card.append(name, blurb);
       card.addEventListener('click', () => {
         this.originIndex = index;

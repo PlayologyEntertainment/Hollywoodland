@@ -77,3 +77,54 @@ function matchingBrace(text: string, open: number): number {
   }
   return -1;
 }
+
+/** What a message is made of, for validation: whether its braces balance, which parameters it uses, and which selectors each
+ * plural offers. Parameters inside plural branches count. */
+export interface MessageAnalysis {
+  readonly balanced: boolean;
+  readonly params: readonly string[];
+  readonly plurals: ReadonlyArray<{ readonly param: string; readonly selectors: readonly string[] }>;
+}
+
+export function analyzeMessage(template: string): MessageAnalysis {
+  const params = new Set<string>();
+  const plurals: Array<{ param: string; selectors: string[] }> = [];
+  let balanced = true;
+
+  const walk = (text: string): void => {
+    let index = 0;
+    while (index < text.length) {
+      const char = text[index] as string;
+      if (char === '}') {
+        balanced = false;
+        index += 1;
+        continue;
+      }
+      if (char !== '{') {
+        index += 1;
+        continue;
+      }
+      const end = matchingBrace(text, index);
+      if (end === -1) {
+        balanced = false;
+        return;
+      }
+      const body = text.slice(index + 1, end);
+      const firstComma = body.indexOf(',');
+      const name = (firstComma === -1 ? body : body.slice(0, firstComma)).trim();
+      if (name !== '') params.add(name);
+      if (firstComma !== -1) {
+        const rest = body.slice(firstComma + 1);
+        const secondComma = rest.indexOf(',');
+        if (secondComma !== -1 && rest.slice(0, secondComma).trim() === 'plural') {
+          const branches = parseBranches(rest.slice(secondComma + 1));
+          plurals.push({ param: name, selectors: [...branches.keys()] });
+          for (const branch of branches.values()) walk(branch);
+        }
+      }
+      index = end + 1;
+    }
+  };
+  walk(template);
+  return { balanced, params: [...params].sort(), plurals };
+}

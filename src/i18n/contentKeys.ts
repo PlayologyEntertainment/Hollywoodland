@@ -1,0 +1,28 @@
+/** Catalog keys for authored content. Derived from the content's own ids, so authors never invent a key: the same id always
+ * gives the same key, in the game and in the extractor (tests/content-catalog.test.ts). All start with `content.` so they can
+ * never collide with a hand-named interface key. */
+export const contentKeys = {
+  questTitle: (questId: string): string => `content.quest.${questId}.title`,
+  questSummary: (questId: string): string => `content.quest.${questId}.summary`,
+  questStage: (questId: string, stageId: string): string => `content.quest.${questId}.stage.${stageId}`,
+  talentName: (talentId: string): string => `content.talent.${talentId}.name`,
+  talentDescription: (talentId: string): string => `content.talent.${talentId}.description`,
+  itemName: (itemId: string): string => `content.item.${itemId}.name`,
+  itemDescription: (itemId: string): string => `content.item.${itemId}.description`,
+  assignmentTitle: (assignmentId: string): string => `content.assignment.${assignmentId}.title`,
+  assignmentDescription: (assignmentId: string): string => `content.assignment.${assignmentId}.description`,
+  characterRole: (characterId: string): string => `content.character.${characterId}.role`,
+  housingTier: (tier: string): string => `content.housing.${tier}`,
+  originName: (originId: string): string => `content.origin.${originId}.name`,
+  originBlurb: (originId: string): string => `content.origin.${originId}.blurb`,
+  playerCharacter: (characterId: string): string => `content.player.${characterId}.label`,
+  auditionTitle: (auditionId: string): string => `content.audition.${auditionId}.title`,
+  auditionCheck: (auditionId: string, index: number): string => `content.audition.${auditionId}.check.${index}`,
+  auditionPrompt: (auditionId: string, kind: string): string => `content.audition.${auditionId}.category.${kind}.prompt`,
+  auditionOption: (auditionId: string, optionId: string): string => `content.audition.${auditionId}.option.${optionId}`,
+  dialogueSpeaker: (graphId: string, nodeId: string): string => `content.dialogue.${graphId}.${nodeId}.speaker`,
+  dialogueText: (graphId: string, nodeId: string): string => `content.dialogue.${graphId}.${nodeId}.text`,
+  dialogueChoice: (graphId: string, nodeId: string, choiceId: string): string => `content.dialogue.${graphId}.${nodeId}.choice.${choiceId}`,
+  locationPrompt: (locationId: string): string => `content.location.${locationId}.prompt`,
+  sceneArtAlt: (locationKey: string): string => `content.sceneArt.${locationKey}.alt`,
+};

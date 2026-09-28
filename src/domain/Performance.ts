@@ -14,6 +14,8 @@ import {
   type RelationshipEffect,
 } from './Relationships';
 import type { CareerState } from './CareerState';
+import { t } from '../i18n';
+import { auditionCheckLabel, auditionOptionLabel } from '../i18n/content';
 
 /** The GDD's (§8) "Read the Room" signature audition system. `study` isn't
  * a category the player chooses from here — it's whatever preparation the
@@ -139,10 +141,6 @@ const TENSION_COMPLICATION_MIN = 50;
 const TALENT_BONUS = 2;
 const RELATIONSHIP_TRUST_DIVISOR = 25;
 
-function capitalize(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
 function evaluatePreparationCheck(
   state: CareerState,
   check: PreparationCheck,
@@ -202,10 +200,10 @@ export function resolveAudition(
   const factors: AuditionFactor[] = [];
   let score = 0;
 
-  for (const check of definition.preparationChecks) {
+  for (const [checkIndex, check] of definition.preparationChecks.entries()) {
     if (!evaluatePreparationCheck(state, check, items)) continue;
     score += check.points;
-    factors.push({ label: check.label, points: check.points });
+    factors.push({ label: auditionCheckLabel(definition, checkIndex, check.label), points: check.points });
   }
 
   const chosenAttributes: AttributeKey[] = [];
@@ -214,20 +212,20 @@ export function resolveAudition(
     if (option === undefined) continue;
 
     score += option.fit;
-    factors.push({ label: option.label, points: option.fit });
+    factors.push({ label: auditionOptionLabel(definition, option), points: option.fit });
 
     if (option.attribute !== undefined) {
       chosenAttributes.push(option.attribute);
       const attributePoints = state.attributes[option.attribute] - BASE_ATTRIBUTE_VALUE;
       if (attributePoints !== 0) {
         score += attributePoints;
-        factors.push({ label: `${capitalize(option.attribute)} carried it`, points: attributePoints });
+        factors.push({ label: t('audition.factor.attributeCarried', { attribute: t(`attribute.${option.attribute}`) }), points: attributePoints });
       }
     }
 
     if (option.talentId !== undefined && (state.progression.unlockedTalentIds[option.talentId] ?? false)) {
       score += TALENT_BONUS;
-      factors.push({ label: 'Trained technique paid off', points: TALENT_BONUS });
+      factors.push({ label: t('audition.factor.trainedTechnique'), points: TALENT_BONUS });
     }
   }
 
@@ -238,7 +236,7 @@ export function resolveAudition(
     const trustPoints = Math.round(scenePartnerAxes.trust / RELATIONSHIP_TRUST_DIVISOR);
     if (trustPoints !== 0) {
       score += trustPoints;
-      factors.push({ label: 'Your scene partner has your back', points: trustPoints });
+      factors.push({ label: t('audition.factor.scenePartnerTrust'), points: trustPoints });
     }
   }
 

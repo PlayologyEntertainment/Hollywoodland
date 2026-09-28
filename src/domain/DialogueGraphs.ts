@@ -834,7 +834,7 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
 
 validateDialogueGraph(CELESTIAL_PALACE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 
-const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
+export const DIALOGUE_GRAPHS: Readonly<Record<string, DialogueGraph>> = Object.freeze({
   [CASTING_OFFICE_DIALOGUE.id]: CASTING_OFFICE_DIALOGUE,
   [DINER_DIALOGUE.id]: DINER_DIALOGUE,
   [LANDLADY_DIALOGUE.id]: LANDLADY_DIALOGUE,

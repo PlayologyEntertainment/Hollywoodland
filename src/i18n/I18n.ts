@@ -58,6 +58,12 @@ export class I18n {
     return formatMessage(template, params, this.current);
   }
 
+  /** Authored content text (a quest title, a line of dialogue): the active language, then English, then the caller's own
+   * inline English, with no placeholder processing, so a brace or hash in the writing stays exactly as written. */
+  public raw(key: string, fallback: string): string {
+    return this.active[key] ?? this.source[key] ?? fallback;
+  }
+
   /** Whether the active language (not just English) has a string for `key`. */
   public has(key: string): boolean {
     return this.active[key] !== undefined;

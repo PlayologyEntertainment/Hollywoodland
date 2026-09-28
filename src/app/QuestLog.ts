@@ -3,6 +3,7 @@ import { t } from '../i18n';
 import type { InventoryItemDefinition } from '../domain/Inventory';
 import { getActiveStage, getQuestStatus, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
+import { questStageDescription, questTitle } from '../i18n/content';
 
 /** One row of the Status panel's quest log. */
 export interface QuestLogEntry {
@@ -31,8 +32,8 @@ export function buildQuestLog(
     const stage = status === 'active' ? getActiveStage(state, quest) : undefined;
     entries.push({
       id: quest.id,
-      title: quest.title,
-      label: status === 'completed' ? t('quests.completed') : (stage?.description ?? t('quests.available')),
+      title: questTitle(quest),
+      label: status === 'completed' ? t('quests.completed') : (stage !== undefined ? questStageDescription(quest, stage) : t('quests.available')),
       completed: status === 'completed',
     });
   }
