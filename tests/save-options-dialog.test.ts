@@ -39,6 +39,14 @@ describe('Save Options wiring', () => {
     expect(appShell).toContain('this.options.onDeleteSave(');
   });
 
+  it('asks for an inline confirmation before deleting a slot', () => {
+    expect(appShell).toContain("prompt.textContent = `Delete \"${save.label}\"? This can't be undone.`;");
+    // The row's Delete button only opens the prompt; deleteSaveSlot is reached from the confirm button alone.
+    expect(appShell.match(/this\.deleteSaveSlot\(/g)).toHaveLength(1);
+    expect(appShell).toMatch(/confirmDelete\.addEventListener\('click', \(\) => void this\.deleteSaveSlot\(save\.saveId, screens\)\)/);
+    expect(appShell).toMatch(/keep\.textContent = 'Keep';/);
+  });
+
   it('imports a file as a brand new slot rather than loading it directly', () => {
     expect(appShell).toMatch(/private async importSave\(fileInput: HTMLInputElement, screens: MenuScreens\): Promise<void> \{/);
     expect(appShell).not.toMatch(/importSave[\s\S]{0,400}this\.enterGame/);
