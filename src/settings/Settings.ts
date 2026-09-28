@@ -1,4 +1,8 @@
+import { AUTO_LANGUAGE, isSupportedLocale } from '../i18n/locales';
+
 export interface GameSettings {
+  /** `auto` (follow the browser) or a supported locale code; see src/i18n/locales.ts. */
+  readonly language: string;
   readonly textScale: number;
   readonly highContrast: boolean;
   readonly reducedMotion: boolean;
@@ -13,6 +17,7 @@ export interface GameSettings {
 }
 
 export const DEFAULT_SETTINGS: GameSettings = Object.freeze({
+  language: AUTO_LANGUAGE,
   textScale: 1,
   highContrast: false,
   reducedMotion: false,
@@ -27,6 +32,7 @@ export const DEFAULT_SETTINGS: GameSettings = Object.freeze({
 export function normalizeSettings(value: unknown): GameSettings {
   if (!isRecord(value)) return DEFAULT_SETTINGS;
   return {
+    language: value.language === AUTO_LANGUAGE || isSupportedLocale(value.language) ? (value.language as string) : DEFAULT_SETTINGS.language,
     textScale: clampNumber(value.textScale, 1, 1.5, DEFAULT_SETTINGS.textScale),
     highContrast: readBoolean(value.highContrast, DEFAULT_SETTINGS.highContrast),
     reducedMotion: readBoolean(value.reducedMotion, DEFAULT_SETTINGS.reducedMotion),

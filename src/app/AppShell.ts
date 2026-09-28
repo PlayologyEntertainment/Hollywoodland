@@ -39,6 +39,9 @@ import { ALL_RELATIONSHIP_CHARACTERS, type RelationshipCharacterDef } from '../d
 import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
 import { AUTOSAVE_ID, type SaveEnvelope } from '../save/SaveEnvelope';
 import type { GameSettings } from '../settings/Settings';
+import type { I18n } from '../i18n/I18n';
+import { AUTO_LANGUAGE, LOCALES } from '../i18n/locales';
+import { formatDateTime } from '../i18n/format';
 import { assertElement } from '../shared/assert';
 import { assetUrl } from '../shared/assetUrl';
 
@@ -121,6 +124,7 @@ interface MenuScreens {
 
 interface AppShellOptions {
   readonly settings: GameSettings;
+  readonly i18n: I18n;
   /** Sets what music and ambience should be playing; the shell only says where the player is. */
   readonly audio: AudioController;
   readonly domainEvents: DomainEventBus;
@@ -187,11 +191,9 @@ function formatPlaytime(seconds: number): string {
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
 }
 
-/** "Sep 23, 2026, 10:15 AM" for a save slot's timestamp, in the player's own locale. */
-function formatSavedAt(iso: string): string {
-  const parsed = new Date(iso);
-  if (Number.isNaN(parsed.getTime())) return iso;
-  return parsed.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+/** "Sep 23, 2026, 10:15 AM" for a save slot's timestamp, in the active language's own style. */
+function formatSavedAt(iso: string, locale: string): string {
+  return formatDateTime(iso, locale);
 }
 
 /** Triggers a browser "Save As" download of a small text file — used to export a save slot. The object URL is
@@ -1255,7 +1257,7 @@ export class AppShell {
 
     const meta = document.createElement('small');
     meta.className = 'save-slot-meta';
-    meta.textContent = `${formatSavedAt(save.savedAt)} · ${formatPlaytime(save.playtimeSeconds)}`;
+    meta.textContent = `${formatSavedAt(save.savedAt, this.options.i18n.locale)} · ${formatPlaytime(save.playtimeSeconds)}`;
     if (save.saveId === AUTOSAVE_ID) {
       const tag = document.createElement('span');
       tag.className = 'save-slot-tag';
@@ -1387,10 +1389,23 @@ export class AppShell {
 
   /** Pre-fills the New Save label with the current time, editable before the player submits it. */
   private populateSaveNewLabel(): void {
-    assertElement('#save-new-label', HTMLInputElement).value = formatSavedAt(new Date().toISOString());
+    assertElement('#save-new-label', HTMLInputElement).value = formatSavedAt(new Date().toISOString(), this.options.i18n.locale);
+  }
+
+  /** One option per language, each named in its own script; a language whose catalog is not yet reviewed carries a Beta tag. */
+  private populateLanguageSelect(): void {
+    const { i18n } = this.options;
+    const select = assertElement('#language', HTMLSelectElement);
+    const auto = new Option(i18n.t('settings.languageAuto', undefined, 'Automatic'), AUTO_LANGUAGE);
+    const languages = LOCALES.map((locale) =>
+      new Option(locale.status === 'beta' ? `${locale.nativeName} (${i18n.t('settings.languageBeta', undefined, 'Beta')})` : locale.nativeName, locale.code),
+    );
+    select.replaceChildren(auto, ...languages);
+    select.value = this.settings.language;
   }
 
   private populateSettingsForm(): void {
+    this.populateLanguageSelect();
     assertElement('#text-scale', HTMLInputElement).value = String(this.settings.textScale * 100);
     assertElement('#text-scale-output', HTMLOutputElement).value = `${this.settings.textScale * 100}%`;
     assertElement('#high-contrast', HTMLInputElement).checked = this.settings.highContrast;
@@ -1409,6 +1424,7 @@ export class AppShell {
 
   private readSettingsForm(): GameSettings {
     return {
+      language: assertElement('#language', HTMLSelectElement).value,
       textScale: Number(assertElement('#text-scale', HTMLInputElement).value) / 100,
       highContrast: assertElement('#high-contrast', HTMLInputElement).checked,
       reducedMotion: assertElement('#reduced-motion', HTMLInputElement).checked,

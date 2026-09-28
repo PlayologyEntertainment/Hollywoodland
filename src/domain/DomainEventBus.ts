@@ -40,6 +40,10 @@ export interface LevelUpPayload {
   readonly level: number;
 }
 
+export interface LocaleChangedPayload {
+  readonly locale: string;
+}
+
 export interface StatusPanelVisibilityChangedPayload {
   readonly open: boolean;
 }
@@ -48,6 +52,8 @@ export interface DomainEventMap {
   readonly 'career-state-changed': CareerState;
   readonly 'restore-career-state': CareerState;
   readonly 'settings-changed': GameSettings;
+  /** The display language changed and its catalog is loaded; anything that renders text should render it again. */
+  readonly 'locale-changed': LocaleChangedPayload;
   readonly 'interaction-proximity-changed': InteractionProximityChangedPayload;
   readonly 'casting-office-entered': undefined;
   readonly 'diner-entered': undefined;
