@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const indexHtml = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const appShell = readFileSync(new URL('../src/app/AppShell.ts', import.meta.url), 'utf8');
 
 describe('home hub dialog', () => {
   it('provides a JS-populated skeleton for the housing, assignment, and away-summary renderers', () => {
@@ -25,5 +26,10 @@ describe('home hub dialog', () => {
     expect(dialog).toContain('has-scene-art');
     expect(dialog).toContain('id="home-hub-background"');
     expect(dialog).toMatch(/class="story-card home-hub-card scene-panel"/);
+  });
+
+  it('shows the active assignment live countdown instead of a check-back-later line', () => {
+    expect(appShell).toMatch(/In progress: \$\{definition\.title\} — \$\{formatCountdown\(/);
+    expect(appShell).toMatch(/\} left`/);
   });
 });

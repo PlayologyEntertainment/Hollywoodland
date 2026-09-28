@@ -1152,8 +1152,12 @@ export class AppShell {
     if (active !== null) {
       const definition = ALL_ASSIGNMENTS.find((candidate) => candidate.id === active.assignmentId);
       activeContainer.hidden = false;
+      // Updated by the same 250ms heartbeat as the header timer; when it reaches zero the assignment resolves, `active`
+      // clears, and the next render swaps this line back for the assignment list.
       assertElement('#home-hub-active-assignment-label', HTMLElement).textContent =
-        definition !== undefined ? `In progress: ${definition.title} — check back later.` : 'In progress — check back later.';
+        definition !== undefined
+          ? `In progress: ${definition.title} — ${formatCountdown(Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now()))} left`
+          : 'In progress — check back later.';
       list.replaceChildren();
       return;
     }
