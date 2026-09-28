@@ -128,3 +128,60 @@ export function analyzeMessage(template: string): MessageAnalysis {
   walk(template);
   return { balanced, params: [...params].sort(), plurals };
 }
+
+/** Rebuilds a message with `transform` applied to each run of literal text: everything outside `{...}` placeholders, including
+ * the text inside plural branches. Placeholders, plural selectors and the `#` number marker are left exactly as written, so
+ * the result is still a valid message with the same parameters. Used to pseudo-localize English (see pseudo.ts). */
+export function mapMessageText(template: string, transform: (text: string) => string): string {
+  let out = '';
+  let run = '';
+  const flush = (): void => {
+    if (run !== '') out += transform(run);
+    run = '';
+  };
+  let index = 0;
+  while (index < template.length) {
+    const char = template[index] as string;
+    if (char !== '{') {
+      run += char;
+      index += 1;
+      continue;
+    }
+    const end = matchingBrace(template, index);
+    if (end === -1) {
+      run += template.slice(index);
+      break;
+    }
+    flush();
+    const body = template.slice(index + 1, end);
+    const firstComma = body.indexOf(',');
+    const rest = firstComma === -1 ? '' : body.slice(firstComma + 1);
+    const secondComma = rest.indexOf(',');
+    if (firstComma !== -1 && secondComma !== -1 && rest.slice(0, secondComma).trim() === 'plural') {
+      const head = body.slice(0, firstComma + 1 + secondComma + 1);
+      const branches = rest.slice(secondComma + 1);
+      let rebuilt = '';
+      let at = 0;
+      while (at < branches.length) {
+        const open = branches.indexOf('{', at);
+        if (open === -1) {
+          rebuilt += branches.slice(at);
+          break;
+        }
+        const close = matchingBrace(branches, open);
+        if (close === -1) {
+          rebuilt += branches.slice(at);
+          break;
+        }
+        rebuilt += `${branches.slice(at, open + 1)}${mapMessageText(branches.slice(open + 1, close), transform)}}`;
+        at = close + 1;
+      }
+      out += `{${head}${rebuilt}}`;
+    } else {
+      out += template.slice(index, end + 1);
+    }
+    index = end + 1;
+  }
+  flush();
+  return out;
+}

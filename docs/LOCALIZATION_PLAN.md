@@ -133,4 +133,11 @@ All four earlier open questions are answered (see the table at the top). One cau
   - Staleness: `npm run i18n:stamp` records a fingerprint of the English each translation came from (`src/locales/meta/<code>.json`). Run it right after a language is (re)translated, not to silence a warning.
   - `LocaleInfo.legalReviewed` tracks the legal sign-off apart from the rest, and a language cannot be `reviewed` without it.
   - `npm run i18n:check` prints each language's coverage and warnings. The checks are ordinary tests, so `npm test` (and the deploy workflow, which runs it) fails on any error.
+- **Step 5 (done, 2026-09-28):** Asian-language readiness. No Asian language ships yet; the engine is ready for one.
+  - `:root:lang(ja|zh|ko)` in `styles.css` swaps the plain-text and display fonts for the device's own CJK fonts (regional fonts first, since the same Han character is drawn differently per language). All plain-text fonts now go through `--sans-font`, so a language can swap them.
+  - For CJK: letter-spacing 0, no italics, small labels raised to at least .8rem, `line-break: strict` (Japanese, Chinese) and `word-break: keep-all` (Korean).
+  - The Wait button's "+20 Energy" tooltip was hard-coded in CSS; it now comes from the catalog (`data-tooltip`).
+  - Test-only languages, reachable with `?lang=` for one visit and never offered to players: `en-XA` (English accented and stretched 40 percent, generated from the current English) and `ja` (a 56-string Japanese sample, `src/locales/ja.json`).
+  - Checked in a real browser through script (screenshots timed out): with `?lang=ja` and `?lang=en-XA`, at text scale 100% and 150%, the main menu, Settings, HUD and Status panel show no clipped or overflowing text and the header stats do not overlap the objective card. Japanese used the CJK font stack, no letter-spacing, no italics, strict line-breaking.
+  - Not yet checked by eye: the actual glyph shapes and the look of the deco style with fallback fonts. Take a screenshot at `?lang=ja` on a real device.
 - **Still English:** `<title>` and the meta description (kept English for crawlers), the default save names stored inside save files, and the error messages thrown when a save file is invalid. Sign text drawn on the Boulevard buildings is proper names only.

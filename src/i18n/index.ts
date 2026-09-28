@@ -1,6 +1,7 @@
 import en from '../locales/en.json';
 import { I18n, type Catalog } from './I18n';
 import type { MessageParams } from './message';
+import { pseudoCatalog } from './pseudo';
 
 // English is bundled with the game, so text exists from the first paint. Every other language is its own chunk, fetched
 // only when the player picks it (or Automatic resolves to it).
@@ -8,6 +9,7 @@ const catalogLoaders = import.meta.glob<Catalog>('../locales/*.json', { import: 
 
 /** The game's one translator. UI code calls `t(...)`; only the shell (main.ts) changes its language. */
 export const i18n = new I18n((locale) => {
+  if (locale === 'en-XA') return Promise.resolve(pseudoCatalog(en as Catalog));
   const load = catalogLoaders[`../locales/${locale}.json`];
   return load === undefined ? Promise.reject(new Error(`No catalog for ${locale}`)) : load();
 }, en as Catalog);

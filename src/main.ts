@@ -11,7 +11,7 @@ import { IndexedDbSaveRepository } from './save/IndexedDbSaveRepository';
 import { AUTOSAVE_ID, MANUAL_SAVE_ID, migrateSaveEnvelope, newestSave, parseSave, serializeSave, SAVE_SCHEMA_VERSION, type SaveEnvelope } from './save/SaveEnvelope';
 import { BrowserSettingsRepository } from './settings/SettingsRepository';
 import { i18n } from './i18n';
-import { resolveLocale } from './i18n/locales';
+import { isLoadableLocale, resolveLocale } from './i18n/locales';
 import { applyStaticTranslations } from './i18n/staticText';
 
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
@@ -25,7 +25,9 @@ i18n.onChange((locale) => {
   applyStaticTranslations(document, i18n);
   domainEvents.emit('locale-changed', { locale });
 });
-void applyLanguage(settings.language);
+// `?lang=en-XA` (stretched pseudo-English) or `?lang=ja` (Japanese sample) show a test language for this visit only; it is not saved.
+const testLanguage = new URLSearchParams(window.location.search).get('lang');
+void (isLoadableLocale(testLanguage) ? i18n.setLocale(testLanguage) : applyLanguage(settings.language));
 const analytics = new NoOpAnalyticsClient();
 const audio = new AudioDirector(new WebAudioEngine());
 audio.setSettings(settings);

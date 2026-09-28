@@ -224,7 +224,7 @@ describe('the sub-titles and attribute rows inside the side panes', () => {
 
   it('set "Name" and "Character" on the left and "Choose an Origin" and "Attributes" on the right in one shared rule', () => {
     const shared = rules(css, '.creator-field span, .creator-origin h3');
-    expect(shared).toContain('font-family: Arial, sans-serif');
+    expect(shared).toContain('font-family: var(--sans-font)');
     expect(shared).toContain('text-transform: uppercase');
   });
 

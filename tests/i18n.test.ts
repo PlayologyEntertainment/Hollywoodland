@@ -202,8 +202,8 @@ describe('locale catalogs', () => {
   const codes = (readdirSync(localesDir) as string[]).filter((name) => name.endsWith('.json')).map((name) => name.replace('.json', ''));
   const read = (code: string): Record<string, string> => JSON.parse(readFileSync(new URL(`${code}.json`, localesDir), 'utf8')) as Record<string, string>;
 
-  it('has a catalog for every supported locale and none for unsupported ones', () => {
-    expect([...codes].sort()).toEqual(LOCALES.map((locale) => locale.code).sort());
+  it('has a catalog for every player language, plus the Japanese test sample, and none for anything else', () => {
+    expect([...codes].sort()).toEqual([...LOCALES.map((locale) => locale.code), 'ja'].sort());
   });
 
   it('never defines a key English lacks, and keeps placeholders identical to English', () => {
