@@ -374,7 +374,13 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
   display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; max-width: min(22rem, 34%); pointer-events: none;
 }
 .game-frame:has(#status-panel:not([hidden])) .notices { top: calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem); right: calc(min(100cqw, 29rem) + 1rem); }
-.interaction-prompt { padding: .8rem 1.1rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(11 9 11 / 92%); box-shadow: 0 8px 30px #000; text-shadow: 0 2px 5px #000; }
+/* Notices share the Day/Time/Money bar's look (see .hud-stats): a dark band whose left and right sides fade into transparency, with the
+   text centred in the solid middle. The wide inline padding keeps the text clear of the fading ends. */
+.interaction-prompt, .toast {
+  padding: .55rem 2.6rem; text-align: center;
+  background: linear-gradient(90deg, transparent, rgb(13 10 12 / 82%) 16%, rgb(13 10 12 / 82%) 84%, transparent);
+  text-shadow: 0 2px 5px #000;
+}
 
 /* The Status panel starts below the header. Its title row stays put and only
    the body scrolls (the panel itself does not). It has a single edge line, on its left. */
@@ -756,7 +762,6 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .attribute-bar span { position: absolute; inset: 0 auto 0 0; background: var(--gold-bright); }
 .creator-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 
-.toast { padding: .7rem 1rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 94%); box-shadow: 0 8px 30px #000; }
 /* A notice shows at once (nothing here transitions while it is showing) and fades away when FadingNotice adds this class. 600ms
    matches NOTICE_FADE_MS in FadingNotice.ts. */
 .notice-fading { opacity: 0; transition: opacity 600ms ease; }

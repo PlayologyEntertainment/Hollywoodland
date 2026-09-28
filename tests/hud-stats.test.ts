@@ -449,11 +449,13 @@ describe('the floating notices: the entrance prompt and the toast', () => {
     expect(z('.notices')).toBeGreaterThan(z('.stage'));
   });
 
-  it('are on rounded rectangles like the buttons, from one shared radius', () => {
-    expect(css).toMatch(/:root \{[^}]*--button-radius: 0\.25rem;/);
-    for (const selector of ['button', '.interaction-prompt', '.toast']) {
-      expect(rule(selector), selector).toContain('border-radius: var(--button-radius)');
-    }
+  it('share the stats bar edge-fading band, with the text centred and no outline or corners', () => {
+    const block = css.match(/\n\.interaction-prompt, \.toast \{([^}]*)\}/)?.[1] ?? '';
+    const fade = 'linear-gradient(90deg, transparent, rgb(13 10 12 / 82%) 16%, rgb(13 10 12 / 82%) 84%, transparent)';
+    expect(block).toContain(fade);
+    expect(rule('.hud-stats')).toContain(fade);
+    expect(block).toContain('text-align: center');
+    expect(block).not.toMatch(/border|box-shadow/);
   });
 
   it('no longer positions either notice itself: the old centred spots are gone', () => {
