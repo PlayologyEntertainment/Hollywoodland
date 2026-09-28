@@ -40,6 +40,7 @@ import { ALL_TALENTS, getTalentById } from '../domain/TalentDefinitions';
 import { AUTOSAVE_ID, type SaveEnvelope } from '../save/SaveEnvelope';
 import type { GameSettings } from '../settings/Settings';
 import type { I18n } from '../i18n/I18n';
+import { t } from '../i18n';
 import { AUTO_LANGUAGE, LOCALES } from '../i18n/locales';
 import { formatDateTime } from '../i18n/format';
 import { assertElement } from '../shared/assert';
@@ -147,40 +148,33 @@ interface AppShellOptions {
   readonly onExportSave: (saveId: string) => Promise<string>;
 }
 
-const AUDITION_OUTCOME_LABELS: Record<AuditionOutcome, string> = {
-  breakthrough: 'Breakthrough',
-  'promising-complication': 'Promising Complication',
-  'wrong-role-right-notice': 'Wrong Role, Right Notice',
-  'memorable-setback': 'Memorable Setback',
-};
+function auditionOutcomeLabel(outcome: AuditionOutcome): string {
+  return t(`audition.outcome.${outcome}`);
+}
 
 function capitalizeRelationshipLabel(label: RelationshipLabel): string {
-  return label.charAt(0).toUpperCase() + label.slice(1);
+  return t(`relationship.label.${label}`);
 }
 
 function formatRelationshipAxes(axes: RelationshipAxes): string {
-  const parts = [`Trust ${axes.trust}`, `Tension ${axes.tension}`];
-  if (axes.attraction !== null) parts.push(`Attraction ${axes.attraction}`);
-  if (axes.obligation !== 0) parts.push(`Obligation ${axes.obligation > 0 ? '+' : ''}${axes.obligation}`);
+  const parts = [t('relationship.trust', { value: axes.trust }), t('relationship.tension', { value: axes.tension })];
+  if (axes.attraction !== null) parts.push(t('relationship.attraction', { value: axes.attraction }));
+  if (axes.obligation !== 0) parts.push(t('relationship.obligation', { value: `${axes.obligation > 0 ? '+' : ''}${axes.obligation}` }));
   return parts.join(' · ');
 }
 
-function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
 /** "Jordan's Career" when the player named their character, "Your Career" otherwise. */
-function possessiveTitle(name: string, noun: string): string {
-  return name.length > 0 ? `${name}'s ${noun}` : `Your ${noun}`;
+function possessiveTitle(name: string, kind: 'career' | 'home'): string {
+  return name.length > 0 ? t(`title.${kind}.named`, { name }) : t(`title.${kind}.unnamed`);
 }
 
 function formatItemCategory(category: InventoryItemDefinition['category']): string {
-  return category.split('-').map(capitalize).join(' ');
+  return t(`item.category.${category}`);
 }
 
 function formatAssignmentDuration(minutes: number): string {
   const hours = minutes / 60;
-  return Number.isInteger(hours) ? `${hours}h` : `${minutes}m`;
+  return Number.isInteger(hours) ? t('time.hoursShort', { hours }) : t('time.minutesShort', { minutes });
 }
 
 /** "2h 05m" (or "5m" under an hour) for a save slot's playtime. */
@@ -188,7 +182,7 @@ function formatPlaytime(seconds: number): string {
   const totalMinutes = Math.round(seconds / 60);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}m` : `${minutes}m`;
+  return hours > 0 ? t('time.hoursMinutesShort', { hours, minutes: String(minutes).padStart(2, '0') }) : t('time.minutesShort', { minutes });
 }
 
 /** "Sep 23, 2026, 10:15 AM" for a save slot's timestamp, in the active language's own style. */
@@ -222,10 +216,11 @@ function formatCountdown(remainingMs: number): string {
 
 function formatRelationshipDelta(delta: RelationshipDelta): string {
   const parts: string[] = [];
-  if (delta.trust) parts.push(`${delta.trust > 0 ? '+' : ''}${delta.trust} trust`);
-  if (delta.tension) parts.push(`${delta.tension > 0 ? '+' : ''}${delta.tension} tension`);
-  if (delta.attraction) parts.push(`${delta.attraction > 0 ? '+' : ''}${delta.attraction} attraction`);
-  if (delta.obligation) parts.push(`${delta.obligation > 0 ? '+' : ''}${delta.obligation} obligation`);
+  const signed = (value: number): string => `${value > 0 ? '+' : ''}${value}`;
+  if (delta.trust) parts.push(t('relationship.delta.trust', { amount: signed(delta.trust) }));
+  if (delta.tension) parts.push(t('relationship.delta.tension', { amount: signed(delta.tension) }));
+  if (delta.attraction) parts.push(t('relationship.delta.attraction', { amount: signed(delta.attraction) }));
+  if (delta.obligation) parts.push(t('relationship.delta.obligation', { amount: signed(delta.obligation) }));
   return parts.join(', ');
 }
 
@@ -234,19 +229,19 @@ function formatRelationshipDelta(delta: RelationshipDelta): string {
  * assignment content today, but the function stays total over
  * `AssignmentReward` rather than assuming that). */
 function describeAssignmentReward(reward: AssignmentReward): string {
-  if (reward.kind === 'xp-grant') return `+${reward.amount} XP`;
+  if (reward.kind === 'xp-grant') return t('reward.xp', { amount: reward.amount });
   if (reward.kind === 'resource-delta') {
     const parts: string[] = [];
     if (reward.delta.money) parts.push(`${reward.delta.money > 0 ? '+' : ''}$${reward.delta.money}`);
-    if (reward.delta.energy) parts.push(`${reward.delta.energy > 0 ? '+' : ''}${reward.delta.energy} energy`);
-    if (reward.delta.reputation) parts.push(`${reward.delta.reputation > 0 ? '+' : ''}${reward.delta.reputation} reputation`);
+    if (reward.delta.energy) parts.push(t('reward.energy', { amount: `${reward.delta.energy > 0 ? '+' : ''}${reward.delta.energy}` }));
+    if (reward.delta.reputation) parts.push(t('reward.reputation', { amount: `${reward.delta.reputation > 0 ? '+' : ''}${reward.delta.reputation}` }));
     return parts.join(', ');
   }
   if (reward.kind === 'relationship-delta') {
     const character = ALL_RELATIONSHIP_CHARACTERS.find((candidate) => candidate.id === reward.characterId);
-    return `${formatRelationshipDelta(reward.delta)} with ${character?.role ?? reward.characterId}`;
+    return t('reward.relationship', { delta: formatRelationshipDelta(reward.delta), role: character?.role ?? reward.characterId });
   }
-  if (reward.kind === 'relationship-pivotal-flag') return 'A memory worth keeping.';
+  if (reward.kind === 'relationship-pivotal-flag') return t('reward.memory');
   return '';
 }
 
@@ -265,9 +260,9 @@ function describeAssignmentRewards(rewards: readonly AssignmentReward[]): string
 function formatTalentRequirement(talent: TalentDefinition): string {
   if (talent.prerequisiteId !== null) {
     const prerequisite = getTalentById(talent.prerequisiteId);
-    return `Requires ${prerequisite?.name ?? talent.prerequisiteId}`;
+    return t('talent.requires', { name: prerequisite?.name ?? talent.prerequisiteId });
   }
-  return `${talent.cost} point${talent.cost === 1 ? '' : 's'}`;
+  return t('talent.cost', { cost: talent.cost });
 }
 
 export class AppShell {
@@ -343,52 +338,62 @@ export class AppShell {
     });
     this.options.domainEvents.on('casting-office-entered', () => {
       this.openDialogue(CASTING_OFFICE_DIALOGUE, 'Sunset Casting Exchange', 'casting-office');
-      this.announce('You entered the Sunset Casting Exchange.');
+      this.announce(t('announce.castingOffice'));
     });
     this.options.domainEvents.on('diner-entered', () => {
       this.openDialogue(DINER_DIALOGUE, 'The Gilded Spoon', 'diner');
-      this.announce('You entered The Gilded Spoon.');
+      this.announce(t('announce.diner'));
     });
     this.options.domainEvents.on('home-hub-entered', ({ resolution }) => {
       // Walking in starts with the landlady; her closing choices open the Home Menu.
       this.pendingAwayResolution = resolution;
       this.openDialogue(LANDLADY_DIALOGUE, 'Bellhaven Rooms', 'boarding-house');
-      this.announce('You entered Bellhaven Rooms.');
+      this.announce(t('announce.homeHub'));
     });
     this.options.domainEvents.on('backlot-gate-entered', () => {
       this.openDialogue(RIVAL_DIALOGUE, 'Monarch Pictures Gate', 'backlot-gate');
-      this.announce('You reached the Monarch Pictures gate.');
+      this.announce(t('announce.backlotGate'));
     });
     this.options.domainEvents.on('extras-corral-entered', () => {
       this.openDialogue(PRODUCTION_COORDINATOR_DIALOGUE, 'The Extras Corral', 'extras-corral');
-      this.announce('You checked in at the extras corral.');
+      this.announce(t('announce.extrasCorral'));
     });
     this.options.domainEvents.on('soundstage-entered', () => {
       this.openDialogue(SCENE_PARTNER_DIALOGUE, 'The Soundstage', 'soundstage');
-      this.announce('You stepped onto the soundstage.');
+      this.announce(t('announce.soundstage'));
     });
     this.options.domainEvents.on('costume-shop-entered', () => {
       this.openDialogue(COSTUME_SHOP_DIALOGUE, 'The Silver Thimble', 'costume-shop');
-      this.announce('You entered The Silver Thimble.');
+      this.announce(t('announce.costumeShop'));
     });
     this.options.domainEvents.on('klieg-light-entered', () => {
       this.openDialogue(KLIEG_LIGHT_DIALOGUE, 'The Klieg Light', 'klieg-light-office');
-      this.announce('You entered The Klieg Light.');
+      this.announce(t('announce.kliegLight'));
     });
     this.options.domainEvents.on('celestial-palace-entered', () => {
       this.openDialogue(CELESTIAL_PALACE_DIALOGUE, 'The Celestial Palace', 'celestial-palace');
-      this.announce('You entered The Celestial Palace.');
+      this.announce(t('announce.celestialPalace'));
     });
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
       this.renderCareerState(state);
+    });
+    // A new language re-draws everything the game wrote itself; the static markup is re-translated by main.ts.
+    this.options.domainEvents.on('locale-changed', () => {
+      this.renderCareerState(this.careerState);
+      assertElement('#film-mode', HTMLButtonElement).setAttribute(
+        'aria-label',
+        document.body.classList.contains('film-mode') ? t('filmMode.returnToColor') : t('filmMode.filmLook'),
+      );
+      if (assertElement('#save-options-dialog', HTMLDialogElement).open) void this.renderSaveSlots(screens);
+      this.populateLanguageSelect();
     });
     this.options.domainEvents.on('level-up', () => {
       this.pendingLevelUp = true;
       this.maybeCelebrateLevelUp();
     });
     this.options.domainEvents.on('assignment-resolved-away', (resolution) => {
-      this.toast(`${resolution.definition.title} finished while you were away — ${describeAssignmentRewards(resolution.definition.rewards)}`);
+      this.toast(t('toast.assignmentFinished', { title: resolution.definition.title, rewards: describeAssignmentRewards(resolution.definition.rewards) }));
     });
     this.options.domainEvents.on('audition-resolved', (payload) => this.renderAuditionDebrief(payload));
     assertElement('#interaction-dialog', HTMLDialogElement).addEventListener('close', () => {
@@ -438,7 +443,7 @@ export class AppShell {
     continueCareer.addEventListener('click', async () => {
       if (this.transition.isRunning) return;
       const state = await this.options.onLoad();
-      await this.resumeCareer(screens, state, 'Career restored');
+      await this.resumeCareer(screens, state, t('toast.careerRestored'));
     });
     assertElement('#return-menu', HTMLButtonElement).addEventListener('click', () => {
       void this.transition.run(async () => {
@@ -475,7 +480,7 @@ export class AppShell {
       this.settings = this.readSettingsForm();
       this.applySettings(this.settings);
       this.options.onSettingsChanged(this.settings);
-      this.toast('Settings saved');
+      this.toast(t('toast.settingsSaved'));
     });
     for (const id of ['music-volume', 'ambience-volume'] as const) {
       assertElement(`#${id}`, HTMLInputElement).addEventListener('input', (event) => {
@@ -519,7 +524,7 @@ export class AppShell {
         await this.refreshContinue();
         await this.renderSaveSlots(screens);
         this.populateSaveNewLabel();
-        this.toast('Career saved');
+        this.toast(t('toast.careerSaved'));
       });
     });
     assertElement('#save-import-button', HTMLButtonElement).addEventListener('click', () => fileInput.click());
@@ -633,7 +638,7 @@ export class AppShell {
     this.inGame = true;
     this.place = undefined;
     this.syncAudio();
-    this.announce('Hollywood Boulevard. Use A and D or arrow keys to move. Press E near the casting office.');
+    this.announce(t('announce.boulevard'));
   }
 
   private buildInitialState(choices: CharacterChoices): CareerState {
@@ -900,7 +905,7 @@ export class AppShell {
   private renderAuditionDebrief(payload: AuditionResolvedPayload): void {
     if (this.activeAudition === undefined || this.activeAudition.id !== payload.auditionId) return;
     assertElement('#audition-form', HTMLFormElement).hidden = true;
-    assertElement('#audition-outcome', HTMLElement).textContent = AUDITION_OUTCOME_LABELS[payload.result.outcome];
+    assertElement('#audition-outcome', HTMLElement).textContent = auditionOutcomeLabel(payload.result.outcome);
     const list = assertElement('#audition-factors', HTMLUListElement);
     list.replaceChildren(...payload.result.factors.map((factor) => this.buildAuditionFactorElement(factor)));
     assertElement('#audition-debrief', HTMLElement).hidden = false;
@@ -936,8 +941,8 @@ export class AppShell {
 
   private renderCareerState(state: CareerState): void {
     this.objectives.update(state);
-    assertElement('#status-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'Career');
-    assertElement('#home-hub-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'Home');
+    assertElement('#status-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'career');
+    assertElement('#home-hub-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'home');
     const hud = describeHud(state);
     // The Status panel.
     assertElement('#status-time', HTMLElement).textContent = `${hud.weekday} · ${hud.slotLabel}`;
@@ -1035,14 +1040,14 @@ export class AppShell {
     const required = xpRequiredForNextLevel(progression.level);
     const levelLabel =
       progression.unspentTalentPoints > 0
-        ? `Level ${progression.level} — ${progression.unspentTalentPoints} talent point${progression.unspentTalentPoints === 1 ? '' : 's'} available`
-        : `Level ${progression.level}`;
+        ? t('progression.levelWithPoints', { level: progression.level, points: progression.unspentTalentPoints })
+        : t('progression.level', { level: progression.level });
     assertElement('#status-level', HTMLElement).textContent = levelLabel;
     const bar = assertElement('#status-xp-bar', HTMLElement);
     const percent = Math.min(100, Math.round((progression.xp / required) * 100));
     bar.setAttribute('aria-valuenow', String(percent));
     assertElement('#status-xp-fill', HTMLElement).style.width = `${percent}%`;
-    assertElement('#status-xp-label', HTMLElement).textContent = `${progression.xp} / ${required} XP`;
+    assertElement('#status-xp-label', HTMLElement).textContent = t('progression.xp', { xp: progression.xp, required });
     const list = assertElement('#status-talents-list', HTMLUListElement);
     list.replaceChildren(...ALL_TALENTS.map((talent) => this.buildTalentListItem(talent, progression)));
   }
@@ -1054,16 +1059,16 @@ export class AppShell {
     const summary = document.createElement('div');
     summary.className = 'talent-summary';
     const name = document.createElement('span');
-    name.textContent = `${talent.name} (${capitalize(talent.branch)})`;
+    name.textContent = t('talent.nameWithBranch', { name: talent.name, branch: t(`talent.branch.${talent.branch}`) });
     const detail = document.createElement('small');
-    detail.textContent = unlocked ? talent.description : `${talent.description} — ${formatTalentRequirement(talent)}`;
+    detail.textContent = unlocked ? talent.description : t('talent.detailLocked', { description: talent.description, requirement: formatTalentRequirement(talent) });
     summary.append(name, detail);
     item.appendChild(summary);
     if (unlocked) return item;
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'talent-unlock-button';
-    button.textContent = `Unlock (${talent.cost})`;
+    button.textContent = t('talent.unlock', { cost: talent.cost });
     const available = canUnlockTalent(progression, talent);
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
@@ -1092,7 +1097,7 @@ export class AppShell {
   private buildInventoryListItem(item: InventoryItemDefinition): HTMLLIElement {
     const listItem = document.createElement('li');
     const summary = document.createElement('span');
-    summary.textContent = `${item.name} (${formatItemCategory(item.category)})`;
+    summary.textContent = t('item.nameWithCategory', { name: item.name, category: formatItemCategory(item.category) });
     const detail = document.createElement('small');
     detail.textContent = item.description;
     listItem.append(summary, detail);
@@ -1118,7 +1123,7 @@ export class AppShell {
     }
     section.hidden = false;
     assertElement('#home-hub-away-headline', HTMLElement).textContent =
-      `${resolution.definition.title} finished while you were away (${formatAssignmentDuration(resolution.awayMinutes)}).`;
+      t('assignments.awayHeadline', { title: resolution.definition.title, duration: formatAssignmentDuration(resolution.awayMinutes) });
     const list = assertElement('#home-hub-away-rewards', HTMLUListElement);
     list.replaceChildren(
       ...resolution.definition.rewards.map((reward) => {
@@ -1131,7 +1136,7 @@ export class AppShell {
 
   private renderHomeHubHousing(state: CareerState): void {
     const tierLabel = HOUSING_TIERS.find((definition) => definition.tier === state.housing.tier)?.label ?? state.housing.tier;
-    assertElement('#home-hub-housing-tier', HTMLElement).textContent = `Currently: ${tierLabel}`;
+    assertElement('#home-hub-housing-tier', HTMLElement).textContent = t('housing.current', { tier: tierLabel });
     const next = nextHousingTierDefinition(state.housing.tier);
     const upgradeButton = assertElement('#home-hub-upgrade-housing', HTMLButtonElement);
     if (next === undefined || next.upgradeCost === null) {
@@ -1139,7 +1144,7 @@ export class AppShell {
       return;
     }
     upgradeButton.hidden = false;
-    upgradeButton.textContent = `Move to ${next.label} ($${next.upgradeCost})`;
+    upgradeButton.textContent = t('housing.moveTo', { tier: next.label, cost: next.upgradeCost });
     const affordable = canAffordHousingUpgrade(state.housing, state.resources);
     upgradeButton.disabled = !affordable;
     upgradeButton.setAttribute('aria-disabled', String(!affordable));
@@ -1158,8 +1163,11 @@ export class AppShell {
       // clears, and the next render swaps this line back for the assignment list.
       assertElement('#home-hub-active-assignment-label', HTMLElement).textContent =
         definition !== undefined
-          ? `In progress: ${definition.title} — ${formatCountdown(Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now()))} left`
-          : 'In progress — check back later.';
+          ? t('assignments.inProgress', {
+              title: definition.title,
+              time: formatCountdown(Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now())),
+            })
+          : t('assignments.inProgressUnknown');
       list.replaceChildren();
       return;
     }
@@ -1171,14 +1179,14 @@ export class AppShell {
   private buildAssignmentListItem(definition: AssignmentDefinition): HTMLLIElement {
     const item = document.createElement('li');
     const summary = document.createElement('span');
-    summary.textContent = `${definition.title} (${formatAssignmentDuration(definition.durationMinutes)})`;
+    summary.textContent = t('assignments.titleWithDuration', { title: definition.title, duration: formatAssignmentDuration(definition.durationMinutes) });
     const detail = document.createElement('small');
     detail.textContent = definition.description;
     const button = document.createElement('button');
     button.type = 'button';
-    button.textContent = 'Start';
+    button.textContent = t('assignments.start');
     // The button sits left of its text, so several identical "Start" buttons need a name.
-    button.setAttribute('aria-label', `Start ${definition.title}`);
+    button.setAttribute('aria-label', t('assignments.startNamed', { title: definition.title }));
     button.addEventListener('click', () =>
       this.options.domainEvents.emit('assignment-start-requested', { assignmentId: definition.id }),
     );
@@ -1203,7 +1211,7 @@ export class AppShell {
       await this.options.onAutosave();
       await this.refreshContinue();
     } catch {
-      this.toast('Autosave unavailable — this browser is not letting the game save');
+      this.toast(t('toast.autosaveUnavailable'));
     }
   }
 
@@ -1215,9 +1223,9 @@ export class AppShell {
       await this.options.onImport(await file.text());
       await this.refreshContinue();
       await this.renderSaveSlots(screens);
-      this.toast('Save imported — find it below');
+      this.toast(t('toast.saveImported'));
     } catch (error) {
-      this.toast(error instanceof Error ? error.message : 'Save import failed');
+      this.toast(error instanceof Error ? error.message : t('toast.saveImportFailed'));
     } finally {
       fileInput.value = '';
     }
@@ -1232,7 +1240,7 @@ export class AppShell {
       assertElement('#save-slot-empty', HTMLElement).hidden = saves.length > 0;
     } catch {
       list.replaceChildren();
-      this.toast('Could not read saves — this browser is not letting the game read save storage');
+      this.toast(t('toast.savesUnreadable'));
     }
   }
 
@@ -1245,14 +1253,14 @@ export class AppShell {
     label.className = 'save-slot-label';
     label.value = save.label;
     label.maxLength = 80;
-    label.setAttribute('aria-label', `Rename "${save.label}"`);
+    label.setAttribute('aria-label', t('save.renameAria', { label: save.label }));
     label.addEventListener('change', () => {
       const nextLabel = label.value.trim();
       if (nextLabel.length === 0 || nextLabel === save.label) {
         label.value = save.label;
         return;
       }
-      void this.options.onRenameSave(save.saveId, nextLabel).then(() => this.toast('Save renamed'));
+      void this.options.onRenameSave(save.saveId, nextLabel).then(() => this.toast(t('toast.saveRenamed')));
     });
 
     const meta = document.createElement('small');
@@ -1261,24 +1269,24 @@ export class AppShell {
     if (save.saveId === AUTOSAVE_ID) {
       const tag = document.createElement('span');
       tag.className = 'save-slot-tag';
-      tag.textContent = 'Autosave';
+      tag.textContent = t('save.autosaveTag');
       meta.append(' · ', tag);
     }
 
     const load = document.createElement('button');
     load.type = 'button';
-    load.textContent = 'Load';
+    load.textContent = t('save.load');
     load.addEventListener('click', () => void this.loadSaveSlot(save.saveId, screens));
 
     const exportButton = document.createElement('button');
     exportButton.type = 'button';
-    exportButton.textContent = 'Export';
+    exportButton.textContent = t('save.export');
     exportButton.addEventListener('click', () => void this.exportSaveSlot(save));
 
     const deleteButton = document.createElement('button');
     deleteButton.type = 'button';
     deleteButton.className = 'danger-button';
-    deleteButton.textContent = 'Delete';
+    deleteButton.textContent = t('save.delete');
 
     const actions = document.createElement('div');
     actions.className = 'save-slot-actions';
@@ -1290,17 +1298,17 @@ export class AppShell {
       const prompt = document.createElement('span');
       prompt.className = 'save-slot-confirm-text';
       prompt.setAttribute('role', 'alert');
-      prompt.textContent = `Delete "${save.label}"? This can't be undone.`;
+      prompt.textContent = t('save.deleteConfirm', { label: save.label });
 
       const confirmDelete = document.createElement('button');
       confirmDelete.type = 'button';
       confirmDelete.className = 'danger-button';
-      confirmDelete.textContent = 'Delete';
+      confirmDelete.textContent = t('save.delete');
       confirmDelete.addEventListener('click', () => void this.deleteSaveSlot(save.saveId, screens));
 
       const keep = document.createElement('button');
       keep.type = 'button';
-      keep.textContent = 'Keep';
+      keep.textContent = t('save.keep');
       keep.addEventListener('click', () => {
         actions.replaceChildren(load, exportButton, deleteButton);
         deleteButton.focus();
@@ -1318,11 +1326,11 @@ export class AppShell {
   private async loadSaveSlot(saveId: string, screens: MenuScreens): Promise<void> {
     const state = await this.options.onLoadSave(saveId);
     if (state === undefined) {
-      this.toast('That save could not be loaded');
+      this.toast(t('toast.saveNotLoaded'));
       return;
     }
     assertElement('#save-options-dialog', HTMLDialogElement).close();
-    await this.resumeCareer(screens, state, 'Career restored');
+    await this.resumeCareer(screens, state, t('toast.careerRestored'));
   }
 
   private async exportSaveSlot(save: SaveEnvelope<CareerState>): Promise<void> {
@@ -1331,7 +1339,7 @@ export class AppShell {
       const filename = `${save.label.replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'hollywoodland-save'}.json`;
       downloadTextFile(filename, raw);
     } catch (error) {
-      this.toast(error instanceof Error ? error.message : 'Save export failed');
+      this.toast(error instanceof Error ? error.message : t('toast.saveExportFailed'));
     }
   }
 
@@ -1339,7 +1347,7 @@ export class AppShell {
     await this.options.onDeleteSave(saveId);
     await this.refreshContinue();
     await this.renderSaveSlots(screens);
-    this.toast('Save deleted');
+    this.toast(t('toast.saveDeleted'));
   }
 
   /** Wires a footer link (Terms of Service / Privacy Policy) to open its dialog, and the dialog's own Close button and
@@ -1360,8 +1368,8 @@ export class AppShell {
     // The button is icon-only now: aria-label is both its accessible name and (via the CSS tooltip's attr(aria-label)) its
     // on-screen tooltip text, so updating just this one attribute keeps both in sync. No `title` here: that would draw the
     // browser's own plain tooltip on top of the on-theme CSS one below the button, showing both at once.
-    button.setAttribute('aria-label', active ? 'Return to Color' : 'Film Look');
-    this.toast(active ? 'Black-and-white living-film treatment' : 'Hollywood color restored');
+    button.setAttribute('aria-label', active ? t('filmMode.returnToColor') : t('filmMode.filmLook'));
+    this.toast(active ? t('toast.filmModeOn') : t('toast.filmModeOff'));
   }
 
   private async toggleFullscreen(): Promise<void> {
@@ -1369,7 +1377,7 @@ export class AppShell {
       if (document.fullscreenElement === null) await assertElement('#game-frame', HTMLElement).requestFullscreen();
       else await document.exitFullscreen();
     } catch {
-      this.toast('Fullscreen is unavailable in this browser');
+      this.toast(t('toast.fullscreenUnavailable'));
     }
   }
 
@@ -1394,11 +1402,10 @@ export class AppShell {
 
   /** One option per language, each named in its own script; a language whose catalog is not yet reviewed carries a Beta tag. */
   private populateLanguageSelect(): void {
-    const { i18n } = this.options;
     const select = assertElement('#language', HTMLSelectElement);
-    const auto = new Option(i18n.t('settings.languageAuto', undefined, 'Automatic'), AUTO_LANGUAGE);
+    const auto = new Option(t('settings.languageAuto'), AUTO_LANGUAGE);
     const languages = LOCALES.map((locale) =>
-      new Option(locale.status === 'beta' ? `${locale.nativeName} (${i18n.t('settings.languageBeta', undefined, 'Beta')})` : locale.nativeName, locale.code),
+      new Option(locale.status === 'beta' ? `${locale.nativeName} (${t('settings.languageBeta')})` : locale.nativeName, locale.code),
     );
     select.replaceChildren(auto, ...languages);
     select.value = this.settings.language;

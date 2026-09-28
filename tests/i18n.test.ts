@@ -3,6 +3,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
+import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
+import { ALL_TALENTS } from '../src/domain/TalentDefinitions';
 import { I18n, type Catalog } from '../src/i18n/I18n';
 import { formatDateTime, formatList, formatNumber, formatPercent, segmentWords } from '../src/i18n/format';
 import { LOCALES, SOURCE_LOCALE, isSupportedLocale, resolveLocale } from '../src/i18n/locales';
@@ -68,8 +70,7 @@ describe('I18n', () => {
   } satisfies Record<string, Catalog>;
 
   it('looks up the active language, then English, then the inline fallback, then the key', async () => {
-    const i18n = new I18n(loaderFor(catalogs));
-    await i18n.init();
+    const i18n = new I18n(loaderFor(catalogs), catalogs.en);
     await i18n.setLocale('es');
     expect(i18n.t('greeting')).toBe('Hola');
     expect(i18n.t('only_en')).toBe('English only');
@@ -78,15 +79,13 @@ describe('I18n', () => {
   });
 
   it('interpolates params', async () => {
-    const i18n = new I18n(loaderFor(catalogs));
-    await i18n.init();
+    const i18n = new I18n(loaderFor(catalogs), catalogs.en);
     expect(i18n.t('count', { n: 1 })).toBe('1 apple');
     expect(i18n.t('count', { n: 2 })).toBe('2 apples');
   });
 
   it('notifies listeners once the new catalog is in place', async () => {
-    const i18n = new I18n(loaderFor(catalogs));
-    await i18n.init();
+    const i18n = new I18n(loaderFor(catalogs), catalogs.en);
     const seen: string[] = [];
     i18n.onChange((locale) => seen.push(`${locale}:${i18n.t('greeting')}`));
     await i18n.setLocale('es');
@@ -95,8 +94,7 @@ describe('I18n', () => {
   });
 
   it('ignores an unsupported locale and stays in English when a catalog fails to load', async () => {
-    const i18n = new I18n(loaderFor({ en: catalogs.en }));
-    await i18n.init();
+    const i18n = new I18n(loaderFor({}), catalogs.en);
     const seen: string[] = [];
     i18n.onChange((locale) => seen.push(locale));
     await i18n.setLocale('tlh');
@@ -114,8 +112,7 @@ describe('I18n', () => {
         : new Promise((resolve) => {
             resolvers[locale] = () => resolve(catalogs.es);
           });
-    const i18n = new I18n(loader);
-    await i18n.init();
+    const i18n = new I18n(loader, catalogs.en);
     const first = i18n.setLocale('es');
     const second = i18n.setLocale('fr');
     resolvers['fr']?.();
@@ -126,8 +123,7 @@ describe('I18n', () => {
   });
 
   it('reports whether the active language itself has a key', async () => {
-    const i18n = new I18n(loaderFor(catalogs));
-    await i18n.init();
+    const i18n = new I18n(loaderFor(catalogs), catalogs.en);
     await i18n.setLocale('es');
     expect(i18n.has('greeting')).toBe(true);
     expect(i18n.has('only_en')).toBe(false);
@@ -190,8 +186,7 @@ describe('applyStaticTranslations', () => {
   }
 
   it('replaces text and attributes for keys the language has, and leaves the rest as authored', async () => {
-    const i18n = new I18n(loaderFor({ en: { a: 'A', b: 'B' }, es: { a: 'Ah', b: 'Be' } }));
-    await i18n.init();
+    const i18n = new I18n(loaderFor({ es: { a: 'Ah', b: 'Be' } }), { a: 'A', b: 'B' });
     await i18n.setLocale('es');
     const text = fakeElement({ i18n: 'a' });
     const missing = fakeElement({ i18n: 'nope' }, 'Untouched');
@@ -240,7 +235,7 @@ describe('the Settings language row', () => {
   });
 
   it('lists Automatic plus each language by its own name, tagging beta ones', () => {
-    expect(appShell).toContain("new Option(i18n.t('settings.languageAuto', undefined, 'Automatic'), AUTO_LANGUAGE)");
+    expect(appShell).toContain("new Option(t('settings.languageAuto'), AUTO_LANGUAGE)");
     expect(appShell).toContain("locale.status === 'beta'");
     expect(appShell).toContain("language: assertElement('#language', HTMLSelectElement).value");
   });
@@ -250,6 +245,50 @@ describe('the Settings language row', () => {
     expect(main).toContain('document.documentElement.lang = locale');
     expect(main).toContain('applyStaticTranslations(document, i18n)');
     expect(main).toContain("domainEvents.emit('locale-changed', { locale })");
-    expect(main).toContain("import.meta.glob<Catalog>('./locales/*.json', { import: 'default' })");
+    expect(readFileSync(new URL('../src/i18n/index.ts', import.meta.url), 'utf8')).toContain("import.meta.glob<Catalog>('../locales/*.json', { import: 'default' })");
+  });
+});
+
+describe('English catalog against the code and the markup', () => {
+  const english = JSON.parse(readFileSync(new URL('../src/locales/en.json', import.meta.url), 'utf8') as string) as Record<string, string>;
+
+  it('defines every key the code looks up with a literal t(...)', () => {
+    const files = (readdirSync(new URL('../src/', import.meta.url), { recursive: true }) as string[]).filter((name) => name.endsWith('.ts'));
+    const missing: string[] = [];
+    for (const file of files) {
+      const source = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8') as string;
+      for (const match of source.matchAll(/(?<![\w.])t\('([^']+)'/g)) {
+        if (english[match[1] as string] === undefined) missing.push(`${file}: ${match[1]}`);
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('defines every key built from a code-side enum (t(`prefix.${value}`))', () => {
+    const families: Array<[string, readonly string[]]> = [
+      ['time.slot', ['morning', 'afternoon', 'evening']],
+      ['time.weekday', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']],
+      ['relationship.label', ['neutral', 'friendship', 'rivalry', 'romance', 'alliance', 'estrangement']],
+      ['audition.outcome', ['breakthrough', 'promising-complication', 'wrong-role-right-notice', 'memorable-setback']],
+      ['attribute', ['presence', 'craft', 'wit', 'nerve', 'grit']],
+      ['item.category', [...new Set(ALL_ITEMS.map((item) => item.category))]],
+      ['talent.branch', [...new Set(ALL_TALENTS.map((talent) => talent.branch))]],
+      ['title.career', ['named', 'unnamed']],
+      ['title.home', ['named', 'unnamed']],
+    ];
+    for (const [prefix, values] of families) {
+      for (const value of values) expect(english[`${prefix}.${value}`], `${prefix}.${value}`).toBeDefined();
+    }
+  });
+
+  it('matches the English written in index.html for every data-i18n element', () => {
+    const decode = (text: string): string => text.replaceAll('&middot;', '·').replaceAll('&amp;', '&').replace(/\s+/g, ' ').trim();
+    const mismatches: string[] = [];
+    for (const match of indexHtml.matchAll(/data-i18n="([^"]+)"[^>]*>([^<]*)</g)) {
+      const key = match[1] as string;
+      if (key === 'settings.language') continue;
+      if (english[key] !== decode(match[2] as string)) mismatches.push(`${key}: "${english[key]}" vs "${decode(match[2] as string)}"`);
+    }
+    expect(mismatches).toEqual([]);
   });
 });

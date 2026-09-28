@@ -1,4 +1,5 @@
 import type { CareerState } from '../domain/CareerState';
+import { t } from '../i18n';
 import type { InventoryItemDefinition } from '../domain/Inventory';
 import { getActiveStage, getQuestStatus, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
@@ -31,7 +32,7 @@ export function buildQuestLog(
     entries.push({
       id: quest.id,
       title: quest.title,
-      label: status === 'completed' ? 'Completed' : (stage?.description ?? 'Available'),
+      label: status === 'completed' ? t('quests.completed') : (stage?.description ?? t('quests.available')),
       completed: status === 'completed',
     });
   }

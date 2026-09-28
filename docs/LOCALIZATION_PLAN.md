@@ -113,3 +113,13 @@ The scope is "all at once", so this is ordered by dependency, not by release:
 ## Decisions log
 
 All four earlier open questions are answered (see the table at the top). One caution remains from the legal decision: machine-translated legal text can misstate rights or obligations, so the "English governs" notice and a qualified review before leaving Beta are part of the plan.
+
+## Progress notes
+
+- **Step 1 (done):** i18n service, lazy catalogs, `Intl` helpers, Language setting.
+- **Step 2 (done, 2026-09-28):** interface text moved into `src/locales/en.json`.
+  - English is now bundled (`src/i18n/index.ts` exports the shared `i18n` and `t(key, params)`); other languages stay lazy chunks.
+  - `tools/extract-html-strings.py` tags `index.html` with `data-i18n` / `data-i18n-attr` and writes the English keys, including the Terms of Service and Privacy Policy paragraphs (`legal.terms.pNN`, `legal.privacy.pNN`). Rerun it after adding markup; it is idempotent. Text the game rewrites at run time is skipped (`RUNTIME_IDS`) and translated in code instead.
+  - `AppShell.ts`, `HudStats.ts`, `QuestLog.ts` and `CharacterCreator.ts` look their text up through `t(...)`. `locale-changed` re-draws the career panels, the film-mode label, the open Save Options list and the language picker.
+  - Guard tests: every literal `t('key')` and every enum-built key family exists in `en.json`, and each `data-i18n` element's English matches the catalog.
+- **Still English (step 3, content):** quest, talent, item, assignment, audition, relationship and dialogue text; origin names and blurbs; the objective card's idle text; building names on prompts; character portrait alt text; housing tier labels. Also `<title>` and the meta description (kept English for crawlers), the default save names stored inside save files, and the error messages thrown when a save file is invalid.

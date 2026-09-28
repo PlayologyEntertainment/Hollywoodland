@@ -1,12 +1,11 @@
 import type { CareerState } from '../domain/CareerState';
+import { t } from '../i18n';
 import { MAX_ENERGY } from '../domain/EconomySystem';
 import { weekdayForDay, type TimeSlot } from '../domain/TimeSystem';
 
-export const TIME_SLOT_LABELS: Readonly<Record<TimeSlot, string>> = {
-  morning: 'Morning',
-  afternoon: 'Afternoon',
-  evening: 'Evening',
-};
+export function timeSlotLabel(slot: TimeSlot): string {
+  return t(`time.slot.${slot}`);
+}
 
 /** Energy at or below this reads as low in the header, so the player notices before they run dry. */
 export const LOW_ENERGY_AT = 25;
@@ -30,16 +29,16 @@ export interface HudStats {
 export function describeHud(state: CareerState): HudStats {
   const { day, slot } = state.time;
   const { money, energy, reputation } = state.resources;
-  const weekday = weekdayForDay(day);
-  const slotLabel = TIME_SLOT_LABELS[slot];
+  const weekday = t(`time.weekday.${weekdayForDay(day).toLowerCase()}`);
+  const slotLabel = timeSlotLabel(slot);
   return {
-    dayNumber: `Day ${day}`,
+    dayNumber: t('hud.day', { day }),
     weekday,
     slotLabel,
     money: `$${money}`,
     energy,
     energyLow: energy <= LOW_ENERGY_AT,
     reputation,
-    spoken: `Day ${day}, ${weekday} · ${slotLabel} · $${money} · Energy ${energy}/${MAX_ENERGY}`,
+    spoken: t('hud.spoken', { day, weekday, slot: slotLabel, money, energy, max: MAX_ENERGY }),
   };
 }

@@ -27,9 +27,9 @@
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main-menu">Skip to menu</a>
+    <a class="skip-link" href="#main-menu" data-i18n="page.skipToMenu">Skip to menu</a>
     <main id="app" class="app-shell">
-      <section id="game-frame" class="game-frame" aria-label="Hollywoodland game view">
+      <section id="game-frame" class="game-frame" aria-label="Hollywoodland game view" data-i18n-attr="aria-label:gameFrame.hollywoodlandGameView">
         <div id="game-root" aria-hidden="true"></div>
         <div id="menu-backdrop" class="menu-backdrop" aria-hidden="true" style="background-image: url('%BASE_URL%assets/locations/soundstage.webp')"></div>
         <div class="film-grain" aria-hidden="true"></div>
@@ -37,56 +37,56 @@
         <div id="splash-screen" class="splash-screen">
           <div class="splash-content">
             <img class="splash-medallion" src="/assets/ui/playology-logo.webp" alt="" aria-hidden="true" />
-            <p class="splash-presents">Playology Entertainment<br />Presents</p>
-            <img class="splash-art" src="/assets/ui/hollywoodland-splash.webp" alt="Hollywoodland" />
-            <button id="splash-enter" class="primary-button splash-enter deco-label" type="button">Play</button>
+            <p class="splash-presents"><span data-i18n="splashScreen.playologyEntertainment">Playology Entertainment</span><br /><span data-i18n="splashScreen.presents">Presents</span></p>
+            <img class="splash-art" src="/assets/ui/hollywoodland-splash.webp" alt="Hollywoodland" data-i18n-attr="alt:splashScreen.hollywoodland" />
+            <button id="splash-enter" class="primary-button splash-enter deco-label" type="button" data-i18n="splashEnter.play">Play</button>
           </div>
         </div>
 
-        <header id="status-bar" class="status-bar" aria-label="Career status" hidden>
+        <header id="status-bar" class="status-bar" aria-label="Career status" hidden data-i18n-attr="aria-label:statusBar.careerStatus">
           <div class="hud-place">
             <span class="hud-label">1935</span>
-            <strong>Hollywood Boulevard</strong>
+            <strong data-i18n="statusBar.hollywoodBoulevard">Hollywood Boulevard</strong>
           </div>
           <!-- The game's logo at the very centre of the header: clear of the top line, and hanging a little over the bottom one. -->
-          <img class="header-logo" src="/assets/ui/hollywoodland-logo.webp" alt="Hollywoodland" />
+          <img class="header-logo" src="/assets/ui/hollywoodland-logo.webp" alt="Hollywoodland" data-i18n-attr="alt:statusBar.hollywoodland" />
           <div class="status-actions">
             <button id="film-mode" class="chrome-button icon-button" type="button" aria-pressed="false" aria-label="Film Look">
               <img src="/assets/ui/icon-film-look.webp" alt="" />
             </button>
-            <button id="fullscreen" class="chrome-button icon-button" type="button" aria-label="Fullscreen">
+            <button id="fullscreen" class="chrome-button icon-button" type="button" aria-label="Fullscreen" data-i18n-attr="aria-label:fullscreen.fullscreen">
               <img src="/assets/ui/icon-fullscreen.webp" alt="" />
             </button>
-            <button id="status-button" class="chrome-button deco-label" type="button" aria-expanded="false">Career</button>
+            <button id="status-button" class="chrome-button deco-label" type="button" aria-expanded="false" data-i18n="statusButton.career">Career</button>
           </div>
         </header>
 
         <section id="title-panel" class="title-panel" aria-labelledby="game-title">
-          <h1 id="game-title"><img class="title-logo" src="/assets/ui/hollywoodland-logo.webp" alt="Hollywoodland" /></h1>
-          <nav id="main-menu" class="menu" aria-label="Main menu">
-            <button id="new-career" class="primary-button deco-label" type="button">Enter Hollywood</button>
-            <button id="continue-career" class="deco-label" type="button" disabled>Continue</button>
-            <button id="open-save-options" class="deco-label" type="button">Save Options</button>
-            <button id="open-settings" class="deco-label" type="button">Settings</button>
+          <h1 id="game-title"><img class="title-logo" src="/assets/ui/hollywoodland-logo.webp" alt="Hollywoodland" data-i18n-attr="alt:gameTitle.hollywoodland" /></h1>
+          <nav id="main-menu" class="menu" aria-label="Main menu" data-i18n-attr="aria-label:mainMenu.mainMenu">
+            <button id="new-career" class="primary-button deco-label" type="button" data-i18n="newCareer.enterHollywood">Enter Hollywood</button>
+            <button id="continue-career" class="deco-label" type="button" disabled data-i18n="continueCareer.continue">Continue</button>
+            <button id="open-save-options" class="deco-label" type="button" data-i18n="openSaveOptions.saveOptions">Save Options</button>
+            <button id="open-settings" class="deco-label" type="button" data-i18n="openSettings.settings">Settings</button>
           </nav>
-          <p class="build-label">Vertical Slice - Proof of Concept</p>
+          <p class="build-label" data-i18n="titlePanel.verticalSliceProofOf">Vertical Slice - Proof of Concept</p>
         </section>
 
         <section id="character-creator" class="creator" aria-labelledby="creator-title" hidden>
-          <h2 id="creator-title" class="sr-only">Character Creator</h2>
+          <h2 id="creator-title" class="sr-only" data-i18n="creatorTitle.characterCreator">Character Creator</h2>
 
           <div class="creator-body">
-            <h3 class="creator-title creator-title-left">Character</h3>
-            <h3 class="creator-title creator-title-right">Origin</h3>
+            <h3 class="creator-title creator-title-left" data-i18n="characterCreator.character">Character</h3>
+            <h3 class="creator-title creator-title-right" data-i18n="characterCreator.origin">Origin</h3>
 
             <div class="creator-panel creator-form">
               <label class="creator-field">
-                <span>Name</span>
-                <input id="creator-name" type="text" maxlength="40" placeholder="Your name" autocomplete="off" />
+                <span data-i18n="characterCreator.name">Name</span>
+                <input id="creator-name" type="text" maxlength="40" placeholder="Your name" autocomplete="off" data-i18n-attr="placeholder:creatorName.yourName" />
               </label>
 
               <div class="creator-field character-field">
-                <span id="creator-character-label">Character</span>
+                <span id="creator-character-label" data-i18n="creatorCharacterLabel.character">Character</span>
                 <div class="character-picker">
                   <div id="creator-characters" class="character-grid" role="radiogroup" aria-labelledby="creator-character-label"></div>
                 </div>
@@ -101,17 +101,17 @@
             </div>
 
             <div class="creator-panel creator-origin">
-              <h3>Choose an Origin</h3>
-              <div id="creator-origins" class="origin-grid" role="radiogroup" aria-label="Origin"></div>
+              <h3 data-i18n="characterCreator.chooseAnOrigin">Choose an Origin</h3>
+              <div id="creator-origins" class="origin-grid" role="radiogroup" aria-label="Origin" data-i18n-attr="aria-label:creatorOrigins.origin"></div>
 
-              <h3>Attributes</h3>
+              <h3 data-i18n="characterCreator.attributes">Attributes</h3>
               <dl id="creator-attributes" class="attribute-list"></dl>
             </div>
           </div>
 
           <footer class="creator-footer">
-            <button id="creator-back" class="deco-label" type="button">Back</button>
-            <button id="creator-start" type="button" class="primary-button deco-label">Start</button>
+            <button id="creator-back" class="deco-label" type="button" data-i18n="creatorBack.back">Back</button>
+            <button id="creator-start" type="button" class="primary-button deco-label" data-i18n="creatorStart.start">Start</button>
           </footer>
         </section>
 
@@ -119,45 +119,45 @@
              fades in (see ChapterTitlePage.ts); its Art Deco border is generated by DecoBorder.ts. -->
         <section id="chapter-title" class="chapter-title" aria-labelledby="chapter-title-heading" aria-describedby="chapter-hint" tabindex="-1" hidden>
           <div class="chapter-title-body">
-            <p class="chapter-number" data-reveal="0">Chapter 1</p>
-            <h2 id="chapter-title-heading" class="chapter-name" data-reveal="800">One Suitcase</h2>
+            <p class="chapter-number" data-reveal="0" data-i18n="chapterTitle.chapter1">Chapter 1</p>
+            <h2 id="chapter-title-heading" class="chapter-name" data-reveal="800" data-i18n="chapterTitleHeading.oneSuitcase">One Suitcase</h2>
             <div class="chapter-divider" aria-hidden="true" data-reveal="1600"><span></span></div>
-            <p class="chapter-place" data-reveal="1600">Hollywood, California &middot; 1935</p>
+            <p class="chapter-place" data-reveal="1600" data-i18n="chapterTitle.hollywoodCalifornia1935">Hollywood, California &middot; 1935</p>
             <div class="chapter-intro">
-              <p data-reveal="2600">The pictures have learned to talk, the Depression is still here, and the Boulevard glows for anyone bold enough to visit.</p>
-              <p data-reveal="4000">You have one suitcase, a few dollars, a room at Bellhaven, and a lead at Sunset Casting that may not last the week.</p>
-              <p data-reveal="5400">Somewhere on this street, a marquee is waiting for your name. Go get it!</p>
+              <p data-reveal="2600" data-i18n="chapterTitle.thePicturesHaveLearned">The pictures have learned to talk, the Depression is still here, and the Boulevard glows for anyone bold enough to visit.</p>
+              <p data-reveal="4000" data-i18n="chapterTitle.youHaveOneSuitcase">You have one suitcase, a few dollars, a room at Bellhaven, and a lead at Sunset Casting that may not last the week.</p>
+              <p data-reveal="5400" data-i18n="chapterTitle.somewhereOnThisStreet">Somewhere on this street, a marquee is waiting for your name. Go get it!</p>
             </div>
-            <p id="chapter-hint" class="chapter-hint" data-reveal="6400">Click or Press Enter</p>
+            <p id="chapter-hint" class="chapter-hint" data-reveal="6400" data-i18n="chapterHint.clickOrPressEnter">Click or Press Enter</p>
           </div>
         </section>
 
         <!-- The stage is exactly the size and place of the game picture (see .stage in styles.css), so everything that hangs
              over the picture - the objective card, the Wait and Menu buttons, the entrance prompt - is anchored to the picture. -->
         <div id="stage" class="stage">
-          <section id="play-hud" class="play-hud" aria-label="Gameplay status" hidden>
+          <section id="play-hud" class="play-hud" aria-label="Gameplay status" hidden data-i18n-attr="aria-label:playHud.gameplayStatus">
             <div class="hud-top">
               <div id="objective-card" class="objective-card">
                 <span id="objective-title" class="eyebrow">First Audition</span>
                 <strong id="objective-goal">Book an audition at the casting office.</strong>
-                <small><kbd>A</kbd>/<kbd>D</kbd> Move · <kbd>E</kbd> Interact</small>
+                <small><kbd>A</kbd>/<kbd>D</kbd> <span data-i18n="objectiveCard.move">Move ·</span> <kbd>E</kbd> <span data-i18n="objectiveCard.interact">Interact</span></small>
               </div>
               <div class="hud-center">
-                <div class="hud-stats" role="group" aria-label="Career stats">
+                <div class="hud-stats" role="group" aria-label="Career stats" data-i18n-attr="aria-label:playHud.careerStats">
                   <div class="hud-stat">
                     <span id="hud-day-number" class="hud-label">Day 1</span>
                     <span id="hud-weekday" class="hud-value">Monday</span>
                   </div>
                   <div class="hud-stat">
-                    <span class="hud-label">Time</span>
+                    <span class="hud-label" data-i18n="playHud.time">Time</span>
                     <span id="hud-time" class="hud-value">Morning</span>
                   </div>
                   <div class="hud-stat" data-stat="money">
-                    <span class="hud-label">Money</span>
+                    <span class="hud-label" data-i18n="playHud.money">Money</span>
                     <span id="hud-money" class="hud-value">$12</span>
                   </div>
                   <div id="hud-energy-stat" class="hud-stat" data-low="false">
-                    <span class="hud-label">Energy</span>
+                    <span class="hud-label" data-i18n="hudEnergyStat.energy">Energy</span>
                     <span id="hud-energy" class="hud-value">100</span>
                   </div>
                 </div>
@@ -177,20 +177,20 @@
 
         <!-- Permanent footer, directly below the picture: Menu on the left, Wait on the right, and a centre group -- Terms of
              Service, the Playology logo, Privacy Policy -- straddling the logo so both legal links sit right against it. -->
-        <footer id="game-footer" class="game-footer" aria-label="Game controls" hidden>
-          <button id="return-menu" class="chrome-button deco-label" type="button">Menu</button>
+        <footer id="game-footer" class="game-footer" aria-label="Game controls" hidden data-i18n-attr="aria-label:gameFooter.gameControls">
+          <button id="return-menu" class="chrome-button deco-label" type="button" data-i18n="returnMenu.menu">Menu</button>
           <div class="footer-center">
-            <button id="footer-tos" class="footer-legal-link deco-label" type="button">Terms of Service</button>
-            <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" />
-            <button id="footer-privacy" class="footer-legal-link deco-label" type="button">Privacy Policy</button>
+            <button id="footer-tos" class="footer-legal-link deco-label" type="button" data-i18n="footerTos.termsOfService">Terms of Service</button>
+            <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" data-i18n-attr="alt:gameFooter.playologyEntertainment" />
+            <button id="footer-privacy" class="footer-legal-link deco-label" type="button" data-i18n="footerPrivacy.privacyPolicy">Privacy Policy</button>
           </div>
-          <button id="advance-time" class="chrome-button deco-label" type="button">Wait</button>
+          <button id="advance-time" class="chrome-button deco-label" type="button" data-i18n="advanceTime.wait">Wait</button>
         </footer>
 
         <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
           <div class="drawer-heading">
             <div><h2 id="status-title">Your Career</h2></div>
-            <button id="close-status" type="button" aria-label="Close career status">×</button>
+            <button id="close-status" type="button" aria-label="Close career status" data-i18n-attr="aria-label:closeStatus.closeCareerStatus">×</button>
           </div>
           <div class="drawer-scroll">
             <div class="status-top-progression">
@@ -201,28 +201,28 @@
               <p id="status-xp-label" class="status-xp-label">0 / 40 XP</p>
             </div>
             <dl class="status-top-stats">
-              <div><dt>Time</dt><dd id="status-time">Monday · Morning</dd></div>
-              <div><dt>Money</dt><dd id="status-money">$12</dd></div>
-              <div><dt>Energy</dt><dd id="status-energy">100/100</dd></div>
-              <div><dt>Reputation</dt><dd id="status-reputation">0/100</dd></div>
+              <div><dt data-i18n="statusPanel.time">Time</dt><dd id="status-time">Monday · Morning</dd></div>
+              <div><dt data-i18n="statusPanel.money">Money</dt><dd id="status-money">$12</dd></div>
+              <div><dt data-i18n="statusPanel.energy">Energy</dt><dd id="status-energy">100/100</dd></div>
+              <div><dt data-i18n="statusPanel.reputation">Reputation</dt><dd id="status-reputation">0/100</dd></div>
             </dl>
             <section class="status-quests">
-              <h3>Quests</h3>
+              <h3 data-i18n="statusPanel.quests">Quests</h3>
               <ul id="status-quests-list"></ul>
             </section>
             <section class="status-progression">
-              <h3>Progression</h3>
+              <h3 data-i18n="statusPanel.progression">Progression</h3>
               <ul id="status-talents-list" class="talent-list"></ul>
             </section>
             <section class="status-relationships">
-              <h3>Relationships</h3>
+              <h3 data-i18n="statusPanel.relationships">Relationships</h3>
               <ul id="status-relationships-list"></ul>
             </section>
             <section class="status-inventory">
-              <h3>Inventory</h3>
+              <h3 data-i18n="statusPanel.inventory">Inventory</h3>
               <ul id="status-inventory-list"></ul>
             </section>
-            <p class="flavor-copy">One suitcase. One good shirt. One impossible address scribbled on the back of a bus ticket.</p>
+            <p class="flavor-copy" data-i18n="statusPanel.oneSuitcaseOneGood">One suitcase. One good shirt. One impossible address scribbled on the back of a bus ticket.</p>
           </div>
         </aside>
 
@@ -241,16 +241,16 @@
 
         <dialog id="audition-dialog" aria-labelledby="audition-title" class="audition-dialog">
           <div class="story-card audition-card">
-            <p class="eyebrow">Read the Room</p>
+            <p class="eyebrow" data-i18n="auditionDialog.readTheRoom">Read the Room</p>
             <h2 id="audition-title">The Screen Test</h2>
             <form id="audition-form">
               <div id="audition-categories" class="audition-categories"></div>
-              <button id="audition-submit" type="submit" class="primary-button" disabled>Perform</button>
+              <button id="audition-submit" type="submit" class="primary-button" disabled data-i18n="auditionSubmit.perform">Perform</button>
             </form>
             <div id="audition-debrief" class="audition-debrief" hidden>
               <h3 id="audition-outcome"></h3>
               <ul id="audition-factors" class="audition-factors"></ul>
-              <button id="audition-continue" type="button" class="primary-button">Continue</button>
+              <button id="audition-continue" type="button" class="primary-button" data-i18n="auditionContinue.continue">Continue</button>
             </div>
           </div>
         </dialog>
@@ -259,11 +259,11 @@
           <div class="scene">
             <div id="home-hub-background" class="scene-background" aria-hidden="true"></div>
             <div class="story-card home-hub-card scene-panel">
-              <p class="eyebrow">Bellhaven Rooms</p>
+              <p class="eyebrow" data-i18n="homeHubDialog.bellhavenRooms">Bellhaven Rooms</p>
               <h2 id="home-hub-title">Home</h2>
 
               <section id="home-hub-away-summary" class="home-hub-away-summary" hidden>
-                <h3>While You Were Away</h3>
+                <h3 data-i18n="homeHubAwaySummary.whileYouWereAway">While You Were Away</h3>
                 <p id="home-hub-away-headline"></p>
                 <ul id="home-hub-away-rewards"></ul>
               </section>
@@ -274,7 +274,7 @@
               </section>
 
               <section class="home-hub-assignments">
-                <h3>Assignments</h3>
+                <h3 data-i18n="homeHubDialog.assignments">Assignments</h3>
                 <p id="home-hub-active-assignment" hidden>
                   <span id="home-hub-active-assignment-label"></span>
                 </p>
@@ -282,8 +282,8 @@
               </section>
 
               <div class="home-hub-actions">
-                <button id="home-hub-talk-landlady" type="button">Talk to the Landlady</button>
-                <button id="home-hub-close" type="button" class="primary-button">Leave</button>
+                <button id="home-hub-talk-landlady" type="button" data-i18n="homeHubTalkLandlady.talkToTheLandlady">Talk to the Landlady</button>
+                <button id="home-hub-close" type="button" class="primary-button" data-i18n="homeHubClose.leave">Leave</button>
               </div>
             </div>
           </div>
@@ -291,162 +291,162 @@
 
         <dialog id="settings-dialog" aria-labelledby="settings-title">
           <form method="dialog" class="settings-form">
-            <div class="drawer-heading"><h2 id="settings-title">Settings</h2></div>
+            <div class="drawer-heading"><h2 id="settings-title" data-i18n="settingsTitle.settings">Settings</h2></div>
             <label><span data-i18n="settings.language">Language</span><select id="language"></select></label>
-            <label>Text size<input id="text-scale" type="range" min="100" max="150" step="10" value="100" /><output id="text-scale-output" for="text-scale">100%</output></label>
-            <label>Music volume<input id="music-volume" type="range" min="0" max="100" step="5" value="60" /><output id="music-volume-output" for="music-volume">60%</output></label>
-            <label class="check-row"><input id="music-muted" type="checkbox" /> Mute music</label>
-            <label>Ambience volume<input id="ambience-volume" type="range" min="0" max="100" step="5" value="50" /><output id="ambience-volume-output" for="ambience-volume">50%</output></label>
-            <label class="check-row"><input id="ambience-muted" type="checkbox" /> Mute ambience</label>
+            <label><span data-i18n="settingsDialog.textSize">Text size</span><input id="text-scale" type="range" min="100" max="150" step="10" value="100" /><output id="text-scale-output" for="text-scale">100%</output></label>
+            <label><span data-i18n="settingsDialog.musicVolume">Music volume</span><input id="music-volume" type="range" min="0" max="100" step="5" value="60" /><output id="music-volume-output" for="music-volume">60%</output></label>
+            <label class="check-row"><input id="music-muted" type="checkbox" /> <span data-i18n="settingsDialog.muteMusic">Mute music</span></label>
+            <label><span data-i18n="settingsDialog.ambienceVolume">Ambience volume</span><input id="ambience-volume" type="range" min="0" max="100" step="5" value="50" /><output id="ambience-volume-output" for="ambience-volume">50%</output></label>
+            <label class="check-row"><input id="ambience-muted" type="checkbox" /> <span data-i18n="settingsDialog.muteAmbience">Mute ambience</span></label>
             <div class="settings-checks">
-              <label class="check-row"><input id="high-contrast" type="checkbox" /> High contrast</label>
-              <label class="check-row"><input id="reduced-motion" type="checkbox" /> Reduce motion and parallax</label>
-              <label class="check-row"><input id="film-effects" type="checkbox" checked /> Film grain and exposure movement</label>
-              <label class="check-row"><input id="analytics-enabled" type="checkbox" checked /> Share anonymous performance analytics</label>
+              <label class="check-row"><input id="high-contrast" type="checkbox" /> <span data-i18n="settingsDialog.highContrast">High contrast</span></label>
+              <label class="check-row"><input id="reduced-motion" type="checkbox" /> <span data-i18n="settingsDialog.reduceMotionAndParallax">Reduce motion and parallax</span></label>
+              <label class="check-row"><input id="film-effects" type="checkbox" checked /> <span data-i18n="settingsDialog.filmGrainAndExposure">Film grain and exposure movement</span></label>
+              <label class="check-row"><input id="analytics-enabled" type="checkbox" checked /> <span data-i18n="settingsDialog.shareAnonymousPerformanceAnalytics">Share anonymous performance analytics</span></label>
             </div>
-            <p class="privacy-note">No player name, dialogue text, or save data is collected.</p>
-            <button class="primary-button" value="confirm">Save</button>
+            <p class="privacy-note" data-i18n="settingsDialog.noPlayerNameDialogue">No player name, dialogue text, or save data is collected.</p>
+            <button class="primary-button" value="confirm" data-i18n="settingsDialog.save">Save</button>
           </form>
         </dialog>
 
         <dialog id="save-options-dialog" class="legal-dialog save-options-dialog" aria-labelledby="save-options-title">
           <div class="drawer-heading">
-            <h2 id="save-options-title">Save Options</h2>
-            <button id="save-options-close" type="button" class="legal-close" aria-label="Close Save Options">×</button>
+            <h2 id="save-options-title" data-i18n="saveOptionsTitle.saveOptions">Save Options</h2>
+            <button id="save-options-close" type="button" class="legal-close" aria-label="Close Save Options" data-i18n-attr="aria-label:saveOptionsClose.closeSaveOptions">×</button>
           </div>
           <div class="drawer-scroll">
             <form id="save-new-form" class="save-new-form">
-              <label for="save-new-label" class="sr-only">Save name</label>
+              <label for="save-new-label" class="sr-only" data-i18n="saveNewForm.saveName">Save name</label>
               <input id="save-new-label" type="text" maxlength="80" />
-              <button type="submit" class="primary-button">New Save</button>
+              <button type="submit" class="primary-button" data-i18n="saveNewForm.newSave">New Save</button>
             </form>
-            <button id="save-import-button" class="chrome-button" type="button">Import Save</button>
-            <p id="save-slot-empty" class="flavor-copy">No saves yet — play a bit, then save your progress here.</p>
+            <button id="save-import-button" class="chrome-button" type="button" data-i18n="saveImportButton.importSave">Import Save</button>
+            <p id="save-slot-empty" class="flavor-copy" data-i18n="saveSlotEmpty.noSavesYetPlay">No saves yet — play a bit, then save your progress here.</p>
             <ul id="save-slot-list" class="save-slot-list"></ul>
           </div>
         </dialog>
 
         <dialog id="legal-terms-dialog" class="legal-dialog" aria-labelledby="legal-terms-title">
           <div class="drawer-heading">
-            <h2 id="legal-terms-title">Terms of Service</h2>
-            <button id="legal-terms-close" type="button" class="legal-close" aria-label="Close Terms of Service">×</button>
+            <h2 id="legal-terms-title" data-i18n="legalTermsTitle.termsOfService">Terms of Service</h2>
+            <button id="legal-terms-close" type="button" class="legal-close" aria-label="Close Terms of Service" data-i18n-attr="aria-label:legalTermsClose.closeTermsOfService">×</button>
           </div>
           <div class="drawer-scroll legal-body">
-            <p class="legal-updated">Last updated: September 22, 2026</p>
-            <p>These Terms of Service ("Terms") govern your access to and use of Hollywoodland (the "Game"), a free, single-player browser game operated by Playology Entertainment ("Playology," "we," "us," or "our"). By accessing or playing the Game, you agree to these Terms. If you do not agree, please do not use the Game.</p>
+            <p class="legal-updated" data-i18n="legal.terms.p01">Last updated: September 22, 2026</p>
+            <p data-i18n="legal.terms.p02">These Terms of Service ("Terms") govern your access to and use of Hollywoodland (the "Game"), a free, single-player browser game operated by Playology Entertainment ("Playology," "we," "us," or "our"). By accessing or playing the Game, you agree to these Terms. If you do not agree, please do not use the Game.</p>
             <section>
-              <h3>Eligibility</h3>
-              <p>The Game is intended for a general audience. If you are under the age of majority in your jurisdiction, you may only use the Game with the involvement and consent of a parent or legal guardian.</p>
+              <h3 data-i18n="legal.terms.p03">Eligibility</h3>
+              <p data-i18n="legal.terms.p04">The Game is intended for a general audience. If you are under the age of majority in your jurisdiction, you may only use the Game with the involvement and consent of a parent or legal guardian.</p>
             </section>
             <section>
-              <h3>The Service</h3>
-              <p>Hollywoodland is a free, single-player browser game. There is no account registration, username, or password: your career — the character you create and your progress — is stored locally in your browser. You may export a save file to your device and import it later, including in a different browser or on a different device, to carry your progress with you.</p>
+              <h3 data-i18n="legal.terms.p05">The Service</h3>
+              <p data-i18n="legal.terms.p06">Hollywoodland is a free, single-player browser game. There is no account registration, username, or password: your career — the character you create and your progress — is stored locally in your browser. You may export a save file to your device and import it later, including in a different browser or on a different device, to carry your progress with you.</p>
             </section>
             <section>
-              <h3>License to Use</h3>
-              <p>We grant you a limited, non-exclusive, non-transferable, revocable license to access and play the Game for your personal, non-commercial entertainment, subject to these Terms. All rights not expressly granted to you are reserved by Playology.</p>
+              <h3 data-i18n="legal.terms.p07">License to Use</h3>
+              <p data-i18n="legal.terms.p08">We grant you a limited, non-exclusive, non-transferable, revocable license to access and play the Game for your personal, non-commercial entertainment, subject to these Terms. All rights not expressly granted to you are reserved by Playology.</p>
             </section>
             <section>
-              <h3>No Purchases</h3>
-              <p>The Game is free to play and, as of this writing, offers no virtual currency, purchases, or paid content. If that changes, these Terms will be updated accordingly.</p>
+              <h3 data-i18n="legal.terms.p09">No Purchases</h3>
+              <p data-i18n="legal.terms.p10">The Game is free to play and, as of this writing, offers no virtual currency, purchases, or paid content. If that changes, these Terms will be updated accordingly.</p>
             </section>
             <section>
-              <h3>User Conduct</h3>
-              <p>When using the Game, you agree not to:</p>
+              <h3 data-i18n="legal.terms.p11">User Conduct</h3>
+              <p data-i18n="legal.terms.p12">When using the Game, you agree not to:</p>
               <ul>
-                <li>Cheat, exploit bugs, or use unauthorized third-party software to gain an unfair advantage.</li>
-                <li>Interfere with, disrupt, or attempt to gain unauthorized access to the Game or the systems that serve it.</li>
-                <li>Use the Game for any unlawful purpose.</li>
-                <li>Reverse engineer, decompile, or attempt to extract the source code of the Game, except where permitted by law.</li>
+                <li data-i18n="legal.terms.p13">Cheat, exploit bugs, or use unauthorized third-party software to gain an unfair advantage.</li>
+                <li data-i18n="legal.terms.p14">Interfere with, disrupt, or attempt to gain unauthorized access to the Game or the systems that serve it.</li>
+                <li data-i18n="legal.terms.p15">Use the Game for any unlawful purpose.</li>
+                <li data-i18n="legal.terms.p16">Reverse engineer, decompile, or attempt to extract the source code of the Game, except where permitted by law.</li>
               </ul>
             </section>
             <section>
-              <h3>AI-Generated Content and Character Likeness</h3>
-              <p>Many of the characters, portraits, backgrounds, and other visual assets in Hollywoodland are generated using artificial intelligence tools as part of the Game's creative production process. Any resemblance between an in-game character or asset and any real person, living or deceased, is purely coincidental and unintentional. No in-game character is based on, modeled after, or intended to depict any actual individual.</p>
-              <p>If you believe an in-game asset resembles you or another identifiable individual, please contact us using the information in the Contact Us section below so we can review the matter.</p>
+              <h3 data-i18n="legal.terms.p17">AI-Generated Content and Character Likeness</h3>
+              <p data-i18n="legal.terms.p18">Many of the characters, portraits, backgrounds, and other visual assets in Hollywoodland are generated using artificial intelligence tools as part of the Game's creative production process. Any resemblance between an in-game character or asset and any real person, living or deceased, is purely coincidental and unintentional. No in-game character is based on, modeled after, or intended to depict any actual individual.</p>
+              <p data-i18n="legal.terms.p19">If you believe an in-game asset resembles you or another identifiable individual, please contact us using the information in the Contact Us section below so we can review the matter.</p>
             </section>
             <section>
-              <h3>Intellectual Property</h3>
-              <p>The Game, including its software, artwork, writing, and all other content, is owned by Playology Entertainment or its licensors and is protected by intellectual property laws. Except for the limited license granted above, nothing in these Terms transfers any ownership rights to you.</p>
+              <h3 data-i18n="legal.terms.p20">Intellectual Property</h3>
+              <p data-i18n="legal.terms.p21">The Game, including its software, artwork, writing, and all other content, is owned by Playology Entertainment or its licensors and is protected by intellectual property laws. Except for the limited license granted above, nothing in these Terms transfers any ownership rights to you.</p>
             </section>
             <section>
-              <h3>Save Data and Loss</h3>
-              <p>Your save data is stored in your browser's local storage and exists only on the device and browser you played on. Clearing your browser's site data, switching browsers or devices, or playing in a private/incognito window can make earlier progress inaccessible unless you exported a save file beforehand. We are not responsible for progress lost this way.</p>
+              <h3 data-i18n="legal.terms.p22">Save Data and Loss</h3>
+              <p data-i18n="legal.terms.p23">Your save data is stored in your browser's local storage and exists only on the device and browser you played on. Clearing your browser's site data, switching browsers or devices, or playing in a private/incognito window can make earlier progress inaccessible unless you exported a save file beforehand. We are not responsible for progress lost this way.</p>
             </section>
             <section>
-              <h3>Termination</h3>
-              <p>We may discontinue or modify the Game at any time. You may stop using the Game at any time.</p>
+              <h3 data-i18n="legal.terms.p24">Termination</h3>
+              <p data-i18n="legal.terms.p25">We may discontinue or modify the Game at any time. You may stop using the Game at any time.</p>
             </section>
             <section>
-              <h3>Disclaimers</h3>
-              <p>The Game is provided "as is" and "as available," without warranties of any kind, whether express or implied, including warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not guarantee that the Game will be uninterrupted, error-free, or secure.</p>
+              <h3 data-i18n="legal.terms.p26">Disclaimers</h3>
+              <p data-i18n="legal.terms.p27">The Game is provided "as is" and "as available," without warranties of any kind, whether express or implied, including warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not guarantee that the Game will be uninterrupted, error-free, or secure.</p>
             </section>
             <section>
-              <h3>Limitation of Liability</h3>
-              <p>To the fullest extent permitted by law, Playology Entertainment shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, arising out of or related to your use of the Game.</p>
+              <h3 data-i18n="legal.terms.p28">Limitation of Liability</h3>
+              <p data-i18n="legal.terms.p29">To the fullest extent permitted by law, Playology Entertainment shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of data, arising out of or related to your use of the Game.</p>
             </section>
             <section>
-              <h3>Changes to These Terms</h3>
-              <p>We may update these Terms from time to time. Changes will be reflected by an updated "Last updated" date above. Continued use of the Game after changes take effect constitutes acceptance of the revised Terms.</p>
+              <h3 data-i18n="legal.terms.p30">Changes to These Terms</h3>
+              <p data-i18n="legal.terms.p31">We may update these Terms from time to time. Changes will be reflected by an updated "Last updated" date above. Continued use of the Game after changes take effect constitutes acceptance of the revised Terms.</p>
             </section>
             <section>
-              <h3>Contact Us</h3>
-              <p>If you have questions about these Terms, please contact Playology Entertainment at serdar@playologyentertainment.com.</p>
+              <h3 data-i18n="legal.terms.p32">Contact Us</h3>
+              <p data-i18n="legal.terms.p33">If you have questions about these Terms, please contact Playology Entertainment at serdar@playologyentertainment.com.</p>
             </section>
           </div>
         </dialog>
 
         <dialog id="legal-privacy-dialog" class="legal-dialog" aria-labelledby="legal-privacy-title">
           <div class="drawer-heading">
-            <h2 id="legal-privacy-title">Privacy Policy</h2>
-            <button id="legal-privacy-close" type="button" class="legal-close" aria-label="Close Privacy Policy">×</button>
+            <h2 id="legal-privacy-title" data-i18n="legalPrivacyTitle.privacyPolicy">Privacy Policy</h2>
+            <button id="legal-privacy-close" type="button" class="legal-close" aria-label="Close Privacy Policy" data-i18n-attr="aria-label:legalPrivacyClose.closePrivacyPolicy">×</button>
           </div>
           <div class="drawer-scroll legal-body">
-            <p class="legal-updated">Last updated: September 22, 2026</p>
-            <p>This Privacy Policy explains what information Hollywoodland (the "Game"), operated by Playology Entertainment ("Playology," "we," "us," or "our"), collects and how it is used. We designed the Game to collect as little information as possible.</p>
+            <p class="legal-updated" data-i18n="legal.privacy.p01">Last updated: September 22, 2026</p>
+            <p data-i18n="legal.privacy.p02">This Privacy Policy explains what information Hollywoodland (the "Game"), operated by Playology Entertainment ("Playology," "we," "us," or "our"), collects and how it is used. We designed the Game to collect as little information as possible.</p>
             <section>
-              <h3>Information We Collect</h3>
-              <p>The Game requires no account, name, email address, or password to play. Your career — the name you give your character, the origin and character you choose, and your progress — is stored only in your browser's local storage (IndexedDB) and is never sent to our servers automatically.</p>
-              <p>If you choose to export a save file, that file is saved to your own device; we only receive it if you voluntarily send it to us, for example to report a bug.</p>
-              <p>The Settings menu includes an optional toggle to share anonymous, aggregate performance analytics; it does not send your character's name, dialogue, or save data, and you can turn it off at any time.</p>
+              <h3 data-i18n="legal.privacy.p03">Information We Collect</h3>
+              <p data-i18n="legal.privacy.p04">The Game requires no account, name, email address, or password to play. Your career — the name you give your character, the origin and character you choose, and your progress — is stored only in your browser's local storage (IndexedDB) and is never sent to our servers automatically.</p>
+              <p data-i18n="legal.privacy.p05">If you choose to export a save file, that file is saved to your own device; we only receive it if you voluntarily send it to us, for example to report a bug.</p>
+              <p data-i18n="legal.privacy.p06">The Settings menu includes an optional toggle to share anonymous, aggregate performance analytics; it does not send your character's name, dialogue, or save data, and you can turn it off at any time.</p>
             </section>
             <section>
-              <h3>Information We Do Not Collect</h3>
-              <p>The Game does not:</p>
+              <h3 data-i18n="legal.privacy.p07">Information We Do Not Collect</h3>
+              <p data-i18n="legal.privacy.p08">The Game does not:</p>
               <ul>
-                <li>Require account registration with personal information.</li>
-                <li>Display third-party advertising.</li>
-                <li>Use advertising trackers or cross-site tracking analytics.</li>
-                <li>Process real-money payments — the Game is free and currently offers no purchases.</li>
+                <li data-i18n="legal.privacy.p09">Require account registration with personal information.</li>
+                <li data-i18n="legal.privacy.p10">Display third-party advertising.</li>
+                <li data-i18n="legal.privacy.p11">Use advertising trackers or cross-site tracking analytics.</li>
+                <li data-i18n="legal.privacy.p12">Process real-money payments — the Game is free and currently offers no purchases.</li>
               </ul>
             </section>
             <section>
-              <h3>How We Use Information</h3>
-              <p>Any information described above is used solely to operate and improve the Game — for example, to keep your career and saved progress in your browser, and to understand overall usage of the Game through aggregate analytics, if you choose to leave that setting on.</p>
+              <h3 data-i18n="legal.privacy.p13">How We Use Information</h3>
+              <p data-i18n="legal.privacy.p14">Any information described above is used solely to operate and improve the Game — for example, to keep your career and saved progress in your browser, and to understand overall usage of the Game through aggregate analytics, if you choose to leave that setting on.</p>
             </section>
             <section>
-              <h3>How We Store and Protect Information</h3>
-              <p>Your career and save data live in your browser's own storage, under your control; a save file you export is a plain file on your device. We take reasonable measures to protect any information we do receive, but no method of electronic storage or transmission is completely secure.</p>
+              <h3 data-i18n="legal.privacy.p15">How We Store and Protect Information</h3>
+              <p data-i18n="legal.privacy.p16">Your career and save data live in your browser's own storage, under your control; a save file you export is a plain file on your device. We take reasonable measures to protect any information we do receive, but no method of electronic storage or transmission is completely secure.</p>
             </section>
             <section>
-              <h3>Data Sharing</h3>
-              <p>We do not sell your information. We do not share it with third parties, except with service providers who help us operate the Game (such as hosting or analytics infrastructure) or if required to do so by law.</p>
+              <h3 data-i18n="legal.privacy.p17">Data Sharing</h3>
+              <p data-i18n="legal.privacy.p18">We do not sell your information. We do not share it with third parties, except with service providers who help us operate the Game (such as hosting or analytics infrastructure) or if required to do so by law.</p>
             </section>
             <section>
-              <h3>Children's Privacy</h3>
-              <p>The Game is intended for a general audience and does not knowingly collect personal information from children. Playing the Game does not require a name, email address, or any other personal information.</p>
+              <h3 data-i18n="legal.privacy.p19">Children's Privacy</h3>
+              <p data-i18n="legal.privacy.p20">The Game is intended for a general audience and does not knowingly collect personal information from children. Playing the Game does not require a name, email address, or any other personal information.</p>
             </section>
             <section>
-              <h3>Your Choices</h3>
-              <p>Because your progress is stored only in your browser, clearing your browser's site data or switching to a different browser or device will make it inaccessible unless you exported a save file first. You can turn off anonymous analytics sharing at any time in Settings.</p>
+              <h3 data-i18n="legal.privacy.p21">Your Choices</h3>
+              <p data-i18n="legal.privacy.p22">Because your progress is stored only in your browser, clearing your browser's site data or switching to a different browser or device will make it inaccessible unless you exported a save file first. You can turn off anonymous analytics sharing at any time in Settings.</p>
             </section>
             <section>
-              <h3>Changes to This Policy</h3>
-              <p>We may update this Privacy Policy from time to time. Changes will be reflected by an updated "Last updated" date above. Continued use of the Game after changes take effect constitutes acceptance of the revised policy.</p>
+              <h3 data-i18n="legal.privacy.p23">Changes to This Policy</h3>
+              <p data-i18n="legal.privacy.p24">We may update this Privacy Policy from time to time. Changes will be reflected by an updated "Last updated" date above. Continued use of the Game after changes take effect constitutes acceptance of the revised policy.</p>
             </section>
             <section>
-              <h3>Contact Us</h3>
-              <p>If you have questions about this Privacy Policy, please contact Playology Entertainment at serdar@playologyentertainment.com.</p>
+              <h3 data-i18n="legal.privacy.p25">Contact Us</h3>
+              <p data-i18n="legal.privacy.p26">If you have questions about this Privacy Policy, please contact Playology Entertainment at serdar@playologyentertainment.com.</p>
             </section>
           </div>
         </dialog>

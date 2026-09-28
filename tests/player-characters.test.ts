@@ -13,6 +13,7 @@ import { createDefaultCareerState, createInitialCareerState, isCareerStateShape,
 import { deriveAttributes } from '../src/domain/Origins';
 import { isWalkCycle, type WalkCycle } from '../src/game/WalkCycle';
 import { migrateSaveEnvelope, SAVE_SCHEMA_VERSION, serializeSave, parseSave } from '../src/save/SaveEnvelope';
+import { plainHtml } from './helpers/plainHtml';
 
 const publicFile = (path: string): URL => new URL(`../public/${path}`, import.meta.url);
 const read = (path: string): string => (readFileSync(new URL(path, import.meta.url), 'utf8') as string).replace(/\r\n/g, '\n');
@@ -108,7 +109,7 @@ describe('the chosen character in the career and its saves', () => {
 });
 
 describe('the Character Creator screen', () => {
-  const html = read('../index.html');
+  const html = plainHtml(read('../index.html'));
 
   it('keeps the name field and swaps the customisation controls for the six-character selector', () => {
     expect(html).toContain('id="creator-name"');
@@ -181,7 +182,7 @@ describe('the Character Creator screen', () => {
 });
 
 describe('the floor reflection under the full-size character', () => {
-  const html = read('../index.html');
+  const html = plainHtml(read('../index.html'));
   const css = read('../src/styles.css');
 
   it('is a decorative image inside the stage, hidden from screen readers, that changes with the chosen character', () => {
@@ -245,7 +246,7 @@ describe('the sub-titles and attribute rows inside the side panes', () => {
 
 describe('the splash screen button', () => {
   it('says Play, in Limelight, at a size larger than the other primary buttons', () => {
-    const html = read('../index.html');
+    const html = plainHtml(read('../index.html'));
     const css = read('../src/styles.css');
     expect(html).toMatch(/<button id="splash-enter" class="[^"]*deco-label[^"]*" type="button">Play<\/button>/);
     expect(html).not.toMatch(/id="splash-enter"[^>]*>Enter</);

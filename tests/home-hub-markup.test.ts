@@ -29,7 +29,8 @@ describe('home hub dialog', () => {
   });
 
   it('shows the active assignment live countdown instead of a check-back-later line', () => {
-    expect(appShell).toMatch(/In progress: \$\{definition\.title\} — \$\{formatCountdown\(/);
-    expect(appShell).toMatch(/\} left`/);
+    expect(appShell).toContain("t('assignments.inProgress', {");
+    expect(appShell).toMatch(/time: formatCountdown\(/);
+    expect(JSON.parse(readFileSync(new URL('../src/locales/en.json', import.meta.url), 'utf8') as string)['assignments.inProgress']).toBe('In progress: {title} — {time} left');
   });
 });
