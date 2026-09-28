@@ -55,14 +55,20 @@ describe('applyXpGain', () => {
     expect(next).toMatchObject({ xp: 20, level: 1, unspentTalentPoints: 0 });
   });
 
-  it('levels up once, carrying the remainder and granting a talent point', () => {
+  it('levels up once, carrying the remainder and granting a talent point per level left', () => {
     const next = applyXpGain(DEFAULT_PROGRESSION, 50);
     expect(next).toMatchObject({ xp: 10, level: 2, unspentTalentPoints: 1 });
   });
 
   it('levels up multiple times from a single large gain', () => {
     const next = applyXpGain(DEFAULT_PROGRESSION, 40 + 60 + 15);
-    expect(next).toMatchObject({ xp: 15, level: 3, unspentTalentPoints: 2 });
+    expect(next).toMatchObject({ xp: 15, level: 3, unspentTalentPoints: 3 });
+  });
+
+  it('grants more points for each later level', () => {
+    const level3 = { ...DEFAULT_PROGRESSION, level: 3 };
+    const next = applyXpGain(level3, xpRequiredForNextLevel(3) + xpRequiredForNextLevel(4));
+    expect(next).toMatchObject({ level: 5, unspentTalentPoints: 3 + 4 });
   });
 
   it('is a no-op for a zero or negative amount', () => {

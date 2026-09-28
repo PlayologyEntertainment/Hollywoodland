@@ -51,11 +51,17 @@ export function xpRequiredForNextLevel(level: number): number {
   return BASE_XP_TO_LEVEL + (level - 1) * XP_GROWTH_PER_LEVEL;
 }
 
+/** Talent points granted for advancing out of `level`: one per level number. */
+export function talentPointsForLevelUp(level: number): number {
+  return level;
+}
+
 /** Grants XP and levels up as many times as a large-enough gain warrants
  * (a defensive loop, not just a single ++level — the same posture a big
  * `resource-delta` reward already gets from `applyResourceDelta`'s
- * clamping). Each level grants exactly one unspent talent point; a
- * negative or zero amount is a no-op rather than letting XP go backwards. */
+ * clamping). Leaving level N grants N unspent talent points (1→2 gives 1,
+ * 2→3 gives 2, …), so later levels pay out more; a negative or zero amount
+ * is a no-op rather than letting XP go backwards. */
 export function applyXpGain(progression: ProgressionState, amount: number): ProgressionState {
   if (amount <= 0) return progression;
   let xp = progression.xp + amount;
@@ -64,8 +70,8 @@ export function applyXpGain(progression: ProgressionState, amount: number): Prog
   let threshold = xpRequiredForNextLevel(level);
   while (xp >= threshold) {
     xp -= threshold;
+    unspentTalentPoints += talentPointsForLevelUp(level);
     level += 1;
-    unspentTalentPoints += 1;
     threshold = xpRequiredForNextLevel(level);
   }
   return { ...progression, xp, level, unspentTalentPoints };
