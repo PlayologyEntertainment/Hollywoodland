@@ -374,7 +374,7 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
   right: calc((100cqw - var(--stage-w)) / 2 + clamp(1rem, 3vw, 3rem));
   display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; max-width: min(22rem, 34%); pointer-events: none;
 }
-.game-frame:has(#status-panel:not([hidden])) .notices { top: calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem); right: calc(min(100cqw, 29rem) + 1rem); }
+.game-frame:has(#status-panel:not([hidden])) .notices { top: var(--notices-below-hud, calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem)); right: calc(min(100cqw, 29rem) + 1rem); }
 /* Notices share the Day/Time/Money bar's look (see .hud-stats): a dark band whose left and right sides fade into transparency, with the
    text centred in the solid middle. The wide inline padding keeps the text clear of the fading ends. */
 .interaction-prompt, .toast {
