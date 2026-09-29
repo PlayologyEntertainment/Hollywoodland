@@ -76,3 +76,27 @@ running game (their "Much better" after round 2), so the same jitter risk was ch
 apply to her -- her raw arms really were smooth motion, not just a clean static frame. This
 male/female difference is the reason `rig_arms.py` existed for him in the first place and never
 existed as a documented problem for her.
+
+## Round 3: one canonical torso (2026-09-29, branch `feat/male-walk-rigged-torso`)
+
+Owner report: torso very jittery, belt area shifts and morphs; legs fine.
+
+Diagnosis (measured on the shipped sheet): every loop frame is a separately AI-drawn pose, so shirt hem, sleeve,
+tuck line and belt differ per frame (belt row wandered ~20 px, blousing hid it entirely in frames 2, 7-11), and head
+top jittered up to 10 px frame to frame. `rig_arms.py` repainted the belt/shirt per frame *from each drawn pose*,
+preserving that inconsistency, so smoothing could not fix it.
+
+Fix: new `tools/rig_torso.py` (replaces `rig_arms.py` in the build: `build_sheet -> smooth_upper_body -> rig_torso ->
+package`). It cuts ONE body (head, shirt, suspenders, belt, top of trousers) from the idle pose, keeps each frame's
+drawn legs, stretches the legs' top so their edges meet the body's at the seam, places the same body on a smooth
+two-bob curve (3.5 px half-amplitude, lowest at contact) plus 1 px sway, and draws the rigged pendulum arms on top.
+`tools/measure_torso.py` gives the objective check (residual from the ideal curve, arms-free render):
+
+| metric | before | after |
+|---|---|---|
+| head top, frame-to-frame max | 10 px | 3 px (pure bob) |
+| head top, residual from smooth curve | 4.0 px | 0.4 px |
+| belt row residual from smooth curve | 20+ px, hidden in 6 frames | 0.4 px, identical every frame |
+
+Idle now shares the identical body, so stopping cannot pop. No new AI generation; `walk-cycle.json` unchanged.
+Staged only: `public/assets/characters/aspiring-actor-walk.webp` is NOT yet promoted.
