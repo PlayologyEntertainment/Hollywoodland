@@ -16,13 +16,13 @@ The player creates an aspiring performer, arrives on Hollywood Boulevard in 1935
 - New Career, Continue, Load, Import Save, Accessibility, and Credits.
 - Character Creator as a portrait selector: name, a portrait from the slice roster (each with its own walk cycle), and an origin.
 - Origin summary and initial allocation across Presence, Craft, Wit, Nerve, and Grit.
-- Short color arrival sequence by bus or train, followed by player control.
+- A chapter title page, followed by player control on the Boulevard. The bus or train arrival sequence is a full-game feature.
 
 ### Hollywood Boulevard district
 
 A continuous 2.5D district connects:
 
-1. Transit arrival point.
+1. Transit arrival point (a location on the Boulevard; there is no arrival cutscene).
 2. Boarding house and rented room hub.
 3. Diner/social anchor.
 4. Theater frontage and lobby.
@@ -71,7 +71,7 @@ The background-extra job is the harbor-market crowd scene of Monarch Pictures' p
 
 ## 3. Critical path
 
-1. **Arrival:** Learn movement and contextual interaction; reach temporary lodging.
+1. **Arrival:** Start on the Boulevard after the chapter title page; learn movement and contextual interaction; reach temporary lodging.
 2. **The lead:** Discover that the studio contact is incomplete, late, or unreliable.
 3. **Get through the door:** Use conversation, observation, a favor, or a small paid expense to secure extra work.
 4. **Prepare:** Obtain required wardrobe, learn set etiquette, manage energy, and gather one useful production detail.
@@ -88,7 +88,6 @@ The background-extra job is the harbor-market crowd scene of Monarch Pictures' p
 - One training activity.
 - One relationship scene at the diner or boarding house.
 - One investigation/eavesdropping secret.
-- One short chase or slapstick scramble.
 - Three environmental collectibles or scrapbook discoveries.
 - At least two origin-specific dialogue or route variations.
 
@@ -106,13 +105,13 @@ Optional content must reinforce the core loop and not turn the slice into a cont
 | Relationships | Several state changes across 8–10 characters |
 | Questing | One authored chain, one repeatable gig, optional scenes |
 | Performance | Background blocking plus full Read-the-Room screen test |
-| Conflict | One contextual crisis and one optional varied showdown |
+| Conflict | One contextual crisis (chases and slapstick showdowns are full-game) |
 | Progression | XP, at least one level choice, starter talent branches |
 | Rewards | First credit, headshot/costume/prop or home display |
 | Achievements | 5–8 cosmetic/world-recognition examples |
 | Idle | One bounded assignment with return summary |
 | Save | Autosave, manual slots, export/import, version migration hook |
-| Analytics | Disclosed anonymous events and opt-out |
+| Analytics | Disclosed boundary and opt-out; no provider, so nothing is transmitted |
 | Accessibility | Complete robust baseline for included content |
 
 ## 6. Outcome matrix
@@ -146,8 +145,8 @@ The slice is approval-ready when:
 - At least four screen-test result families are reachable and understandable.
 - Save/load/export/import preserve all included state and reject corrupt data safely.
 - A 1080p midrange target machine sustains 60 FPS during normal play, with documented budgets and scalable effects.
-- Text scaling, high contrast, reduced motion, remapping, and timing assists work through the entire slice.
-- Analytics disclose collection, respect opt-out, and contain no player-entered name or save payload.
+- Text scaling, high contrast, and reduced motion work through the entire slice. Remapping and timing assists are full-game features.
+- Analytics disclose collection, respect opt-out, and contain no player-entered name or save payload. With no approved provider, the slice transmits nothing.
 - All final assets have provenance, generation prompt/version notes, cleanup status, and usage approval.
 - No runtime AI, account dependency, advertisements, purchases, or game implementation beyond the approved slice appears.
 
