@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 
 import { ChapterTitlePage } from './ChapterTitlePage';
 import { FadingNotice } from './FadingNotice';
+import { FpsReadout } from './FpsReadout';
 import { describeHud } from './HudStats';
 import { chooseObjective, isObjectiveAccomplished, ObjectiveTracker, type Objective } from './Objective';
 import { buildQuestLog } from './QuestLog';
@@ -297,6 +298,7 @@ export class AppShell {
   /** The Character Creator screen, kept so a language change can redraw its origins and attributes. */
   private readonly creatorScreen = new CharacterCreator();
   private levelUpHideTimer = 0;
+  private readonly fpsReadout = new FpsReadout();
 
   public constructor(private readonly options: AppShellOptions) {
     this.settings = options.settings;
@@ -659,6 +661,7 @@ export class AppShell {
     // Publish the bars' heights before the game boots, so Phaser measures the shorter game area.
     this.syncBarHeights();
     this.game = this.options.onStart(state);
+    this.fpsReadout.attach(this.game);
     this.inGame = true;
     this.place = undefined;
     this.syncAudio();
@@ -1446,6 +1449,7 @@ export class AppShell {
     assertElement('#high-contrast', HTMLInputElement).checked = this.settings.highContrast;
     assertElement('#reduced-motion', HTMLInputElement).checked = this.settings.reducedMotion;
     assertElement('#film-effects', HTMLInputElement).checked = this.settings.filmEffects;
+    assertElement('#show-fps', HTMLInputElement).checked = this.settings.showFps;
     assertElement('#analytics-enabled', HTMLInputElement).checked = this.settings.analyticsEnabled;
     const music = Math.round(this.settings.musicVolume * 100);
     const ambience = Math.round(this.settings.ambienceVolume * 100);
@@ -1464,6 +1468,7 @@ export class AppShell {
       highContrast: assertElement('#high-contrast', HTMLInputElement).checked,
       reducedMotion: assertElement('#reduced-motion', HTMLInputElement).checked,
       filmEffects: assertElement('#film-effects', HTMLInputElement).checked,
+      showFps: assertElement('#show-fps', HTMLInputElement).checked,
       analyticsEnabled: assertElement('#analytics-enabled', HTMLInputElement).checked,
       musicVolume: Number(assertElement('#music-volume', HTMLInputElement).value) / 100,
       musicMuted: assertElement('#music-muted', HTMLInputElement).checked,
@@ -1477,6 +1482,7 @@ export class AppShell {
     document.body.classList.toggle('high-contrast', settings.highContrast);
     document.body.classList.toggle('reduced-motion', settings.reducedMotion);
     document.body.classList.toggle('film-effects-off', !settings.filmEffects);
+    this.fpsReadout.setVisible(settings.showFps);
   }
 
   private toast(message: string): void {

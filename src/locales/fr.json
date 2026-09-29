@@ -78,6 +78,7 @@
   "settingsDialog.highContrast": "Contraste élevé",
   "settingsDialog.reduceMotionAndParallax": "Réduire les mouvements et la parallaxe",
   "settingsDialog.filmGrainAndExposure": "Grain de pellicule et variations d'exposition",
+  "settingsDialog.showFpsCounter": "Afficher les images par seconde",
   "settingsDialog.shareAnonymousPerformanceAnalytics": "Partager des statistiques de performance anonymes",
   "settingsDialog.noPlayerNameDialogue": "Aucun nom de joueur, texte de dialogue ni donnée de sauvegarde n'est collecté.",
   "settingsDialog.save": "Enregistrer",

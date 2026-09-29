@@ -170,6 +170,7 @@ describe('AudioDirector', () => {
       reducedMotion: false,
       analyticsEnabled: true,
       filmEffects: true,
+      showFps: false,
       musicVolume: 0.3,
       musicMuted: false,
       ambienceVolume: 0.2,

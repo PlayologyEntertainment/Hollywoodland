@@ -310,7 +310,7 @@ describe('the picture, the stage, and the footer below it', () => {
     // A grid with equal columns either side of the centre group keeps it dead centre whatever Wait/Menu's own widths are.
     expect(rule('.game-footer')).toContain('grid-template-columns: 1fr auto 1fr');
     expect(css).toContain('.game-footer #return-menu { justify-self: start; }');
-    expect(css).toContain('.game-footer #advance-time { justify-self: end; }');
+    expect(css).toContain('.game-footer .footer-right { justify-self: end;');
   });
 
   it('has only Wait, Menu, Terms of Service and Privacy Policy as buttons: Save and Export are gone', () => {

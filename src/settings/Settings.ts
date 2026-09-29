@@ -8,6 +8,8 @@ export interface GameSettings {
   readonly reducedMotion: boolean;
   readonly analyticsEnabled: boolean;
   readonly filmEffects: boolean;
+  /** Shows the frames-per-second readout beside the footer's Wait button. A diagnostic, so it is off by default. */
+  readonly showFps: boolean;
   /** 0 to 1, shaped to a gain by sliderToGain. Music covers the Main Menu, Character Creator, Boulevard and building tracks. */
   readonly musicVolume: number;
   readonly musicMuted: boolean;
@@ -23,6 +25,7 @@ export const DEFAULT_SETTINGS: GameSettings = Object.freeze({
   reducedMotion: false,
   analyticsEnabled: true,
   filmEffects: true,
+  showFps: false,
   musicVolume: 0.6,
   musicMuted: false,
   ambienceVolume: 0.5,
@@ -38,6 +41,7 @@ export function normalizeSettings(value: unknown): GameSettings {
     reducedMotion: readBoolean(value.reducedMotion, DEFAULT_SETTINGS.reducedMotion),
     analyticsEnabled: readBoolean(value.analyticsEnabled, DEFAULT_SETTINGS.analyticsEnabled),
     filmEffects: readBoolean(value.filmEffects, DEFAULT_SETTINGS.filmEffects),
+    showFps: readBoolean(value.showFps, DEFAULT_SETTINGS.showFps),
     musicVolume: clampNumber(value.musicVolume, 0, 1, DEFAULT_SETTINGS.musicVolume),
     musicMuted: readBoolean(value.musicMuted, DEFAULT_SETTINGS.musicMuted),
     ambienceVolume: clampNumber(value.ambienceVolume, 0, 1, DEFAULT_SETTINGS.ambienceVolume),
