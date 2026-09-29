@@ -1,7 +1,7 @@
 # Hollywoodland — Technical Implementation Plan
 
-Status: **Owner approved September 12, 2026; Phase 1 foundation authorized**  
-Baseline verified: September 2026
+Status: **Owner approved September 12, 2026. Phase 1 foundation authorized; Phase 2 systems now built (see `DECISION_LOG.md`)**  
+Baseline verified: September 2026. Repository layout, hosting and the sections marked "as built" were reconciled with the code on 2026-09-29.
 
 ## 1. Proposed stack
 
@@ -22,7 +22,7 @@ Phaser provides maintained browser-game primitives for scenes, cameras, spritesh
 
 ## 2. Repository shape
 
-Proposed first implementation layout:
+As built (2026-09-29). The originally proposed layout used `src/systems/`, `src/accessibility/` and a top-level `content/`; the code settled on the folders below instead. Authored content lives inline in `src/domain/` with English text mirrored into `src/locales/en.json`.
 
 ```text
 /
@@ -31,18 +31,20 @@ Proposed first implementation layout:
 ├── public/
 │   └── assets/                # Optimized runtime assets and manifests
 ├── src/
-│   ├── app/                   # Boot, routing, DOM screens, settings
-│   ├── game/                  # Phaser config, scenes, camera, world objects
-│   ├── systems/               # Time, economy, quests, relationships, progression
-│   ├── content/               # Typed content access and validation
-│   ├── save/                  # Schema, migration, IndexedDB, import/export
-│   ├── analytics/             # Consent/opt-out and event boundary
-│   ├── accessibility/         # Remapping, motion/timing/contrast policies
-│   └── shared/                # Events, types, utilities
-├── content/                   # Authored JSON/YAML source data
-├── tools/                     # Asset validation/packing and content checks
-├── tests/                     # Unit, integration, visual, accessibility
-└── .github/workflows/         # CI checks and deploy artifact build
+│   ├── app/                   # DOM screens and shell: menus, creator, HUD, panels
+│   ├── game/                  # Phaser config, scenes, camera, walk cycles, FPS meter
+│   ├── domain/                # Time, economy, quests, dialogue, relationships, progression, content definitions
+│   ├── content/               # Content validators (quests, dialogue, talents, localization, ...)
+│   ├── save/                  # Envelope, migration, IndexedDB, import/export
+│   ├── settings/              # Settings model and repository
+│   ├── input/                 # Input action abstraction
+│   ├── audio/                 # Audio director, cues, Web Audio engine
+│   ├── analytics/             # Event boundary (currently a no-op client)
+│   ├── i18n/, locales/        # Localization service and per-language catalogs
+│   ├── ui/, shared/, assets/  # Deco border, helpers, fonts
+├── tools/                     # Locale stamping and string extraction scripts
+├── tests/                     # Unit and markup tests (vitest)
+└── .github/workflows/         # CI checks and the manual Hostinger deploy
 ```
 
 ## 3. Architectural rules
@@ -174,7 +176,7 @@ Every change must pass formatting, linting, type checking, unit tests, content v
 
 Build with `/Hollywoodland/` as the base path. The deployment artifact contains immutable hashed assets plus an entry HTML file and suitable cache headers. Do not cache the entry HTML indefinitely. Provide a version file and a friendly refresh prompt when a new build is available; never update in the middle of a session.
 
-The exact playologyentertainment.com hosting provider and deployment credentials remain **Owner approval required** before deployment automation is added.
+As built: the game is hosted on Hostinger shared hosting at `https://www.playologyentertainment.com/Hollywoodland/` (capital H, since the host is case-sensitive). A manual GitHub Actions workflow builds and uploads `dist/` over FTP, and a push to `main` never publishes. See `docs/deploy.md`. The version file and in-session refresh prompt described above are not built yet.
 
 ## 14. Technical sources
 

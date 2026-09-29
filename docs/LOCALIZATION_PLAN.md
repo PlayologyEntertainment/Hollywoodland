@@ -1,6 +1,6 @@
 # Localization plan
 
-Status: **Open questions resolved 2026-09-28; awaiting owner approval to build. No code has been written.**
+Status: **Built 2026-09-28 (steps 1 to 6 below). Spanish, French, German and Brazilian Portuguese ship as AI drafts labelled Beta; native review (step 7) is still to do.**
 
 ## Owner decisions (2026-09-28)
 
