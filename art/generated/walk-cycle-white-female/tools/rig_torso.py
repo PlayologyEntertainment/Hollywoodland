@@ -51,12 +51,30 @@ def belt_top(c, y_s):
     return int(y_s + 40 + rows.min())
 
 
-R.waist_row = belt_top       # ArmSprites and rebuild_torso call it through the module, so they now see the real belt
+# Her sleeve is a short rolled one entirely within ~30 px of the shoulder pivot, so the male rig's "fade the sleeve in
+# from under a kept drawn cap" leaves it see-through. Instead the whole drawn sleeve is lifted out of the body and the
+# rigged sleeve is fully opaque.
+R.CAP_RADIUS = 6
+R.FEATHER_INNER, R.FEATHER_OUTER = 0.0, 1.0
+R.waist_row = belt_top      # ArmSprites and rebuild_torso call it through the module, so they now see the real belt
 
 
 def canonical_body(idle):
     yy, xx = np.mgrid[0:CH, 0:CW]
     sprites = R.ArmSprites(idle)
+    # the arm's outline colour is sampled from the skin edge (brown); on the blue sleeve it should be a dark slate
+    up = sprites.upper
+    brown = (np.abs(up[..., :3].astype(int) - np.asarray(sprites.edge, int)).sum(axis=2) < 70) & (up[..., 3] > 0)
+    up[brown, :3] = (78, 92, 122)
+    # dark blotches inside the hand (finger-line pixels the sprite cut turned into holes): repaint from nearest skin
+    fo = sprites.fore
+    solid = fo[..., 3] > 128
+    inner = ndi.binary_erosion(solid, iterations=3)
+    lum = 0.30 * fo[..., 0] + 0.59 * fo[..., 1] + 0.11 * fo[..., 2]
+    dark = inner & (lum < 125)
+    if dark.any():
+        _, (iy, ix) = ndi.distance_transform_edt(~(inner & ~dark), return_indices=True)
+        fo[dark, :3] = fo[iy[dark], ix[dark], :3]
     y_s = R.shirt_row(idle)
     y_w = R.waist_row(idle, y_s)
     tx = R.torso_x(idle, y_s)
@@ -124,15 +142,32 @@ def row_weight(seam):
 
 def legs_layer(c, seam, y_s):
     parts = split(c, y_s)
-    out = R.erase(c, parts['near'] | parts['far'], grow=3)
+    gone = ndi.binary_dilation(parts['near'] | parts['far'], iterations=4)
+    out = R.erase(c, parts['near'] | parts['far'], grow=4)
     solid = out[..., 3] > 128
     yy = np.arange(CH)[:, None]
-    zone = (yy >= seam - 4) & (yy <= seam + 70)
-    closed = ndi.binary_closing(solid, structure=np.ones((13, 13), bool))
-    hole = closed & ~solid & zone
+    zone = (yy >= seam - 4) & (yy <= seam + 110)
+    # Fabric that hid behind the hand: fill where navy trouser survives on both sides of the removed arm, vertically or
+    # horizontally (so open background beside the hip is left open), then let the nearest drawn colour fill it.
+    nav = is_trouser(out)
+    def seen(axis, size=46):
+        f = lambda m, o: ndi.maximum_filter1d(m.astype(np.uint8), size=size, axis=axis, origin=o, mode='constant') > 0
+        # windows strictly before / after each pixel
+        return f(nav, size // 2 - 1 + (size % 2 == 0) * 0) & True, f(nav, -(size // 2))
+    up_a, dn_a = seen(0, 26)
+    lf_a, rt_a = seen(1, 26)
+    hole = gone & ~solid & zone & ((up_a & dn_a) | (lf_a & rt_a))
+    # just under the seam the fabric above the hand is hidden by the body layer's fade, so fill the hip's own width there
+    # (never beyond its back and front edges, so no navy is painted out into the open air)
+    xs = np.arange(CW)[None, :]
+    near_seam = (yy >= seam - 4) & (yy <= seam + 30)
+    back, front = extents(out, seam + 8, seam + 14)
+    hole |= gone & ~solid & near_seam & (xs >= back - 1) & (xs <= front + 1)
     if hole.any():
-        _, (iy, ix) = ndi.distance_transform_edt(~solid, return_indices=True)
-        out[hole, :3] = out[iy[hole], ix[hole], :3]
+        # flat navy: the nearest drawn colour would drag the dark trouser outline into the patch as black streaks
+        core = ndi.binary_erosion(nav, iterations=3)
+        navy = np.median(out[core][:, :3], axis=0) if core.any() else np.array([44, 51, 79.0])
+        out[hole, :3] = np.rint(navy).astype(np.uint8)
         out[hole, 3] = 255
     return out
 

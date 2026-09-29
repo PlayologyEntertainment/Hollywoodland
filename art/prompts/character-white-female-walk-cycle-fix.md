@@ -114,3 +114,20 @@ frame, head and body size both steady across the whole sheet including idle.
 Done (both rounds) -- copied over
 `public/assets/characters/player/white-female-walk.webp` and
 `public/data/walk-cycle-white-female.json`.
+
+## Round 3 (2026-09-29, branch `feat/female-walk-rigged-torso`): one canonical torso + rigged arms
+
+Owner report: arms not right in motion. Ported the male fix (`character-white-male-walk-cycle-fix.md`, Round 3):
+`tools/rig_torso.py` cuts ONE body (head, blouse, belt, hips) from the idle pose, keeps each frame's drawn legs,
+stretches the leg tops to meet the body at the seam, rides the body on a smooth two-bob curve, and draws the
+standing-pose pendulum arms on top (`rig_arms.py` helpers). Build is now
+`build_sheet -> smooth_upper_body -> rig_torso -> package`.
+
+Female-specific fixes needed on top of the male port: `waist_row` looked for navy trousers, but her idle arm hides their
+top, so it landed ~23 px low (now detects the brown belt); her idle arm hangs *in front of* her hip, so the hip back edge
+is rebuilt as a plain vertical line (`repair_hips`); her short rolled sleeve is lifted out whole and rigged opaque with a
+slate outline; hand blotches repainted; trouser holes behind removed hands filled with flat navy only where fabric
+brackets them.
+
+Measured (arms-free render): head top residual from smooth curve 0.4 px, belt row 0.8 px, head x 0.2 px.
+`walk-cycle-white-female.json` is identical to the public one (feet, scale, stride unchanged). Staged only.
