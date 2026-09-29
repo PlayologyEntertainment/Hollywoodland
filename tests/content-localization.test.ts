@@ -75,6 +75,17 @@ describe('display code reads content through the accessors', () => {
     expect(appShell).toMatch(/domainEvents\.on\('locale-changed'[\s\S]*?this\.renderDialogueNode\(\);/);
   });
 
+  it('redraws the Character Creator when the language changes, since it is built before a chosen language has loaded', () => {
+    expect(appShell).toContain('private readonly creatorScreen = new CharacterCreator();');
+    expect(appShell).toContain('this.creatorScreen.mount(');
+    expect(appShell).toMatch(/domainEvents\.on\('locale-changed'[\s\S]*?this\.creatorScreen\.refreshText\(\);/);
+    const creator = read('../src/app/CharacterCreator.ts');
+    const refresh = creator.match(/public refreshText\(\): void \{[\s\S]*?\r?\n  \}\r?\n/)?.[0] ?? '';
+    for (const call of ['originName(origin)', 'originBlurb(origin)', 'playerCharacterLabel(character)', 'this.renderAttributes(attributeList)']) {
+      expect(refresh, call).toContain(call);
+    }
+  });
+
   it('localizes the entrance prompt and the character creator', () => {
     expect(read('../src/game/scenes/BoulevardSpikeScene.ts')).toContain('label: locationPrompt(location),');
     const creator = read('../src/app/CharacterCreator.ts');

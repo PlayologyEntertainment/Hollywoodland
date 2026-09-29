@@ -294,6 +294,8 @@ export class AppShell {
   private audioSyncTimer = 0;
   /** A level-up happened (possibly mid-dialogue) and hasn't been celebrated yet — see maybeCelebrateLevelUp. */
   private pendingLevelUp = false;
+  /** The Character Creator screen, kept so a language change can redraw its origins and attributes. */
+  private readonly creatorScreen = new CharacterCreator();
   private levelUpHideTimer = 0;
 
   public constructor(private readonly options: AppShellOptions) {
@@ -390,6 +392,7 @@ export class AppShell {
       if (assertElement('#save-options-dialog', HTMLDialogElement).open) void this.renderSaveSlots(screens);
       this.populateLanguageSelect();
       this.renderDialogueNode();
+      this.creatorScreen.refreshText();
     });
     this.options.domainEvents.on('level-up', () => {
       this.pendingLevelUp = true;
@@ -432,7 +435,7 @@ export class AppShell {
         characterCreator.hidden = false;
       });
     });
-    new CharacterCreator().mount(
+    this.creatorScreen.mount(
       (choices) => void this.startNewCareer(choices, screens, characterCreator),
       () => {
         void this.transition.run(() => {

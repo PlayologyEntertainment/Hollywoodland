@@ -25,6 +25,8 @@ const ATTRIBUTE_KEYS: readonly AttributeKey[] = ['presence', 'craft', 'wit', 'ne
 export class CharacterCreator {
   private characterIndex = 0;
   private originIndex = 0;
+  /** The parts of the screen whose words come from the catalog, kept so a language change can redraw them. */
+  private view: { characterGrid: HTMLElement; originGrid: HTMLElement; attributeList: HTMLElement; portrait: HTMLImageElement } | undefined;
 
   public mount(onStartCareer: (choices: CharacterChoices) => void, onBack: () => void): void {
     const nameInput = assertElement('#creator-name', HTMLInputElement);
@@ -33,6 +35,7 @@ export class CharacterCreator {
     const attributeList = assertElement('#creator-attributes', HTMLElement);
     const portrait = assertElement('#creator-portrait', HTMLImageElement);
 
+    this.view = { characterGrid, originGrid, attributeList, portrait };
     this.buildCharacters(characterGrid, portrait);
     this.showCharacter(characterGrid, portrait);
     this.buildOrigins(originGrid, attributeList);
@@ -52,6 +55,26 @@ export class CharacterCreator {
         characterId: this.getCurrentCharacter().id,
       });
     });
+  }
+
+  /** Writes the screen's words again in the active language: the origin names and blurbs, the attribute names, and the
+   * screen-reader descriptions of the characters. The screen is built once, at start-up, before a chosen language has
+   * loaded, so it is redrawn whenever the language changes; the player's selections are left alone. */
+  public refreshText(): void {
+    if (this.view === undefined) return;
+    const { characterGrid, originGrid, attributeList, portrait } = this.view;
+    ORIGINS.forEach((origin, index) => {
+      const card = originGrid.children[index];
+      const name = card?.querySelector('strong');
+      const blurb = card?.querySelector('span');
+      if (name !== null && name !== undefined) name.textContent = originName(origin);
+      if (blurb !== null && blurb !== undefined) blurb.textContent = originBlurb(origin);
+    });
+    PLAYER_CHARACTERS.forEach((character, index) => {
+      characterGrid.children[index]?.setAttribute('aria-label', playerCharacterLabel(character));
+    });
+    portrait.alt = playerCharacterLabel(this.getCurrentCharacter());
+    this.renderAttributes(attributeList);
   }
 
   /** The six headshots, as a radio group: click or press an arrow key to choose. Characters without a walk cycle drawn to
