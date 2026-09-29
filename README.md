@@ -2,7 +2,7 @@
 
 Hollywoodland is a free, single-player, side-scrolling web RPG about arriving in 1935 Hollywood with almost nothing and building a career as a film star. The player creates an original performer, navigates a romanticized Golden Age dream factory, takes survival jobs, builds relationships, auditions for roles, manages money and energy, and shapes a branching career with multiple endings.
 
-The design package was approved by the owner on September 12, 2026. The current build is the **Phase 1 visual gameplay spike**: an animated protagonist can explore a registered five-plane Hollywood Boulevard, discover the casting office, trigger a semantic story encounter, switch into the living-film treatment, and save/export/import progress.
+The design package was approved by the owner on September 12, 2026. The current build is a **Phase 1 spike with Phase 2 systems already running**: the player picks a portrait and origin, walks a layered Hollywood Boulevard, enters buildings, talks through branching dialogue, takes quests and scheduled assignments, auditions, manages money, energy and reputation, and can switch into the living-film treatment. Saves are local, with export/import. The interface is available in English, plus Spanish, French, German and Brazilian Portuguese drafts marked Beta.
 
 ## Approval package
 
@@ -11,11 +11,13 @@ The design package was approved by the owner on September 12, 2026. The current 
 3. [`TECHNICAL_IMPLEMENTATION_PLAN.md`](docs/TECHNICAL_IMPLEMENTATION_PLAN.md) — architecture, browser, save, analytics, performance, and testing plan.
 4. [`CONTENT_AND_ASSET_PIPELINE.md`](docs/CONTENT_AND_ASSET_PIPELINE.md) — authored-content and generated-art pipeline.
 5. [`PRODUCTION_ROADMAP.md`](docs/PRODUCTION_ROADMAP.md) — gated delivery sequence.
-6. [`PHASE_1_VISUAL_SPIKE.md`](docs/PHASE_1_VISUAL_SPIKE.md) — current implementation proof and review checklist.
+6. [`PHASE_1_VISUAL_SPIKE.md`](docs/PHASE_1_VISUAL_SPIKE.md) — the original visual spike proof and review checklist.
+7. [`DECISION_LOG.md`](docs/DECISION_LOG.md) — approved decisions and open questions; the source of truth when documents disagree.
+8. [`LOCALIZATION_PLAN.md`](docs/LOCALIZATION_PLAN.md), [`AUDIO_PROVENANCE.md`](docs/AUDIO_PROVENANCE.md) and [`deploy.md`](docs/deploy.md) — localization, audio licensing, and Hostinger deployment.
 
 ## Development gate
 
-The current build is for Phase 1 technical and visual approval. Story production and bulk asset creation remain blocked until this spike is reviewed. Scope must not expand beyond the approved vertical slice without explicit owner approval.
+Phase 1 is not closed: it still needs the measured feasibility report and final asset and frame budgets (`docs/PRODUCTION_ROADMAP.md`). Bulk art production stays gated on that. Scope must not expand beyond the approved vertical slice without explicit owner approval.
 
 ## Local development
 
@@ -40,7 +42,8 @@ npm run build
 
 - `A`/`D` or Left/Right Arrow — walk
 - `E` or Enter — interact
-- On-screen controls — film look, fullscreen, status, save, export, and settings
+- `Esc` — close an open dialog
+- On-screen controls — Film Look, Fullscreen, Career, Wait and Menu; Save Options (save slots, export, import) and Settings are on the Main Menu
 
 ## Product constraints
 

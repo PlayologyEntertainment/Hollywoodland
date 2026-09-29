@@ -132,7 +132,7 @@ Important conversations use classic, readable branching dialogue trees. Choices 
 
 The recurring cast participates in a full relationship web. Each key character tracks a small authored set of states rather than a single universal affection score: trust, tension, attraction where applicable, obligation/favors, and pivotal flags. Relationships can become friendship, rivalry, romance, alliance, estrangement, or combinations that change over time.
 
-The charismatic aspiring rival, Delphine Voss, is the player’s narrative foil. They compete for rooms and roles but can become a friend, romance, enemy, or ally. Romance is optional and never required for optimal progression. In the slice, the romance-capable characters are Delphine Voss, Frankie Dolan, and Corinne Lake, each attraction-flexible and reactive to what the player set in the creator. Every other recurring character uses trust, obligation, or mentor tracks. The full slice roster and its relationship boundaries are in the Vertical Slice Specification.
+The charismatic aspiring rival, Delphine Voss, is the player’s narrative foil. They compete for rooms and roles but can become a friend, romance, enemy, or ally. Romance is optional and never required for optimal progression. In the slice, the romance-capable characters are Delphine Voss, Frankie Dolan, and Corinne Lake, each attraction-flexible and reactive to the identity of the portrait the player chose. Every other recurring character uses trust, obligation, or mentor tracks. The full slice roster and its relationship boundaries are in the Vertical Slice Specification.
 
 ## 8. Auditions and conflict resolution
 
