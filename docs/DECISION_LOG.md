@@ -125,6 +125,16 @@ The exact Phaser/Vite versions, analytics provider, deployment provider, animati
 | Wardrobe | No visual outfit changes in the slice. Wardrobe stays a collection and quest-requirement item; outfit variants (extra sheets per portrait) are deferred to the full game. "Change appearance" is removed from the home loop |
 | Art risk | The roadmap's "sprites multiply across creator options" risk is replaced by a bounded per-portrait cost: one walk cycle, plus the rest of the player animation set, per selectable portrait |
 
+## Slice content expansion (2026-09-29)
+
+| Area | Decision |
+|---|---|
+| Goal | Lengthen the slice's narrative by about 50 percent: one more experience-earning dialogue option per NPC, and three more quests (ten in total) |
+| Follow-up XP options | Casting office (15 XP), Diner, Bellhaven Rooms, Backlot Gate, Extras Corral and Soundstage (10 XP each): one-time choices, each unlocked by finishing that NPC's first quest and costing 10 energy |
+| New quests | The Perfect Fit (The Silver Thimble), On the Record (The Klieg Light) and Tuesday Matinee (The Celestial Palace): two stages each, 15 XP at the last stage. They give the three NPCs without a quest their XP option. Gus Albrecht is left out until he has a location |
+| Localization | New English text is in the catalog, with AI first drafts for es, fr, de and pt-BR, still Beta and awaiting native review |
+| Balance | About 110 XP added in total. Level pacing and the Screen Test's level-2 gate have not been playtested against it |
+
 ## Spec reconciliation (2026-09-29)
 
 Audit of the design documents against the build. Items the docs promised but the build lacks were ruled on one by one.

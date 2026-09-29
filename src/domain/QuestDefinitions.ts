@@ -4,6 +4,60 @@ import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipD
 import { ALL_TALENTS } from './TalentDefinitions';
 import type { QuestDef } from './Quests';
 
+/** The Silver Thimble's quest: the wardrobe mistress promises a proper fitting once the player has a callback (her
+ * `fitting-reply` line says as much), so `fitted` waits on the callback slip from First Audition. */
+export const COSTUME_FITTING_QUEST: QuestDef = {
+  id: 'costume-fitting',
+  title: 'The Perfect Fit',
+  summary: 'Earn a proper fitting from the wardrobe mistress at The Silver Thimble.',
+  stages: [
+    { id: 'sized-up', description: 'Ask the wardrobe mistress for a fitting.' },
+    {
+      id: 'fitted',
+      description: 'Come back with a callback and get properly fitted.',
+      rewards: [
+        { kind: 'resource-delta', delta: { reputation: 2 } },
+        { kind: 'xp-grant', amount: 15 },
+      ],
+    },
+  ],
+};
+
+/** The Klieg Light's quest: the newsman trades in favors, so `see-it-in-print` waits on real news (the player being
+ * cleared for the extras call) and can be finished by feeding him the story or by asking him to hold it. */
+export const ON_THE_RECORD_QUEST: QuestDef = {
+  id: 'on-the-record',
+  title: 'On the Record',
+  summary: 'Trade a story with the newsman at The Klieg Light, and decide how much of it he prints.',
+  stages: [
+    { id: 'gave-him-something', description: 'Give the newsman something to work with.' },
+    {
+      id: 'see-it-in-print',
+      description: 'Come back with news worth printing.',
+      rewards: [
+        { kind: 'resource-delta', delta: { reputation: 3 } },
+        { kind: 'xp-grant', amount: 15 },
+      ],
+    },
+  ],
+};
+
+/** The Celestial Palace's quest: the house manager's matinee offer is the first stage (see the `accept-the-matinee-
+ * pass` choice), and taking him up on it is the second. */
+export const PALACE_MATINEE_QUEST: QuestDef = {
+  id: 'palace-matinee',
+  title: 'Tuesday Matinee',
+  summary: 'Take the house manager up on a free seat at the Celestial Palace.',
+  stages: [
+    { id: 'matinee-promised', description: 'Get the house manager\'s offer of a matinee seat.' },
+    {
+      id: 'matinee-attended',
+      description: 'Take your seat at the Tuesday matinee.',
+      rewards: [{ kind: 'xp-grant', amount: 15 }],
+    },
+  ],
+};
+
 /** Debug content for round 18's sixth Boulevard location (see
  * DialogueGraphs.ts's `SCENE_PARTNER_DIALOGUE`) — the `scene-partner` roster
  * entry's first content, past the extras corral at the soundstage. Unlike
@@ -180,6 +234,9 @@ export const ALL_QUESTS: readonly QuestDef[] = [
   BACKLOT_RIVALRY_QUEST,
   EXTRAS_CALL_QUEST,
   SCENE_REHEARSAL_QUEST,
+  COSTUME_FITTING_QUEST,
+  ON_THE_RECORD_QUEST,
+  PALACE_MATINEE_QUEST,
 ];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
