@@ -38,7 +38,7 @@ The chosen animation method is traditional frame-by-frame sprite sheets.
 
 ### Vertical-slice animation minimum
 
-- Player (for each selectable portrait): idle, walk, run, turn, interact, stairs, contextual ladder, sit, surprised, pleased, discouraged, basic acting beats, and arrival/cinematic poses.
+- Player (for each selectable portrait): idle, walk, run, turn, interact, sit, surprised, pleased, discouraged, basic acting beats, and cinematic poses. Stairs and ladder animations are full-game.
 - Recurring NPCs: idle, walk, talk set, two signature reactions, and role-specific action.
 - Crowd: a small reusable library of low-cost loops with palette/wardrobe variants.
 - Performance: dedicated blocking, delivery, reaction, and improvisation sequences for the screen test.

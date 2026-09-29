@@ -125,6 +125,22 @@ The exact Phaser/Vite versions, analytics provider, deployment provider, animati
 | Wardrobe | No visual outfit changes in the slice. Wardrobe stays a collection and quest-requirement item; outfit variants (extra sheets per portrait) are deferred to the full game. "Change appearance" is removed from the home loop |
 | Art risk | The roadmap's "sprites multiply across creator options" risk is replaced by a bounded per-portrait cost: one walk cycle, plus the rest of the player animation set, per selectable portrait |
 
+## Spec reconciliation (2026-09-29)
+
+Audit of the design documents against the build. Items the docs promised but the build lacks were ruled on one by one.
+
+| Area | Decision |
+|---|---|
+| Remappable controls | Deferred to the full game. The slice ships fixed keys (A/D or arrows, E or Enter, Esc) |
+| Timing assists / untimed mode | Deferred to the full game. The slice keeps its timing light and fixed |
+| Analytics | The boundary and Settings opt-out stay; no provider in the slice, so nothing is transmitted. The payload audit applies once a provider is chosen |
+| CI gates | A bundle-size and asset-budget check is added after the Phase 1 budgets; formatting, linting, and browser smoke tests are Phase 5 release-candidate gates |
+| Arrival sequence | Deferred to the full game. The slice opens on the chapter title page, then player control on the Boulevard |
+| Stairs, ladders, chase/slapstick | Deferred to the full game. The slice's conflict content is the one on-set crisis |
+| Achievements and scrapbook | Kept for the slice (5-8 achievements; scrapbook of the career chronology). Not yet built; tracked in the roadmap |
+| Version file and refresh prompt | Deferred to Phase 6 release work |
+| Seeded random streams | Rule dropped for the slice, which uses no randomness. Required if a random system is ever added |
+
 ## Open decisions
 
 | Area | Question | Raised |

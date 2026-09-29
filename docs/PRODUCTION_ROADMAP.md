@@ -101,6 +101,15 @@ Deliverables:
 
 No full-game production is implied by slice release.
 
+### Known gaps to close before Phase 3 exit
+
+Slice features the specs still require that are not yet built:
+
+- [ ] Achievements (5-8 cosmetic examples) and the career scrapbook (`VERTICAL_SLICE_SPEC.md` §5).
+- [ ] Bundle-size and asset-budget check in CI, once the Phase 1 budgets exist.
+
+Deferred to the full game by owner ruling (2026-09-29, see `DECISION_LOG.md`): remappable controls, timing assists, the arrival sequence, stairs, ladders, chases, and the version-refresh prompt.
+
 ## 3. Workstreams
 
 | Workstream | Primary responsibilities |

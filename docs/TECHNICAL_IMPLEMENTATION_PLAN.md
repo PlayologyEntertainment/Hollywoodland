@@ -52,9 +52,9 @@ As built (2026-09-29). The originally proposed layout used `src/systems/`, `src/
 1. The game world emits typed domain events; UI, saves, analytics, and audio subscribe through narrow interfaces.
 2. Narrative content never imports Phaser. Dialogue and quest logic are engine-independent data plus deterministic evaluators.
 3. Save data contains domain state, never live scene objects or framework internals.
-4. All random decisions use named seeded streams so tests and bug reports can reproduce outcomes.
+4. Outcomes come from authored data and deterministic evaluators; the slice uses no randomness. If a random system is added, it must use named seeded streams so tests and bug reports can reproduce outcomes.
 5. Input actions (`moveLeft`, `interact`, `journal`, etc.) are abstracted from physical keys and mouse buttons.
-6. Timing pressure uses a central accessibility-aware clock multiplier and supports an untimed mode.
+6. Timing pressure uses a central accessibility-aware clock multiplier and supports an untimed mode. Full-game feature; the slice keeps its timing light and fixed.
 7. Content IDs are stable, namespaced, and never derived from display text.
 8. No external secret, AI API key, or privileged service is shipped to the browser.
 
@@ -147,8 +147,7 @@ Use feature detection rather than user-agent branching. Provide a readable unsup
 - Text scale cannot clip or hide required choices at the supported maximum.
 - High-contrast/color-independent modes swap tokens and assets through centralized presentation settings.
 - Reduced motion disables camera shake, aggressive parallax, flashes, and nonessential transitions.
-- Timing assists affect only player-facing deadlines, never physics stability.
-- Remapping detects conflicts, provides restore defaults, and saves independently of career slots.
+- Full-game features (deferred from the slice): timing assists affect only player-facing deadlines, never physics stability; remapping detects conflicts, provides restore defaults, and saves independently of career slots.
 
 Target WCAG 2.2 AA for DOM-based screens and equivalent functional access for canvas gameplay, documented through an accessibility conformance checklist.
 
@@ -163,7 +162,7 @@ Target WCAG 2.2 AA for DOM-based screens and equivalent functional access for ca
 
 ## 12. CI and release gates
 
-Every change must pass formatting, linting, type checking, unit tests, content validation, production build, bundle-budget check, and browser smoke tests. Release candidates additionally require:
+Every change must pass type checking, unit tests, content validation, and the production build (as built). A bundle-size and asset-budget check is added once the Phase 1 budgets are set. Formatting, linting, and browser smoke tests are release-candidate gates from Phase 5. Release candidates additionally require:
 
 - Chrome/Safari manual pass.
 - Save migration and import corruption tests.
@@ -174,7 +173,7 @@ Every change must pass formatting, linting, type checking, unit tests, content v
 
 ## 13. Deployment
 
-Build with `/Hollywoodland/` as the base path. The deployment artifact contains immutable hashed assets plus an entry HTML file and suitable cache headers. Do not cache the entry HTML indefinitely. Provide a version file and a friendly refresh prompt when a new build is available; never update in the middle of a session.
+Build with `/Hollywoodland/` as the base path. The deployment artifact contains immutable hashed assets plus an entry HTML file and suitable cache headers. Do not cache the entry HTML indefinitely. Provide a version file and a friendly refresh prompt when a new build is available; never update in the middle of a session. This is deferred to Phase 6 release work; until then cache-busting relies on commit-SHA asset URLs.
 
 As built: the game is hosted on Hostinger shared hosting at `https://www.playologyentertainment.com/Hollywoodland/` (capital H, since the host is case-sensitive). A manual GitHub Actions workflow builds and uploads `dist/` over FTP, and a push to `main` never publishes. See `docs/deploy.md`. The version file and in-session refresh prompt described above are not built yet.
 

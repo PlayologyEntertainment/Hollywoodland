@@ -73,7 +73,7 @@ The creator collects:
 
 Aspiration, strength, and flaw are not collected in the slice; the origin carries the equivalent trade-off and the starting connection.
 
-The origin is mechanically meaningful. It modifies initial attributes, starting skill access, dialogue tags, one contact, early money or energy conditions, and portions of the arrival sequence. No origin is strictly superior.
+The origin is mechanically meaningful. It modifies initial attributes, starting skill access, dialogue tags, one contact, early money or energy conditions, and portions of the opening. No origin is strictly superior.
 
 Approved origins (September 18, 2026). Each trades a benefit for a cost and connects to one cast member:
 
@@ -150,13 +150,13 @@ Accessibility settings can lengthen or remove timing pressure. Outcomes must nev
 
 ### Contextual showdowns
 
-Outside auditions and dialogue, conflict uses bespoke lightweight encounters: chases, slapstick scrambles, dance-offs, publicity battles, stealth, investigations, crowd navigation, and on-set crises. These reuse a shared vocabulary of movement, observation, choice, timing, and resource expenditure. Conventional combat is not a core system.
+Outside auditions and dialogue, conflict uses bespoke lightweight encounters (the vertical slice has one on-set crisis; chases and slapstick scrambles are full-game): chases, slapstick scrambles, dance-offs, publicity battles, stealth, investigations, crowd navigation, and on-set crises. These reuse a shared vocabulary of movement, observation, choice, timing, and resource expenditure. Conventional combat is not a core system.
 
 ## 9. World and exploration
 
 Hollywood is organized into connected side-scrolling districts. Each district is a dense handcrafted sequence of exteriors and selected interiors with layered parallax, recurring NPC routines, secrets, environmental storytelling, shortcuts, and events that change by time or quest state.
 
-Movement is grounded and responsive: walk, run, use stairs, enter doors, climb contextual ladders, navigate crowds, and interact. Precision platforming is not required. Traversal exists to reveal people, place, humor, and opportunity.
+Movement is grounded and responsive: walk, run, use stairs, enter doors, climb contextual ladders, navigate crowds, and interact. The vertical slice covers walking, doors, and interaction; stairs, ladders, and other vertical traversal are full-game features. Precision platforming is not required. Traversal exists to reveal people, place, humor, and opportunity.
 
 Housing charts the career: rented room, apartment, bungalow, then mansion. Each is a customizable hub for saving, rest, wardrobe, achievements, memorabilia, schedule planning, and idle assignments.
 
@@ -168,7 +168,7 @@ Achievements provide titles, posters, outfits, trophies, scrapbook entries, and 
 
 ## 11. Narrative structure
 
-The story begins in 1935 with the player arriving by bus or train with one suitcase, little money, temporary lodging, and a fragile studio lead. The career branches through choices, relationships, job outcomes, scandals, and roles toward multiple endings.
+The story begins in 1935 with the player arriving by bus or train with one suitcase, little money, temporary lodging, and a fragile studio lead. The slice opens on a chapter title page and then hands over control on the Boulevard; a full arrival sequence is a full-game feature. The career branches through choices, relationships, job outcomes, scandals, and roles toward multiple endings.
 
 The first slice introduces a background-extra job on Monarch Pictures' swashbuckler *The Corsair's Daughter* that grows into a possible screen test opposite Corinne Lake. The full game should escalate from survival and access, through supporting work and public identity, to starring opportunities and the question of what the player is willing to trade for fame.
 
@@ -184,13 +184,13 @@ Audio emphasizes an adaptive period-inspired jazz/orchestral score, environmenta
 
 The first playable release requires:
 
-- Complete keyboard navigation and remappable gameplay controls.
+- Complete keyboard navigation. Remappable gameplay controls are a full-game feature; the slice uses fixed keys (A/D or arrows, E or Enter, Esc).
 - Mouse alternatives for all required actions.
 - Text scaling, readable line lengths, strong focus states, and high-contrast mode.
 - Information never communicated by color alone.
 - Reduced-motion mode and control over camera shake, flashes, film grain, and fisheye intensity.
 - Pause at any time outside explicitly noninteractive transitions.
-- Adjustable or removable timing pressure.
+- Adjustable or removable timing pressure (a full-game feature; the slice keeps its timing light and fixed).
 - Separate music, effects, and ambient volume controls.
 - Plain-language descriptions of settings and consequences.
 
@@ -198,7 +198,7 @@ The first playable release requires:
 
 The game supports autosaves plus several named manual slots. Saves live locally in the browser and may be exported/imported as versioned portable backups. No account is required.
 
-Standard anonymous analytics are enabled by default, clearly disclosed, and may be disabled. Only non-identifying progression, usage, performance, and crash events are permitted. Save content, free-form player names, and dialogue selections tied to a persistent personal identifier must not be transmitted.
+Standard anonymous analytics are enabled by default, clearly disclosed, and may be disabled. Only non-identifying progression, usage, performance, and crash events are permitted. Save content, free-form player names, and dialogue selections tied to a persistent personal identifier must not be transmitted. Until a provider is approved, the analytics client transmits nothing; the opt-out setting and the privacy boundary are built ahead of it.
 
 Hollywoodland is free, with no advertisements or purchases. Sponsorship or voluntary support may be considered later, but monetization must not shape progression. Generative AI is used only during development; the released game makes no generative-AI calls.
 
