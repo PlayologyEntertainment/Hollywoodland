@@ -23,8 +23,20 @@ export const LOCALES: readonly LocaleInfo[] = Object.freeze([
   { code: 'pt-BR', nativeName: 'Português (Brasil)', status: 'beta', legalReviewed: false },
 ]);
 
+/** Languages that exist only to test the engine, never offered to players (not in the picker, not accepted as a saved setting).
+ * Reach one by adding `?lang=<code>` to the page address:
+ *  - `en-XA` is English accented and stretched about 40 percent, generated from the current English (see pseudo.ts), for
+ *    finding text that does not fit and fonts that cannot cope;
+ *  - `ja` is a small sample of real Japanese (src/locales/ja.json), for checking Asian glyphs, wrapping and spacing. */
+export const TEST_LOCALES: readonly string[] = Object.freeze(['en-XA', 'ja']);
+
 /** The value of the language setting that follows the browser rather than naming a language. */
 export const AUTO_LANGUAGE = 'auto';
+
+/** A language the loader can fetch: a player language, or one of the test-only ones. */
+export function isLoadableLocale(code: unknown): code is string {
+  return isSupportedLocale(code) || (typeof code === 'string' && TEST_LOCALES.includes(code));
+}
 
 export function isSupportedLocale(code: unknown): code is string {
   return typeof code === 'string' && LOCALES.some((locale) => locale.code === code);

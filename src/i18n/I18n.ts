@@ -1,5 +1,5 @@
 import { formatMessage, type MessageParams } from './message';
-import { SOURCE_LOCALE, isSupportedLocale } from './locales';
+import { SOURCE_LOCALE, isLoadableLocale } from './locales';
 
 /** A locale's strings, by key. */
 export type Catalog = Readonly<Record<string, string>>;
@@ -32,11 +32,11 @@ export class I18n {
     return this.current;
   }
 
-  /** Switches language and tells listeners once the new catalog is in place. An unsupported code is ignored. A catalog
+  /** Switches language and tells listeners once the new catalog is in place. A code that is neither a player language nor a test language is ignored. A catalog
    * that fails to load leaves the game in English rather than half-translated. If the player changes their mind while a
    * catalog is still loading, the later choice wins. */
   public async setLocale(locale: string): Promise<void> {
-    if (!isSupportedLocale(locale)) return;
+    if (!isLoadableLocale(locale)) return;
     const request = ++this.requestId;
     let chosen = locale;
     let catalog: Catalog = this.source;

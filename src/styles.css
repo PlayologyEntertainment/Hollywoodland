@@ -39,6 +39,7 @@
   --panel: rgb(17 14 15 / 94%);
   --focus: #75ddff;
   --display-font: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sans-font: Arial, sans-serif;
   --deco-font: 'Limelight', 'Playfair Display', Georgia, 'Times New Roman', serif;
   --splash-bg: #000;
   /* The corner radius of a button; the floating notices (the entrance prompt and the toast) use it too, so they match. */
@@ -129,9 +130,9 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
    (position: absolute) anchors to it. */
 #advance-time { position: relative; }
 #advance-time::after {
-  content: '+20 Energy'; position: absolute; z-index: 20; bottom: calc(100% + .5rem); left: 50%; transform: translateX(-50%);
+  content: attr(data-tooltip); position: absolute; z-index: 20; bottom: calc(100% + .5rem); left: 50%; transform: translateX(-50%);
   padding: .35rem .6rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 96%);
-  color: var(--ink); font-family: Arial, sans-serif; font-size: .74rem; letter-spacing: .02em; white-space: nowrap;
+  color: var(--ink); font-family: var(--sans-font); font-size: .74rem; letter-spacing: .02em; white-space: nowrap;
   opacity: 0; pointer-events: none; transition: opacity .15s ease; box-shadow: 0 4px 15px rgb(0 0 0 / 35%);
 }
 #advance-time:hover::after, #advance-time:focus-visible::after { opacity: 1; }
@@ -149,7 +150,7 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .icon-button::after {
   content: attr(aria-label); position: absolute; z-index: 20; top: calc(100% + .5rem); left: 50%; transform: translateX(-50%);
   padding: .35rem .6rem; border: 1px solid var(--gold); border-radius: var(--button-radius); background: rgb(12 9 11 / 96%);
-  color: var(--ink); font-family: Arial, sans-serif; font-size: .74rem; letter-spacing: .02em; white-space: nowrap;
+  color: var(--ink); font-family: var(--sans-font); font-size: .74rem; letter-spacing: .02em; white-space: nowrap;
   opacity: 0; pointer-events: none; transition: opacity .15s ease; box-shadow: 0 4px 15px rgb(0 0 0 / 35%);
 }
 .icon-button:hover::after, .icon-button:focus-visible::after { opacity: 1; }
@@ -169,7 +170,7 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .title-panel[hidden] { display: none; }
 /* Dialogs keep a fine inner frame. The Status panel does not: its content scrolls, and the frame cut across it. */
 dialog::before { position: absolute; inset: .5rem; border: 1px solid rgb(216 173 88 / 42%); content: ''; pointer-events: none; }
-.eyebrow, .build-label { margin: 0; color: var(--muted); font-family: Arial, sans-serif; font-size: .72em; letter-spacing: .19em; text-transform: uppercase; }
+.eyebrow, .build-label { margin: 0; color: var(--muted); font-family: var(--sans-font); font-size: .72em; letter-spacing: .19em; text-transform: uppercase; }
 h1 {
   margin: .12em 0 0; color: var(--gold-bright); font-family: var(--display-font);
   font-size: clamp(1.9rem, 6.4vw, 4.6rem); font-weight: 900; line-height: 1;
@@ -196,7 +197,7 @@ h1 {
   height: 88px; width: auto; transition: opacity .3s ease;
 }
 .splash-presents {
-  margin: 0; color: var(--muted); font-family: Arial, sans-serif; font-size: .8rem; letter-spacing: .24em;
+  margin: 0; color: var(--muted); font-family: var(--sans-font); font-size: .8rem; letter-spacing: .24em;
   text-align: center; text-transform: uppercase; text-shadow: 0 1px 0 rgb(0 0 0 / 60%), 0 0 14px rgb(212 175 55 / 35%);
   transition: opacity .3s ease;
 }
@@ -504,6 +505,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   border: 1px solid rgb(216 173 88 / 55%); border-radius: 0; background: transparent; box-shadow: none; font-size: 1.05rem; line-height: 1;
 }
 .legal-close:hover:not(:disabled) { border-color: var(--gold-bright); background: rgb(216 173 88 / 10%); transform: none; }
+.legal-language-note { margin: 0 0 .8rem; padding: .5rem .7rem; border-left: 3px solid var(--gold); background: rgb(255 255 255 / 4%); color: var(--muted); }
 .legal-updated { margin: 0 0 1rem; color: var(--muted); font-style: italic; }
 .legal-body p { margin: 0 0 .8rem; line-height: 1.6; }
 .legal-body ul { margin: 0 0 .8rem; padding-left: 1.4rem; line-height: 1.6; }
@@ -525,7 +527,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .save-slot-meta { grid-column: 1; grid-row: 2; color: var(--muted); }
 .save-slot-tag {
   padding: .05rem .4rem; border: 1px solid rgb(216 173 88 / 45%); border-radius: 999px;
-  color: var(--gold-bright); font-family: Arial, sans-serif; font-size: .68rem; letter-spacing: .02em;
+  color: var(--gold-bright); font-family: var(--sans-font); font-size: .68rem; letter-spacing: .02em;
 }
 .save-slot-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: .5rem; }
 .save-slot-actions.is-confirming { flex-wrap: wrap; align-items: center; justify-content: flex-end; }
@@ -686,7 +688,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .creator-field { display: grid; gap: .35rem; font-size: .92rem; }
 /* The small sub-titles inside the panes: "Name" and "Character" on the left, "Choose an Origin" and "Attributes" on the right. One
    rule, so the two sides always match (.6624rem is the .72em these labels have always had inside the .92rem field). */
-.creator-field span, .creator-origin h3 { color: var(--muted); font-family: Arial, sans-serif; font-size: .6624rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
+.creator-field span, .creator-origin h3 { color: var(--muted); font-family: var(--sans-font); font-size: .6624rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; }
 .creator-field input[type='text'] { border: 1px solid var(--gold); border-radius: .2rem; padding: .55rem .7rem; background: #17120f; color: var(--ink); }
 /* The headshots fill the room under the Name field: .character-field takes all the height left in the pane, and .character-picker
    (a size container) is that room. The grid then uses whichever of 1, 2, 3 or 6 columns lets the six squares grow largest in it,
@@ -757,7 +759,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
    same length. Each row's div is display: contents, so it draws no divider line. */
 .attribute-list { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; column-gap: .75rem; row-gap: .3rem; margin: 0; }
 .attribute-list > div { display: contents; }
-.attribute-list dt { color: var(--muted); font-family: Arial, sans-serif; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; line-height: 1; }
+.attribute-list dt { color: var(--muted); font-family: var(--sans-font); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; line-height: 1; }
 .attribute-list dd { margin: 0; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; }
 .attribute-bar { position: relative; display: block; height: .45rem; padding: 0; border: 0; background: rgb(255 255 255 / 8%); }
 .attribute-bar span { position: absolute; inset: 0 auto 0 0; background: var(--gold-bright); }
@@ -821,3 +823,40 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   }
   .character-choice { border-width: 1px; }
 }
+
+/* Asian languages (Japanese, Chinese, Korean). The bundled fonts, Limelight and Playfair Display, have no CJK glyphs, so each
+   language falls back to fonts the device already has, in an order that picks the right regional glyph shapes (the same Han
+   character is drawn differently for Japanese, Chinese and Korean). The page's <html lang> is set from the chosen language
+   (see main.ts), which is what these :lang() rules read. Mincho/Song/Myeongjo (serif) stand in for the display and deco faces,
+   Gothic/Hei/Dotum (sans) for the plain small print. */
+:root:lang(ja) {
+  --sans-font: 'Yu Gothic UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, 'Noto Sans CJK JP', 'Noto Sans JP', sans-serif;
+  --display-font: 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Noto Serif JP', serif;
+}
+:root:lang(zh) {
+  --sans-font: 'PingFang SC', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', sans-serif;
+  --display-font: 'Songti SC', SimSun, 'Noto Serif CJK SC', 'Noto Serif SC', serif;
+}
+:root:lang(ko) {
+  --sans-font: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', 'Noto Sans KR', sans-serif;
+  --display-font: AppleMyungjo, Batang, 'Noto Serif CJK KR', 'Noto Serif KR', serif;
+}
+:root:is(:lang(ja), :lang(zh), :lang(ko)) {
+  --deco-font: var(--display-font);
+  font-family: var(--display-font);
+  line-height: 1.6;
+}
+/* Wide letter-spacing and italics are Latin habits: they pull CJK characters apart and slant them into a smear, and there is no
+   upper case to shout with. Small caps-style labels also need a little more size, because a CJK character is far more detailed
+   than a Latin letter of the same height. */
+:root:is(:lang(ja), :lang(zh), :lang(ko)) * { letter-spacing: 0; font-style: normal; }
+:root:is(:lang(ja), :lang(zh), :lang(ko)) :is(.hud-label, .eyebrow, .build-label, .creator-field span, .creator-origin h3, .attribute-list dt, .chapter-hint, .chapter-place, .save-slot-tag, .splash-presents) {
+  font-size: max(.8rem, 1em);
+}
+:root:is(:lang(ja), :lang(zh), :lang(ko)) .icon-button::after,
+:root:is(:lang(ja), :lang(zh), :lang(ko)) #advance-time::after { font-size: .8rem; }
+/* Line breaking: Japanese and Chinese may break between any two characters, by the stricter rules that keep small kana and
+   closing punctuation off the start of a line. Korean uses spaces between words, so keep each word whole and break only at
+   spaces (or, for a very long word, anywhere rather than overflow). */
+:root:is(:lang(ja), :lang(zh)) { line-break: strict; overflow-wrap: anywhere; }
+:root:lang(ko) { word-break: keep-all; line-break: strict; overflow-wrap: break-word; }
