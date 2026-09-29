@@ -69,7 +69,7 @@ Proposed first implementation layout:
 
 ### State domains
 
-- Player identity and creator selections.
+- Player identity and creator selections (name, portrait id, origin).
 - Attributes, skills, talents, XP, levels, credits, and achievements.
 - Money, energy, reputation, inventory, wardrobe, housing, and scrapbook.
 - Calendar/day/time slot and scheduled idle assignments.

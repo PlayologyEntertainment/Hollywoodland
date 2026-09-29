@@ -14,7 +14,7 @@ The player creates an aspiring performer, arrives on Hollywood Boulevard in 1935
 
 - Splash/title and settings-first launch.
 - New Career, Continue, Load, Import Save, Accessibility, and Credits.
-- Curated modular Character Creator with a representative—not exhaustive—selection from every planned category.
+- Character Creator as a portrait selector: name, a portrait from the slice roster (each with its own walk cycle), and an origin.
 - Origin summary and initial allocation across Presence, Craft, Wit, Nerve, and Grit.
 - Short color arrival sequence by bus or train, followed by player control.
 
@@ -98,7 +98,7 @@ Optional content must reinforce the core loop and not turn the slice into a cont
 
 | System | Slice depth |
 |---|---|
-| Character Creator | Polished representative subset |
+| Character Creator | Portrait selector: name, portrait, origin |
 | Movement/exploration | Production-quality core controls and interactions |
 | Time | Morning, afternoon, evening; flexible advancement |
 | Economy | Money, energy, reputation with visible tradeoffs |
@@ -163,5 +163,5 @@ Resolved September 18, 2026 (see `DECISION_LOG.md` and `DRAFT_TRACK_B_CANON_PROP
 
 Still **Owner approval required**:
 
-- Final protagonist creator matrix (appearance categories and option counts beyond the origin list).
+- How many portraits ship in the slice (the full game targets six; two have walk cycles today).
 - Representative art-size and animation-frame budgets after a pipeline test.

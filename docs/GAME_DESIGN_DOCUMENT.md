@@ -9,13 +9,13 @@ Initial milestone: Polished 45–90 minute vertical slice
 
 ## 1. Vision
 
-Hollywoodland is a rags-to-riches role-playing game about the human machinery behind the dream factory. The player arrives with one suitcase, a few dollars, temporary lodging, and a fragile lead. They are not a prewritten hero: appearance, identity, background, strengths, flaw, aspiration, and starting connections are created by the player.
+Hollywoodland is a rags-to-riches role-playing game about the human machinery behind the dream factory. The player arrives with one suitcase, a few dollars, temporary lodging, and a fragile lead. They are not a prewritten hero: the player chooses who they are from a cast of individual portraits, then shapes their background, strengths, and starting connections through an origin.
 
 The fantasy is not merely becoming famous. It is learning how Hollywood works, deciding who to trust, choosing what kind of performer to become, surviving setbacks, and watching a personalized career become visible through roles, relationships, homes, memorabilia, and public reputation.
 
 ### Design pillars
 
-1. **Become the star you invent.** A robust, art-directed creator and meaningful origin choices support distinct builds and stories.
+1. **Become the star you choose.** A cast of individually drawn, fully animated portraits and meaningful origin choices support distinct builds and stories.
 2. **Hollywood is a relationship web.** Friends, rivals, romances, loyalties, favors, and grudges materially alter access, quests, auditions, scandals, and endings.
 3. **Performance replaces combat.** Auditions, persuasion, chases, investigations, publicity battles, dance-offs, slapstick crises, and stealth provide varied conflict.
 4. **Failure writes the next scene.** A failed roll or audition creates a setback, debt, rumor, altered relationship, or unexpected opportunity rather than a reload wall.
@@ -50,7 +50,7 @@ Writer guardrails (approved September 18, 2026):
 1. Start at home; review schedule, money, energy, reputation, leads, and assignments.
 2. Choose activities for morning, afternoon, and evening.
 3. Travel through connected districts and pursue a career chain, repeatable gig, training, networking, recovery, or exploration.
-4. Return home to save, change appearance, display rewards, schedule idle assignments, and advance the day.
+4. Return home to save, display rewards, schedule idle assignments, and advance the day.
 
 The calendar is flexible. Activities consume time slots, but the main story rarely uses permanently missable deadlines. Time creates tradeoffs and atmosphere without punishing curiosity.
 
@@ -60,12 +60,18 @@ Train abilities, build contacts, accumulate credits, improve housing, shape rela
 
 ## 4. Character Creator
 
-The creator uses curated modular choices that preserve a cohesive retro-cartoon style. It supports:
+**Direction changed (September 2026).** The creator does not assemble a character from modular parts. The player picks one of a set of individual, fully drawn portraits, and each portrait has its own dedicated walk cycle and animation set. This replaces the earlier plan for head and body presets, skin tones, hair, facial hair, makeup, eyewear, accessories, and a per-player starting wardrobe. It keeps every portrait cohesive in the retro-cartoon style and means art cost grows with the number of portraits, not with the number of option combinations.
 
-- Name, pronouns, age range, voice/mannerism identity (text and animation only), and hometown.
-- Stylized head and body presets; skin tones; facial features; hair; facial hair; makeup; eyewear; accessories; and period-appropriate starting wardrobe.
-- Background/origin, aspiration, strength, flaw, and a starting connection.
-- A live hero preview, animation preview, and summary of narrative/mechanical effects.
+The creator collects:
+
+- **Name**, typed by the player.
+- **Portrait**, chosen from the roster. Each portrait is a complete character: headshot, full-size portrait, floor reflection, and a walk cycle drawn to match. A portrait carries its own pronouns, so the pronoun field is gone. Age range, hometown, and voice/mannerism identity are no longer separate choices.
+- **Origin** (below), which supplies the mechanical and narrative build, including one starting contact.
+- A summary of the origin's narrative and mechanical effects.
+
+**Roster.** The full game targets six portraits: a man and a woman each in White, Asian, and Black designs (`art/prompts/character-player-roster.md`, `src/domain/PlayerCharacters.ts`). The vertical slice ships fewer: only portraits with their own finished walk cycle are selectable, and a portrait without one stays visible but disabled (`hasInGameArt`) rather than putting an unmatched body on the Boulevard. As of this writing two portraits have a walk cycle (the White man and the White woman); the final slice count is an owner decision. The portrait choice is cosmetic. It does not change attributes, talents, or quest access, and no portrait is strictly superior. It is also the identity the relationship system reads (see Romance).
+
+Aspiration, strength, and flaw are not collected in the slice; the origin carries the equivalent trade-off and the starting connection.
 
 The origin is mechanically meaningful. It modifies initial attributes, starting skill access, dialogue tags, one contact, early money or energy conditions, and portions of the arrival sequence. No origin is strictly superior.
 
@@ -83,7 +89,7 @@ builds; see `docs/DRAFT_TRACK_B_CANON_PROPOSAL.md` §3 and `src/domain/Origins.t
 | Immigrant Striver | +3 Grit, -3 Presence | Odalys Bellhaven (shared home community; discounted first week's rent) |
 | Studio-Lot Hand-Me-Down | +3 Wit, -3 Nerve | Ola Whitfield (unlocks the wardrobe-department route past the casting-office gatekeeper) |
 
-Wardrobe is a cosmetic collection rather than numerical armor. Clothing expresses identity, films completed, achievements, and housing displays; quest requirements may ask for a costume or dress code, but items do not carry rarity tiers or general stat bonuses.
+Wardrobe is a collection rather than numerical armor. Clothing expresses films completed, achievements, and housing displays; quest requirements may ask for a costume or dress code, but items do not carry rarity tiers or general stat bonuses. Because each portrait has one fixed walk cycle, the vertical slice has no visual outfit changes: owning a costume can satisfy a requirement, but the on-screen character does not change. Outfit variants would need extra animation sheets per portrait and are deferred to the full game.
 
 ## 5. Attributes, skills, and progression
 
