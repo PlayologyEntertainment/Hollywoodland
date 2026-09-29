@@ -444,7 +444,11 @@ describe('the floating notices: the entrance prompt and the toast', () => {
   });
 
   it('slides left of the Status panel when it is open, and down below the stats so it covers neither, and is drawn above the rest', () => {
-    expect(css).toContain(".game-frame:has(#status-panel:not([hidden])) .notices { top: calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem); right: calc(min(100cqw, 29rem) + 1rem); }");
+    // Below the stats column as measured (so, below the assignment countdown too when one is showing); the estimate is the fallback.
+    expect(css).toContain(".game-frame:has(#status-panel:not([hidden])) .notices { top: var(--notices-below-hud, calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem)); right: calc(min(100cqw, 29rem) + 1rem); }");
+    expect(appShell).toContain("frame.style.setProperty('--notices-below-hud', value)");
+    expect(appShell).toContain("new ResizeObserver(() => this.syncNoticesTop()).observe(assertElement('.hud-center', HTMLElement))");
+    expect(appShell).toMatch(/openStatus[\s\S]*?this\.syncNoticesTop\(\);/);
     const z = (selector: string): number => Number(rule(selector).match(/z-index: (\d+)/)?.[1]);
     expect(z('.notices')).toBeGreaterThan(z('.drawer'));
     expect(z('.notices')).toBeGreaterThan(z('.stage'));

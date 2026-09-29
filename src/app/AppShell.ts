@@ -580,6 +580,24 @@ export class AppShell {
     observer.observe(footer);
     this.syncBarHeights = sync;
     sync();
+    // The notices stack drops below the stats row, and below the assignment countdown when one is showing, once the Career panel
+    // is open; the column they must clear grows and shrinks with that countdown, so watch it.
+    new ResizeObserver(() => this.syncNoticesTop()).observe(assertElement('.hud-center', HTMLElement));
+  }
+
+  /** Publishes where the header stats column (the Day/Time/Money bar and, under it, the assignment countdown) ends, measured from
+   * the top of the game frame, as `--notices-below-hud`. With the Career panel open the notices start just below this line,
+   * so they never cover the stats or the countdown. Unset while the HUD is not showing, and the stylesheet falls back to an
+   * estimate. */
+  private syncNoticesTop(): void {
+    const frame = assertElement('#game-frame', HTMLElement);
+    const column = assertElement('.hud-center', HTMLElement).getBoundingClientRect();
+    if (column.height === 0) {
+      frame.style.removeProperty('--notices-below-hud');
+      return;
+    }
+    const value = `${Math.ceil(column.bottom - frame.getBoundingClientRect().top) + 6}px`;
+    if (frame.style.getPropertyValue('--notices-below-hud') !== value) frame.style.setProperty('--notices-below-hud', value);
   }
 
   /** Start (on the Character Creator): dips through black to the Chapter 1 title page, plays its reveal once the fade-in has uncovered it,
@@ -1393,6 +1411,7 @@ export class AppShell {
   private openStatus(panel: HTMLElement, button: HTMLButtonElement): void {
     panel.hidden = false;
     button.setAttribute('aria-expanded', 'true');
+    this.syncNoticesTop();
     assertElement('#close-status', HTMLButtonElement).focus();
     this.options.domainEvents.emit('status-panel-visibility-changed', { open: true });
   }
