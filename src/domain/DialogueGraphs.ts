@@ -61,7 +61,29 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
             { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
+        {
+          id: 'ask-for-pointers',
+          label: 'Ask what the casting directors actually watch for. (-10 Energy)',
+          next: 'pointers-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'first-audition', status: 'completed' },
+            { kind: 'fact', fact: 'casting-pointers-asked', equals: false },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'xp-grant', amount: 15 },
+            { kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+            { kind: 'set-fact', fact: 'casting-pointers-asked' },
+          ],
+        },
       ],
+    },
+    {
+      id: 'pointers-reply',
+      speaker: 'Clerk',
+      text: '"They watch the hands, then the eyes, then whether you flinch when the light comes on," she says, stamping a folder without looking up. "Nobody tells you that. You did not hear it from me."',
+      choices: [{ id: 'thank-her', label: 'Thank her and step outside.', next: null }],
     },
     {
       /** The vertical slice's critical-path step 9 (VERTICAL_SLICE_SPEC.md
@@ -269,8 +291,30 @@ export const DINER_DIALOGUE: DialogueGraph = {
             { kind: 'relationship-pivotal-flag', characterId: DINER_CONFIDANT.id, flag: 'sharedColumnTip' },
           ],
         },
+        {
+          id: 'ask-about-her-story',
+          label: 'Ask how she ended up behind this counter. (-10 Energy)',
+          next: 'story-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'diner-introductions', status: 'completed' },
+            { kind: 'fact', fact: 'diner-story-asked', equals: false },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'xp-grant', amount: 10 },
+            { kind: 'relationship-delta', characterId: DINER_CONFIDANT.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+            { kind: 'set-fact', fact: 'diner-story-asked' },
+          ],
+        },
         { id: 'stay-quiet', label: 'Just finish your coffee.', next: null },
       ],
+    },
+    {
+      id: 'story-reply',
+      speaker: 'Counter Girl',
+      text: '"Came out from Ohio with a suitcase and a screen test that never happened," she says, wiping the counter in slow circles. "Turns out everybody in this town eats. Some of them tip like they remember being hungry."',
+      choices: [{ id: 'leave', label: 'Leave a little extra on the counter.', next: null }],
     },
     {
       id: 'gossip-reply',
@@ -361,8 +405,30 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
             { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
+        {
+          id: 'ask-about-the-photographs',
+          label: 'Ask about the photographs on her wall. (-10 Energy)',
+          next: 'photographs-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'making-rent', status: 'completed' },
+            { kind: 'fact', fact: 'boarding-house-photographs-asked', equals: false },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'xp-grant', amount: 10 },
+            { kind: 'relationship-delta', characterId: LANDLADY.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+            { kind: 'set-fact', fact: 'boarding-house-photographs-asked' },
+          ],
+        },
         { id: 'say-nothing', label: 'Just nod and head upstairs.', next: null, opensHomeHub: true },
       ],
+    },
+    {
+      id: 'photographs-reply',
+      speaker: 'Landlady',
+      text: '"Every one of them slept in your room once," she says, tapping a frame of a young man in a borrowed tuxedo. "Two got a contract. One got a husband. The rest went home and swear they never wanted it." She turns the ledger a quarter-inch straighter. "Rent is due Friday, all the same."',
+      choices: [{ id: 'head-upstairs', label: 'Head upstairs.', next: null, opensHomeHub: true }],
     },
   ],
 };
@@ -442,8 +508,30 @@ export const RIVAL_DIALOGUE: DialogueGraph = {
             { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
+        {
+          id: 'ask-about-her-audition',
+          label: 'Ask how her own audition went. (-10 Energy)',
+          next: 'audition-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'backlot-rivalry', status: 'completed' },
+            { kind: 'fact', fact: 'rival-audition-asked', equals: false },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'xp-grant', amount: 10 },
+            { kind: 'relationship-delta', characterId: RIVAL.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+            { kind: 'set-fact', fact: 'rival-audition-asked' },
+          ],
+        },
         { id: 'stay-cold', label: 'Say nothing and walk away.', next: null },
       ],
+    },
+    {
+      id: 'audition-reply',
+      speaker: 'Rival',
+      text: '"They liked me. They always like me," she says, then looks away. "That is the trouble. Liked is not the same as chosen." A beat, and the smile is back. "Do not repeat that."',
+      choices: [{ id: 'keep-her-secret', label: 'Keep it to yourself.', next: null }],
     },
   ],
 };
@@ -527,8 +615,30 @@ export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
             { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
+        {
+          id: 'ask-how-to-get-noticed',
+          label: 'Ask how an extra gets noticed on a set this size. (-10 Energy)',
+          next: 'noticed-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'extras-call', status: 'completed' },
+            { kind: 'fact', fact: 'coordinator-noticed-asked', equals: false },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'xp-grant', amount: 10 },
+            { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+            { kind: 'set-fact', fact: 'coordinator-noticed-asked' },
+          ],
+        },
         { id: 'wait-for-the-wave', label: 'Say nothing and wait for the wave-in.', next: null },
       ],
+    },
+    {
+      id: 'noticed-reply',
+      speaker: 'Production Coordinator',
+      text: '"Hit your mark, hold your mark, and never look at the camera," he says, without lifting his pen. "Extras who do that get remembered. Extras who wave get replaced." He glances up, just once. "Take that free."',
+      choices: [{ id: 'take-it-to-heart', label: 'Take it to heart and get back behind the rope.', next: null }],
     },
   ],
 };
@@ -622,7 +732,29 @@ export const SCENE_PARTNER_DIALOGUE: DialogueGraph = {
             { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
+        {
+          id: 'ask-about-her-first-role',
+          label: 'Ask about her first role. (-10 Energy)',
+          next: 'first-role-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'scene-rehearsal', status: 'completed' },
+            { kind: 'fact', fact: 'scene-partner-first-role-asked', equals: false },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'xp-grant', amount: 10 },
+            { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+            { kind: 'set-fact', fact: 'scene-partner-first-role-asked' },
+          ],
+        },
       ],
+    },
+    {
+      id: 'first-role-reply',
+      speaker: 'Scene Partner',
+      text: '"A corpse in a two-reel comedy," she laughs. "Eleven takes, and the director told me I had a wonderful stillness." She lowers her sides. "The trick is that you never stop acting, even lying down."',
+      choices: [{ id: 'take-the-tip', label: 'Take the tip and return to your mark.', next: null }],
     },
   ],
 };
@@ -662,10 +794,33 @@ export const COSTUME_SHOP_DIALOGUE: DialogueGraph = {
             { kind: 'relationship-delta', characterId: WARDROBE_MENTOR.id, delta: { trust: 1, obligation: -2 } },
             { kind: 'relationship-pivotal-flag', characterId: WARDROBE_MENTOR.id, flag: 'offeredFitting' },
             { kind: 'set-fact', fact: 'silver-thimble-fitting-offered' },
+            { kind: 'quest-action', action: 'start', questId: 'costume-fitting' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'costume-fitting', stageId: 'sized-up' },
+          ],
+        },
+        {
+          id: 'return-for-the-fitting',
+          label: 'Show her the callback slip and ask for the proper fitting. (-10 Energy)',
+          next: 'proper-fitting-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'costume-fitting', status: 'active' },
+            { kind: 'item-owned', itemId: 'first-callback-slip' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'costume-fitting', stageId: 'fitted' },
+            { kind: 'relationship-delta', characterId: WARDROBE_MENTOR.id, delta: { trust: 3 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         { id: 'browse-quietly', label: 'Just browse.', next: null },
       ],
+    },
+    {
+      id: 'proper-fitting-reply',
+      speaker: 'Wardrobe Mistress',
+      text: '"A callback, and you remembered to come back," she says, pins already between her lips. "Arms out. Now we are talking about a costume that will make a director believe the rest of you." She chalks a line down your shoulder and, for the first time, almost smiles.',
+      choices: [{ id: 'stand-still', label: 'Stand very still and let her work.', next: null }],
     },
     {
       id: 'coat-reply',
@@ -676,6 +831,8 @@ export const COSTUME_SHOP_DIALOGUE: DialogueGraph = {
           { kind: 'relationship-delta', characterId: WARDROBE_MENTOR.id, delta: { trust: 1, obligation: -2 } },
           { kind: 'relationship-pivotal-flag', characterId: WARDROBE_MENTOR.id, flag: 'offeredFitting' },
           { kind: 'set-fact', fact: 'silver-thimble-fitting-offered' },
+          { kind: 'quest-action', action: 'start', questId: 'costume-fitting' },
+          { kind: 'quest-action', action: 'complete-stage', questId: 'costume-fitting', stageId: 'sized-up' },
         ] },
         { id: 'leave-her-to-the-braid', label: 'Let her get back to the braid.', next: null },
       ],
@@ -713,6 +870,8 @@ export const KLIEG_LIGHT_DIALOGUE: DialogueGraph = {
           effects: [
             { kind: 'relationship-delta', characterId: REPORTER.id, delta: { trust: 1, obligation: 2 } },
             { kind: 'set-fact', fact: 'klieg-light-tip-given' },
+            { kind: 'quest-action', action: 'start', questId: 'on-the-record' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'on-the-record', stageId: 'gave-him-something' },
           ],
         },
         {
@@ -724,6 +883,38 @@ export const KLIEG_LIGHT_DIALOGUE: DialogueGraph = {
             { kind: 'relationship-delta', characterId: REPORTER.id, delta: { trust: 1, obligation: -2 } },
             { kind: 'relationship-pivotal-flag', characterId: REPORTER.id, flag: 'sharedCastingTip' },
             { kind: 'set-fact', fact: 'klieg-light-gossip-asked' },
+            { kind: 'quest-action', action: 'start', questId: 'on-the-record' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'on-the-record', stageId: 'gave-him-something' },
+          ],
+        },
+        {
+          id: 'feed-him-the-story',
+          label: 'Give him the story of your first day on set. (-10 Energy)',
+          next: 'print-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'on-the-record', status: 'active' },
+            { kind: 'quest-status', questId: 'extras-call', status: 'completed' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'on-the-record', stageId: 'see-it-in-print' },
+            { kind: 'relationship-delta', characterId: REPORTER.id, delta: { trust: 2, obligation: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+          ],
+        },
+        {
+          id: 'hold-the-story',
+          label: 'Ask him to hold the story until it is official. (-10 Energy)',
+          next: 'hold-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'on-the-record', status: 'active' },
+            { kind: 'quest-status', questId: 'extras-call', status: 'completed' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'on-the-record', stageId: 'see-it-in-print' },
+            { kind: 'relationship-delta', characterId: REPORTER.id, delta: { trust: 1, obligation: -2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
           ],
         },
         {
@@ -745,6 +936,18 @@ export const KLIEG_LIGHT_DIALOGUE: DialogueGraph = {
       speaker: 'Newspaper Stringer',
       text: '"Monarch\'s casting is a revolving door, and Sunset Casting Exchange holds the key," he says, lowering his voice. "Be early and be reliable, and they forget you\'re new. Be a story, and I\'ll be the one who tells it."',
       choices: [{ id: 'take-the-hint', label: 'Take the hint.', next: null }],
+    },
+    {
+      id: 'print-reply',
+      speaker: 'Newspaper Stringer',
+      text: '"Cleared for the Monarch call, and still smiling? Readers will eat that with a spoon," he says, already writing. "Front of the entertainment column by Thursday. Your name spelled right, for once."',
+      choices: [{ id: 'see-yourself-in-print', label: 'Tip your hat and head out.', next: null }],
+    },
+    {
+      id: 'hold-reply',
+      speaker: 'Newspaper Stringer',
+      text: '"A closed mouth and a good instinct, that is rare on this street," he says, tapping the notebook shut. "I will hold it. But you owe me the first word when it is official, and I never forget a debt."',
+      choices: [{ id: 'shake-on-it', label: 'Shake on it and head out.', next: null }],
     },
     {
       id: 'cool-reply',
@@ -784,6 +987,20 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
           ],
         },
         { id: 'ask-about-the-picture', label: 'Ask what is playing tonight.', next: 'picture-reply' },
+        {
+          id: 'take-the-matinee-seat',
+          label: 'Ask for the seat he promised at the Tuesday matinee. (-10 Energy)',
+          next: 'matinee-reply',
+          conditions: [
+            { kind: 'quest-status', questId: 'palace-matinee', status: 'active' },
+            { kind: 'resource-at-least', resource: 'energy', minimum: 10 },
+          ],
+          effects: [
+            { kind: 'quest-action', action: 'complete-stage', questId: 'palace-matinee', stageId: 'matinee-attended' },
+            { kind: 'relationship-delta', characterId: HOUSE_MANAGER.id, delta: { trust: 2 } },
+            { kind: 'resource-delta', delta: { energy: -10 } },
+          ],
+        },
         { id: 'leave-quietly', label: 'Step back out to the Boulevard.', next: null },
       ],
     },
@@ -814,6 +1031,12 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
       ],
     },
     {
+      id: 'matinee-reply',
+      speaker: 'House Manager',
+      text: '"Row F, center, and not a word about the voucher," he murmurs, walking you down the aisle by the light of the brass flashlight. On the screen a cartoon mouse is dodging a piano. Around you, the whole audience is laughing at the same instant, and you find yourself studying exactly how they do it.',
+      choices: [{ id: 'enjoy-the-show', label: 'Settle in and enjoy the show.', next: null }],
+    },
+    {
       id: 'voucher-reply',
       speaker: 'House Manager',
       text: '"A Monarch voucher?" He straightens further, if that is possible, and lowers his voice. "Crew and extras sit free at the Tuesday matinee, and nobody asks where you got the seat. Ask for me at the rope."',
@@ -825,6 +1048,8 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
           effects: [
             { kind: 'relationship-delta', characterId: HOUSE_MANAGER.id, delta: { trust: 1, obligation: -1 } },
             { kind: 'set-fact', fact: 'celestial-palace-matinee-pass' },
+            { kind: 'quest-action', action: 'start', questId: 'palace-matinee' },
+            { kind: 'quest-action', action: 'complete-stage', questId: 'palace-matinee', stageId: 'matinee-promised' },
           ],
         },
       ],

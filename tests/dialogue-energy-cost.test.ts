@@ -9,12 +9,15 @@ import {
   PRODUCTION_COORDINATOR_DIALOGUE,
   RIVAL_DIALOGUE,
   SCENE_PARTNER_DIALOGUE,
+  COSTUME_SHOP_DIALOGUE,
+  KLIEG_LIGHT_DIALOGUE,
+  CELESTIAL_PALACE_DIALOGUE,
 } from '../src/domain/DialogueGraphs';
 import { ALL_ITEMS } from '../src/domain/InventoryDefinitions';
 import { ALL_QUESTS } from '../src/domain/QuestDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS } from '../src/domain/RelationshipDefinitions';
 
-/** Every dialogue choice that completes a quest's final stage — the "gate progress" moments — across all seven
+/** Every dialogue choice that completes a quest's final stage — the "gate progress" moments — across all ten
  * quests, paired with the node it lives on. One entry per choice id from DialogueGraphs.ts. */
 const QUEST_COMPLETING_CHOICES: ReadonlyArray<{ graph: DialogueGraph; nodeId: string; choiceId: string }> = [
   { graph: CASTING_OFFICE_DIALOGUE, nodeId: 'root', choiceId: 'ask-for-screen-test' },
@@ -29,6 +32,10 @@ const QUEST_COMPLETING_CHOICES: ReadonlyArray<{ graph: DialogueGraph; nodeId: st
   { graph: SCENE_PARTNER_DIALOGUE, nodeId: 'settled-in', choiceId: 'commit-to-the-scene' },
   { graph: SCENE_PARTNER_DIALOGUE, nodeId: 'settled-in', choiceId: 'dig-into-motivation' },
   { graph: SCENE_PARTNER_DIALOGUE, nodeId: 'settled-in', choiceId: 'lean-into-the-chemistry' },
+  { graph: COSTUME_SHOP_DIALOGUE, nodeId: 'root', choiceId: 'return-for-the-fitting' },
+  { graph: KLIEG_LIGHT_DIALOGUE, nodeId: 'root', choiceId: 'feed-him-the-story' },
+  { graph: KLIEG_LIGHT_DIALOGUE, nodeId: 'root', choiceId: 'hold-the-story' },
+  { graph: CELESTIAL_PALACE_DIALOGUE, nodeId: 'root', choiceId: 'take-the-matinee-seat' },
 ];
 
 function getChoice(graph: DialogueGraph, nodeId: string, choiceId: string): DialogueChoice {
