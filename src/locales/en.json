@@ -554,5 +554,6 @@
   "content.sceneArt.costume-shop.alt": "The wardrobe mistress at The Silver Thimble",
   "content.sceneArt.klieg-light-office.alt": "The newspaper stringer at The Klieg Light",
   "content.sceneArt.celestial-palace.alt": "The house manager of The Celestial Palace",
-  "advanceTime.tooltip": "+20 Energy"
+  "advanceTime.tooltip": "+20 Energy",
+  "legal.governingLanguage": "This is a translation provided for convenience. If it differs from the English version, the English version governs."
 }

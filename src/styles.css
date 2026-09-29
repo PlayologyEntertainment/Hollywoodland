@@ -505,6 +505,7 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   border: 1px solid rgb(216 173 88 / 55%); border-radius: 0; background: transparent; box-shadow: none; font-size: 1.05rem; line-height: 1;
 }
 .legal-close:hover:not(:disabled) { border-color: var(--gold-bright); background: rgb(216 173 88 / 10%); transform: none; }
+.legal-language-note { margin: 0 0 .8rem; padding: .5rem .7rem; border-left: 3px solid var(--gold); background: rgb(255 255 255 / 4%); color: var(--muted); }
 .legal-updated { margin: 0 0 1rem; color: var(--muted); font-style: italic; }
 .legal-body p { margin: 0 0 .8rem; line-height: 1.6; }
 .legal-body ul { margin: 0 0 .8rem; padding-left: 1.4rem; line-height: 1.6; }

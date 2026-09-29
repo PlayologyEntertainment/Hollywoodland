@@ -22,6 +22,8 @@ let settings = settingsRepository.load();
 const applyLanguage = (language: string): Promise<void> => i18n.setLocale(resolveLocale(language, navigator.languages));
 i18n.onChange((locale) => {
   document.documentElement.lang = locale;
+  // A translated Terms of Service or Privacy Policy says the English version governs; English itself needs no such note.
+  for (const note of document.querySelectorAll<HTMLElement>('.legal-language-note')) note.hidden = locale === 'en';
   applyStaticTranslations(document, i18n);
   domainEvents.emit('locale-changed', { locale });
 });
