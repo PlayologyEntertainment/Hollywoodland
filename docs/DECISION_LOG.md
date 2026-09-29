@@ -7,7 +7,7 @@ Status: Owner approved September 12, 2026. Track B canon (naming slate, cast, or
 | Product | Free, single-player, web-based side-scrolling RPG about becoming a film star |
 | Setting | Romanticized Golden Age Hollywood beginning in 1935 |
 | Fiction policy | Original studios, stars, moguls, unions, and tabloids; real landmarks/broad texture allowed |
-| Player | Fully customizable blank slate with meaningful origin |
+| Player | Chosen from individual portraits (no free-form customization), with a meaningful origin |
 | Career | Acting-led; other film crafts support skills, contacts, and side jobs |
 | Narrative | Branching career, meaningful consequences, multiple endings |
 | Tone | Teen historical dramedy; glamour, humor, romance, peril, softened darker history |
@@ -15,7 +15,7 @@ Status: Owner approved September 12, 2026. Track B canon (naming slate, cast, or
 | Movement | Grounded walking/running, stairs, doors, contextual ladders, crowds, interaction |
 | Conflict | Auditions, persuasion, performance, chases, slapstick, dance, publicity, stealth, investigation, set crises; no core combat |
 | Failure | Fail forward into altered scenes, rumors, debts, relationships, or new opportunities |
-| Creator | Curated modular art direction; origin, identity, appearance, traits, aspiration, connection |
+| Creator | Individual portrait selector: name, portrait, origin. Each portrait has its own walk cycle; no modular parts, no outfit changes in the slice. See the 2026-09-29 entry |
 | Attributes | Presence, Craft, Wit, Nerve, Grit |
 | Skills | Branching talent trees including Drama, Comedy, Dance, Charm, Hustle, Observation, Stagecraft |
 | Leveling | XP grants attribute/perk choices; career milestones unlock signature perks/opportunities |
@@ -114,6 +114,17 @@ Several choices began as recommended defaults after a blank selection and were s
 
 The exact Phaser/Vite versions, analytics provider, deployment provider, animation frame counts, and asset budgets remain intentionally unresolved until their named gates. Cast identities, fictional proper nouns, the origin list, the screen-test genre, and the tone boundary were resolved on September 18, 2026 (see Canon above). The full creator appearance matrix is still open.
 
+## Character creation direction (2026-09-29)
+
+| Area | Decision |
+|---|---|
+| Portraits, not modular parts | The Character Creator is a portrait selector. Each portrait is a complete character with its own headshot, full-size portrait, reflection, and walk cycle. The earlier modular plan (head and body presets, skin tones, hair, facial hair, makeup, eyewear, accessories) is dropped. This formalises PR #62 (2026-09-20) |
+| Roster | Six portraits for the full game (White, Asian, and Black man and woman). The vertical slice ships fewer: only those with a finished walk cycle are selectable (currently the White man and the White woman). Final slice count is an owner decision |
+| Pronouns | Fixed per portrait; no separate pronoun, age-range, or hometown choice |
+| Romance | Delphine Voss, Frankie Dolan, and Corinne Lake stay attraction-flexible and react to the chosen portrait's identity rather than to creator settings |
+| Wardrobe | No visual outfit changes in the slice. Wardrobe stays a collection and quest-requirement item; outfit variants (extra sheets per portrait) are deferred to the full game. "Change appearance" is removed from the home loop |
+| Art risk | The roadmap's "sprites multiply across creator options" risk is replaced by a bounded per-portrait cost: one walk cycle, plus the rest of the player animation set, per selectable portrait |
+
 ## Open decisions
 
 | Area | Question | Raised |
@@ -121,3 +132,5 @@ The exact Phaser/Vite versions, analytics provider, deployment provider, animati
 | Phase 1 visual tweaks | Owner will outline minor tweaks to the approved Phase 1 visual spike | 2026-09-19 |
 | Phase 1 exit | Measured feasibility report and final asset/frame budgets are still needed (`PRODUCTION_ROADMAP.md`) | 2026-09-19 |
 | The alley | The only Boulevard entrance without a scene | 2026-09-19 |
+| Slice portrait count | How many portraits ship in the slice, and when the remaining walk cycles are made | 2026-09-29 |
+| Per-portrait animation set | The slice player animation minimum (idle, run, interact, stairs, sit, reactions) is needed per portrait; frame counts and budget are not yet set | 2026-09-29 |

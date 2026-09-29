@@ -33,6 +33,12 @@ Deliverables:
 
 Exit: Measured feasibility report, final asset/frame budgets, and owner visual approval.
 
+Action items:
+
+- [ ] Record Chrome frame rate on a named test machine, using the Settings > Show frames per second indicator.
+- [ ] Run the Safari smoke test (scaling, fullscreen, storage, import/export).
+- [ ] Write the feasibility report, including per-portrait frame and sheet budgets and the slice roster count.
+
 ### Phase 2 — Core systems foundation
 
 Deliverables:
@@ -120,7 +126,7 @@ GPT-5.6 Sol may perform implementation tasks and ChatGPT Images 2.5 may generate
 
 | Risk | Early mitigation |
 |---|---|
-| Traditional sprites multiply across creator options | Complete a creator/animation feasibility spike before bulk art; use curated whole-character combinations if necessary |
+| Traditional sprites multiply across portraits | Creator options are whole-character portraits, so cost is bounded by the roster. Set the slice roster and per-portrait frame and sheet budgets in the Phase 1 feasibility report |
 | Generated art lacks frame/perspective continuity | Lock turnarounds, anchors, palettes, and environment guides; require cleanup and in-engine review |
 | Branching content becomes untestable | Typed data, stable IDs, graph validation, deterministic conditions, route matrix |
 | Dense scenes miss 60 FPS | Establish measured budgets on one representative Boulevard scene before expansion |
@@ -134,7 +140,7 @@ GPT-5.6 Sol may perform implementation tasks and ChatGPT Images 2.5 may generate
 The owner should approve or revise:
 
 - [ ] Core vision and design pillars.
-- [ ] Character Creator scope and attribute/talent model.
+- [ ] Character Creator scope (portrait selector: name, portrait, origin) and attribute/talent model.
 - [ ] Time, economy, reputation, jobs, idle, save, and achievement rules.
 - [ ] Relationship, romance, dialogue, audition, and fail-forward approach.
 - [ ] 1935 romanticized fictional-Hollywood policy.

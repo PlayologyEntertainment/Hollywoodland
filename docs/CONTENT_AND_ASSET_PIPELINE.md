@@ -38,12 +38,12 @@ The chosen animation method is traditional frame-by-frame sprite sheets.
 
 ### Vertical-slice animation minimum
 
-- Player: idle, walk, run, turn, interact, stairs, contextual ladder, sit, surprised, pleased, discouraged, basic acting beats, and arrival/cinematic poses.
+- Player (for each selectable portrait): idle, walk, run, turn, interact, stairs, contextual ladder, sit, surprised, pleased, discouraged, basic acting beats, and arrival/cinematic poses.
 - Recurring NPCs: idle, walk, talk set, two signature reactions, and role-specific action.
 - Crowd: a small reusable library of low-cost loops with palette/wardrobe variants.
 - Performance: dedicated blocking, delivery, reaction, and improvisation sequences for the screen test.
 
-Frame counts must be established through a representative animation spike before bulk generation. Creator combinations require a production feasibility test; if fully interchangeable visual parts cannot remain consistent in traditional sheets, the creator must use curated whole-character output combinations rather than runtime body-part compositing.
+Frame counts must be established through a representative animation spike before bulk generation. The player is chosen from whole-character portraits, each with its own sprite sheets, rather than assembled from interchangeable parts, so there is no runtime body-part compositing and no combinatorial sheet growth. Every selectable portrait needs the full player animation set below, so per-portrait frame counts and budgets are set in the Phase 1 feasibility report. A portrait without a finished walk cycle is shown but not selectable.
 
 ## 4. Environments
 

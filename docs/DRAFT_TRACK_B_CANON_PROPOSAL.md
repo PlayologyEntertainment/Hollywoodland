@@ -42,7 +42,7 @@ compete with it.
 Each entry: role, one-line visual brief, personality, and relationship
 boundaries (what states apply and how far they can go). All romance-capable
 characters are written attraction-flexible — reactive to whatever the player
-sets in the Creator — rather than hard-coded straight/gay, matching the GDD's
+sets through the chosen portrait (the Creator is now a portrait selector) — rather than hard-coded straight/gay, matching the GDD's
 "no origin/build is strictly superior" spirit extended to romance access.
 
 1. **Delphine Voss — the Rival/Foil.** Sleek, expensive-looking clothes worn
