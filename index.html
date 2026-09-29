@@ -184,7 +184,10 @@
             <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" data-i18n-attr="alt:gameFooter.playologyEntertainment" />
             <button id="footer-privacy" class="footer-legal-link deco-label" type="button" data-i18n="footerPrivacy.privacyPolicy">Privacy Policy</button>
           </div>
-          <button id="advance-time" class="chrome-button deco-label" type="button" data-tooltip="+20 Energy" data-i18n-attr="data-tooltip:advanceTime.tooltip" data-i18n="advanceTime.wait">Wait</button>
+          <div class="footer-right">
+            <span id="fps-readout" class="fps-readout deco-label" hidden aria-hidden="true"></span>
+            <button id="advance-time" class="chrome-button deco-label" type="button" data-tooltip="+20 Energy" data-i18n-attr="data-tooltip:advanceTime.tooltip" data-i18n="advanceTime.wait">Wait</button>
+          </div>
         </footer>
 
         <aside id="status-panel" class="drawer" aria-labelledby="status-title" hidden>
@@ -302,6 +305,7 @@
               <label class="check-row"><input id="high-contrast" type="checkbox" /> <span data-i18n="settingsDialog.highContrast">High contrast</span></label>
               <label class="check-row"><input id="reduced-motion" type="checkbox" /> <span data-i18n="settingsDialog.reduceMotionAndParallax">Reduce motion and parallax</span></label>
               <label class="check-row"><input id="film-effects" type="checkbox" checked /> <span data-i18n="settingsDialog.filmGrainAndExposure">Film grain and exposure movement</span></label>
+              <label class="check-row"><input id="show-fps" type="checkbox" /> <span data-i18n="settingsDialog.showFpsCounter">Show frames per second</span></label>
               <label class="check-row"><input id="analytics-enabled" type="checkbox" checked /> <span data-i18n="settingsDialog.shareAnonymousPerformanceAnalytics">Share anonymous performance analytics</span></label>
             </div>
             <p class="privacy-note" data-i18n="settingsDialog.noPlayerNameDialogue">No player name, dialogue text, or save data is collected.</p>
