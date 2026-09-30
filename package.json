@@ -13,6 +13,7 @@
     "test": "vitest run",
     "i18n:check": "vitest run --reporter=verbose tests/localization-validation.test.ts tests/content-catalog.test.ts tests/i18n.test.ts",
     "i18n:stamp": "node tools/stamp-locale-hashes.mjs",
+    "narrative:export": "node -e \"process.env.NARRATIVE_EXPORT=1;require('child_process').spawnSync('npx',['vitest','run','tests/narrative-snapshot.test.ts'],{stdio:'inherit',shell:true,env:process.env})\"",
     "i18n:sync": "node -e \"process.env.I18N_SYNC=1;require('child_process').spawnSync('npx',['vitest','run','tests/content-catalog.test.ts'],{stdio:'inherit',shell:true,env:process.env})\""
   },
   "dependencies": { "phaser": "4.2.1" },
