@@ -609,5 +609,17 @@
   "content.sceneArt.costume-shop.alt": "The wardrobe mistress at The Silver Thimble",
   "content.sceneArt.klieg-light-office.alt": "The newspaper stringer at The Klieg Light",
   "content.sceneArt.celestial-palace.alt": "The house manager of The Celestial Palace",
-  "dialogue.lockedOption": "Locked option"
+  "dialogue.lockedOption": "Locked option",
+  "audition.scoreNote": "Each line below adds points to, or takes points from, your performance score. A higher score earns a better outcome.",
+  "audition.scoreTotal": "Total performance score: {score}",
+  "audition.rewards": "You earned {xp} XP and {reputation} Reputation.",
+  "audition.source.preparation": "Preparation",
+  "audition.source.relationship": "Relationship",
+  "audition.source.intention": "Intention",
+  "audition.source.technique": "Technique",
+  "audition.source.delivery": "Delivery",
+  "audition.source.emotion": "Emotion",
+  "audition.source.blocking": "Blocking",
+  "audition.source.improvisation": "Improvisation",
+  "audition.source.adaptation": "Adaptation"
 }

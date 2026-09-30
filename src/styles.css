@@ -633,8 +633,12 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
    from the dialog's own fixed border. Scrolling .story-card instead keeps <dialog> itself static. */
 .audition-dialog { width: min(94vw, 44rem); max-height: 90vh; overflow: hidden; }
 .audition-dialog[open] { display: flex; flex-direction: column; }
+/* The scrolling card keeps a clear margin (--audition-gap) all round, so neither its scrollbar nor a row clipped mid-scroll can
+   reach dialog::before's frame line (inset .5rem, 1px): the same guarantee .settings-form gives. Padding is cut back by the
+   same amount, so the text sits where it did before. */
 .audition-dialog .story-card {
-  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  --audition-gap: .75rem;
+  flex: 1 1 auto; min-height: 0; margin: var(--audition-gap); padding: .95rem; overflow: hidden auto;
   scrollbar-width: thin; scrollbar-color: rgb(216 173 88 / 55%) transparent;
 }
 .audition-dialog .story-card::-webkit-scrollbar { width: .55rem; }
@@ -646,9 +650,20 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
 .audition-option { display: flex; align-items: start; gap: .6rem; padding: .3rem 0; line-height: 1.4; }
 .audition-option input { margin-top: .2rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
 .audition-debrief { display: grid; gap: .8rem; }
+/* display: grid above would otherwise override the hidden attribute, leaving the (empty) results and their button showing
+   under the questions before the test has been performed. */
+.audition-debrief[hidden] { display: none; }
 .audition-debrief h3 { margin: 0; color: var(--gold-bright); font-size: 1.6rem; }
 .audition-factors { display: grid; gap: .4rem; margin: 0; padding: 0; list-style: none; }
-.audition-factors li { padding: .5rem .7rem; border: 1px solid rgb(216 173 88 / 24%); font-size: .92rem; }
+.audition-score-note { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.45; }
+.audition-factors li { display: grid; grid-template-columns: 8rem 1fr auto; gap: .2rem .8rem; align-items: baseline; padding: .5rem .7rem; border: 1px solid rgb(216 173 88 / 24%); font-size: .92rem; }
+.audition-factor-source { color: var(--gold-bright); font-size: .8rem; letter-spacing: .04em; text-transform: uppercase; }
+.audition-factor-points { color: rgb(var(--complete-rgb)); font-weight: 700; font-variant-numeric: tabular-nums; }
+.audition-factor-points.is-negative { color: #f0876a; }
+.audition-score-total { margin: 0; color: var(--gold-bright); font-weight: 700; }
+.audition-rewards { margin: 0; color: rgb(var(--complete-rgb)); }
+.audition-rewards:empty { display: none; }
+@media (max-width: 34rem) { .audition-factors li { grid-template-columns: 1fr auto; } .audition-factor-source { grid-column: 1 / -1; } }
 .creator {
   /* The character should fill the room between the column titles and the footer buttons. That room is the container's inner
      height (cqh already excludes the padding) minus the gap above the footer, the footer buttons, the title row and the gap

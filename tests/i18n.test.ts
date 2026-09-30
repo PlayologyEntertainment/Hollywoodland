@@ -270,6 +270,7 @@ describe('English catalog against the code and the markup', () => {
       ['time.weekday', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']],
       ['relationship.label', ['neutral', 'friendship', 'rivalry', 'romance', 'alliance', 'estrangement']],
       ['audition.outcome', ['breakthrough', 'promising-complication', 'wrong-role-right-notice', 'memorable-setback']],
+      ['audition.source', ['preparation', 'relationship', 'intention', 'technique', 'delivery', 'emotion', 'blocking', 'improvisation', 'adaptation']],
       ['attribute', ['presence', 'craft', 'wit', 'nerve', 'grit']],
       ['item.category', [...new Set(ALL_ITEMS.map((item) => item.category))]],
       ['talent.branch', [...new Set(ALL_TALENTS.map((talent) => talent.branch))]],

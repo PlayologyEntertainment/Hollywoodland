@@ -148,7 +148,9 @@ describe('the Status panel redesign, first pass', () => {
     expect(dialogBlock).toContain('overflow: hidden');
     expect(css).toMatch(/\n\.audition-dialog\[open\] \{ display: flex; flex-direction: column; \}/);
     const cardBlock = css.match(/\n\.audition-dialog \.story-card \{([^}]*)\}/s)?.[1] ?? '';
-    expect(cardBlock).toMatch(/overflow-y:\s*auto/);
+    expect(cardBlock).toMatch(/overflow:\s*hidden auto/);
+    // A clear margin all round keeps the scroller (and its scrollbar) off the frame line, as .settings-form does.
+    expect(cardBlock).toMatch(/margin:\s*var\(--audition-gap\)/);
     expect(cardBlock).toMatch(/min-height:\s*0/);
     expect(cardBlock).toMatch(/scrollbar-width:\s*thin/);
   });

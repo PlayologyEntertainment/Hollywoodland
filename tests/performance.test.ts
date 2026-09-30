@@ -94,14 +94,14 @@ describe('resolveAudition', () => {
     const state = stateWith({ facts: { 'studied-the-script': true } });
     const result = resolveAudition(state, DEFINITION, {}, ROSTER, ITEMS);
     expect(result.score).toBe(2);
-    expect(result.factors).toContainEqual({ label: 'Studied the script.', points: 2 });
+    expect(result.factors).toContainEqual({ label: 'Studied the script.', points: 2, source: 'preparation' });
   });
 
   it('credits an item-owned preparation check', () => {
     const state = stateWith({ ownedItemIds: { 'prepared-prop': true } });
     const result = resolveAudition(state, DEFINITION, {}, ROSTER, ITEMS);
     expect(result.score).toBe(1);
-    expect(result.factors).toContainEqual({ label: 'Brought the prop.', points: 1 });
+    expect(result.factors).toContainEqual({ label: 'Brought the prop.', points: 1, source: 'preparation' });
   });
 
   it('ignores a category the player left unanswered', () => {
@@ -117,8 +117,8 @@ describe('resolveAudition', () => {
     const result = resolveAudition(state, DEFINITION, choices, ROSTER, ITEMS);
     // fit 2, plus (8 - 5) = 3 attribute points
     expect(result.score).toBe(5);
-    expect(result.factors).toContainEqual({ label: 'Lean on craft.', points: 2 });
-    expect(result.factors).toContainEqual({ label: 'Craft carried it', points: 3 });
+    expect(result.factors).toContainEqual({ label: 'Lean on craft.', points: 2, source: 'intention' });
+    expect(result.factors).toContainEqual({ label: 'Craft carried it', points: 3, source: 'intention' });
   });
 
   it('subtracts an attribute penalty below baseline', () => {
@@ -135,7 +135,7 @@ describe('resolveAudition', () => {
     const choices: AuditionChoices = { intention: 'trained' };
     const result = resolveAudition(state, DEFINITION, choices, ROSTER, ITEMS);
     expect(result.score).toBe(3); // fit 1 + talent bonus 2
-    expect(result.factors).toContainEqual({ label: 'Trained technique paid off', points: 2 });
+    expect(result.factors).toContainEqual({ label: 'Trained technique paid off', points: 2, source: 'intention' });
   });
 
   it('does not grant the talent bonus when the talent is not unlocked', () => {
@@ -149,7 +149,7 @@ describe('resolveAudition', () => {
     const state = stateWith({ relationships: applyRelationshipDelta({}, SCENE_PARTNER, { trust: 50 }) });
     const result = resolveAudition(state, DEFINITION, {}, ROSTER, ITEMS);
     expect(result.score).toBe(2); // round(50 / 25)
-    expect(result.factors).toContainEqual({ label: 'Your scene partner has your back', points: 2 });
+    expect(result.factors).toContainEqual({ label: 'Your scene partner has your back', points: 2, source: 'relationship' });
   });
 
   it('treats a dangling scenePartnerId as contributing nothing rather than throwing', () => {
