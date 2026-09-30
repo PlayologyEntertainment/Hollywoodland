@@ -608,5 +608,6 @@
   "content.dialogue.celestial-palace-lobby.root.choice.take-the-matinee-seat": "Bitte um den Platz, den er dir für die Dienstagsmatinee versprochen hat. (-10 Energie)",
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Kinoleiter",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "„Reihe F, Mitte, und kein Wort über den Gutschein“, murmelt er und führt dich im Schein seiner Messingtaschenlampe den Gang entlang. Auf der Leinwand weicht eine Zeichentrickmaus einem Klavier aus. Um dich herum lacht das ganze Publikum im selben Augenblick, und du ertappst dich dabei, genau zu studieren, wie sie das machen.",
-  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Lehn dich zurück und genieße die Vorstellung."
+  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Lehn dich zurück und genieße die Vorstellung.",
+  "dialogue.lockedOption": "Gesperrte Option"
 }

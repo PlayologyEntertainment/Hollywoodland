@@ -32,6 +32,15 @@ review_status: approved for use in the game by the owner (2026-09-20), after lis
 rights_or_license_notes: free from Pixabay, per the owner. The license terms in force when the files were downloaded were not captured (see below)
 ```
 
+## Dialogue choice sounds (added 2026-09-29)
+
+| asset_id | runtime_files | Used for |
+|---|---|---|
+| `sfx_choice_energy` | `public/assets/audio/ChoiceExp.mp3` | Clicking a dialogue choice that spends energy (the story-carrying, green-outlined ones) |
+| `sfx_choice_plain` | `public/assets/audio/ChoiceNoExp.mp3` | Clicking any other dialogue choice |
+
+Both were supplied by the owner. Their source, generator and license were not recorded when they were added; record them here with the tracks above before release.
+
 ## To finish before release
 
 - Save each track's Pixabay page URL (and the creator name shown there) beside the file names above.

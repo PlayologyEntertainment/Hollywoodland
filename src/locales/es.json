@@ -608,5 +608,6 @@
   "content.dialogue.celestial-palace-lobby.root.choice.take-the-matinee-seat": "Pide el asiento que te prometió para la matiné del martes. (-10 Energía)",
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Gerente del cine",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "«Fila F, centro, y ni una palabra sobre el vale», murmura, guiándote por el pasillo con la luz de su linterna de latón. En la pantalla, un ratón de dibujos esquiva un piano. A tu alrededor, todo el público se ríe en el mismo instante, y te descubres estudiando exactamente cómo lo hacen.",
-  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Acomódate y disfruta de la función."
+  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Acomódate y disfruta de la función.",
+  "dialogue.lockedOption": "Opción bloqueada"
 }

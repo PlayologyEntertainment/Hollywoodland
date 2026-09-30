@@ -608,5 +608,6 @@
   "content.dialogue.celestial-palace-lobby.root.choice.take-the-matinee-seat": "Peça o lugar que ele prometeu para a matinê de terça. (-10 Energia)",
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Gerente do cinema",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "“Fileira F, no centro, e nem uma palavra sobre o voucher”, murmura ele, guiando você pelo corredor à luz da lanterna de latão. Na tela, um ratinho de desenho animado desvia de um piano. Ao seu redor, a plateia inteira ri no mesmo instante, e você se pega estudando exatamente como eles fazem isso.",
-  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Acomode-se e aproveite a sessão."
+  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Acomode-se e aproveite a sessão.",
+  "dialogue.lockedOption": "Opção bloqueada"
 }
