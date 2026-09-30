@@ -185,13 +185,14 @@ describe('the career stats, in the row just under the header', () => {
     expect(rule('.hud-top')).not.toContain('stretch');
     expect(rule('.hud-stats')).not.toMatch(/(?:align-self|height|min-height)\s*:/);
     expect(rule('.objective-card')).not.toContain('align-self');
-    // A snug plaque: a little padding round the stats, not a tall band.
-    expect(rule('.hud-stats')).toMatch(/padding: \.3rem /);
+    // A snug plaque: a little padding round the stats, plus the film strip's sprocket margin, not a tall band.
+    expect(rule('.hud-stats')).toMatch(/padding: calc\(\.3rem \+ var\(--film-band\)\) /);
   });
 
   it('are simply spaced apart: no bullets or diamonds between them', () => {
     expect(css).not.toContain('.hud-stat + .hud-stat');
-    expect(css).not.toMatch(/\.hud-stat[^{]*::(?:before|after)/);
+    // (.hud-stats::before is the film strip's sprocket holes, not a separator between stats.)
+    expect(css).not.toMatch(/\.hud-stat(?!s)[^{]*::(?:before|after)/);
     expect(rule('.hud-stat')).toMatch(/padding: [^;]*clamp\(/);
   });
 
@@ -468,5 +469,30 @@ describe('the floating notices: the entrance prompt and the toast', () => {
       const block = rule(selector);
       expect(block, selector).not.toMatch(/position: absolute|left: 50%|translateX|bottom:|top:/);
     }
+  });
+});
+
+describe('the film strip look of the dark bands', () => {
+  const strip = css.match(/\n\.objective-card, \.hud-stats, \.hud-assignment-timer, \.interaction-prompt, \.toast \{([^}]*)\}/)?.[1] ?? '';
+  const holes = css.match(/\n\.objective-card::before[^{]*\{([^}]*)\}/)?.[1] ?? '';
+
+  it('gives each band a top and bottom margin for evenly spaced see-through sprocket holes', () => {
+    expect(strip).toContain('--film-band: .75rem');
+    expect(strip).toContain('--film-hole: url("data:image/svg+xml');
+    expect(holes).toContain('background: var(--strip-bg)');
+    expect(holes).toContain('mask-image: var(--film-hole), var(--film-hole)');
+    expect(holes).toContain('mask-repeat: round no-repeat, round no-repeat, no-repeat');
+  });
+
+  it('keeps every band\'s text out of the margin by adding it to the padding', () => {
+    for (const selector of ['.objective-card', '.hud-stats', '.hud-assignment-timer']) expect(rule(selector), selector).toContain('var(--film-band)');
+    expect(css).toMatch(/\n\.interaction-prompt, \.toast \{[^}]*calc\(\.55rem \+ var\(--film-band\)\)/);
+  });
+
+  it('paints the holes on all five bands, and the completed quest card keeps its green through --strip-bg', () => {
+    for (const selector of ['.objective-card', '.hud-stats', '.hud-assignment-timer', '.interaction-prompt', '.toast']) {
+      expect(css, selector).toContain(`${selector}::before`);
+    }
+    expect(css).toMatch(/\.objective-card\.objective-complete \{[^}]*--strip-bg: linear-gradient\(90deg, rgb\(10 24 15/);
   });
 });
