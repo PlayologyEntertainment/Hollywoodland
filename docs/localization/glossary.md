@@ -34,6 +34,10 @@ Keep sentences about as long as the English. The interface has little room: butt
 | Career | Carrera | Carrière | Karriere | Carreira |
 | Assignment | Encargo | Mission | Aufgabe | Tarefa |
 | Quest | Misión | Quête | Auftrag | Missão |
+| Chapter | Capítulo | Chapitre | Kapitel | Capítulo |
+| Level (character) | Nivel | Niveau | Stufe | Nível |
+| Conclusion (of a chapter) | Conclusión | Conclusion | Abschluss | Conclusão |
+| Coming soon | Próximamente | Bientôt disponible | Demnächst verfügbar | Em breve |
 | Talent point | punto de talento | point de talent | Talentpunkt | ponto de talento |
 | Energy | Energía | Énergie | Energie | Energia |
 | Reputation | Reputación | Réputation | Ruf | Reputação |

@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hollywoodland — Story Planner</title>
+<style>
+  :root {
+    --bg: #16110c; --panel: #201a13; --panel-2: #291f15; --border: #4a3a24;
+    --cream: #f2e6c9; --tan: #d2b48c; --amber: #c9903f; --green: #5f9666;
+    --red: #c9503f; --slate: #8a9092; --blue: #6f9bd0;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--cream); height: 100vh; display: flex; flex-direction: column; overflow: hidden; font-size: 13px; }
+  header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--border); flex: none; flex-wrap: wrap; }
+  header h1 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: 0.03em; white-space: nowrap; }
+  header .spacer { flex: 1; }
+  #status { font-size: 12px; color: var(--tan); max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #dirty { font-size: 11px; color: var(--amber); font-weight: 700; }
+  button, select, input, textarea { font-family: inherit; font-size: 12px; }
+  button { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--amber); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.primary { background: var(--green); border-color: #3f6b45; color: #fff; font-weight: 600; }
+  button.danger { background: #5b2a22; border-color: #7a2f24; color: #fff; }
+  button.small { padding: 2px 8px; font-size: 11px; }
+  button.active { background: var(--amber); border-color: var(--amber); color: #241a0e; font-weight: 700; }
+  input[type="text"], input[type="search"], textarea, select { background: var(--panel-2); color: var(--cream); border: 1px solid var(--border); border-radius: 4px; padding: 6px 8px; width: 100%; }
+  textarea { resize: vertical; line-height: 1.45; }
+  input:focus, textarea:focus, select:focus { outline: 1px solid var(--amber); }
+  nav { display: flex; gap: 4px; padding: 8px 16px 0; background: var(--panel); border-bottom: 1px solid var(--border); flex: none; flex-wrap: wrap; }
+  nav button { border-radius: 4px 4px 0 0; border-bottom: none; padding: 7px 14px; }
+  nav .sp { flex: 1; }
+  nav input[type="search"] { width: 240px; margin-bottom: 4px; }
+  main { flex: 1; min-height: 0; display: flex; }
+  .empty { color: var(--slate); padding: 40px; text-align: center; line-height: 1.6; }
+  .side { width: 330px; flex: none; background: var(--panel); border-right: 1px solid var(--border); overflow-y: auto; }
+  .detail { flex: 1; overflow-y: auto; padding: 16px 22px 60px; min-width: 0; }
+  .side .sh { display: flex; gap: 6px; padding: 8px 10px; border-bottom: 1px solid #2b2114; align-items: center; flex-wrap: wrap; }
+  .tree-row { display: flex; align-items: center; gap: 6px; padding: 5px 10px; cursor: pointer; border-bottom: 1px solid #2b2114; }
+  .tree-row:hover { background: var(--panel-2); }
+  .tree-row.sel { background: #3a2c17; }
+  .tree-row.ch { font-weight: 700; background: #241b11; }
+  .tree-row.arc { padding-left: 22px; }
+  .tree-row.beat { padding-left: 38px; color: var(--tan); }
+  .tree-row .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pill { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; background: #33363c; color: var(--slate); white-space: nowrap; }
+  .pill.idea { background: #3a3d44; color: #b5bac0; }
+  .pill.outlined { background: #4a3a20; color: var(--amber); }
+  .pill.drafted { background: #233a52; color: #a9cbee; }
+  .pill.in-game { background: #2c4a30; color: #b8e0be; }
+  .pill.ok { background: #2c4a30; color: #b8e0be; }
+  .pill.stale { background: #5b4820; color: #ecc87a; }
+  .pill.missing { background: #5b2a22; color: #f0a79b; }
+  .pill.edited { background: var(--amber); color: #241a0e; font-weight: 700; }
+  .pill.will { background: transparent; border: 1px dashed var(--amber); color: var(--amber); }
+  .pill.cond { background: #2d3340; color: #a9b8d6; }
+  .pill.eff { background: #27382a; color: #a6d1ac; }
+  .pill.warn { background: #5b2a22; color: #f0a79b; }
+  h2 { font-size: 18px; margin: 0 0 4px; }
+  h3 { font-size: 13px; margin: 18px 0 6px; color: var(--tan); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sub { color: var(--slate); font-size: 11px; margin-bottom: 12px; }
+  label.f { display: block; font-size: 11px; color: var(--tan); margin: 10px 0 3px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 2px 4px 2px 10px; font-size: 11px; }
+  .chip.bad { border-color: var(--red); color: #f0a79b; }
+  .chip a { cursor: pointer; text-decoration: underline; color: var(--cream); }
+  .chip button { padding: 0 6px; border: none; background: transparent; color: var(--slate); font-size: 13px; }
+  .chip button:hover { color: var(--red); }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin: 0 0 12px; }
+  .card.flash { border-color: var(--amber); box-shadow: 0 0 0 2px #c9903f55; }
+  .card h4 { margin: 0 0 6px; font-size: 13px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .ed { position: relative; margin: 6px 0; }
+  .ed .meta { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-top: 3px; font-size: 10px; color: var(--slate); }
+  .ed.changed textarea, .ed.changed input { border-color: var(--amber); }
+  .choice { margin: 6px 0 6px 18px; padding-left: 10px; border-left: 2px solid var(--border); }
+  .next { color: var(--blue); cursor: pointer; text-decoration: underline; font-size: 11px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #2b2114; vertical-align: top; font-size: 12px; }
+  th { color: var(--tan); font-weight: 600; }
+  .bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: #0c0906; min-width: 140px; }
+  .bar i { display: block; height: 100%; }
+  .bar .idea { background: #6c7078; } .bar .outlined { background: var(--amber); } .bar .drafted { background: var(--blue); } .bar .in-game { background: var(--green); }
+  .diff del { background: #5b2a2288; text-decoration: none; } .diff ins { background: #2c4a3088; text-decoration: none; }
+  #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #2c4a30; border: 1px solid #3f6b45; padding: 8px 16px; border-radius: 6px; display: none; z-index: 9; max-width: 80vw; }
+  #toast.err { background: #5b2a22; border-color: #7a2f24; }
+  .hint { color: var(--tan); max-width: 720px; line-height: 1.6; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } .side { width: 240px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Story Planner</h1>
+  <button id="btn-open">Open Project Folder…</button>
+  <button id="btn-reload" disabled>Reload from disk</button>
+  <span id="status">Loading…</span>
+  <span class="spacer"></span>
+  <span id="dirty"></span>
+  <button id="btn-save" class="primary" disabled>Save</button>
+</header>
+<nav id="tabs"></nav>
+<main id="main"><div class="empty">Loading…</div></main>
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ------------------------------------------------------------------ helpers
+  const $ = (id) => document.getElementById(id);
+  function h(tag, attrs, ...kids) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v === undefined || v === null || v === false) continue;
+      if (k === 'class') node.className = v;
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else if (k === 'value') node.value = v;
+      else node.setAttribute(k, v === true ? '' : v);
+    }
+    for (const kid of kids.flat()) {
+      if (kid === null || kid === undefined || kid === false) continue;
+      node.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    }
+    return node;
+  }
+  const uid = (p) => p + '-' + Math.random().toString(36).slice(2, 8);
+  const STATUSES = ['idea', 'outlined', 'drafted', 'in-game'];
+  const PATHS = { snapshot: 'public/data/narrative-snapshot.json', plan: 'public/data/story-plan.json', edits: 'public/data/story-edits.json' };
+
+  let toastTimer;
+  function toast(message, isError) {
+    const t = $('toast');
+    t.textContent = message;
+    t.className = isError ? 'err' : '';
+    t.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.style.display = 'none'; }, isError ? 6000 : 2800);
+  }
+
+  // ------------------------------------------------------------------ state
+  const S = {
+    snapshot: null,
+    plan: null,
+    edits: new Map(), // key -> { before, after, note }
+    rootHandle: null,
+    dirtyPlan: false,
+    dirtyEdits: false,
+    view: 'plan',
+    sel: null, // { type: 'chapter'|'arc'|'beat', id }
+    planFilter: { status: '', text: '' },
+    contentSel: {}, // per view: selected id
+    search: '',
+  };
+
+  function markDirty(which) {
+    if (which === 'plan') S.dirtyPlan = true;
+    if (which === 'edits') S.dirtyEdits = true;
+    refreshChrome();
+  }
+  function refreshChrome() {
+    const dirty = S.dirtyPlan || S.dirtyEdits;
+    $('dirty').textContent = dirty ? '● unsaved changes' : '';
+    $('btn-save').disabled = !dirty || !S.plan;
+    $('btn-reload').disabled = !S.rootHandle;
+  }
+  window.addEventListener('beforeunload', (e) => { if (S.dirtyPlan || S.dirtyEdits) { e.preventDefault(); e.returnValue = ''; } });
+
+  // ------------------------------------------------------------------ file plumbing
+  const DB = 'hollywoodland-story-planner';
+  const idb = () => new Promise((res, rej) => { const r = indexedDB.open(DB, 1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const idbGet = async (k) => { const db = await idb(); return new Promise((res, rej) => { const q = db.transaction('h').objectStore('h').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); };
+  const idbSet = async (k, v) => { const db = await idb(); return new Promise((res, rej) => { const t = db.transaction('h', 'readwrite'); t.objectStore('h').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); };
+
+  async function dirOf(root, rel, create) {
+    let dir = root;
+    for (const part of rel.split('/').filter(Boolean)) dir = await dir.getDirectoryHandle(part, { create: !!create });
+    return dir;
+  }
+  async function readText(root, path) {
+    const parts = path.split('/'); const name = parts.pop();
+    try { const dir = await dirOf(root, parts.join('/')); return await (await (await dir.getFileHandle(name)).getFile()).text(); }
+    catch (e) { if (e.name === 'NotFoundError') return null; throw e; }
+  }
+  async function writeText(root, path, text) {
+    const parts = path.split('/'); const name = parts.pop();
+    const dir = await dirOf(root, parts.join('/'), true);
+    const w = await (await dir.getFileHandle(name, { create: true })).createWritable();
+    await w.write(new Blob([text], { type: 'application/json' })); await w.close();
+  }
+  async function readFromDiskOrServer(path) {
+    if (S.rootHandle) return readText(S.rootHandle, path);
+    const rel = '../../' + path.replace(/^public\//, '');
+    try { const r = await fetch(rel, { cache: 'no-store' }); return r.ok ? await r.text() : null; } catch { return null; }
+  }
+
+  function parseEdits(text) {
+    const map = new Map();
+    if (!text) return map;
+    for (const e of JSON.parse(text).edits || []) map.set(e.key, { before: e.before, after: e.after, note: e.note || '' });
+    return map;
+  }
+
+  async function loadAll() {
+    const snapText = await readFromDiskOrServer(PATHS.snapshot);
+    if (!snapText) {
+      S.snapshot = null;
+      $('status').textContent = 'No data yet';
+      render();
+      return;
+    }
+    S.snapshot = JSON.parse(snapText);
+    const planText = await readFromDiskOrServer(PATHS.plan);
+    S.plan = planText ? JSON.parse(planText) : { version: 1, chapters: [] };
+    const editText = await readFromDiskOrServer(PATHS.edits);
+    const loaded = parseEdits(editText);
+    // An edit whose new text is already the game's text has been applied; drop it.
+    let cleared = 0;
+    for (const [key, e] of [...loaded]) {
+      const cur = S.snapshot.strings[key];
+      if (!cur || cur.en === e.after) { loaded.delete(key); cleared += 1; }
+    }
+    S.edits = loaded;
+    S.dirtyPlan = false; S.dirtyEdits = cleared > 0;
+    if (!S.sel && S.plan.chapters[0]) S.sel = { type: 'chapter', id: S.plan.chapters[0].id };
+    $('status').textContent = (S.rootHandle ? 'Project: ' + S.rootHandle.name : 'Read from the dev server (open the project folder to save)') + ' · ' + Object.keys(S.snapshot.strings).length + ' strings';
+    if (cleared > 0) toast(cleared + ' pending edit(s) were already applied to the game and were cleared.');
+    refreshChrome();
+    render();
+  }
+
+  async function openRoot(handle) {
+    if ((await handle.requestPermission({ mode: 'readwrite' })) !== 'granted') { toast('Read/write permission was not granted.', true); return; }
+    S.rootHandle = handle;
+    await idbSet('root', handle);
+    await loadAll();
+  }
+  $('btn-open').addEventListener('click', async () => {
+    if (!window.showDirectoryPicker) { toast('This browser cannot open folders. Use Chrome or Edge, or download the files instead.', true); return; }
+    try { await openRoot(await window.showDirectoryPicker({ mode: 'readwrite' })); }
+    catch (e) { if (e.name !== 'AbortError') toast(String(e.message || e), true); }
+  });
+  $('btn-reload').addEventListener('click', async () => {
+    if ((S.dirtyPlan || S.dirtyEdits) && !confirm('Discard unsaved changes and reload from disk?')) return;
+    await loadAll();
+    toast('Reloaded.');
+  });
+
+  function planJson() { return JSON.stringify(S.plan, null, 2) + '\n'; }
+  function editsJson() {
+    const edits = [...S.edits].map(([key, e]) => ({ key, before: e.before, after: e.after, ...(e.note ? { note: e.note } : {}), editedAt: e.editedAt || new Date().toISOString() }));
+    return JSON.stringify({ version: 1, edits }, null, 2) + '\n';
+  }
+  function download(name, text, type) {
+    const a = h('a', { href: URL.createObjectURL(new Blob([text], { type: type || 'application/json' })), download: name });
+    document.body.append(a); a.click(); a.remove();
+  }
+  $('btn-save').addEventListener('click', async () => {
+    try {
+      if (S.rootHandle) {
+        if (S.dirtyPlan) await writeText(S.rootHandle, PATHS.plan, planJson());
+        if (S.dirtyEdits) await writeText(S.rootHandle, PATHS.edits, editsJson());
+        S.dirtyPlan = false; S.dirtyEdits = false; refreshChrome();
+        toast('Saved to public/data/.');
+      } else {
+        if (S.dirtyPlan) download('story-plan.json', planJson());
+        if (S.dirtyEdits) download('story-edits.json', editsJson());
+        toast('No project folder open, so the files were downloaded. Put them in public/data/.');
+      }
+    } catch (e) { toast('Save failed: ' + (e.message || e), true); }
+  });
+
+  (async function start() {
+    try {
+      const handle = await idbGet('root');
+      if (handle && (await handle.queryPermission({ mode: 'readwrite' })) === 'granted') S.rootHandle = handle;
+    } catch { /* no stored folder */ }
+    await loadAll();
+  })();
+
+  // ------------------------------------------------------------------ lookups
+  const str = (key) => S.snapshot.strings[key];
+  const curText = (key) => (S.edits.has(key) ? S.edits.get(key).after : (str(key) ? str(key).en : '[missing ' + key + ']'));
+  const snap = () => S.snapshot;
+  const questById = (id) => snap().quests.find((q) => q.id === id);
+  const graphById = (id) => snap().dialogue.find((g) => g.id === id);
+  const assignById = (id) => snap().other.assignments.find((a) => a.id === id);
+  const charById = (id) => snap().cast.characters.find((c) => c.id === id);
+  const locById = (id) => snap().cast.locations.find((l) => l.id === id);
+  const questName = (q) => curText(q.title);
+  const charName = (c) => curText(c.role);
+  const graphName = (g) => {
+    const root = g.nodes.find((n) => n.id === g.root);
+    return g.id + (root ? ' — ' + curText(root.speaker) : '');
+  };
+  const assignName = (a) => curText(a.title);
+  const locName = (l) => l.label;
+
+  function allBeats() {
+    const out = [];
+    for (const ch of S.plan.chapters) for (const arc of ch.arcs) for (const beat of arc.beats) out.push({ ch, arc, beat });
+    return out;
+  }
+  function findNode(sel) {
+    if (!sel) return null;
+    for (const ch of S.plan.chapters) {
+      if (sel.type === 'chapter' && ch.id === sel.id) return { ch, node: ch };
+      for (const arc of ch.arcs) {
+        if (sel.type === 'arc' && arc.id === sel.id) return { ch, arc, node: arc };
+        for (const beat of arc.beats) if (sel.type === 'beat' && beat.id === sel.id) return { ch, arc, beat, node: beat };
+      }
+    }
+    return null;
+  }
+  function usage() {
+    // Which beats link to each piece of content.
+    const u = { quests: {}, dialogue: {}, assignments: {}, characters: {}, locations: {} };
+    const add = (bucket, id, info) => { (u[bucket][id] = u[bucket][id] || []).push(info); };
+    for (const info of allBeats()) {
+      const b = info.beat;
+      for (const id of b.links.quests || []) add('quests', id, info);
+      for (const id of b.links.dialogue || []) add('dialogue', id, info);
+      for (const id of b.links.assignments || []) add('assignments', id, info);
+      for (const id of b.cast || []) add('characters', id, info);
+      for (const id of b.locations || []) add('locations', id, info);
+    }
+    return u;
+  }
+
+  // ------------------------------------------------------------------ editable text
+  function translationPills(key, edited) {
+    const entry = str(key);
+    if (!entry) return [];
+    return snap().locales.map((l) => {
+      if (edited) return h('span', { class: 'pill will', title: l.name + ': will be stale after this edit is applied' }, l.code);
+      const st = entry.tr[l.code];
+      return h('span', { class: 'pill ' + st, title: l.name + ': ' + (st === 'ok' ? 'translated from the current English' : st === 'stale' ? 'translated from older English' : 'not translated') }, l.code);
+    });
+  }
+  function editor(key, opts) {
+    opts = opts || {};
+    const multiline = opts.multiline !== false && (curText(key).length > 60 || opts.multiline === true);
+    const control = multiline
+      ? h('textarea', { rows: Math.min(6, Math.max(2, Math.ceil(curText(key).length / 90))) })
+      : h('input', { type: 'text' });
+    control.value = curText(key);
+    const meta = h('div', { class: 'meta' });
+    const wrap = h('div', { class: 'ed' }, opts.label ? h('label', { class: 'f' }, opts.label) : null, control, meta);
+    function paint() {
+      const edited = S.edits.has(key);
+      wrap.classList.toggle('changed', edited);
+      // (replaceChildren would print a null as the word "null", so leave the gaps out.)
+      meta.replaceChildren(...[
+        h('code', { style: 'color:#7d776c' }, key.replace(/^content\./, '')),
+        edited ? h('span', { class: 'pill edited' }, 'edited') : null,
+        ...translationPills(key, edited),
+        edited ? h('button', { class: 'small', onclick: () => { S.edits.delete(key); control.value = str(key).en; markDirty('edits'); paint(); } }, 'Revert') : null,
+        edited && S.edits.get(key).before !== str(key).en ? h('span', { class: 'pill warn', title: 'The game text changed after this edit was made' }, 'game text changed') : null,
+      ].filter(Boolean));
+    }
+    control.addEventListener('input', () => {
+      const original = str(key).en;
+      if (control.value === original) S.edits.delete(key);
+      else S.edits.set(key, { before: original, after: control.value, note: (S.edits.get(key) || {}).note || '', editedAt: new Date().toISOString() });
+      markDirty('edits');
+      paint();
+    });
+    paint();
+    return wrap;
+  }
+
+  // ------------------------------------------------------------------ render shell
+  const TABS = [
+    ['plan', 'Story Plan'], ['dialogue', 'Dialogue'], ['quests', 'Quests'], ['cast', 'Cast & World'], ['other', 'Other Content'],
+    ['edits', 'Edits'], ['coverage', 'Coverage'], ['export', 'Export'],
+  ];
+  function renderTabs() {
+    const nav = $('tabs');
+    const pending = S.edits.size;
+    nav.replaceChildren(
+      ...TABS.map(([id, label]) => h('button', { class: S.view === id ? 'active' : '', onclick: () => { S.view = id; render(); } }, label + (id === 'edits' && pending ? ' (' + pending + ')' : ''))),
+      h('span', { class: 'sp' }),
+      h('input', { type: 'search', placeholder: 'Search all text…', value: S.search, oninput: (e) => { S.search = e.target.value; if (S.search.length > 1) { S.view = 'search'; } else if (S.view === 'search') { S.view = 'plan'; } render(true); } }),
+    );
+  }
+  function render(keepFocus) {
+    renderTabs();
+    if (keepFocus) { const s = $('tabs').querySelector('input'); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); } }
+    const main = $('main');
+    if (!S.snapshot) {
+      main.replaceChildren(h('div', { class: 'empty' },
+        h('p', null, 'No game content snapshot was found.'),
+        h('p', { class: 'hint' }, 'Run ', h('code', null, 'npm run narrative:export'), ' in the project, then click "Open Project Folder…" and pick the repo root (or open this page from the dev server).')));
+      return;
+    }
+    const views = { plan: viewPlan, dialogue: viewDialogue, quests: viewQuests, cast: viewCast, other: viewOther, edits: viewEdits, coverage: viewCoverage, export: viewExport, search: viewSearch };
+    main.replaceChildren(...(views[S.view] || viewPlan)());
+    refreshChrome();
+  }
+  function jumpTo(view, id) {
+    S.view = view; S.contentSel[view] = id; render();
+    const card = document.querySelector('[data-id="' + CSS.escape(id) + '"]');
+    if (card) { card.scrollIntoView({ block: 'center' }); card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1600); }
+  }
+
+  // ------------------------------------------------------------------ PLAN view
+  function pill(status) { return h('span', { class: 'pill ' + status }, status); }
+  function matches(text) { const q = S.planFilter.text.toLowerCase(); return !q || text.toLowerCase().includes(q); }
+
+  function viewPlan() {
+    const side = h('div', { class: 'side' });
+    const detail = h('div', { class: 'detail' });
+    const tools = h('div', { class: 'sh' },
+      h('button', { class: 'small', onclick: () => { const ch = { id: uid('ch'), title: 'New chapter', summary: '', status: 'idea', arcs: [] }; S.plan.chapters.push(ch); S.sel = { type: 'chapter', id: ch.id }; markDirty('plan'); render(); } }, '+ Chapter'),
+      h('select', { style: 'width:110px', onchange: (e) => { S.planFilter.status = e.target.value; paintTree(); } },
+        h('option', { value: '' }, 'All statuses'), ...STATUSES.map((s) => h('option', { value: s, selected: S.planFilter.status === s }, s))),
+      h('input', { type: 'search', placeholder: 'Filter…', style: 'width:100px', value: S.planFilter.text, oninput: (e) => { S.planFilter.text = e.target.value; paintTree(); } }),
+    );
+    const tree = h('div');
+    side.append(tools, tree);
+
+    function paintTree() {
+      const rows = [];
+      for (const ch of S.plan.chapters) {
+        const chBeats = ch.arcs.flatMap((a) => a.beats);
+        const anyMatch = (b) => (!S.planFilter.status || b.status === S.planFilter.status) && matches(b.title + ' ' + b.summary);
+        const filtering = S.planFilter.status || S.planFilter.text;
+        if (filtering && !chBeats.some(anyMatch)) continue;
+        rows.push(row('ch', ch.title, ch.status, { type: 'chapter', id: ch.id }));
+        for (const arc of ch.arcs) {
+          const visible = arc.beats.filter(anyMatch);
+          if (filtering && visible.length === 0) continue;
+          rows.push(row('arc', arc.title, arc.status, { type: 'arc', id: arc.id }));
+          for (const beat of (filtering ? visible : arc.beats)) rows.push(row('beat', beat.title, beat.status, { type: 'beat', id: beat.id }));
+        }
+      }
+      tree.replaceChildren(...(rows.length ? rows : [h('div', { class: 'empty' }, 'Nothing matches.')]));
+    }
+    function row(kind, title, status, sel) {
+      const isSel = S.sel && S.sel.type === sel.type && S.sel.id === sel.id;
+      return h('div', { class: 'tree-row ' + kind + (isSel ? ' sel' : ''), onclick: () => { S.sel = sel; paintTree(); paintDetail(); } },
+        h('span', { class: 't', title }, title || '(untitled)'), pill(status));
+    }
+    function paintDetail() {
+      const found = findNode(S.sel);
+      if (!found) { detail.replaceChildren(h('div', { class: 'empty' }, 'Select a chapter, arc or beat, or add a chapter to begin.')); return; }
+      detail.replaceChildren(...(S.sel.type === 'chapter' ? chapterDetail(found) : S.sel.type === 'arc' ? arcDetail(found) : beatDetail(found)));
+    }
+    paintTree(); paintDetail();
+    return [side, detail];
+
+    // ---- detail panels
+    function textBind(obj, field, opts) {
+      opts = opts || {};
+      const control = opts.multiline ? h('textarea', { rows: opts.rows || 3 }) : h('input', { type: 'text' });
+      control.value = obj[field] || '';
+      control.addEventListener('input', () => { obj[field] = control.value; markDirty('plan'); paintTree(); });
+      return h('div', null, h('label', { class: 'f' }, opts.label), control);
+    }
+    function statusSelect(obj) {
+      const sel = h('select', { onchange: (e) => { obj.status = e.target.value; markDirty('plan'); paintTree(); } }, ...STATUSES.map((s) => h('option', { value: s, selected: obj.status === s }, s)));
+      return h('div', { style: 'max-width:180px' }, h('label', { class: 'f' }, 'Status'), sel);
+    }
+    function moveButtons(list, item) {
+      const i = list.indexOf(item);
+      return h('span', { class: 'row' },
+        h('button', { class: 'small', disabled: i <= 0, onclick: () => { list.splice(i, 1); list.splice(i - 1, 0, item); markDirty('plan'); paintTree(); } }, '↑ Up'),
+        h('button', { class: 'small', disabled: i >= list.length - 1, onclick: () => { list.splice(i, 1); list.splice(i + 1, 0, item); markDirty('plan'); paintTree(); } }, '↓ Down'));
+    }
+    function chapterDetail({ ch }) {
+      return [
+        h('h2', null, 'Chapter'),
+        h('div', { class: 'sub' }, ch.arcs.length + ' storyline(s), ' + ch.arcs.reduce((n, a) => n + a.beats.length, 0) + ' beat(s)'),
+        textBind(ch, 'title', { label: 'Title' }), textBind(ch, 'summary', { label: 'Summary', multiline: true, rows: 4 }), statusSelect(ch),
+        h('div', { class: 'row', style: 'margin-top:14px' },
+          moveButtons(S.plan.chapters, ch),
+          h('button', { onclick: () => { const arc = { id: uid('arc'), title: 'New storyline', summary: '', status: 'idea', notes: '', beats: [] }; ch.arcs.push(arc); S.sel = { type: 'arc', id: arc.id }; markDirty('plan'); paintTree(); paintDetail(); } }, '+ Storyline'),
+          h('button', { class: 'danger', onclick: () => { if (!confirm('Delete this chapter and everything in it?')) return; S.plan.chapters.splice(S.plan.chapters.indexOf(ch), 1); S.sel = null; markDirty('plan'); render(); } }, 'Delete chapter')),
+        h('h3', null, 'Storylines'),
+        h('div', { class: 'chips' }, ...ch.arcs.map((a) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'arc', id: a.id }; paintTree(); paintDetail(); } }, a.title), pill(a.status)))),
+      ];
+    }
+    function arcDetail({ ch, arc }) {
+      return [
+        h('h2', null, 'Storyline'),
+        h('div', { class: 'sub' }, 'In chapter: ' + ch.title),
+        textBind(arc, 'title', { label: 'Title' }), textBind(arc, 'summary', { label: 'Summary', multiline: true, rows: 4 }), statusSelect(arc),
+        textBind(arc, 'notes', { label: 'Notes', multiline: true, rows: 4 }),
+        h('div', { class: 'row', style: 'margin-top:14px' },
+          moveButtons(ch.arcs, arc),
+          h('button', { onclick: () => { const b = newBeat(); arc.beats.push(b); S.sel = { type: 'beat', id: b.id }; markDirty('plan'); paintTree(); paintDetail(); } }, '+ Beat'),
+          h('span', null, 'Move to chapter: ', h('select', { style: 'width:170px', onchange: (e) => { const to = S.plan.chapters.find((c) => c.id === e.target.value); if (!to || to === ch) return; ch.arcs.splice(ch.arcs.indexOf(arc), 1); to.arcs.push(arc); markDirty('plan'); paintTree(); paintDetail(); } }, ...S.plan.chapters.map((c) => h('option', { value: c.id, selected: c === ch }, c.title)))),
+          h('button', { class: 'danger', onclick: () => { if (!confirm('Delete this storyline and its beats?')) return; ch.arcs.splice(ch.arcs.indexOf(arc), 1); S.sel = { type: 'chapter', id: ch.id }; markDirty('plan'); paintTree(); paintDetail(); } }, 'Delete storyline')),
+        h('h3', null, 'Beats'),
+        h('div', { class: 'chips' }, ...arc.beats.map((b) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'beat', id: b.id }; paintTree(); paintDetail(); } }, b.title), pill(b.status)))),
+      ];
+    }
+    function newBeat() {
+      return { id: uid('beat'), title: 'New beat', summary: '', status: 'idea', cast: [], locations: [], links: { quests: [], dialogue: [], assignments: [] }, notes: '' };
+    }
+    function linkPicker(beat, bucket, getList, labelOf, view) {
+      // bucket: where on the beat the ids live; getList(): [{id,label}] options
+      const holder = bucket === 'cast' || bucket === 'locations' ? beat : beat.links;
+      holder[bucket] = holder[bucket] || [];
+      const box = h('div', { class: 'chips' });
+      function paint() {
+        const exists = (id) => getList().some((o) => o.id === id);
+        box.replaceChildren(
+          ...holder[bucket].map((id) => {
+            const ok = exists(id);
+            return h('span', { class: 'chip' + (ok ? '' : ' bad'), title: ok ? '' : 'This no longer exists in the game content' },
+              ok && view ? h('a', { onclick: () => jumpTo(view, id) }, labelOf(id)) : (ok ? labelOf(id) : id + ' (missing)'),
+              h('button', { title: 'Remove', onclick: () => { holder[bucket].splice(holder[bucket].indexOf(id), 1); markDirty('plan'); paint(); } }, '×'));
+          }),
+          h('select', { style: 'width:150px', onchange: (e) => { if (e.target.value && !holder[bucket].includes(e.target.value)) { holder[bucket].push(e.target.value); markDirty('plan'); } paint(); } },
+            h('option', { value: '' }, '+ add…'), ...getList().filter((o) => !holder[bucket].includes(o.id)).map((o) => h('option', { value: o.id }, o.label))),
+        );
+      }
+      paint();
+      return box;
+    }
+    function beatDetail({ ch, arc, beat }) {
+      const others = [];
+      for (const c of S.plan.chapters) for (const a of c.arcs) others.push({ c, a });
+      const linked = (beat.links.quests || []).length + (beat.links.dialogue || []).length + (beat.links.assignments || []).length;
+      return [
+        h('h2', null, 'Beat'),
+        h('div', { class: 'sub' }, ch.title + ' › ' + arc.title + (linked === 0 && beat.status !== 'idea' ? '' : '')),
+        textBind(beat, 'title', { label: 'Title' }), textBind(beat, 'summary', { label: 'What happens (high level)', multiline: true, rows: 4 }), statusSelect(beat),
+        h('label', { class: 'f' }, 'Cast'), linkPicker(beat, 'cast', () => snap().cast.characters.map((c) => ({ id: c.id, label: charName(c) })), (id) => { const c = charById(id); return c ? charName(c) : id; }, 'cast'),
+        h('label', { class: 'f' }, 'Locations'), linkPicker(beat, 'locations', () => snap().cast.locations.map((l) => ({ id: l.id, label: locName(l) })), (id) => { const l = locById(id); return l ? locName(l) : id; }, 'cast'),
+        h('h3', null, 'Written content this beat uses'),
+        h('div', { class: 'sub' }, linked === 0 ? 'Nothing linked yet: this beat is still only a plan.' : 'Click a chip to open it.'),
+        h('label', { class: 'f' }, 'Quests'), linkPicker(beat, 'quests', () => snap().quests.map((q) => ({ id: q.id, label: questName(q) })), (id) => { const q = questById(id); return q ? questName(q) : id; }, 'quests'),
+        h('label', { class: 'f' }, 'Dialogue'), linkPicker(beat, 'dialogue', () => snap().dialogue.map((g) => ({ id: g.id, label: graphName(g) })), (id) => { const g = graphById(id); return g ? graphName(g) : id; }, 'dialogue'),
+        h('label', { class: 'f' }, 'Assignments'), linkPicker(beat, 'assignments', () => snap().other.assignments.map((a) => ({ id: a.id, label: assignName(a) })), (id) => { const a = assignById(id); return a ? assignName(a) : id; }, 'other'),
+        textBind(beat, 'notes', { label: 'Notes (intended outcomes, branches, open questions)', multiline: true, rows: 5 }),
+        h('div', { class: 'row', style: 'margin-top:14px' },
+          moveButtons(arc.beats, beat),
+          h('span', null, 'Move to storyline: ', h('select', { style: 'width:230px', onchange: (e) => { const [cid, aid] = e.target.value.split('|'); const to = S.plan.chapters.find((c) => c.id === cid).arcs.find((a) => a.id === aid); if (to === arc) return; arc.beats.splice(arc.beats.indexOf(beat), 1); to.beats.push(beat); markDirty('plan'); paintTree(); paintDetail(); } }, ...others.map(({ c, a }) => h('option', { value: c.id + '|' + a.id, selected: a === arc }, c.title + ' › ' + a.title)))),
+          h('button', { onclick: () => { const copy = JSON.parse(JSON.stringify(beat)); copy.id = uid('beat'); copy.title += ' (copy)'; arc.beats.splice(arc.beats.indexOf(beat) + 1, 0, copy); S.sel = { type: 'beat', id: copy.id }; markDirty('plan'); paintTree(); paintDetail(); } }, 'Duplicate'),
+          h('button', { class: 'danger', onclick: () => { if (!confirm('Delete this beat?')) return; arc.beats.splice(arc.beats.indexOf(beat), 1); S.sel = { type: 'arc', id: arc.id }; markDirty('plan'); paintTree(); paintDetail(); } }, 'Delete beat')),
+      ];
+    }
+  }
+
+  // ------------------------------------------------------------------ content views
+  function whereUsed(bucket, id) {
+    const list = usage()[bucket][id] || [];
+    if (!list.length) return h('span', { class: 'pill warn', title: 'No beat in the plan points at this' }, 'not in the plan');
+    return h('span', { class: 'chips' }, h('span', { class: 'sub', style: 'margin:0' }, 'Used by:'),
+      ...list.map(({ ch, arc, beat }) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'beat', id: beat.id }; S.view = 'plan'; render(); } }, beat.title), h('span', { style: 'padding-right:8px;color:#7d776c' }, ' · ' + arc.title))));
+  }
+  function master(items, view, labelOf, subOf) {
+    const side = h('div', { class: 'side' });
+    const q = h('input', { type: 'search', placeholder: 'Filter…', style: 'margin:8px;width:calc(100% - 16px)' });
+    const list = h('div');
+    side.append(q, list);
+    function paint() {
+      const f = q.value.toLowerCase();
+      list.replaceChildren(...items.filter((it) => !f || (labelOf(it) + ' ' + it.id).toLowerCase().includes(f)).map((it) =>
+        h('div', { class: 'tree-row' + (S.contentSel[view] === it.id ? ' sel' : ''), onclick: () => { S.contentSel[view] = it.id; render(); } },
+          h('span', { class: 't' }, labelOf(it)), subOf ? h('span', { class: 'pill' }, subOf(it)) : null)));
+    }
+    q.addEventListener('input', paint); paint();
+    return side;
+  }
+
+  // ---- Dialogue
+  function viewDialogue() {
+    const graphs = snap().dialogue;
+    if (!S.contentSel.dialogue) S.contentSel.dialogue = graphs[0] && graphs[0].id;
+    const side = master(graphs, 'dialogue', graphName, (g) => g.nodes.length + ' nodes');
+    const g = graphById(S.contentSel.dialogue);
+    const detail = h('div', { class: 'detail' });
+    if (!g) { detail.append(h('div', { class: 'empty' }, 'Choose a conversation.')); return [side, detail]; }
+    // Nodes in reading order from the root; unreachable ones last.
+    const byId = new Map(g.nodes.map((n) => [n.id, n]));
+    const order = []; const seen = new Set(); const queue = [g.root];
+    while (queue.length) { const id = queue.shift(); if (seen.has(id) || !byId.has(id)) continue; seen.add(id); order.push(byId.get(id)); for (const c of byId.get(id).choices) if (c.next) queue.push(c.next); }
+    const unreachable = g.nodes.filter((n) => !seen.has(n.id));
+    detail.append(h('h2', null, graphName(g)),
+      h('div', { class: 'sub' }, g.nodes.length + ' nodes · touches quests: ' + (g.touches.quests.join(', ') || 'none') + ' · characters: ' + (g.touches.characters.join(', ') || 'none')),
+      whereUsed('dialogue', g.id));
+    function nodeCard(n) {
+      return h('div', { class: 'card', 'data-id': g.id + ':' + n.id },
+        h('h4', null, n.id, n.id === g.root ? h('span', { class: 'pill in-game' }, 'start') : null, unreachable.includes(n) ? h('span', { class: 'pill warn' }, 'unreachable') : null),
+        editor(n.speaker, { label: 'Speaker', multiline: false }),
+        editor(n.text, { label: 'Line', multiline: true }),
+        ...n.choices.map((c) => h('div', { class: 'choice' },
+          editor(c.label, { label: 'Choice → ' + c.id, multiline: false }),
+          h('div', { class: 'chips' },
+            c.next ? h('a', { class: 'next', onclick: () => { const el = document.querySelector('[data-id="' + CSS.escape(g.id + ':' + c.next) + '"]'); if (el) { el.scrollIntoView({ block: 'center' }); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); } } }, '→ ' + c.next) : h('span', { class: 'pill' }, 'ends the conversation'),
+            c.opensHomeHub ? h('span', { class: 'pill' }, 'opens Home Menu') : null,
+            c.startsAudition ? h('span', { class: 'pill' }, 'starts audition: ' + c.startsAudition) : null,
+            ...c.conditions.map((x) => h('span', { class: 'pill cond', title: 'Only shown when' }, 'if ' + x)),
+            ...c.effects.map((x) => h('span', { class: 'pill eff', title: 'Happens when chosen' }, x))))));
+    }
+    detail.append(...order.map(nodeCard), ...(unreachable.length ? [h('h3', null, 'Not reachable from the start')] : []), ...unreachable.map(nodeCard));
+    return [side, detail];
+  }
+
+  // ---- Quests
+  function viewQuests() {
+    const quests = snap().quests;
+    if (!S.contentSel.quests) S.contentSel.quests = quests[0] && quests[0].id;
+    const side = master(quests, 'quests', questName, (q) => q.stages.length + ' stage' + (q.stages.length === 1 ? '' : 's'));
+    const detail = h('div', { class: 'detail' });
+    const q = questById(S.contentSel.quests);
+    if (!q) { detail.append(h('div', { class: 'empty' }, 'Choose a quest.')); return [side, detail]; }
+    const talking = snap().dialogue.filter((g) => g.touches.quests.includes(q.id));
+    detail.append(h('h2', null, questName(q)), h('div', { class: 'sub' }, q.id), whereUsed('quests', q.id),
+      editor(q.title, { label: 'Title', multiline: false }), editor(q.summary, { label: 'Summary', multiline: true }),
+      h('h3', null, 'Prerequisites'), q.prerequisites.length ? h('div', { class: 'chips' }, ...q.prerequisites.map((p) => h('span', { class: 'pill cond' }, p))) : h('div', { class: 'sub' }, 'None: available from the start.'),
+      h('h3', null, 'Stages'),
+      ...q.stages.map((s, i) => h('div', { class: 'card' }, h('h4', null, 'Stage ' + (i + 1) + ' · ' + s.id), editor(s.text, { label: 'Objective text', multiline: false }),
+        s.rewards.length ? h('div', { class: 'chips' }, ...s.rewards.map((r) => h('span', { class: 'pill eff' }, r))) : null)),
+      h('h3', null, 'Conversations that start, advance or check this quest'),
+      talking.length ? h('div', { class: 'chips' }, ...talking.map((g) => h('span', { class: 'chip' }, h('a', { onclick: () => jumpTo('dialogue', g.id) }, graphName(g))))) : h('div', { class: 'sub' }, 'None.'));
+    return [side, detail];
+  }
+
+  // ---- Cast & World
+  function viewCast() {
+    const c = snap().cast;
+    const u = usage();
+    const d = h('div', { class: 'detail', style: 'width:100%' },
+      h('h2', null, 'Cast & World'),
+      h('div', { class: 'sub' }, 'Characters, where they appear, and the places and text around them.'),
+      h('h3', null, 'Recurring cast'),
+      h('div', { class: 'grid2' }, ...c.characters.map((ch) => h('div', { class: 'card', 'data-id': ch.id },
+        h('h4', null, ch.id, h('span', { class: 'pill' }, ch.supportsAttraction ? 'romance possible' : 'no romance track')),
+        editor(ch.role, { label: 'Role', multiline: false }),
+        h('div', { class: 'sub' }, 'In dialogue: ' + (snap().dialogue.filter((g) => g.touches.characters.includes(ch.id)).map((g) => g.id).join(', ') || 'no conversation affects them yet')),
+        (u.characters[ch.id] || []).length ? h('div', { class: 'chips' }, ...u.characters[ch.id].map(({ beat }) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'beat', id: beat.id }; S.view = 'plan'; render(); } }, beat.title)))) : h('span', { class: 'pill warn' }, 'not in the plan')))),
+      h('h3', null, 'Locations'),
+      h('div', { class: 'grid2' }, ...c.locations.map((l) => h('div', { class: 'card', 'data-id': l.id },
+        h('h4', null, l.label, h('span', { class: 'pill' }, l.enterable ? 'enterable' : 'sign only')),
+        l.prompt ? editor(l.prompt, { label: 'Entrance prompt', multiline: false }) : h('div', { class: 'sub' }, 'No entrance prompt.'),
+        (u.locations[l.id] || []).length ? h('div', { class: 'chips' }, ...u.locations[l.id].map(({ beat }) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'beat', id: beat.id }; S.view = 'plan'; render(); } }, beat.title)))) : h('span', { class: 'pill warn' }, 'not in the plan')))),
+      h('h3', null, 'Screen-reader descriptions of the character portraits'),
+      h('div', { class: 'grid2' }, ...c.sceneArt.map((s) => h('div', { class: 'card' }, h('h4', null, s.id), editor(s.alt, { label: 'Description', multiline: false })))),
+      h('h3', null, 'Origins (character creator)'),
+      h('div', { class: 'grid2' }, ...c.origins.map((o) => h('div', { class: 'card' }, h('h4', null, o.id), editor(o.name, { label: 'Name', multiline: false }), editor(o.blurb, { label: 'Blurb', multiline: true })))),
+      h('h3', null, 'Player characters'),
+      h('div', { class: 'grid2' }, ...c.players.map((p) => h('div', { class: 'card' }, h('h4', null, p.id), editor(p.label, { label: 'Description', multiline: true })))),
+      h('h3', null, 'Housing'),
+      h('div', { class: 'grid2' }, ...c.housing.map((x) => h('div', { class: 'card' }, h('h4', null, x.id, x.upgradeCost !== null ? h('span', { class: 'pill' }, '$' + x.upgradeCost) : null), editor(x.label, { label: 'Name', multiline: false })))));
+    return [d];
+  }
+
+  // ---- Other content
+  function viewOther() {
+    const o = snap().other;
+    const u = usage();
+    const d = h('div', { class: 'detail', style: 'width:100%' },
+      h('h2', null, 'Other Content'),
+      h('div', { class: 'sub' }, 'Assignments, talents, items and auditions.'),
+      h('h3', null, 'Assignments'),
+      h('div', { class: 'grid2' }, ...o.assignments.map((a) => h('div', { class: 'card', 'data-id': a.id },
+        h('h4', null, a.id, h('span', { class: 'pill' }, a.category), h('span', { class: 'pill' }, a.level > 1 ? 'level ' + a.level : a.housing === 'room' ? 'from the start' : a.housing), h('span', { class: 'pill' }, a.durationMinutes + ' min')),
+        editor(a.title, { label: 'Title', multiline: false }), editor(a.description, { label: 'Description', multiline: true }),
+        h('div', { class: 'chips' }, ...a.rewards.map((r) => h('span', { class: 'pill eff' }, r))),
+        (u.assignments[a.id] || []).length ? null : h('span', { class: 'pill warn' }, 'not in the plan')))),
+      h('h3', null, 'Talents'),
+      h('div', { class: 'grid2' }, ...o.talents.map((t) => h('div', { class: 'card' }, h('h4', null, t.id, h('span', { class: 'pill' }, t.branch)), editor(t.name, { label: 'Name', multiline: false }), editor(t.description, { label: 'Description', multiline: true })))),
+      h('h3', null, 'Items'),
+      h('div', { class: 'grid2' }, ...o.items.map((i) => h('div', { class: 'card' }, h('h4', null, i.id, h('span', { class: 'pill' }, i.category)), editor(i.name, { label: 'Name', multiline: false }), editor(i.description, { label: 'Description', multiline: true }), h('div', { class: 'sub' }, 'Comes from: ' + i.unlockSource)))),
+      h('h3', null, 'Auditions'),
+      ...o.auditions.map((a) => h('div', { class: 'card' },
+        h('h4', null, a.id, h('span', { class: 'pill' }, 'scene partner: ' + a.scenePartnerId)),
+        editor(a.title, { label: 'Title', multiline: false }),
+        h('label', { class: 'f' }, 'Preparation checks'), ...a.checks.map((k) => editor(k, { multiline: false })),
+        ...a.categories.map((c) => h('div', { class: 'choice' }, h('div', { class: 'sub' }, c.kind), editor(c.prompt, { label: 'Prompt', multiline: true }), ...c.options.map((op) => editor(op.label, { label: 'Option · ' + op.id, multiline: false }))))))
+    );
+    return [d];
+  }
+
+  // ------------------------------------------------------------------ EDITS view
+  function diffHtml(a, b) {
+    // A small word diff: shows what was removed and added.
+    const aw = a.split(/(\s+)/), bw = b.split(/(\s+)/);
+    const m = aw.length, n = bw.length;
+    const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+    for (let i = m - 1; i >= 0; i -= 1) for (let j = n - 1; j >= 0; j -= 1) dp[i][j] = aw[i] === bw[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    const out = []; let i = 0, j = 0;
+    while (i < m && j < n) {
+      if (aw[i] === bw[j]) { out.push(aw[i]); i += 1; j += 1; }
+      else if (dp[i + 1][j] >= dp[i][j + 1]) { out.push(h('del', null, aw[i])); i += 1; }
+      else { out.push(h('ins', null, bw[j])); j += 1; }
+    }
+    while (i < m) { out.push(h('del', null, aw[i])); i += 1; }
+    while (j < n) { out.push(h('ins', null, bw[j])); j += 1; }
+    return h('span', { class: 'diff' }, ...out);
+  }
+  function applyInstructions() {
+    const lines = [...S.edits].map(([key, e]) => '- `' + key + '`: "' + e.before.replace(/\n/g, '\\n') + '" → "' + e.after.replace(/\n/g, '\\n') + '"' + (e.note ? ' (' + e.note + ')' : ''));
+    return 'Please apply the pending story edits in public/data/story-edits.json to the game content (each key is a content catalog key: ' +
+      'find the authored text it comes from, change it, run `npm run i18n:sync`, re-translate the changed strings in de/es/fr/pt-BR and re-stamp them, ' +
+      'run `npm run narrative:export`, and run the tests):\n\n' + lines.join('\n');
+  }
+  function viewEdits() {
+    const d = h('div', { class: 'detail', style: 'width:100%' }, h('h2', null, 'Pending edits'),
+      h('div', { class: 'sub' }, 'Edits to existing game text. They change nothing in the game until they are applied: save, then ask Claude to apply them.'));
+    if (!S.edits.size) { d.append(h('div', { class: 'empty' }, 'No pending edits. Edit any line in the Dialogue, Quests, Cast & World or Other Content tabs.')); return [d]; }
+    d.append(h('div', { class: 'row' },
+      h('button', { onclick: async () => { try { await navigator.clipboard.writeText(applyInstructions()); toast('Instructions copied. Paste them to Claude.'); } catch { toast('Could not copy; use Download instead.', true); } } }, 'Copy "apply these" instructions'),
+      h('button', { onclick: () => download('story-edits.json', editsJson()) }, 'Download edits JSON'),
+      h('button', { class: 'danger', onclick: () => { if (!confirm('Revert all ' + S.edits.size + ' pending edits?')) return; S.edits.clear(); markDirty('edits'); render(); } }, 'Revert all')));
+    const rows = [...S.edits].map(([key, e]) => {
+      const note = h('input', { type: 'text', placeholder: 'Note for the apply step (optional)', value: e.note || '' });
+      note.addEventListener('input', () => { e.note = note.value; markDirty('edits'); });
+      const entry = str(key);
+      return h('tr', null,
+        h('td', null, h('code', null, key.replace(/^content\./, '')), h('div', { class: 'chips', style: 'margin-top:4px' }, entry && e.before !== entry.en ? h('span', { class: 'pill warn' }, 'game text changed since') : null, ...snap().locales.map((l) => h('span', { class: 'pill will' }, l.code + ' will be stale')))),
+        h('td', null, diffHtml(e.before, e.after)), h('td', null, note),
+        h('td', null, h('button', { class: 'small', onclick: () => { S.edits.delete(key); markDirty('edits'); render(); } }, 'Revert')));
+    });
+    d.append(h('table', { style: 'margin-top:12px' }, h('tr', null, h('th', null, 'Text'), h('th', { style: 'width:45%' }, 'Change'), h('th', { style: 'width:200px' }, 'Note'), h('th')), ...rows));
+    return [d];
+  }
+
+  // ------------------------------------------------------------------ COVERAGE view
+  function viewCoverage() {
+    const u = usage();
+    const d = h('div', { class: 'detail', style: 'width:100%' }, h('h2', null, 'Coverage'), h('div', { class: 'sub' }, 'Where the plan stands, and what is written but not in the plan (or planned but not written).'));
+    function bar(counts) {
+      const total = STATUSES.reduce((n, s) => n + (counts[s] || 0), 0) || 1;
+      return h('div', { class: 'bar' }, ...STATUSES.map((s) => h('i', { class: s, style: 'width:' + ((counts[s] || 0) / total) * 100 + '%', title: s + ': ' + (counts[s] || 0) })));
+    }
+    const rows = [];
+    for (const ch of S.plan.chapters) {
+      const cc = {}; for (const a of ch.arcs) for (const b of a.beats) cc[b.status] = (cc[b.status] || 0) + 1;
+      rows.push(h('tr', { style: 'background:#241b11' }, h('td', null, h('b', null, ch.title)), h('td', null, pill(ch.status)), h('td', null, bar(cc)), h('td', null, STATUSES.map((s) => (cc[s] || 0) + ' ' + s).join(' · '))));
+      for (const a of ch.arcs) {
+        const ac = {}; for (const b of a.beats) ac[b.status] = (ac[b.status] || 0) + 1;
+        rows.push(h('tr', null, h('td', { style: 'padding-left:22px' }, a.title), h('td', null, pill(a.status)), h('td', null, bar(ac)), h('td', null, a.beats.length + ' beat(s)')));
+      }
+    }
+    d.append(h('table', null, h('tr', null, h('th', null, 'Chapter / storyline'), h('th', null, 'Status'), h('th', null, 'Beats'), h('th', null, 'Breakdown')), ...rows));
+
+    const unwritten = allBeats().filter(({ beat }) => !(beat.links.quests || []).length && !(beat.links.dialogue || []).length && !(beat.links.assignments || []).length);
+    d.append(h('h3', null, 'Beats with no written content yet (' + unwritten.length + ')'),
+      unwritten.length ? h('div', { class: 'chips' }, ...unwritten.map(({ beat, arc }) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'beat', id: beat.id }; S.view = 'plan'; render(); } }, beat.title), pill(beat.status), h('span', { style: 'padding-right:8px;color:#7d776c' }, ' ' + arc.title)))) : h('div', { class: 'sub' }, 'Every beat points at something written.'));
+
+    function gaps(title, items, bucket, view, label) {
+      const missing = items.filter((it) => !(u[bucket][it.id] || []).length);
+      d.append(h('h3', null, title + ' in the game but not in the plan (' + missing.length + ')'),
+        missing.length ? h('div', { class: 'chips' }, ...missing.map((it) => h('span', { class: 'chip' }, h('a', { onclick: () => jumpTo(view, it.id) }, label(it))))) : h('div', { class: 'sub' }, 'All covered.'));
+    }
+    gaps('Quests', snap().quests, 'quests', 'quests', questName);
+    gaps('Conversations', snap().dialogue, 'dialogue', 'dialogue', graphName);
+    gaps('Assignments', snap().other.assignments, 'assignments', 'other', assignName);
+    gaps('Characters', snap().cast.characters, 'characters', 'cast', charName);
+
+    const broken = [];
+    for (const { beat } of allBeats()) {
+      for (const id of beat.links.quests || []) if (!questById(id)) broken.push(beat.title + ' → quest ' + id);
+      for (const id of beat.links.dialogue || []) if (!graphById(id)) broken.push(beat.title + ' → dialogue ' + id);
+      for (const id of beat.links.assignments || []) if (!assignById(id)) broken.push(beat.title + ' → assignment ' + id);
+      for (const id of beat.cast || []) if (!charById(id)) broken.push(beat.title + ' → character ' + id);
+      for (const id of beat.locations || []) if (!locById(id)) broken.push(beat.title + ' → location ' + id);
+    }
+    d.append(h('h3', null, 'Broken links (' + broken.length + ')'), broken.length ? h('ul', null, ...broken.map((b) => h('li', null, b))) : h('div', { class: 'sub' }, 'None.'));
+
+    // Translations
+    const t = {};
+    for (const l of snap().locales) t[l.code] = { ok: 0, stale: 0, missing: 0 };
+    for (const entry of Object.values(snap().strings)) for (const l of snap().locales) t[l.code][entry.tr[l.code]] += 1;
+    d.append(h('h3', null, 'Translations'), h('div', { class: 'sub' }, 'Every pending edit will also make its string stale in every language.'),
+      h('table', null, h('tr', null, h('th', null, 'Language'), h('th', null, 'Current'), h('th', null, 'Stale'), h('th', null, 'Missing'), h('th', null, 'Stale after pending edits')),
+        ...snap().locales.map((l) => h('tr', null, h('td', null, l.name + ' (' + l.code + ')'), h('td', null, t[l.code].ok), h('td', null, t[l.code].stale), h('td', null, t[l.code].missing),
+          h('td', null, [...S.edits.keys()].filter((k) => str(k) && str(k).tr[l.code] === 'ok').length)))));
+    return [d];
+  }
+
+  // ------------------------------------------------------------------ SEARCH view
+  function viewSearch() {
+    const q = S.search.toLowerCase();
+    const hits = Object.keys(snap().strings).filter((k) => curText(k).toLowerCase().includes(q) || k.toLowerCase().includes(q)).slice(0, 80);
+    const d = h('div', { class: 'detail', style: 'width:100%' }, h('h2', null, 'Search'), h('div', { class: 'sub' }, hits.length + (hits.length === 80 ? '+' : '') + ' result(s) for "' + S.search + '"'),
+      ...hits.map((k) => h('div', { class: 'card' }, editor(k, { multiline: curText(k).length > 60 }))));
+    return [d];
+  }
+
+  // ------------------------------------------------------------------ EXPORT view
+  function markdown(opts) {
+    const L = [];
+    const T = (key) => curText(key).replace(/\n/g, ' ');
+    L.push('# Hollywoodland — Story Bible', '');
+    if (opts.plan) {
+      L.push('## Story plan', '');
+      for (const ch of S.plan.chapters) {
+        L.push('### ' + ch.title + ' _(' + ch.status + ')_', '', ch.summary, '');
+        for (const arc of ch.arcs) {
+          L.push('#### ' + arc.title + ' _(' + arc.status + ')_', '');
+          if (arc.summary) L.push(arc.summary, '');
+          if (arc.notes) L.push('> ' + arc.notes.replace(/\n/g, '\n> '), '');
+          for (const b of arc.beats) {
+            L.push('- **' + b.title + '** _(' + b.status + ')_: ' + (b.summary || ''));
+            const cast = (b.cast || []).map((id) => { const c = charById(id); return c ? charName(c) : id; });
+            const locs = (b.locations || []).map((id) => { const l = locById(id); return l ? locName(l) : id; });
+            if (cast.length) L.push('  - Cast: ' + cast.join(', '));
+            if (locs.length) L.push('  - Places: ' + locs.join(', '));
+            const qs = (b.links.quests || []).map((id) => { const q = questById(id); return q ? questName(q) : id; });
+            if (qs.length) L.push('  - Quests: ' + qs.join(', '));
+            if ((b.links.dialogue || []).length) L.push('  - Dialogue: ' + b.links.dialogue.join(', '));
+            if (b.notes) L.push('  - Notes: ' + b.notes.replace(/\n/g, ' '));
+          }
+          L.push('');
+        }
+      }
+    }
+    if (opts.quests) {
+      L.push('## Quests', '');
+      for (const q of snap().quests) {
+        L.push('### ' + T(q.title), '', T(q.summary), '');
+        if (q.prerequisites.length) L.push('Requires: ' + q.prerequisites.join('; '), '');
+        q.stages.forEach((s, i) => L.push((i + 1) + '. ' + T(s.text) + (s.rewards.length ? ' _(' + s.rewards.join('; ') + ')_' : '')));
+        L.push('');
+      }
+    }
+    if (opts.dialogue) {
+      L.push('## Dialogue', '');
+      for (const g of snap().dialogue) {
+        L.push('### ' + graphName(g), '');
+        for (const n of g.nodes) {
+          L.push('**' + T(n.speaker) + '** (`' + n.id + '`): ' + T(n.text));
+          for (const c of n.choices) L.push('  - ' + T(c.label) + ' → ' + (c.next ? '`' + c.next + '`' : 'end') + (c.effects.length ? ' _[' + c.effects.join('; ') + ']_' : ''));
+          L.push('');
+        }
+      }
+    }
+    if (opts.cast) {
+      L.push('## Cast & world', '');
+      for (const c of snap().cast.characters) L.push('- **' + c.id + '**: ' + T(c.role));
+      L.push('');
+      for (const l of snap().cast.locations) L.push('- **' + l.label + '**' + (l.prompt ? ': ' + T(l.prompt) : ''));
+      L.push('');
+      for (const o of snap().cast.origins) L.push('- **' + T(o.name) + '**: ' + T(o.blurb));
+      L.push('');
+    }
+    if (opts.other) {
+      L.push('## Assignments', '');
+      for (const a of snap().other.assignments) L.push('- **' + T(a.title) + '**: ' + T(a.description) + ' _(' + a.rewards.join('; ') + ')_');
+      L.push('', '## Talents', '');
+      for (const t of snap().other.talents) L.push('- **' + T(t.name) + '** (' + t.branch + '): ' + T(t.description));
+      L.push('', '## Items', '');
+      for (const i of snap().other.items) L.push('- **' + T(i.name) + '**: ' + T(i.description));
+      L.push('');
+    }
+    return L.join('\n');
+  }
+  function viewExport() {
+    const opts = { plan: true, quests: true, dialogue: true, cast: true, other: false };
+    const out = h('textarea', { rows: 22, style: 'font-family:Consolas,monospace;font-size:12px', readonly: true });
+    const checks = Object.keys(opts).map((k) => h('label', { style: 'display:inline-flex;gap:5px;margin-right:14px;align-items:center' },
+      h('input', { type: 'checkbox', checked: opts[k], style: 'width:auto', onchange: (e) => { opts[k] = e.target.checked; out.value = markdown(opts); } }),
+      { plan: 'Story plan', quests: 'Quests', dialogue: 'Dialogue', cast: 'Cast & world', other: 'Assignments, talents, items' }[k]));
+    out.value = markdown(opts);
+    return [h('div', { class: 'detail', style: 'width:100%' }, h('h2', null, 'Export to Markdown'),
+      h('div', { class: 'sub' }, 'Includes your pending edits, so it reads as the story would after they are applied.'),
+      h('div', { class: 'row', style: 'margin-bottom:10px' }, ...checks,
+        h('button', { onclick: () => download('hollywoodland-story-bible.md', out.value, 'text/markdown') }, 'Download .md'),
+        h('button', { onclick: async () => { try { await navigator.clipboard.writeText(out.value); toast('Copied.'); } catch { toast('Could not copy.', true); } } }, 'Copy')),
+      out)];
+  }
+})();
+</script>
+</body>
+</html>

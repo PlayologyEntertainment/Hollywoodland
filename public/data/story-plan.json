@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "chapters": [
+    {
+      "id": "ch1",
+      "title": "One Suitcase",
+      "summary": "Hollywood, 1935. One suitcase, a few dollars, a room at Bellhaven and a lead at Sunset Casting. By the end of the chapter the Boulevard knows your name.",
+      "status": "in-game",
+      "arcs": [
+        {
+          "id": "ch1-getting-noticed",
+          "title": "Getting Noticed",
+          "summary": "From a first audition at the casting office to a screen test, earning the gatekeeper's trust along the way.",
+          "status": "in-game",
+          "notes": "",
+          "beats": [
+            {
+              "id": "ch1-first-audition",
+              "title": "Book a first audition",
+              "summary": "Talk your way past the clerk at Sunset Casting Exchange and get on the books.",
+              "status": "in-game",
+              "cast": ["casting-gatekeeper"],
+              "locations": ["casting-office"],
+              "links": { "quests": ["first-audition"], "dialogue": ["casting-office-intro"], "assignments": [] },
+              "notes": ""
+            },
+            {
+              "id": "ch1-screen-test",
+              "title": "Land the screen test",
+              "summary": "A callback, some experience and the gatekeeper's trust open the door to a screen test.",
+              "status": "in-game",
+              "cast": ["casting-gatekeeper"],
+              "locations": ["casting-office"],
+              "links": { "quests": ["screen-test"], "dialogue": ["casting-office-intro"], "assignments": [] },
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "id": "ch1-a-place-to-land",
+          "title": "A Place to Land",
+          "summary": "Making rent at Bellhaven and finding friends at the diner: the everyday life behind the ambition.",
+          "status": "in-game",
+          "notes": "",
+          "beats": [
+            {
+              "id": "ch1-making-rent",
+              "title": "Make rent at Bellhaven",
+              "summary": "Settle up with the landlady and earn your keep.",
+              "status": "in-game",
+              "cast": ["landlady"],
+              "locations": ["boarding-house"],
+              "links": { "quests": ["making-rent"], "dialogue": ["boarding-house-intro"], "assignments": ["scene-study-class", "diner-counter-shift", "early-night-in"] },
+              "notes": ""
+            },
+            {
+              "id": "ch1-diner-introductions",
+              "title": "Introduce yourself at the diner",
+              "summary": "Win over the counter crowd at The Gilded Spoon and earn a confidant.",
+              "status": "in-game",
+              "cast": ["diner-confidant"],
+              "locations": ["diner"],
+              "links": { "quests": ["diner-introductions"], "dialogue": ["sunset-diner-intro"], "assignments": [] },
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "id": "ch1-the-rival",
+          "title": "The Rival at the Gate",
+          "summary": "A rival with her own hard-won ambitions, met at the Monarch Pictures gate.",
+          "status": "in-game",
+          "notes": "",
+          "beats": [
+            {
+              "id": "ch1-backlot-rivalry",
+              "title": "Cross paths at the Monarch gate",
+              "summary": "First encounter with the rival; standing your ground earns respect.",
+              "status": "in-game",
+              "cast": ["rival"],
+              "locations": ["backlot-gate"],
+              "links": { "quests": ["backlot-rivalry"], "dialogue": ["backlot-gate-intro"], "assignments": [] },
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "id": "ch1-on-the-lot",
+          "title": "On the Lot",
+          "summary": "Getting work, rehearsing and being seen: extras calls, scene work, wardrobe, press and the Palace.",
+          "status": "in-game",
+          "notes": "",
+          "beats": [
+            {
+              "id": "ch1-extras-call",
+              "title": "Answer an extras call",
+              "summary": "Check in with the production coordinator and get cleared for call.",
+              "status": "in-game",
+              "cast": ["production-coordinator"],
+              "locations": ["extras-corral"],
+              "links": { "quests": ["extras-call"], "dialogue": ["extras-corral-intro"], "assignments": [] },
+              "notes": ""
+            },
+            {
+              "id": "ch1-scene-rehearsal",
+              "title": "Rehearse with a scene partner",
+              "summary": "Run the scene together and find the rhythm.",
+              "status": "in-game",
+              "cast": ["scene-partner"],
+              "locations": ["soundstage"],
+              "links": { "quests": ["scene-rehearsal"], "dialogue": ["soundstage-intro"], "assignments": ["run-lines-with-scene-partner"] },
+              "notes": ""
+            },
+            {
+              "id": "ch1-costume-fitting",
+              "title": "Get fitted for the part",
+              "summary": "The wardrobe mistress at The Silver Thimble sizes you up.",
+              "status": "in-game",
+              "cast": ["wardrobe-mentor"],
+              "locations": ["costume-shop"],
+              "links": { "quests": ["costume-fitting"], "dialogue": ["silver-thimble-intro"], "assignments": [] },
+              "notes": ""
+            },
+            {
+              "id": "ch1-on-the-record",
+              "title": "Give the newsman something",
+              "summary": "Feed The Klieg Light a story and see it in print.",
+              "status": "in-game",
+              "cast": ["reporter"],
+              "locations": ["klieg-light-office"],
+              "links": { "quests": ["on-the-record"], "dialogue": ["klieg-light-intro"], "assignments": [] },
+              "notes": ""
+            },
+            {
+              "id": "ch1-palace-matinee",
+              "title": "A matinee at The Celestial Palace",
+              "summary": "Earn the house manager's offer of a matinee seat and attend.",
+              "status": "in-game",
+              "cast": ["house-manager"],
+              "locations": ["celestial-palace"],
+              "links": { "quests": ["palace-matinee"], "dialogue": ["celestial-palace-lobby"], "assignments": [] },
+              "notes": ""
+            }
+          ]
+        },
+        {
+          "id": "ch1-conclusion",
+          "title": "Chapter 1 Conclusion",
+          "summary": "All ten quests done: the Conclusion card recaps the chapter and hands off to Chapter 2.",
+          "status": "in-game",
+          "notes": "",
+          "beats": [
+            {
+              "id": "ch1-conclusion-card",
+              "title": "The Conclusion screen",
+              "summary": "A green-bordered title card with a story recap, then back to the Boulevard with \"Chapter 2 - Coming Soon\" in the quest helper.",
+              "status": "in-game",
+              "cast": [],
+              "locations": [],
+              "links": { "quests": [], "dialogue": [], "assignments": [] },
+              "notes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch2",
+      "title": "Chapter 2 (working title)",
+      "summary": "Not yet planned. Use this chapter to shape the next storylines before any dialogue is written.",
+      "status": "idea",
+      "arcs": [
+        {
+          "id": "ch2-arc-1",
+          "title": "Untitled storyline",
+          "summary": "",
+          "status": "idea",
+          "notes": "",
+          "beats": []
+        }
+      ]
+    }
+  ]
+}

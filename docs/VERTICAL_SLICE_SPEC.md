@@ -16,7 +16,7 @@ The player creates an aspiring performer, arrives on Hollywood Boulevard in 1935
 - New Career, Continue, Load, Import Save, Accessibility, and Credits.
 - Character Creator as a portrait selector: name, a portrait from the slice roster (each with its own walk cycle), and an origin.
 - Origin summary and initial allocation across Presence, Craft, Wit, Nerve, and Grit.
-- A chapter title page, followed by player control on the Boulevard. The bus or train arrival sequence is a full-game feature.
+- A chapter title page, followed by player control on the Boulevard. The bus or train arrival sequence is a full-game feature. Completing every quest plays a Chapter 1 Conclusion card with a short story recap, then returns to the Boulevard with "Chapter 2 - Coming Soon" in the quest helper.
 
 ### Hollywood Boulevard district
 
@@ -109,7 +109,7 @@ Optional content must reinforce the core loop and not turn the slice into a cont
 | Progression | XP, at least one level choice, starter talent branches |
 | Rewards | First credit, headshot/costume/prop or home display |
 | Achievements | 5–8 cosmetic/world-recognition examples |
-| Idle | One bounded assignment with return summary |
+| Idle | Bounded assignments with a return summary: nine in the build, four open from the start, one gated by housing and one more unlocked at each of levels 2 to 5 (never paying Energy) |
 | Save | Autosave, manual slots, export/import, version migration hook |
 | Analytics | Disclosed boundary and opt-out; no provider, so nothing is transmitted |
 | Accessibility | Complete robust baseline for included content |

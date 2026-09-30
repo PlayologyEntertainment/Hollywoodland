@@ -124,7 +124,7 @@ Hollywoodland uses a balanced job structure:
 
 Quest states must support success, partial success, failure, refusal, delay, and alternate completion. The player should understand immediate consequences while some downstream effects remain discoverable.
 
-When away, the player may schedule bounded career assignments such as classes, rehearsals, side jobs, networking, or recovery. On return, the game summarizes elapsed time and the result. Offline progress never bypasses major story scenes, creates unlimited wealth, or punishes a long absence.
+When away, the player may schedule bounded career assignments such as classes, rehearsals, side jobs, networking, or recovery. On return, the game summarizes elapsed time and the result. Offline progress never bypasses major story scenes, creates unlimited wealth, or punishes a long absence. Assignments unlock with housing and with character level, so the list grows as the career does, and they do not award Energy (resting already restores it); Money, XP and relationship gains are the rewards.
 
 ## 7. Dialogue, relationships, and reputation
 
@@ -168,7 +168,7 @@ Achievements provide titles, posters, outfits, trophies, scrapbook entries, and 
 
 ## 11. Narrative structure
 
-The story begins in 1935 with the player arriving by bus or train with one suitcase, little money, temporary lodging, and a fragile studio lead. The slice opens on a chapter title page and then hands over control on the Boulevard; a full arrival sequence is a full-game feature. The career branches through choices, relationships, job outcomes, scandals, and roles toward multiple endings.
+The story begins in 1935 with the player arriving by bus or train with one suitcase, little money, temporary lodging, and a fragile studio lead. The slice opens on a chapter title page and then hands over control on the Boulevard; a full arrival sequence is a full-game feature. The career branches through choices, relationships, job outcomes, scandals, and roles toward multiple endings. Quests are grouped by chapter. Finishing every quest of a chapter closes it with a conclusion card, a short story recap in the same title-card style as the chapter opening, before the next chapter begins.
 
 The first slice introduces a background-extra job on Monarch Pictures' swashbuckler *The Corsair's Daughter* that grows into a possible screen test opposite Corinne Lake. The full game should escalate from survival and access, through supporting work and public identity, to starring opportunities and the question of what the player is willing to trade for fame.
 
@@ -176,7 +176,7 @@ The first slice introduces a background-extra job on Monarch Pictures' swashbuck
 
 Exploration uses a layered 2.5D side view with parallax. Key interactions may shift into cinematic close-ups, staged angles, and subtle fisheye compositions. Menus, landmarks, and connective scenes use vivid storybook color; selected “living film” performance sequences use expressive black and white. UI accents use restrained gold and period geometry.
 
-The HUD is minimal and contextual. Immediate prompts and essential state appear during play; money, energy, reputation, time, quests, relationships, inventory, scrapbook, and settings live in elegant expandable panels.
+The HUD is minimal and contextual. Its dark bands (the quest helper, the stats, the assignment countdown, the notices) are drawn as strips of film, with rows of sprocket holes along the top and bottom. Small ambient touches, such as a flock of birds crossing the sky now and then, add life without asking for attention; they stop for Reduce Motion. Immediate prompts and essential state appear during play; money, energy, reputation, time, quests, relationships, inventory, scrapbook, and settings live in elegant expandable panels.
 
 Audio emphasizes an adaptive period-inspired jazz/orchestral score, environmental sound, Foley, and responsive stingers. Dialogue is text-only. The plan does not require voiceover.
 
