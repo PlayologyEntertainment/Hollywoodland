@@ -609,5 +609,17 @@
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Gerente del cine",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "«Fila F, centro, y ni una palabra sobre el vale», murmura, guiándote por el pasillo con la luz de su linterna de latón. En la pantalla, un ratón de dibujos esquiva un piano. A tu alrededor, todo el público se ríe en el mismo instante, y te descubres estudiando exactamente cómo lo hacen.",
   "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Acomódate y disfruta de la función.",
-  "dialogue.lockedOption": "Opción bloqueada"
+  "dialogue.lockedOption": "Opción bloqueada",
+  "audition.scoreNote": "Cada línea de abajo suma o resta puntos a tu puntuación de actuación. Cuanto más alta sea, mejor será el resultado.",
+  "audition.scoreTotal": "Puntuación total de actuación: {score}",
+  "audition.rewards": "Ganaste {xp} XP y {reputation} de Reputación.",
+  "audition.source.preparation": "Preparación",
+  "audition.source.relationship": "Relación",
+  "audition.source.intention": "Intención",
+  "audition.source.technique": "Técnica",
+  "audition.source.delivery": "Dicción",
+  "audition.source.emotion": "Emoción",
+  "audition.source.blocking": "Movimiento escénico",
+  "audition.source.improvisation": "Improvisación",
+  "audition.source.adaptation": "Adaptación"
 }

@@ -28,6 +28,9 @@ export const LEVEL_UP_SFX_FILE = 'assets/audio/Hollywoodland_LevelUp_SFX.mp3';
 export const CHOICE_ENERGY_SFX_FILE = 'assets/audio/ChoiceExp.mp3';
 export const CHOICE_PLAIN_SFX_FILE = 'assets/audio/ChoiceNoExp.mp3';
 
+/** Played when the player performs the Screen Test and its results appear. See AppShell.renderAuditionDebrief. */
+export const SCREEN_TEST_COMPLETE_SFX_FILE = 'assets/audio/ScreenTestComplete.mp3';
+
 /** Every change of music is a cross-fade: the old track fades down while the new one fades up over this long, on an
  * equal-power curve so the loudness does not dip in the middle. The street ambience fades in or out alongside. */
 export const CROSSFADE_SECONDS = 1.0;

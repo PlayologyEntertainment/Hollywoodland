@@ -174,7 +174,7 @@ describe('the shipped catalogs', () => {
     }
     for (const key of Object.keys(collectContentStrings())) used.add(key);
     // Keys the code builds at run time from an enum; tests/i18n.test.ts checks each family is complete.
-    const families = ['time.slot.', 'time.weekday.', 'relationship.label.', 'audition.outcome.', 'attribute.', 'item.category.', 'talent.branch.', 'title.career.', 'title.home.'];
+    const families = ['time.slot.', 'time.weekday.', 'relationship.label.', 'audition.outcome.', 'audition.source.', 'attribute.', 'item.category.', 'talent.branch.', 'title.career.', 'title.home.'];
     expect(used.size, 'the scan found the keys in use').toBeGreaterThan(300);
     expect(findUnusedKeys(english, used, families)).toEqual([]);
   });

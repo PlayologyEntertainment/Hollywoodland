@@ -10,7 +10,7 @@ import { buildQuestLog } from './QuestLog';
 import { mountDecoOutline } from '../ui/DecoBorder';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
-import { CHOICE_ENERGY_SFX_FILE, CHOICE_PLAIN_SFX_FILE, LEVEL_UP_SFX_FILE, moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
+import { CHOICE_ENERGY_SFX_FILE, CHOICE_PLAIN_SFX_FILE, LEVEL_UP_SFX_FILE, SCREEN_TEST_COMPLETE_SFX_FILE, moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
 import type { AudioController } from '../audio/AudioDirector';
 import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
@@ -49,6 +49,9 @@ import { assertElement } from '../shared/assert';
 import { assetUrl } from '../shared/assetUrl';
 import { assignmentDescription, assignmentTitle, auditionOptionLabel, auditionPrompt, auditionTitle, characterRole, dialogueChoiceLabel, dialogueSpeaker, dialogueText, housingTierLabel, itemDescription, itemName, sceneArtAlt, talentDescription, talentName } from '../i18n/content';
 import { SCENE_ART_ALT } from '../game/SceneArtText';
+
+/** A number with its sign always shown: +2, a true minus for -1, and plain 0. */
+const signedPoints = (value: number): string => (value > 0 ? `+${value}` : value < 0 ? `−${Math.abs(value)}` : '0');
 
 interface LocationSceneArt {
   readonly background: string;
@@ -418,6 +421,15 @@ export class AppShell {
     assertElement('#audition-form', HTMLFormElement).addEventListener('submit', (event) => this.submitAudition(event));
     assertElement('#audition-continue', HTMLButtonElement).addEventListener('click', () => {
       assertElement('#audition-dialog', HTMLDialogElement).close();
+    });
+    // Clicking outside the Screen Test cancels it, like the other dialogs. The scrolling card sits inside a margin that is
+    // part of the <dialog> itself, so a click there also targets the dialog; only a click beyond its box counts as outside.
+    const auditionDialog = assertElement('#audition-dialog', HTMLDialogElement);
+    auditionDialog.addEventListener('click', (event) => {
+      if (event.target !== auditionDialog) return;
+      const box = auditionDialog.getBoundingClientRect();
+      const outside = event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+      if (outside) auditionDialog.close();
     });
     assertElement('#home-hub-talk-landlady', HTMLButtonElement).addEventListener('click', () => {
       assertElement('#home-hub-dialog', HTMLDialogElement).close();
@@ -953,17 +965,44 @@ export class AppShell {
 
   private renderAuditionDebrief(payload: AuditionResolvedPayload): void {
     if (this.activeAudition === undefined || this.activeAudition.id !== payload.auditionId) return;
+    this.options.audio.playSfx(SCREEN_TEST_COMPLETE_SFX_FILE);
     assertElement('#audition-form', HTMLFormElement).hidden = true;
     assertElement('#audition-outcome', HTMLElement).textContent = auditionOutcomeLabel(payload.result.outcome);
+    assertElement('#audition-score-note', HTMLElement).textContent = t('audition.scoreNote');
     const list = assertElement('#audition-factors', HTMLUListElement);
     list.replaceChildren(...payload.result.factors.map((factor) => this.buildAuditionFactorElement(factor)));
+    assertElement('#audition-score-total', HTMLElement).textContent = t('audition.scoreTotal', { score: signedPoints(payload.result.score) });
+    assertElement('#audition-rewards', HTMLElement).textContent = this.describeAuditionRewards(payload.result.outcome);
     assertElement('#audition-debrief', HTMLElement).hidden = false;
   }
 
+  /** "You earned 60 XP and +15 Reputation.", from the outcome's authored effects, or nothing if it grants neither. */
+  private describeAuditionRewards(outcome: AuditionOutcome): string {
+    const effects = this.activeAudition?.outcomeEffects[outcome] ?? [];
+    let xp = 0;
+    let reputation = 0;
+    for (const effect of effects) {
+      if (effect.kind === 'xp-grant') xp += effect.amount;
+      if (effect.kind === 'resource-delta') reputation += effect.delta.reputation ?? 0;
+    }
+    if (xp === 0 && reputation === 0) return '';
+    return t('audition.rewards', { xp, reputation: signedPoints(reputation) });
+  }
+
+  /** One line of the breakdown: what it is for ("Delivery", "Preparation", ...), what it says, and the points it added to,
+   * or took from, the performance score. */
   private buildAuditionFactorElement(factor: AuditionFactor): HTMLLIElement {
     const item = document.createElement('li');
-    const sign = factor.points > 0 ? '+' : '';
-    item.textContent = `${factor.label} (${sign}${factor.points})`;
+    const source = document.createElement('span');
+    source.className = 'audition-factor-source';
+    source.textContent = t(`audition.source.${factor.source}`);
+    const text = document.createElement('span');
+    text.className = 'audition-factor-text';
+    text.textContent = factor.label;
+    const points = document.createElement('span');
+    points.className = factor.points < 0 ? 'audition-factor-points is-negative' : 'audition-factor-points';
+    points.textContent = signedPoints(factor.points);
+    item.append(source, text, points);
     return item;
   }
 

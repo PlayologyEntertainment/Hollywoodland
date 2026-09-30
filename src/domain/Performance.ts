@@ -115,9 +115,15 @@ export interface AuditionDefinition {
  * requiring every category to be answered. */
 export type AuditionChoices = Readonly<Record<string, string>>;
 
+/** Where a factor's points came from, so the debrief can say what each number is for: the preparation the player did before
+ * the scene, one of the categories they answered (an attribute or a talent bonus counts toward the category whose choice
+ * used it), or their relationship with the scene partner. */
+export type AuditionFactorSource = 'preparation' | 'relationship' | AuditionCategoryKind;
+
 export interface AuditionFactor {
   readonly label: string;
   readonly points: number;
+  readonly source: AuditionFactorSource;
 }
 
 export interface AuditionResult {
@@ -203,7 +209,7 @@ export function resolveAudition(
   for (const [checkIndex, check] of definition.preparationChecks.entries()) {
     if (!evaluatePreparationCheck(state, check, items)) continue;
     score += check.points;
-    factors.push({ label: auditionCheckLabel(definition, checkIndex, check.label), points: check.points });
+    factors.push({ label: auditionCheckLabel(definition, checkIndex, check.label), points: check.points, source: 'preparation' });
   }
 
   const chosenAttributes: AttributeKey[] = [];
@@ -212,20 +218,24 @@ export function resolveAudition(
     if (option === undefined) continue;
 
     score += option.fit;
-    factors.push({ label: auditionOptionLabel(definition, option), points: option.fit });
+    factors.push({ label: auditionOptionLabel(definition, option), points: option.fit, source: category.kind });
 
     if (option.attribute !== undefined) {
       chosenAttributes.push(option.attribute);
       const attributePoints = state.attributes[option.attribute] - BASE_ATTRIBUTE_VALUE;
       if (attributePoints !== 0) {
         score += attributePoints;
-        factors.push({ label: t('audition.factor.attributeCarried', { attribute: t(`attribute.${option.attribute}`) }), points: attributePoints });
+        factors.push({
+        label: t('audition.factor.attributeCarried', { attribute: t(`attribute.${option.attribute}`) }),
+        points: attributePoints,
+        source: category.kind,
+      });
       }
     }
 
     if (option.talentId !== undefined && (state.progression.unlockedTalentIds[option.talentId] ?? false)) {
       score += TALENT_BONUS;
-      factors.push({ label: t('audition.factor.trainedTechnique'), points: TALENT_BONUS });
+      factors.push({ label: t('audition.factor.trainedTechnique'), points: TALENT_BONUS, source: category.kind });
     }
   }
 
@@ -236,7 +246,7 @@ export function resolveAudition(
     const trustPoints = Math.round(scenePartnerAxes.trust / RELATIONSHIP_TRUST_DIVISOR);
     if (trustPoints !== 0) {
       score += trustPoints;
-      factors.push({ label: t('audition.factor.scenePartnerTrust'), points: trustPoints });
+      factors.push({ label: t('audition.factor.scenePartnerTrust'), points: trustPoints, source: 'relationship' });
     }
   }
 

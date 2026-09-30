@@ -105,25 +105,25 @@ export const SCREEN_TEST_AUDITION: AuditionDefinition = {
   outcomeEffects: {
     breakthrough: [
       { kind: 'resource-delta', delta: { reputation: 15 } },
-      { kind: 'xp-grant', amount: 40 },
+      { kind: 'xp-grant', amount: 60 },
       { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 10 } },
       { kind: 'set-fact', fact: 'screen-test:outcome:breakthrough' },
     ],
     'promising-complication': [
       { kind: 'resource-delta', delta: { reputation: 8 } },
-      { kind: 'xp-grant', amount: 25 },
+      { kind: 'xp-grant', amount: 38 },
       { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { tension: 8 } },
       { kind: 'set-fact', fact: 'screen-test:outcome:promising-complication' },
     ],
     'wrong-role-right-notice': [
       { kind: 'resource-delta', delta: { reputation: 5 } },
-      { kind: 'xp-grant', amount: 20 },
+      { kind: 'xp-grant', amount: 30 },
       { kind: 'relationship-delta', characterId: CASTING_GATEKEEPER.id, delta: { trust: 5 } },
       { kind: 'set-fact', fact: 'screen-test:outcome:wrong-role-right-notice' },
     ],
     'memorable-setback': [
       { kind: 'resource-delta', delta: { reputation: 1 } },
-      { kind: 'xp-grant', amount: 10 },
+      { kind: 'xp-grant', amount: 15 },
       { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 5 } },
       { kind: 'set-fact', fact: 'screen-test:outcome:memorable-setback' },
     ],

@@ -609,5 +609,17 @@
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Kinoleiter",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "„Reihe F, Mitte, und kein Wort über den Gutschein“, murmelt er und führt dich im Schein seiner Messingtaschenlampe den Gang entlang. Auf der Leinwand weicht eine Zeichentrickmaus einem Klavier aus. Um dich herum lacht das ganze Publikum im selben Augenblick, und du ertappst dich dabei, genau zu studieren, wie sie das machen.",
   "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Lehn dich zurück und genieße die Vorstellung.",
-  "dialogue.lockedOption": "Gesperrte Option"
+  "dialogue.lockedOption": "Gesperrte Option",
+  "audition.scoreNote": "Jede Zeile unten bringt Punkte für deine Leistungswertung oder zieht welche ab. Je höher sie ist, desto besser fällt das Ergebnis aus.",
+  "audition.scoreTotal": "Gesamtwertung der Leistung: {score}",
+  "audition.rewards": "Du hast {xp} XP und {reputation} Ruf verdient.",
+  "audition.source.preparation": "Vorbereitung",
+  "audition.source.relationship": "Beziehung",
+  "audition.source.intention": "Absicht",
+  "audition.source.technique": "Technik",
+  "audition.source.delivery": "Vortrag",
+  "audition.source.emotion": "Gefühl",
+  "audition.source.blocking": "Bewegungsregie",
+  "audition.source.improvisation": "Improvisation",
+  "audition.source.adaptation": "Anpassung"
 }

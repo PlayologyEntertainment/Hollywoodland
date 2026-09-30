@@ -609,5 +609,17 @@
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Gerente do cinema",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "“Fileira F, no centro, e nem uma palavra sobre o voucher”, murmura ele, guiando você pelo corredor à luz da lanterna de latão. Na tela, um ratinho de desenho animado desvia de um piano. Ao seu redor, a plateia inteira ri no mesmo instante, e você se pega estudando exatamente como eles fazem isso.",
   "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Acomode-se e aproveite a sessão.",
-  "dialogue.lockedOption": "Opção bloqueada"
+  "dialogue.lockedOption": "Opção bloqueada",
+  "audition.scoreNote": "Cada linha abaixo soma ou tira pontos da sua pontuação de atuação. Quanto mais alta, melhor o resultado.",
+  "audition.scoreTotal": "Pontuação total de atuação: {score}",
+  "audition.rewards": "Você ganhou {xp} XP e {reputation} de Reputação.",
+  "audition.source.preparation": "Preparação",
+  "audition.source.relationship": "Relacionamento",
+  "audition.source.intention": "Intenção",
+  "audition.source.technique": "Técnica",
+  "audition.source.delivery": "Entonação",
+  "audition.source.emotion": "Emoção",
+  "audition.source.blocking": "Marcação",
+  "audition.source.improvisation": "Improvisação",
+  "audition.source.adaptation": "Adaptação"
 }
