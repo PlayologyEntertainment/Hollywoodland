@@ -32,18 +32,20 @@ review_status: approved for use in the game by the owner (2026-09-20), after lis
 rights_or_license_notes: free from Pixabay, per the owner. The license terms in force when the files were downloaded were not captured (see below)
 ```
 
-## Dialogue choice sounds (added 2026-09-29)
+## Sound effects (added 2026-09-29)
 
 | asset_id | runtime_files | Used for |
 |---|---|---|
+| `sfx_level_up` | `public/assets/audio/Hollywoodland_LevelUp_SFX.mp3` | The level-up celebration |
 | `sfx_choice_energy` | `public/assets/audio/ChoiceExp.mp3` | Clicking a dialogue choice that spends energy (the story-carrying, green-outlined ones) |
 | `sfx_choice_plain` | `public/assets/audio/ChoiceNoExp.mp3` | Clicking any other dialogue choice |
+| `sfx_screen_test_complete` | `public/assets/audio/ScreenTestComplete.mp3` | The Screen Test results appearing |
 
-Both were supplied by the owner. Their source, generator and license were not recorded when they were added; record them here with the tracks above before release.
+All the sound effects are **royalty-free files from Pixabay**, per the owner (2026-09-29). As with the tracks above, the individual Pixabay page URLs, creator names, download dates and the license terms in force at download were not saved, and whether any of them is AI-generated is not recorded. The `ChoiceExp.mp3` in the repo is the owner's newer replacement of an earlier version (commit `7109538`).
 
 ## To finish before release
 
-- Save each track's Pixabay page URL (and the creator name shown there) beside the file names above.
+- Save each track's and sound effect's Pixabay page URL (and the creator name shown there) beside the file names above.
 - Save a copy or link of the Pixabay license terms that applied at download, and confirm they cover use in a commercial game and anything specific to AI-generated audio. This record does not state what those terms are.
 - Note the date of download and, if Pixabay names one, the generator used.
 - `CONTENT_AND_ASSET_PIPELINE.md` section 7 also asks for consistent loudness normalisation with headroom; the levels of these five files have not been measured against each other.
