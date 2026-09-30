@@ -2,6 +2,18 @@ import Phaser from 'phaser';
 
 import type { BoulevardActiveRule, BoulevardManifest, BoulevardPlane, BoulevardSign } from '../BoulevardManifest';
 import { isBuildingActive, nearestInteractable } from '../BoulevardStates';
+import {
+  BIRD_FRAME_COUNT,
+  BIRD_FRAME_SIZE,
+  birdPosition,
+  flapFrame,
+  flockFinished,
+  nextFlockDelayMs,
+  planFlock,
+  wingOutline,
+  type BirdPlan,
+} from '../BirdFlight';
+import { isPictureCovered } from '../PictureCover';
 import { skyTileCount, skyTileLayout, SKY_DRIFT_PX_PER_SEC } from '../SkyDrift';
 import {
   DEFAULT_WALK_CYCLE,
@@ -104,6 +116,10 @@ interface InteractionPoint {
   readonly onEnter: () => void;
 }
 
+/** Above the street, its buildings and the foreground, so a bird is never hidden behind a palm; below the confetti (60). */
+const BIRD_DEPTH = 40;
+const birdTextureKey = (frame: number): string => `bird:${frame}`;
+
 export class BoulevardSpikeScene extends Phaser.Scene {
   private inputController!: InputController;
   private settings!: GameSettings;
@@ -135,6 +151,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private skyDriftX = 0;
   private skyTiles: Phaser.GameObjects.Image[] = [];
   private skyTileWidth = 0;
+  /** The ambient flock crossing the top of the screen (see BirdFlight.ts): empty between flights. */
+  private birds: Array<{ readonly plan: BirdPlan; readonly image: Phaser.GameObjects.Image }> = [];
+  private flockElapsedMs = 0;
+  private nextFlockInMs = 0;
+  /** Whether a dialog, title card or menu is covering the picture, checked on the state heartbeat; the birds stand still then. */
+  private pictureCovered = false;
   /** Click-to-move's target, or undefined when nothing is pending — see update(). */
   private clickTargetX: number | undefined;
   /** The Career panel covers only part of the screen and isn't a native <dialog>, so unlike every other panel a
@@ -184,6 +206,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.createRenderedEnvironment();
     this.createPlayer();
     this.ensureConfettiTexture();
+    this.ensureBirdTextures();
+    // A restarted scene has already lost its old birds along with the rest of its display list.
+    this.birds = [];
+    this.flockElapsedMs = 0;
+    this.nextFlockInMs = nextFlockDelayMs(Math.random);
+    this.pictureCovered = false;
 
     this.cameras.main.setBounds(0, 0, this.worldWidth, 1080);
     this.cameras.main.startFollow(this.player, true, 0.085, 0.085);
@@ -229,6 +257,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   public override update(_time: number, delta: number): void {
     if (!this.settings.reducedMotion) this.skyDriftX += SKY_DRIFT_PX_PER_SEC * (delta / 1000);
     this.applySkyTileLayout();
+    this.updateBirds(delta);
     const direction = this.currentDirection();
     const speed = this.settings.reducedMotion ? WALK_SPEED * REDUCED_MOTION_WALK_FACTOR : WALK_SPEED;
     const previousX = this.player.x;
@@ -271,6 +300,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.stateClock += delta;
     if (this.stateClock >= 250) {
       this.stateClock = 0;
+      this.pictureCovered = isPictureCovered();
       this.resolvePendingAssignment();
       this.emitState();
     }
@@ -708,6 +738,76 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
     this.clickTargetX = Phaser.Math.Clamp(worldPoint.x, 110, this.worldWidth - 110);
   };
+
+  /** One dark silhouette per pose of the flap cycle, drawn here so the birds need no art asset: a body and head, and two wings
+   * whose tips rise and fall through the cycle. Near-black, like the film strips. */
+  private ensureBirdTextures(): void {
+    const { width, height } = BIRD_FRAME_SIZE;
+    const cx = width / 2;
+    const cy = height / 2 + 2;
+    for (let frame = 0; frame < BIRD_FRAME_COUNT; frame += 1) {
+      const key = birdTextureKey(frame);
+      if (this.textures.exists(key)) continue;
+      const graphics = this.add.graphics();
+      graphics.fillStyle(0x0d0a0c, 1);
+      const left = wingOutline(frame);
+      const first = left[0];
+      if (first !== undefined) {
+        for (let index = 1; index < left.length - 1; index += 1) {
+          const a = left[index];
+          const b = left[index + 1];
+          if (a === undefined || b === undefined) continue;
+          graphics.fillTriangle(first.x, first.y, a.x, a.y, b.x, b.y);
+          graphics.fillTriangle(width - first.x, first.y, width - a.x, a.y, width - b.x, b.y);
+        }
+      }
+      graphics.fillEllipse(cx, cy + 1, 11, 6);
+      graphics.fillCircle(cx - 6, cy - 0.5, 2.6);
+      graphics.fillTriangle(cx - 8, cy - 1.5, cx - 12, cy, cx - 8, cy + 0.5);
+      graphics.generateTexture(key, width, height);
+      graphics.destroy();
+    }
+  }
+
+  /** Every so often a flock of two or three birds crosses the top of the picture, right to left. Fixed to the screen (not the
+   * street), so it is always seen whatever the player is doing. It stands still while anything covers the picture, and there
+   * are no birds at all with Reduce Motion on. */
+  private updateBirds(deltaMs: number): void {
+    if (this.settings.reducedMotion) {
+      if (this.birds.length > 0) this.clearFlock();
+      return;
+    }
+    if (this.pictureCovered) return;
+    if (this.birds.length === 0) {
+      this.nextFlockInMs -= deltaMs;
+      if (this.nextFlockInMs > 0) return;
+      this.startFlock();
+    }
+    this.flockElapsedMs += deltaMs;
+    const viewWidth = this.cameras.main.width;
+    for (const { plan, image } of this.birds) {
+      const position = birdPosition(plan, this.flockElapsedMs, viewWidth);
+      image.setVisible(position.active);
+      if (!position.active) continue;
+      image.setPosition(position.x, position.y).setTexture(birdTextureKey(flapFrame(plan, this.flockElapsedMs)));
+    }
+    if (flockFinished(this.birds.map((bird) => bird.plan), this.flockElapsedMs, viewWidth)) this.clearFlock();
+  }
+
+  private startFlock(): void {
+    this.flockElapsedMs = 0;
+    this.birds = planFlock(Math.random, this.cameras.main.height).map((plan) => ({
+      plan,
+      image: this.add.image(-200, -200, birdTextureKey(0)).setScrollFactor(0).setDepth(BIRD_DEPTH).setScale(plan.scale).setAlpha(0.9).setVisible(false),
+    }));
+  }
+
+  private clearFlock(): void {
+    for (const { image } of this.birds) image.destroy();
+    this.birds = [];
+    this.flockElapsedMs = 0;
+    this.nextFlockInMs = nextFlockDelayMs(Math.random);
+  }
 
   /** Generated once (idempotent across scene restarts, which re-run create()) so the burst needs no art asset of
    * its own: a small rectangle, tinted per-particle from CONFETTI_COLORS. */
