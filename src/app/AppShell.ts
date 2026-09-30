@@ -13,7 +13,7 @@ import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
 import { CHOICE_ENERGY_SFX_FILE, CHOICE_PLAIN_SFX_FILE, LEVEL_UP_SFX_FILE, SCREEN_TEST_COMPLETE_SFX_FILE, moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
 import type { AudioController } from '../audio/AudioDirector';
-import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
+import { assignmentLock, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
 import { type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
@@ -29,7 +29,7 @@ import {
   SCENE_PARTNER_DIALOGUE,
 } from '../domain/DialogueGraphs';
 import type { AuditionResolvedPayload, DomainEventBus } from '../domain/DomainEventBus';
-import { canAffordHousingUpgrade, HOUSING_TIERS, nextHousingTierDefinition } from '../domain/Housing';
+import { canAffordHousingUpgrade, HOUSING_TIERS, nextHousingTierDefinition, type HousingTier } from '../domain/Housing';
 import { hasItem, type InventoryItemDefinition } from '../domain/Inventory';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
 import { deriveAttributes } from '../domain/Origins';
@@ -281,6 +281,8 @@ export class AppShell {
   private toastNotice!: FadingNotice;
   private game: Phaser.Game | undefined;
   private syncBarHeights: () => void = () => undefined;
+  /** What the Home screen's assignment list was last built for; see `renderHomeHubAssignments`. */
+  private assignmentListKey = '';
   private transition!: ScreenTransition;
   private chapterPage!: ChapterTitlePage;
   private careerState: CareerState = createDefaultCareerState();
@@ -1248,48 +1250,87 @@ export class AppShell {
     upgradeButton.setAttribute('aria-disabled', String(!affordable));
   }
 
-  /** Locked assignments (housing tier too low) are omitted entirely, the
-   * same posture `renderQuests` takes toward a locked quest. */
+  /** Every assignment is always listed. One that is still locked (a character level or a housing tier short) shows what it is
+   * waiting for and cannot be started; while one assignment runs, the others stay in view but fade, and the running one is
+   * picked out. The list itself is rebuilt only when its shape changes (a level, a housing tier, which assignment is running,
+   * the language), not on the game's 250ms heartbeat, so a Start button is never replaced under a click; the heartbeat only
+   * moves the running assignment's countdown and progress bar. */
   private renderHomeHubAssignments(state: CareerState): void {
     const activeContainer = assertElement('#home-hub-active-assignment', HTMLElement);
     const list = assertElement('#home-hub-assignment-list', HTMLUListElement);
     const active = state.assignments.active;
-    if (active !== null) {
-      const definition = ALL_ASSIGNMENTS.find((candidate) => candidate.id === active.assignmentId);
-      activeContainer.hidden = false;
-      // Updated by the same 250ms heartbeat as the header timer; when it reaches zero the assignment resolves, `active`
-      // clears, and the next render swaps this line back for the assignment list.
-      assertElement('#home-hub-active-assignment-label', HTMLElement).textContent =
-        definition !== undefined
-          ? t('assignments.inProgress', {
-              title: assignmentTitle(definition),
-              time: formatCountdown(Math.max(0, active.startedAtMs + definition.durationMinutes * 60_000 - Date.now())),
-            })
-          : t('assignments.inProgressUnknown');
-      list.replaceChildren();
+    const activeDefinition = active !== null ? ALL_ASSIGNMENTS.find((candidate) => candidate.id === active.assignmentId) : undefined;
+    const listKey = [t('assignments.start'), state.progression.level, state.housing.tier, active?.assignmentId ?? ''].join('|');
+    if (listKey !== this.assignmentListKey) {
+      this.assignmentListKey = listKey;
+      list.replaceChildren(...ALL_ASSIGNMENTS.map((definition) => this.buildAssignmentListItem(definition, state)));
+    }
+    if (active === null) {
+      activeContainer.hidden = true;
       return;
     }
-    activeContainer.hidden = true;
-    const available = ALL_ASSIGNMENTS.filter((definition) => isAssignmentUnlocked(definition, state.housing));
-    list.replaceChildren(...available.map((definition) => this.buildAssignmentListItem(definition)));
+    activeContainer.hidden = false;
+    if (activeDefinition === undefined) {
+      assertElement('#home-hub-active-assignment-label', HTMLElement).textContent = t('assignments.inProgressUnknown');
+      assertElement('#home-hub-active-assignment-progress', HTMLProgressElement).hidden = true;
+      return;
+    }
+    const totalMs = activeDefinition.durationMinutes * 60_000;
+    const remainingMs = Math.max(0, active.startedAtMs + totalMs - Date.now());
+    assertElement('#home-hub-active-assignment-label', HTMLElement).textContent = t('assignments.inProgress', {
+      title: assignmentTitle(activeDefinition),
+      time: formatCountdown(remainingMs),
+    });
+    const progress = assertElement('#home-hub-active-assignment-progress', HTMLProgressElement);
+    progress.hidden = false;
+    progress.value = Math.round(((totalMs - remainingMs) / totalMs) * 100);
+    progress.setAttribute('aria-label', t('assignments.progressLabel', { title: assignmentTitle(activeDefinition) }));
   }
 
-  private buildAssignmentListItem(definition: AssignmentDefinition): HTMLLIElement {
+  private buildAssignmentListItem(definition: AssignmentDefinition, state: CareerState): HTMLLIElement {
+    const lock = assignmentLock(definition, state);
+    const isRunning = state.assignments.active?.assignmentId === definition.id;
     const item = document.createElement('li');
+    item.dataset.state = lock !== undefined ? 'locked' : isRunning ? 'running' : state.assignments.active !== null ? 'faded' : 'available';
     const summary = document.createElement('span');
     summary.textContent = t('assignments.titleWithDuration', { title: assignmentTitle(definition), duration: formatAssignmentDuration(definition.durationMinutes) });
     const detail = document.createElement('small');
     detail.textContent = assignmentDescription(definition);
+    const rewards = document.createElement('small');
+    rewards.className = 'home-hub-assignment-rewards';
+    rewards.textContent = describeAssignmentRewards(definition.rewards);
+    item.append(summary, detail, rewards);
+    if (lock !== undefined) {
+      const badge = document.createElement('span');
+      badge.className = 'home-hub-assignment-badge';
+      badge.textContent = lock.kind === 'level' ? t('assignments.lockedLevel', { level: lock.level }) : this.housingTierName(lock.tier);
+      item.append(badge);
+      return item;
+    }
+    if (isRunning) {
+      const badge = document.createElement('span');
+      badge.className = 'home-hub-assignment-badge';
+      badge.textContent = t('assignments.running');
+      item.append(badge);
+      return item;
+    }
     const button = document.createElement('button');
     button.type = 'button';
     button.textContent = t('assignments.start');
     // The button sits left of its text, so several identical "Start" buttons need a name.
     button.setAttribute('aria-label', t('assignments.startNamed', { title: assignmentTitle(definition) }));
+    // While another assignment runs, the button stays (so the card keeps its shape) but cannot be used.
+    button.disabled = state.assignments.active !== null;
     button.addEventListener('click', () =>
       this.options.domainEvents.emit('assignment-start-requested', { assignmentId: definition.id }),
     );
-    item.append(summary, detail, button);
+    item.append(button);
     return item;
+  }
+
+  private housingTierName(tier: HousingTier): string {
+    const definition = HOUSING_TIERS.find((candidate) => candidate.tier === tier);
+    return definition !== undefined ? housingTierLabel(definition) : tier;
   }
 
   /** The entrance prompt appears at once and fades away gently. Its words stay while it fades (the game reports an empty label

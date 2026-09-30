@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   canStartAssignment,
+  assignmentLock,
   isAssignmentUnlocked,
   resolveActiveAssignment,
   startAssignment,
@@ -45,10 +46,27 @@ const ROSTER: readonly RelationshipCharacter[] = [{ id: 'friend', supportsAttrac
 const START_MS = 1_000_000;
 
 describe('assignments', () => {
+  it('locks an assignment until the character reaches its level, naming the level as the blocker', () => {
+    const state = createDefaultCareerState();
+    const levelTwo: AssignmentDefinition = { ...ROOM_CLASS, id: 'level-two', requiredLevel: 2 };
+    expect(isAssignmentUnlocked(levelTwo, state)).toBe(false);
+    expect(assignmentLock(levelTwo, state)).toEqual({ kind: 'level', level: 2 });
+    expect(canStartAssignment(state, levelTwo)).toBe(false);
+    expect(startAssignment(state, levelTwo, START_MS)).toBe(state);
+    const leveled = { ...state, progression: { ...state.progression, level: 2 } };
+    expect(assignmentLock(levelTwo, leveled)).toBeUndefined();
+    expect(startAssignment(leveled, levelTwo, START_MS).assignments.active?.assignmentId).toBe('level-two');
+  });
+
+  it('names the housing tier as the blocker when the level is met but the tier is not', () => {
+    const state = createDefaultCareerState();
+    expect(assignmentLock(APARTMENT_CLASS, state)).toEqual({ kind: 'housing', tier: 'apartment' });
+  });
+
   it('locks an assignment above the current housing tier', () => {
     const state = createDefaultCareerState();
-    expect(isAssignmentUnlocked(ROOM_CLASS, state.housing)).toBe(true);
-    expect(isAssignmentUnlocked(APARTMENT_CLASS, state.housing)).toBe(false);
+    expect(isAssignmentUnlocked(ROOM_CLASS, state)).toBe(true);
+    expect(isAssignmentUnlocked(APARTMENT_CLASS, state)).toBe(false);
     expect(canStartAssignment(state, APARTMENT_CLASS)).toBe(false);
   });
 
