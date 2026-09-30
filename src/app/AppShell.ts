@@ -597,6 +597,9 @@ export class AppShell {
     const observer = new ResizeObserver(sync);
     observer.observe(header);
     observer.observe(footer);
+    // The game view's own box is what Phaser fits to. Re-fit whenever it really changes size (for instance when the bars come
+    // back after a trip to the menu), not only when a bar's measured height happens to differ from the last published value.
+    new ResizeObserver(() => this.game?.scale.refresh()).observe(assertElement('#game-root', HTMLElement));
     this.syncBarHeights = sync;
     sync();
     // The notices stack drops below the stats row, and below the assignment countdown when one is showing, once the Career panel
@@ -678,6 +681,8 @@ export class AppShell {
     // Publish the bars' heights before the game boots, so Phaser measures the shorter game area.
     this.syncBarHeights();
     this.game = this.options.onStart(state);
+    // A game kept from an earlier visit was fitted while the bars were hidden; fit it to the space between them now.
+    this.game.scale.refresh();
     this.fpsReadout.attach(this.game);
     this.inGame = true;
     this.place = undefined;
