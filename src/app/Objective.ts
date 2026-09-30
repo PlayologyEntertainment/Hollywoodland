@@ -1,4 +1,5 @@
 import type { CareerState } from '../domain/CareerState';
+import { isChapterOneComplete } from '../domain/Chapters';
 import type { InventoryItemDefinition } from '../domain/Inventory';
 import { getActiveStage, getActiveStageIndex, getQuestStatus, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
@@ -26,6 +27,11 @@ export const IDLE_OBJECTIVE: Objective = Object.freeze({
   goal: 'Explore the Boulevard',
 });
 
+/** What the card says once every Chapter 1 quest is done: the next chapter is not built yet. */
+function chapterTwoObjective(): Objective {
+  return Object.freeze({ kind: 'idle', questId: undefined, stageId: undefined, title: t('objective.chapter2.title'), goal: t('objective.chapter2.goal') });
+}
+
 /** The idle objective in the active language. */
 function idleObjective(): Objective {
   return Object.freeze({ ...IDLE_OBJECTIVE, title: t('objective.idle.title'), goal: t('objective.idle.goal') });
@@ -46,7 +52,7 @@ export function chooseObjective(
     .map((quest) => ({ quest, status: getQuestStatus(state, quest, quests, roster, items) }))
     .filter(({ status }) => status === 'active' || status === 'available');
   const chosen = open.find(({ status }) => status === 'active') ?? open[0];
-  if (chosen === undefined) return idleObjective();
+  if (chosen === undefined) return isChapterOneComplete(state, quests, roster, items) ? chapterTwoObjective() : idleObjective();
   const stage = (chosen.status === 'active' ? getActiveStage(state, chosen.quest) : undefined) ?? chosen.quest.stages[0];
   if (stage === undefined) return idleObjective();
   return { kind: 'quest', questId: chosen.quest.id, stageId: stage.id, title: questTitle(chosen.quest), goal: questStageDescription(chosen.quest, stage) };
@@ -128,6 +134,11 @@ export class ObjectiveTracker {
       this.current = next;
       this.view.show(next, false);
     }
+  }
+
+  /** True while a finished goal is being held in its green look (before, during or waiting to start its beat). */
+  public get isHolding(): boolean {
+    return this.holding;
   }
 
   public reset(): void {

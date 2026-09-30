@@ -114,6 +114,7 @@ const shell = new AppShell({
     return activeGame;
   },
   onStop: () => input.setGameplayActive(false),
+  setGameplayActive: (active) => input.setGameplayActive(active),
   onAutosave: async () => { await saveRepository.put(makeSave(AUTOSAVE_ID, 'Autosave')); },
   // Continue resumes whichever save slot — autosave, a manual save, or an import — is newest.
   onLoad: async () => {

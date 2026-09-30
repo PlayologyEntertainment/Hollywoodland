@@ -12,12 +12,14 @@ import {
 } from '../WalkCycle';
 import { getAssignmentById, resolveActiveAssignment, startAssignment } from '../../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../../domain/AssignmentDefinitions';
+import { CHAPTER_ONE_CONCLUDED_FACT } from '../../domain/Chapters';
 import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
 import { getDialogueGraphById } from '../../domain/DialogueGraphs';
 import type {
   AssignmentStartRequestedPayload,
+  ChapterConcludedPayload,
   AuditionSubmittedPayload,
   DomainEventBus,
   StatusPanelVisibilityChangedPayload,
@@ -208,6 +210,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('audition-submitted', this.onAuditionSubmitted),
       this.domainEvents.on('assignment-start-requested', this.onAssignmentStartRequested),
       this.domainEvents.on('housing-upgrade-requested', this.onHousingUpgradeRequested),
+      this.domainEvents.on('chapter-concluded', this.onChapterConcluded),
       this.domainEvents.on('level-up-celebration', this.onLevelUpCelebration),
       this.domainEvents.on('status-panel-visibility-changed', this.onStatusPanelVisibilityChanged),
     ];
@@ -672,6 +675,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const definition = getAssignmentById(ALL_ASSIGNMENTS, payload.assignmentId);
     if (definition === undefined) return;
     this.careerState = startAssignment(this.careerState, definition, Date.now());
+    this.emitState();
+  };
+
+  private readonly onChapterConcluded = (payload: ChapterConcludedPayload): void => {
+    if (payload.chapter !== 1) return;
+    this.careerState = { ...this.careerState, facts: { ...this.careerState.facts, [CHAPTER_ONE_CONCLUDED_FACT]: true } };
     this.emitState();
   };
 

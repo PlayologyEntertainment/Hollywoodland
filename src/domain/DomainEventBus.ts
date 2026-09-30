@@ -32,6 +32,10 @@ export interface HomeHubEnteredPayload {
   readonly resolution: AssignmentResolution | undefined;
 }
 
+export interface ChapterConcludedPayload {
+  readonly chapter: number;
+}
+
 export interface AssignmentStartRequestedPayload {
   readonly assignmentId: string;
 }
@@ -77,6 +81,8 @@ export interface DomainEventMap {
    * `resolvePendingAssignment`. */
   readonly 'assignment-resolved-away': AssignmentResolution;
   readonly 'housing-upgrade-requested': undefined;
+  /** The player has read a chapter's Conclusion screen and left it; the scene remembers that so it is shown once. */
+  readonly 'chapter-concluded': ChapterConcludedPayload;
   /** Fired once from BoulevardSpikeScene.emitState when progression.level rises — the raw fact of a level-up,
    * which may happen mid-dialogue. See 'level-up-celebration' for the moment it's actually safe to show it. */
   readonly 'level-up': LevelUpPayload;
