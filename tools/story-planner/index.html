@@ -288,16 +288,21 @@
   const questById = (id) => snap().quests.find((q) => q.id === id);
   const graphById = (id) => snap().dialogue.find((g) => g.id === id);
   const assignById = (id) => snap().other.assignments.find((a) => a.id === id);
-  const charById = (id) => snap().cast.characters.find((c) => c.id === id);
-  const locById = (id) => snap().cast.locations.find((l) => l.id === id);
+  // Planned cast and places (public story-plan.json "planned") are ones the plan has invented but the game does not have yet.
+  const planned = () => { S.plan.planned = S.plan.planned || {}; S.plan.planned.cast = S.plan.planned.cast || []; S.plan.planned.locations = S.plan.planned.locations || []; return S.plan.planned; };
+  const plannedChar = (id) => planned().cast.find((c) => c.id === id);
+  const plannedLoc = (id) => planned().locations.find((l) => l.id === id);
+  const charById = (id) => snap().cast.characters.find((c) => c.id === id) || plannedChar(id);
+  const locById = (id) => snap().cast.locations.find((l) => l.id === id) || plannedLoc(id);
   const questName = (q) => curText(q.title);
-  const charName = (c) => curText(c.role);
+  // The game's roster is named by role; the plan may carry the approved canon name for each (plan.names) to show beside it.
+  const charName = (c) => (c.role && str(c.role) ? ((S.plan.names || {})[c.id] ? S.plan.names[c.id] + ' — ' : '') + curText(c.role) : c.name + (c.role ? ' — ' + c.role : '') + ' ★');
   const graphName = (g) => {
     const root = g.nodes.find((n) => n.id === g.root);
     return g.id + (root ? ' — ' + curText(root.speaker) : '');
   };
   const assignName = (a) => curText(a.title);
-  const locName = (l) => l.label;
+  const locName = (l) => (l.label !== undefined ? l.label : l.name + ' ★');
 
   function allBeats() {
     const out = [];
@@ -374,7 +379,7 @@
 
   // ------------------------------------------------------------------ render shell
   const TABS = [
-    ['plan', 'Story Plan'], ['dialogue', 'Dialogue'], ['quests', 'Quests'], ['cast', 'Cast & World'], ['other', 'Other Content'],
+    ['plan', 'Story Plan'], ['planned', 'Planned Cast & Places'], ['dialogue', 'Dialogue'], ['quests', 'Quests'], ['cast', 'Cast & World'], ['other', 'Other Content'],
     ['edits', 'Edits'], ['coverage', 'Coverage'], ['export', 'Export'],
   ];
   function renderTabs() {
@@ -396,7 +401,7 @@
         h('p', { class: 'hint' }, 'Run ', h('code', null, 'npm run narrative:export'), ' in the project, then click "Open Project Folder…" and pick the repo root (or open this page from the dev server).')));
       return;
     }
-    const views = { plan: viewPlan, dialogue: viewDialogue, quests: viewQuests, cast: viewCast, other: viewOther, edits: viewEdits, coverage: viewCoverage, export: viewExport, search: viewSearch };
+    const views = { plan: viewPlan, planned: viewPlanned, dialogue: viewDialogue, quests: viewQuests, cast: viewCast, other: viewOther, edits: viewEdits, coverage: viewCoverage, export: viewExport, search: viewSearch };
     main.replaceChildren(...(views[S.view] || viewPlan)());
     refreshChrome();
   }
@@ -475,6 +480,10 @@
         h('h2', null, 'Chapter'),
         h('div', { class: 'sub' }, ch.arcs.length + ' storyline(s), ' + ch.arcs.reduce((n, a) => n + a.beats.length, 0) + ' beat(s)'),
         textBind(ch, 'title', { label: 'Title' }), textBind(ch, 'summary', { label: 'Summary', multiline: true, rows: 4 }), statusSelect(ch),
+        h('div', { class: 'two' }, textBind(ch, 'location', { label: 'Main location' }), textBind(ch, 'timeframe', { label: 'When (in the story)' })),
+        h('h3', null, 'Where the player should be when the chapter starts'),
+        (() => { ch.targets = ch.targets || {}; return h('div', { class: 'two' }, textBind(ch.targets, 'level', { label: 'Level' }), textBind(ch.targets, 'reputation', { label: 'Reputation (0-100)' }), textBind(ch.targets, 'housing', { label: 'Housing' }), textBind(ch.targets, 'money', { label: 'Money' })); })(),
+        textBind(ch, 'carryForward', { label: 'What carries forward (attributes, talents, reputation, relationships, unlocks)', multiline: true, rows: 5 }),
         h('div', { class: 'row', style: 'margin-top:14px' },
           moveButtons(S.plan.chapters, ch),
           h('button', { onclick: () => { const arc = { id: uid('arc'), title: 'New storyline', summary: '', status: 'idea', notes: '', beats: [] }; ch.arcs.push(arc); S.sel = { type: 'arc', id: arc.id }; markDirty('plan'); paintTree(); paintDetail(); } }, '+ Storyline'),
@@ -512,7 +521,7 @@
           ...holder[bucket].map((id) => {
             const ok = exists(id);
             return h('span', { class: 'chip' + (ok ? '' : ' bad'), title: ok ? '' : 'This no longer exists in the game content' },
-              ok && view ? h('a', { onclick: () => jumpTo(view, id) }, labelOf(id)) : (ok ? labelOf(id) : id + ' (missing)'),
+              ok && view ? h('a', { onclick: () => jumpTo(typeof view === 'function' ? view(id) : view, id) }, labelOf(id)) : (ok ? labelOf(id) : id + ' (missing)'),
               h('button', { title: 'Remove', onclick: () => { holder[bucket].splice(holder[bucket].indexOf(id), 1); markDirty('plan'); paint(); } }, '×'));
           }),
           h('select', { style: 'width:150px', onchange: (e) => { if (e.target.value && !holder[bucket].includes(e.target.value)) { holder[bucket].push(e.target.value); markDirty('plan'); } paint(); } },
@@ -530,14 +539,17 @@
         h('h2', null, 'Beat'),
         h('div', { class: 'sub' }, ch.title + ' › ' + arc.title + (linked === 0 && beat.status !== 'idea' ? '' : '')),
         textBind(beat, 'title', { label: 'Title' }), textBind(beat, 'summary', { label: 'What happens (high level)', multiline: true, rows: 4 }), statusSelect(beat),
-        h('label', { class: 'f' }, 'Cast'), linkPicker(beat, 'cast', () => snap().cast.characters.map((c) => ({ id: c.id, label: charName(c) })), (id) => { const c = charById(id); return c ? charName(c) : id; }, 'cast'),
-        h('label', { class: 'f' }, 'Locations'), linkPicker(beat, 'locations', () => snap().cast.locations.map((l) => ({ id: l.id, label: locName(l) })), (id) => { const l = locById(id); return l ? locName(l) : id; }, 'cast'),
+        h('label', { class: 'f' }, 'Cast (★ = planned, not in the game yet)'), linkPicker(beat, 'cast', () => [...snap().cast.characters, ...planned().cast].map((c) => ({ id: c.id, label: charName(c) })), (id) => { const c = charById(id); return c ? charName(c) : id; }, (id) => (plannedChar(id) ? 'planned' : 'cast')),
+        h('label', { class: 'f' }, 'Locations'), linkPicker(beat, 'locations', () => [...snap().cast.locations, ...planned().locations].map((l) => ({ id: l.id, label: locName(l) })), (id) => { const l = locById(id); return l ? locName(l) : id; }, (id) => (plannedLoc(id) ? 'planned' : 'cast')),
         h('h3', null, 'Written content this beat uses'),
         h('div', { class: 'sub' }, linked === 0 ? 'Nothing linked yet: this beat is still only a plan.' : 'Click a chip to open it.'),
         h('label', { class: 'f' }, 'Quests'), linkPicker(beat, 'quests', () => snap().quests.map((q) => ({ id: q.id, label: questName(q) })), (id) => { const q = questById(id); return q ? questName(q) : id; }, 'quests'),
         h('label', { class: 'f' }, 'Dialogue'), linkPicker(beat, 'dialogue', () => snap().dialogue.map((g) => ({ id: g.id, label: graphName(g) })), (id) => { const g = graphById(id); return g ? graphName(g) : id; }, 'dialogue'),
         h('label', { class: 'f' }, 'Assignments'), linkPicker(beat, 'assignments', () => snap().other.assignments.map((a) => ({ id: a.id, label: assignName(a) })), (id) => { const a = assignById(id); return a ? assignName(a) : id; }, 'other'),
-        textBind(beat, 'notes', { label: 'Notes (intended outcomes, branches, open questions)', multiline: true, rows: 5 }),
+        textBind(beat, 'choices', { label: 'Choice points', multiline: true, rows: 3 }),
+        textBind(beat, 'routes', { label: 'Attribute / talent routes (how different builds clear it)', multiline: true, rows: 3 }),
+        textBind(beat, 'effects', { label: 'Consequences and carry-forward (relationships, reputation, unlocks, rewards)', multiline: true, rows: 3 }),
+        textBind(beat, 'notes', { label: 'Notes (intended outcomes, branches, open questions)', multiline: true, rows: 4 }),
         h('div', { class: 'row', style: 'margin-top:14px' },
           moveButtons(arc.beats, beat),
           h('span', null, 'Move to storyline: ', h('select', { style: 'width:230px', onchange: (e) => { const [cid, aid] = e.target.value.split('|'); const to = S.plan.chapters.find((c) => c.id === cid).arcs.find((a) => a.id === aid); if (to === arc) return; arc.beats.splice(arc.beats.indexOf(beat), 1); to.beats.push(beat); markDirty('plan'); paintTree(); paintDetail(); } }, ...others.map(({ c, a }) => h('option', { value: c.id + '|' + a.id, selected: a === arc }, c.title + ' › ' + a.title)))),
@@ -545,6 +557,45 @@
           h('button', { class: 'danger', onclick: () => { if (!confirm('Delete this beat?')) return; arc.beats.splice(arc.beats.indexOf(beat), 1); S.sel = { type: 'arc', id: arc.id }; markDirty('plan'); paintTree(); paintDetail(); } }, 'Delete beat')),
       ];
     }
+  }
+
+
+  // ------------------------------------------------------------------ PLANNED CAST & PLACES view
+  function viewPlanned() {
+    const u = usage();
+    const P = planned();
+    function field(obj, name, label, opts) {
+      opts = opts || {};
+      const control = opts.multiline ? h('textarea', { rows: opts.rows || 3 }) : h('input', { type: 'text' });
+      control.value = obj[name] || '';
+      control.addEventListener('input', () => { obj[name] = control.value; markDirty('plan'); });
+      return h('div', null, h('label', { class: 'f' }, label), control);
+    }
+    function usedBy(bucket, id) {
+      const list = u[bucket][id] || [];
+      return list.length
+        ? h('div', { class: 'chips' }, ...list.map(({ beat, ch }) => h('span', { class: 'chip' }, h('a', { onclick: () => { S.sel = { type: 'beat', id: beat.id }; S.view = 'plan'; render(); } }, beat.title), h('span', { style: 'padding-right:8px;color:#7d776c' }, ' · ' + ch.title))))
+        : h('span', { class: 'pill warn' }, 'not in any beat');
+    }
+    function remove(list, item) { if (!confirm('Remove "' + (item.name || item.id) + '"? Beats that use it will show a broken link.')) return; list.splice(list.indexOf(item), 1); markDirty('plan'); render(); }
+    const d = h('div', { class: 'detail', style: 'width:100%' },
+      h('h2', null, 'Planned Cast & Places'),
+      h('div', { class: 'sub' }, 'Characters and places the story needs that the game does not have yet. They can be used in any beat (marked ★) and are not flagged as broken. Once one is built into the game it moves to the Cast & World tab.'),
+      h('div', { class: 'row' }, h('button', { onclick: () => { P.cast.push({ id: uid('npc'), name: 'New character', role: '', debut: '', romance: false, presence: '', summary: '' }); markDirty('plan'); render(); } }, '+ Character'),
+        h('button', { onclick: () => { P.locations.push({ id: uid('place'), name: 'New place', chapters: '', summary: '' }); markDirty('plan'); render(); } }, '+ Place')),
+      h('h3', null, 'Characters (' + P.cast.length + ')'),
+      h('div', { class: 'grid2' }, ...P.cast.map((c) => h('div', { class: 'card', 'data-id': c.id },
+        h('h4', null, c.name || '(unnamed)', h('span', { class: 'pill' }, c.romance ? 'romance possible' : 'no romance track'), c.debut ? h('span', { class: 'pill' }, 'debut ' + c.debut) : null),
+        field(c, 'name', 'Name'), field(c, 'role', 'Role'), field(c, 'debut', 'First appears (chapter)'),
+        h('label', { class: 'f', style: 'display:flex;gap:6px;align-items:center' }, h('input', { type: 'checkbox', style: 'width:auto', checked: !!c.romance, onchange: (e) => { c.romance = e.target.checked; markDirty('plan'); render(); } }), 'Romance-capable (attraction-flexible)'),
+        field(c, 'presence', 'Where the player can find them, by chapter', { multiline: true, rows: 2 }), field(c, 'summary', 'Who they are', { multiline: true, rows: 4 }),
+        usedBy('characters', c.id), h('div', { style: 'margin-top:8px' }, h('button', { class: 'small danger', onclick: () => remove(P.cast, c) }, 'Remove'))))),
+      h('h3', null, 'Places (' + P.locations.length + ')'),
+      h('div', { class: 'grid2' }, ...P.locations.map((l) => h('div', { class: 'card', 'data-id': l.id },
+        h('h4', null, l.name || '(unnamed)', l.chapters ? h('span', { class: 'pill' }, 'chapters ' + l.chapters) : null),
+        field(l, 'name', 'Name'), field(l, 'chapters', 'Chapters it serves'), field(l, 'summary', 'What it is and what happens there', { multiline: true, rows: 4 }),
+        usedBy('locations', l.id), h('div', { style: 'margin-top:8px' }, h('button', { class: 'small danger', onclick: () => remove(P.locations, l) }, 'Remove'))))));
+    return [d];
   }
 
   // ------------------------------------------------------------------ content views
@@ -755,6 +806,11 @@
     gaps('Conversations', snap().dialogue, 'dialogue', 'dialogue', graphName);
     gaps('Assignments', snap().other.assignments, 'assignments', 'other', assignName);
     gaps('Characters', snap().cast.characters, 'characters', 'cast', charName);
+    {
+      const idle = [...planned().cast.filter((c) => !(u.characters[c.id] || []).length).map((c) => ({ id: c.id, label: charName(c) })), ...planned().locations.filter((l) => !(u.locations[l.id] || []).length).map((l) => ({ id: l.id, label: locName(l) }))];
+      d.append(h('h3', null, 'Planned cast and places no beat uses (' + idle.length + ')'),
+        idle.length ? h('div', { class: 'chips' }, ...idle.map((it) => h('span', { class: 'chip' }, h('a', { onclick: () => jumpTo('planned', it.id) }, it.label)))) : h('div', { class: 'sub' }, 'All used.'));
+    }
 
     const broken = [];
     for (const { beat } of allBeats()) {
@@ -795,6 +851,10 @@
       L.push('## Story plan', '');
       for (const ch of S.plan.chapters) {
         L.push('### ' + ch.title + ' _(' + ch.status + ')_', '', ch.summary, '');
+        if (ch.location || ch.timeframe) L.push('_' + [ch.location, ch.timeframe].filter(Boolean).join(' · ') + '_', '');
+        const tg = ch.targets || {};
+        if (tg.level || tg.reputation || tg.housing || tg.money) L.push('Target at chapter start: level ' + (tg.level || '?') + ', reputation ' + (tg.reputation || '?') + ', housing ' + (tg.housing || '?') + (tg.money ? ', money ' + tg.money : ''), '');
+        if (ch.carryForward) L.push('Carries forward: ' + ch.carryForward.replace(/\n/g, ' '), '');
         for (const arc of ch.arcs) {
           L.push('#### ' + arc.title + ' _(' + arc.status + ')_', '');
           if (arc.summary) L.push(arc.summary, '');
@@ -808,11 +868,20 @@
             const qs = (b.links.quests || []).map((id) => { const q = questById(id); return q ? questName(q) : id; });
             if (qs.length) L.push('  - Quests: ' + qs.join(', '));
             if ((b.links.dialogue || []).length) L.push('  - Dialogue: ' + b.links.dialogue.join(', '));
+            if (b.choices) L.push('  - Choices: ' + b.choices.replace(/\n/g, ' '));
+            if (b.routes) L.push('  - Routes: ' + b.routes.replace(/\n/g, ' '));
+            if (b.effects) L.push('  - Consequences: ' + b.effects.replace(/\n/g, ' '));
             if (b.notes) L.push('  - Notes: ' + b.notes.replace(/\n/g, ' '));
           }
           L.push('');
         }
       }
+    }
+    if (opts.plan && (planned().cast.length || planned().locations.length)) {
+      L.push('## Planned cast and places', '');
+      for (const c of planned().cast) L.push('- **' + c.name + '** — ' + c.role + (c.romance ? ' (romance possible)' : '') + (c.debut ? ' · first appears ' + c.debut : '') + (c.summary ? ': ' + c.summary : ''));
+      for (const l of planned().locations) L.push('- **' + l.name + '** (chapters ' + (l.chapters || '?') + ')' + (l.summary ? ': ' + l.summary : ''));
+      L.push('');
     }
     if (opts.quests) {
       L.push('## Quests', '');
