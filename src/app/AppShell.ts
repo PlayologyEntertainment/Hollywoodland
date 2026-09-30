@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 
 import { ChapterTitlePage } from './ChapterTitlePage';
+import { hasConcludedChapterOne, isChapterOneComplete } from '../domain/Chapters';
 import { FadingNotice } from './FadingNotice';
 import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
 import { FpsReadout } from './FpsReadout';
@@ -142,6 +143,8 @@ interface AppShellOptions {
    * actually enters play) and reuses it on subsequent calls. */
   readonly onStart: (state?: CareerState) => Phaser.Game;
   readonly onStop: () => void;
+  /** Switches the game's keyboard controls on or off without leaving the game, for a full-screen card laid over it. */
+  readonly setGameplayActive: (active: boolean) => void;
   /** Saves the career to its own slot; called as the player leaves the game for the Main Menu. */
   readonly onAutosave: () => Promise<void>;
   readonly onLoad: () => Promise<CareerState | undefined>;
@@ -285,6 +288,9 @@ export class AppShell {
   private assignmentListKey = '';
   private transition!: ScreenTransition;
   private chapterPage!: ChapterTitlePage;
+  private conclusionPage!: ChapterTitlePage;
+  /** The Chapter 1 Conclusion is on its way to the screen, on it, or on its way off; see `concludeChapter`. */
+  private concluding = false;
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
   private activeDialogueNodeId: string | undefined;
@@ -333,11 +339,12 @@ export class AppShell {
       (message) => this.announce(message),
       undefined,
       // A conversation covers the whole picture, so the green "complete" beat waits until it is closed.
-      () => ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'].some((selector) => assertElement(selector, HTMLDialogElement).open),
+      () => this.isPictureCovered(),
     );
     this.promptNotice = new FadingNotice(assertElement('#interaction-prompt', HTMLElement));
     this.toastNotice = new FadingNotice(assertElement('#toast', HTMLElement));
     this.chapterPage = new ChapterTitlePage(assertElement('#chapter-title', HTMLElement));
+    this.conclusionPage = new ChapterTitlePage(assertElement('#chapter-conclusion', HTMLElement));
     const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
@@ -654,6 +661,57 @@ export class AppShell {
         this.syncAudio();
       }
     }
+  }
+
+  /** True while a conversation, the Home Menu or an audition covers the whole picture. */
+  private isPictureCovered(): boolean {
+    return ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'].some((selector) => assertElement(selector, HTMLDialogElement).open);
+  }
+
+  /** Once every Chapter 1 quest is done, and the player has seen the last goal's green "complete" beat out on the open Boulevard,
+   * fades to the Chapter 1 Conclusion, once per career. Career state arrives several times a second, so anything that is not
+   * quite ready yet (a conversation still open, the beat still playing, another fade running, a finished save that is still
+   * loading in) is simply retried on the next update. */
+  private maybeConcludeChapter(state: CareerState): void {
+    if (this.concluding || !this.inGame || this.transition.isRunning || this.objectives.isHolding || this.isPictureCovered()) return;
+    if (hasConcludedChapterOne(state) || !isChapterOneComplete(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS)) return;
+    void this.concludeChapter(state);
+  }
+
+  /** Dips through black to the Conclusion card, waits for the player to leave it (music off, controls off), then dips back to
+   * the Boulevard. The scene is told only once the card has been dismissed, so a career closed in the meantime still has
+   * it to show. */
+  private async concludeChapter(state: CareerState): Promise<void> {
+    this.concluding = true;
+    this.onChapterPage = true;
+    this.syncAudio();
+    this.options.setGameplayActive(false);
+    try {
+      const shown = await this.transition.run(() => {
+        this.fillConclusionRecap(state);
+        this.conclusionPage.prepare();
+      });
+      if (!shown) return;
+      await this.conclusionPage.play();
+      this.options.domainEvents.emit('chapter-concluded', { chapter: 1 });
+      await this.transition.run(() => {
+        this.conclusionPage.hide();
+        this.onChapterPage = false;
+      });
+    } finally {
+      this.conclusionPage.hide();
+      this.onChapterPage = false;
+      this.options.setGameplayActive(true);
+      this.syncAudio();
+      this.concluding = false;
+    }
+  }
+
+  /** The recap's opening line speaks to the player by name when they have one. */
+  private fillConclusionRecap(state: CareerState): void {
+    const name = state.identity.name;
+    assertElement('#chapter-conclusion-recap', HTMLElement).textContent =
+      name.length > 0 ? t('chapterConclusion.recap.named', { name }) : t('chapterConclusion.recap.unnamed');
   }
 
   /** Starts the game and resolves once the Boulevard has created its first frame, so a fade-in never shows a blank canvas.
@@ -1040,6 +1098,7 @@ export class AppShell {
 
   private renderCareerState(state: CareerState): void {
     this.objectives.update(state);
+    this.maybeConcludeChapter(state);
     assertElement('#status-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'career');
     assertElement('#home-hub-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'home');
     const hud = describeHud(state);

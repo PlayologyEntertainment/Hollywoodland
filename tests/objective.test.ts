@@ -70,12 +70,23 @@ describe('chooseObjective', () => {
     expect(choose(state)).toMatchObject({ questId: 'diner-introductions', goal: 'Introduce yourself at the counter.' });
   });
 
-  it('says all caught up when nothing is open', () => {
+  it('says all caught up when nothing is open but a quest is still locked', () => {
+    const locked: QuestDef = {
+      id: 'locked',
+      title: 'Locked',
+      summary: '',
+      prerequisites: [{ kind: 'level-at-least', minimum: 99 }],
+      stages: [{ id: 'a', description: 'Do it.' }],
+    };
+    expect(chooseObjective(createDefaultCareerState(), [locked], [], [])).toEqual(IDLE_OBJECTIVE);
+    expect(IDLE_OBJECTIVE).toMatchObject({ kind: 'idle', title: 'All caught up', goal: 'Explore the Boulevard' });
+  });
+
+  it('points to Chapter 2 once every quest is completed', () => {
     const only: QuestDef = { id: 'only', title: 'Only', summary: '', stages: [{ id: 'a', description: 'Do it.' }] };
     let state = startQuest(createDefaultCareerState(), only, [only], []);
     state = completeQuestStage(state, only, 'a');
-    expect(chooseObjective(state, [only], [], [])).toEqual(IDLE_OBJECTIVE);
-    expect(IDLE_OBJECTIVE).toMatchObject({ kind: 'idle', title: 'All caught up', goal: 'Explore the Boulevard' });
+    expect(chooseObjective(state, [only], [], [])).toMatchObject({ kind: 'idle', title: 'Chapter 2', goal: 'Coming Soon' });
   });
 
   it('says all caught up when there are no quests at all', () => {
@@ -176,7 +187,7 @@ describe('ObjectiveTracker', () => {
     expect(shown.at(-1)).toBe('DONE First Audition: Follow up on the audition.');
   });
 
-  it('ends on the all-caught-up message when the last quest is finished, and says so', () => {
+  it('ends on the Chapter 2 message when the last quest is finished, and says so', () => {
     const only: QuestDef = { id: 'only', title: 'Only', summary: '', stages: [{ id: 'a', description: 'Do it.' }] };
     const shown: string[] = [];
     const said: string[] = [];
@@ -190,8 +201,8 @@ describe('ObjectiveTracker', () => {
     tracker.update(begun);
     tracker.update(completeQuestStage(begun, only, 'a'));
     vi.advanceTimersByTime(OBJECTIVE_COMPLETE_MS);
-    expect(shown).toEqual(['Only: Do it.', 'DONE Only: Do it.', 'All caught up: Explore the Boulevard']);
-    expect(said.at(-1)).toBe('All caught up. Explore the Boulevard');
+    expect(shown).toEqual(['Only: Do it.', 'DONE Only: Do it.', 'Chapter 2: Coming Soon']);
+    expect(said.at(-1)).toBe('Chapter 2. Coming Soon');
   });
 
   it('switches at once, with no beat, when the objective changes for a reason other than finishing its goal', () => {

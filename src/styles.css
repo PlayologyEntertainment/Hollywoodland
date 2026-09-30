@@ -252,6 +252,8 @@ h1 {
 .chapter-title-body::-webkit-scrollbar { display: none; }
 .chapter-title [data-reveal] { opacity: 0; transform: translateY(.5rem); transition: opacity 900ms ease, transform 900ms ease; }
 .chapter-title [data-reveal].shown { opacity: 1; transform: none; }
+/* The Chapter 1 Conclusion is the same card with the green a completed quest uses (see --complete-rgb), on its border only. */
+.chapter-conclusion .deco-border { color: rgb(var(--complete-rgb)); }
 .chapter-number { margin: 0; color: var(--muted); font-size: clamp(.8rem, 2.2vh, 1.05rem); letter-spacing: .38em; text-transform: uppercase; }
 .chapter-name { margin: 0; color: var(--gold-bright); font-weight: 400; font-size: clamp(1.9rem, min(7vw, 7.5vh), 4rem); line-height: 1.1; text-shadow: 0 3px 0 #5b351b, 0 8px 24px #000; }
 .chapter-divider { display: flex; align-items: center; gap: .8rem; width: min(20rem, 70%); }
@@ -422,6 +424,9 @@ kbd { border: 1px solid var(--gold); border-radius: .2rem; padding: .13rem .35re
    gold and teal; high contrast swaps it for a brighter one. */
 .status-quests li.quest-complete { border-color: rgb(var(--complete-rgb) / 55%); background: rgb(var(--complete-rgb) / 12%); color: rgb(var(--complete-rgb)); }
 .status-quests li.quest-complete::before { margin-right: .45em; content: '\2713'; content: '\2713' / ''; }
+/* Quests are grouped by chapter, each group collapsible. */
+.quest-chapter > summary { margin: 0 0 .5rem; color: var(--gold); font-size: .95rem; cursor: pointer; }
+.quest-chapter:not([open]) > summary { margin-bottom: 0; }
 .status-relationships li, .status-inventory li { display: grid; gap: .2rem; }
 .status-relationships li small, .status-inventory li small { color: var(--muted); }
 
