@@ -1,12 +1,13 @@
 # The Story Planner
 
 A stand-alone page for seeing everything the game has written and for planning the story above it. It lives at
-`public/tools/story-planner/index.html` and, like the Art Director, is opened from the dev server
-(`http://127.0.0.1:5173/Hollywoodland/tools/story-planner/index.html`) or as a file, then pointed at the project folder with
+`tools/story-planner/index.html`, deliberately **outside `public/`** so that neither the tool nor your unreleased story plan is
+copied into the production build or uploaded to the live site. Open it from the dev server
+(`http://127.0.0.1:5173/Hollywoodland/tools/story-planner/index.html`) or as a file, then point it at the project folder with
 **Open Project Folder…** (Chrome or Edge; it uses the File System Access API). Without a folder it still reads from the dev
 server, and Save downloads the files instead.
 
-## The three files it works with (all in `public/data/`)
+## The three files it works with (all in `tools/story-planner/data/`, also not shipped)
 
 | File | Who writes it | What it holds |
 |---|---|---|
