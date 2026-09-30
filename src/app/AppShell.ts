@@ -4,6 +4,7 @@ import { ChapterTitlePage } from './ChapterTitlePage';
 import { FadingNotice } from './FadingNotice';
 import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
 import { FpsReadout } from './FpsReadout';
+import { releaseFocusAfterMouseClick } from './ReleaseFocusAfterClick';
 import { describeHud } from './HudStats';
 import { chooseObjective, isObjectiveAccomplished, ObjectiveTracker, type Objective } from './Objective';
 import { buildQuestLog } from './QuestLog';
@@ -525,6 +526,9 @@ export class AppShell {
     assertElement('#film-mode', HTMLButtonElement).addEventListener('click', (event) => this.toggleFilmMode(event.currentTarget as HTMLButtonElement));
     assertElement('#fullscreen', HTMLButtonElement).addEventListener('click', () => void this.toggleFullscreen());
     assertElement('#advance-time', HTMLButtonElement).addEventListener('click', () => this.options.domainEvents.emit('advance-time-requested', undefined));
+    // A clicked header or footer button would keep focus, and the next movement key would light its outline and tooltip.
+    releaseFocusAfterMouseClick(assertElement('#status-bar', HTMLElement));
+    releaseFocusAfterMouseClick(assertElement('#game-footer', HTMLElement));
 
     const saveOptionsDialog = assertElement('#save-options-dialog', HTMLDialogElement);
     assertElement('#open-save-options', HTMLButtonElement).addEventListener('click', () => {
