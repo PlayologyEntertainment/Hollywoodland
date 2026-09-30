@@ -3,7 +3,7 @@ import type { RelationshipCharacter } from '../domain/Relationships';
 import { validateContent } from './ContentValidator';
 
 /** Checks an assignment set's structural integrity: unique ids, a positive
- * duration, and (when `roster` is provided) no relationship reward
+ * duration, a sensible required level, and (when `roster` is provided) no relationship reward
  * referencing an unknown character or adjusting attraction for a character
  * that doesn't support it — the same cross-check `validateQuestGraph` runs
  * for a quest's relationship prerequisites and rewards. */
@@ -15,6 +15,9 @@ export function validateAssignments(
   for (const assignment of assignments) {
     if (assignment.durationMinutes <= 0) {
       throw new Error(`Assignment "${assignment.id}" must have a positive duration.`);
+    }
+    if (assignment.requiredLevel !== undefined && (!Number.isInteger(assignment.requiredLevel) || assignment.requiredLevel < 1)) {
+      throw new Error(`Assignment "${assignment.id}" must require a whole level of at least 1.`);
     }
     for (const reward of assignment.rewards) {
       if (reward.kind !== 'relationship-delta' && reward.kind !== 'relationship-pivotal-flag') continue;

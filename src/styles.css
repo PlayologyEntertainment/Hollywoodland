@@ -541,17 +541,30 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
   .save-slot { grid-template-columns: 1fr; }
   .save-slot-actions { grid-column: 1; grid-row: 3; }
 }
-/* Home Menu assignments: each row is a Start button on the left, with the
-   title above its description on the right. The button stays after the text
-   in the DOM (so a screen reader hears the assignment first); the grid only
-   moves it. */
+/* Home Menu assignments: each row is a Start button (or, while the assignment is out of reach or running, a badge) on the left,
+   with the title, description and rewards stacked on the right. The button or badge stays after the text in the DOM (so a screen
+   reader hears the assignment first); the grid only moves it. While another assignment runs, the rest fade; locked ones are
+   faded too and carry their requirement (a level or a housing tier) in the badge. */
 .home-hub-assignment-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
 .home-hub-assignment-list li {
-  display: grid; grid-template-columns: max-content 1fr; column-gap: 1.1rem; row-gap: .2rem; align-items: start;
+  display: grid; grid-template-columns: 6.5rem 1fr; column-gap: 1.1rem; row-gap: .2rem; align-items: start;
+  transition: opacity .25s ease;
 }
-.home-hub-assignment-list li > button { grid-column: 1; grid-row: 1 / span 2; justify-self: start; }
-.home-hub-assignment-list li > span { grid-column: 2; grid-row: 1; }
-.home-hub-assignment-list li > small { grid-column: 2; grid-row: 2; color: var(--muted); line-height: 1.4; }
+.home-hub-assignment-list li > button, .home-hub-assignment-list li > .home-hub-assignment-badge {
+  grid-column: 1; grid-row: 1 / span 3; justify-self: stretch; text-align: center;
+}
+.home-hub-assignment-list li > span:first-child { grid-column: 2; grid-row: 1; }
+.home-hub-assignment-list li > small { grid-column: 2; color: var(--muted); line-height: 1.4; }
+.home-hub-assignment-list li > small:nth-of-type(1) { grid-row: 2; }
+.home-hub-assignment-list li > .home-hub-assignment-rewards { grid-row: 3; color: var(--gold-bright); }
+.home-hub-assignment-badge {
+  padding: .35rem .5rem; border: 1px solid rgb(216 173 88 / 45%); border-radius: .4rem; font-size: .85em; color: var(--gold-bright);
+}
+.home-hub-assignment-list li[data-state="locked"], .home-hub-assignment-list li[data-state="faded"] { opacity: .5; }
+.home-hub-assignment-list li[data-state="locked"] .home-hub-assignment-badge { color: var(--muted); border-style: dashed; }
+.home-hub-assignment-list li[data-state="running"] > span:first-child { color: var(--gold-bright); }
+.home-hub-active-assignment { display: grid; gap: .4rem; margin: 0 0 .9rem; }
+.home-hub-active-assignment progress { width: 100%; height: .6rem; accent-color: var(--gold-bright); }
 .story-card blockquote { margin: 0; padding: 1rem; border-left: 3px solid var(--gold); background: rgb(255 255 255 / 4%); font-size: 1.15em; font-style: italic; }
 .dialogue-choices { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
 .dialogue-choices li { margin: 0; }

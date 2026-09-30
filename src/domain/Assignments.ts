@@ -1,5 +1,5 @@
 import { applySharedEffect, type SharedEffect } from './Conditions';
-import { meetsHousingTier, type HousingState, type HousingTier } from './Housing';
+import { meetsHousingTier, type HousingTier } from './Housing';
 import { applyProgressionEffect, type ProgressionEffect } from './Progression';
 import { applyRelationshipEffect, type RelationshipCharacter, type RelationshipEffect } from './Relationships';
 import type { CareerState } from './CareerState';
@@ -22,6 +22,8 @@ export interface AssignmentDefinition {
   readonly title: string;
   readonly description: string;
   readonly requiredHousingTier: HousingTier;
+  /** The character level that unlocks this assignment; 1 (available from the start) when omitted. */
+  readonly requiredLevel?: number;
   /** Real minutes the assignment takes to fully resolve while the player is
    * away. Elapsed real time beyond this is reported (see
    * `AssignmentResolution.awayMinutes`) but never grows the reward — per the
@@ -53,12 +55,37 @@ export function getAssignmentById(
   return definitions.find((candidate) => candidate.id === assignmentId);
 }
 
-export function isAssignmentUnlocked(definition: AssignmentDefinition, housing: HousingState): boolean {
-  return meetsHousingTier(housing, definition.requiredHousingTier);
+export function assignmentRequiredLevel(definition: AssignmentDefinition): number {
+  return definition.requiredLevel ?? 1;
+}
+
+/** What still stands between the player and an assignment: a character level first, then a housing tier. `undefined` once
+ * both are met. The Home screen shows this as the locked card's label. */
+export type AssignmentLock =
+  | { readonly kind: 'level'; readonly level: number }
+  | { readonly kind: 'housing'; readonly tier: HousingTier };
+
+export function assignmentLock(
+  definition: AssignmentDefinition,
+  state: Pick<CareerState, 'housing' | 'progression'>,
+): AssignmentLock | undefined {
+  const level = assignmentRequiredLevel(definition);
+  if (state.progression.level < level) return { kind: 'level', level };
+  if (!meetsHousingTier(state.housing, definition.requiredHousingTier)) {
+    return { kind: 'housing', tier: definition.requiredHousingTier };
+  }
+  return undefined;
+}
+
+export function isAssignmentUnlocked(
+  definition: AssignmentDefinition,
+  state: Pick<CareerState, 'housing' | 'progression'>,
+): boolean {
+  return assignmentLock(definition, state) === undefined;
 }
 
 export function canStartAssignment(state: CareerState, definition: AssignmentDefinition): boolean {
-  return state.assignments.active === null && isAssignmentUnlocked(definition, state.housing);
+  return state.assignments.active === null && isAssignmentUnlocked(definition, state);
 }
 
 /** No-ops unless `definition` is currently startable (see
