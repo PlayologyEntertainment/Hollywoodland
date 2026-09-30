@@ -290,20 +290,22 @@ h1 {
 /* Film strips: the dark bands behind the quest helper, the stats, the assignment countdown and the notices look like a length of
    film. Along the top and bottom runs a margin (--film-band) that text never enters, and in it a row of evenly spaced rounded
    squares, cut clean through the band so the picture shows through, like sprocket holes. Each element sets --strip-bg to its own
-   colour, which the ::before paints under the text; the hole rows are a mask on that layer (the tile is 44 x 30 units, the hole a
-   16-unit rounded square in it). The rows repeat with `round`, so the holes stay evenly spaced end to end. Each element adds
-   --film-band to its own top and bottom padding. */
+   colour, which the ::before paints under the text. The layer is one unbroken mask with the two hole rows subtracted from it
+   (mask-composite: exclude), never a body and two rails laid edge to edge, so no hairline of picture can open between a rail and
+   the body at a fractional pixel size. The tile is 44 x 30 units, the hole a 16-unit rounded square in it; the rows repeat with
+   `round`, so the holes stay evenly spaced end to end. Each element adds --film-band to its own top and bottom padding. */
 .objective-card, .hud-stats, .hud-assignment-timer, .interaction-prompt, .toast {
   --film-band: .75rem; --film-pitch: 1.1rem;
-  --film-hole: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 30' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H44V30H0Z M17 7H27A3 3 0 0 1 30 10V20A3 3 0 0 1 27 23H17A3 3 0 0 1 14 20V10A3 3 0 0 1 17 7Z'/%3E%3C/svg%3E");
+  --film-hole: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 30' preserveAspectRatio='none'%3E%3Cpath d='M17 7H27A3 3 0 0 1 30 10V20A3 3 0 0 1 27 23H17A3 3 0 0 1 14 20V10A3 3 0 0 1 17 7Z'/%3E%3C/svg%3E");
   position: relative; isolation: isolate;
 }
 .objective-card::before, .hud-stats::before, .hud-assignment-timer::before, .interaction-prompt::before, .toast::before {
   position: absolute; z-index: -1; inset: 0; background: var(--strip-bg); content: ''; pointer-events: none;
   mask-image: var(--film-hole), var(--film-hole), linear-gradient(#000, #000);
-  mask-size: var(--film-pitch) var(--film-band), var(--film-pitch) var(--film-band), 100% calc(100% - 2 * var(--film-band));
-  mask-position: left top, left bottom, left var(--film-band);
+  mask-size: var(--film-pitch) var(--film-band), var(--film-pitch) var(--film-band), 100% 100%;
+  mask-position: left top, left bottom, 0 0;
   mask-repeat: round no-repeat, round no-repeat, no-repeat;
+  mask-composite: exclude, exclude, add;
 }
 .hud-top {
   position: absolute; top: clamp(.4rem, 1.2vh, .8rem); right: clamp(1rem, 3vw, 3rem); left: clamp(1rem, 3vw, 3rem);

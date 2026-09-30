@@ -482,6 +482,9 @@ describe('the film strip look of the dark bands', () => {
     expect(holes).toContain('background: var(--strip-bg)');
     expect(holes).toContain('mask-image: var(--film-hole), var(--film-hole)');
     expect(holes).toContain('mask-repeat: round no-repeat, round no-repeat, no-repeat');
+    // One unbroken body with the hole rows subtracted, so no seam can open between a rail and the body.
+    expect(holes).toContain('mask-size: var(--film-pitch) var(--film-band), var(--film-pitch) var(--film-band), 100% 100%');
+    expect(holes).toContain('mask-composite: exclude, exclude, add');
   });
 
   it('keeps every band\'s text out of the margin by adding it to the padding', () => {
