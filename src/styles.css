@@ -560,6 +560,13 @@ dialog::backdrop { background: rgb(0 0 0 / 74%); backdrop-filter: blur(5px); }
    is specifically why it's disabled (see AppShell's lacksRequiredEnergy) -- a choice locked by some other
    unmet condition (a quest not yet active, a missing item, ...) keeps its plain dimmed label. */
 .dialogue-choice-energy-cost { color: #f0876a; }
+/* A choice that spends energy carries the story, so once it can be taken it is outlined in the completed-quest green
+   (--complete-rgb). Locked ones are not outlined, so the outline never hints at what is behind them. */
+.dialogue-choice.uses-energy:not(:disabled) { border-color: rgb(var(--complete-rgb) / 75%); box-shadow: 0 0 0 1px rgb(var(--complete-rgb) / 30%); }
+.dialogue-choice.uses-energy:hover:not(:disabled), .dialogue-choice.uses-energy:focus-visible { border-color: rgb(var(--complete-rgb)); }
+/* A choice locked behind an unmet story prerequisite: the wording is blurred beyond reading so it cannot give the story away
+   (the button keeps its shape, and screen readers hear "Locked option" instead; see AppShell.buildDialogueChoiceElement). */
+.dialogue-choice.is-locked .dialogue-choice-text { filter: blur(.32rem); user-select: none; }
 
 /* Visual-novel scene layout: location art fills the frame, the character
    portrait overlays it on the left, and the dialogue/choices panel sits on

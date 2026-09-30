@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 
 import { ChapterTitlePage } from './ChapterTitlePage';
 import { FadingNotice } from './FadingNotice';
+import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
 import { FpsReadout } from './FpsReadout';
 import { describeHud } from './HudStats';
 import { chooseObjective, isObjectiveAccomplished, ObjectiveTracker, type Objective } from './Objective';
@@ -9,12 +10,12 @@ import { buildQuestLog } from './QuestLog';
 import { mountDecoOutline } from '../ui/DecoBorder';
 import { CharacterCreator, type CharacterChoices } from './CharacterCreator';
 import { FADE_MS, ScreenTransition } from './ScreenTransition';
-import { LEVEL_UP_SFX_FILE, moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
+import { CHOICE_ENERGY_SFX_FILE, CHOICE_PLAIN_SFX_FILE, LEVEL_UP_SFX_FILE, moodForPlace, placeForLocation, type AudioMood, type PlaceKind } from '../audio/AudioCues';
 import type { AudioController } from '../audio/AudioDirector';
 import { isAssignmentUnlocked, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
-import { isChoiceAvailable, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
+import { type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
 import {
   CASTING_OFFICE_DIALOGUE,
   CELESTIAL_PALACE_DIALOGUE,
@@ -813,19 +814,37 @@ export class AppShell {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'dialogue-choice';
-    const available = isChoiceAvailable(this.careerState, choice, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
+    const { available, locked, usesEnergy } = describeDialogueChoice(
+      this.careerState,
+      choice,
+      ALL_QUESTS,
+      ALL_RELATIONSHIP_CHARACTERS,
+      ALL_ITEMS,
+    );
     // Disabled for a reason other than "not enough energy" (a locked quest, a missing item, ...) keeps the plain
     // label: highlighting the energy cost there would point at the wrong prerequisite.
     const label = dialogueChoiceLabel(this.activeDialogueGraph?.id ?? '', node, choice);
     const energyLabel = !available && this.lacksRequiredEnergy(choice) ? label.match(AppShell.ENERGY_COST_LABEL) : null;
+    const text = document.createElement('span');
+    text.className = 'dialogue-choice-text';
     if (energyLabel !== null) {
       const cost = document.createElement('span');
       cost.className = 'dialogue-choice-energy-cost';
       cost.textContent = energyLabel[2] ?? '';
-      button.append(energyLabel[1] ?? '', cost);
+      text.append(energyLabel[1] ?? '', cost);
     } else {
-      button.textContent = label;
+      text.textContent = label;
     }
+    button.append(text);
+    // A choice locked behind an unmet story prerequisite is blurred so its wording cannot hint at the story, and its
+    // real text is kept from screen readers for the same reason.
+    if (locked) {
+      button.classList.add('is-locked');
+      button.setAttribute('aria-label', t('dialogue.lockedOption'));
+    }
+    // Choices that spend energy carry the story, so they are outlined once they can be taken. A locked one is not,
+    // so the outline never hints at what is behind it.
+    if (usesEnergy && available) button.classList.add('uses-energy');
     button.disabled = !available;
     button.setAttribute('aria-disabled', String(!available));
     if (available) button.addEventListener('click', () => this.selectDialogueChoice(node, choice));
@@ -845,6 +864,7 @@ export class AppShell {
   private selectDialogueChoice(node: DialogueNode, choice: DialogueChoice): void {
     const graph = this.activeDialogueGraph;
     if (graph === undefined) return;
+    this.options.audio.playSfx(choiceUsesEnergy(choice) ? CHOICE_ENERGY_SFX_FILE : CHOICE_PLAIN_SFX_FILE);
     // The event bus is synchronous, so this.careerState is already updated
     // (via the career-state-changed subscription above) by the time emit()
     // returns — safe today, but a real coupling to synchronous dispatch.

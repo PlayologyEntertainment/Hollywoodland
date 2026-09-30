@@ -608,5 +608,6 @@
   "content.dialogue.celestial-palace-lobby.root.choice.take-the-matinee-seat": "Réclamez la place qu'il vous a promise pour la matinée du mardi. (-10 Énergie)",
   "content.dialogue.celestial-palace-lobby.matinee-reply.speaker": "Directeur de salle",
   "content.dialogue.celestial-palace-lobby.matinee-reply.text": "« Rangée F, au centre, et pas un mot sur le bon », murmure-t-il en vous guidant dans l'allée à la lueur de sa lampe de laiton. À l'écran, une souris de dessin animé esquive un piano. Autour de vous, toute la salle rit au même instant, et vous vous surprenez à étudier exactement comment ils font.",
-  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Installez-vous et profitez du spectacle."
+  "content.dialogue.celestial-palace-lobby.matinee-reply.choice.enjoy-the-show": "Installez-vous et profitez du spectacle.",
+  "dialogue.lockedOption": "Option verrouillée"
 }
