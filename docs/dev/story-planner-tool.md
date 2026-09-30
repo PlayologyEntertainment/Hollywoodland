@@ -12,7 +12,7 @@ server, and Save downloads the files instead.
 | File | Who writes it | What it holds |
 |---|---|---|
 | `narrative-snapshot.json` | `npm run narrative:export` (never by hand) | Everything the game has written: dialogue trees, quests, cast, locations, origins, housing, assignments, talents, items, auditions. Every piece of text is addressed by its catalog key (the same `content.*` keys as `src/locales/en.json`), with its English and whether each translation is current, stale or missing. |
-| `story-plan.json` | The tool | The plan: **Chapters > Storylines (arcs) > Beats**. A beat has a summary, a status (idea, outlined, drafted, in-game), cast, locations, notes, and links to quests, dialogue and assignments. |
+| `story-plan.json` | The tool | The plan: **Chapters > Storylines (arcs) > Beats**. A chapter has a main location, a time in the story, where the player should be when it starts (level, reputation, housing, money) and what carries forward. A beat has a summary, a status (idea, outlined, drafted, in-game), cast, locations, choice points, attribute/talent routes, consequences, notes, and links to quests, dialogue and assignments. It also holds **planned cast and places** (ones the plan has invented that the game does not have yet) and an optional `names` map giving the approved canon name of each role-named roster character. |
 | `story-edits.json` | The tool | Pending edits to existing game text, as `{ key, before, after, note }`. |
 
 ## Editing existing text
@@ -30,7 +30,7 @@ changing game text, dialogue, quests, assignments and so on, or re-stamping tran
 
 ## The tabs
 
-Story Plan (the outline and beat editor), Dialogue (every conversation in reading order, with conditions and effects),
+Story Plan (the outline and beat editor), Planned Cast & Places (characters and places the story needs that the game does not have yet; a beat can use them, marked with a star, and they are not flagged as broken links; once one is built into the game it moves to Cast & World), Dialogue (every conversation in reading order, with conditions and effects),
 Quests, Cast & World, Other Content, Edits (pending changes, with a word diff), Coverage (status per chapter and storyline,
 beats with nothing written, content the plan does not mention, broken links, translation freshness), Export (Markdown of the
 plan and content, including pending edits). The search box finds text anywhere in the game's content.
