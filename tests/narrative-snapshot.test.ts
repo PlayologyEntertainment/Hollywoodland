@@ -8,7 +8,7 @@ import { collectContentStrings } from '../src/i18n/contentStrings';
 import { LOCALES, SOURCE_LOCALE } from '../src/i18n/locales';
 
 const localesDir = new URL('../src/locales/', import.meta.url);
-const snapshotUrl = new URL('../public/data/narrative-snapshot.json', import.meta.url);
+const snapshotUrl = new URL('../tools/story-planner/data/narrative-snapshot.json', import.meta.url);
 
 const readJson = <T,>(url: URL): T => JSON.parse(readFileSync(url, 'utf8') as string) as T;
 
@@ -23,7 +23,7 @@ function localeInputs(): LocaleInputs {
   return { catalogs, hashes };
 }
 
-/** The Story Planner (public/tools/story-planner) reads this snapshot of everything the game has written. */
+/** The Story Planner (tools/story-planner, which is not part of the shipped build) reads this snapshot of everything the game has written. */
 describe('the narrative snapshot for the Story Planner', () => {
   // `npm run narrative:export` sets NARRATIVE_EXPORT=1, which rewrites the snapshot instead of checking it.
   const write = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.['NARRATIVE_EXPORT'] === '1';

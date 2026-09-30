@@ -129,7 +129,7 @@
   }
   const uid = (p) => p + '-' + Math.random().toString(36).slice(2, 8);
   const STATUSES = ['idea', 'outlined', 'drafted', 'in-game'];
-  const PATHS = { snapshot: 'public/data/narrative-snapshot.json', plan: 'public/data/story-plan.json', edits: 'public/data/story-edits.json' };
+  const PATHS = { snapshot: 'tools/story-planner/data/narrative-snapshot.json', plan: 'tools/story-planner/data/story-plan.json', edits: 'tools/story-planner/data/story-edits.json' };
 
   let toastTimer;
   function toast(message, isError) {
@@ -193,7 +193,7 @@
   }
   async function readFromDiskOrServer(path) {
     if (S.rootHandle) return readText(S.rootHandle, path);
-    const rel = '../../' + path.replace(/^public\//, '');
+    const rel = path.replace(/^tools\/story-planner\//, '');
     try { const r = await fetch(rel, { cache: 'no-store' }); return r.ok ? await r.text() : null; } catch { return null; }
   }
 
@@ -264,11 +264,11 @@
         if (S.dirtyPlan) await writeText(S.rootHandle, PATHS.plan, planJson());
         if (S.dirtyEdits) await writeText(S.rootHandle, PATHS.edits, editsJson());
         S.dirtyPlan = false; S.dirtyEdits = false; refreshChrome();
-        toast('Saved to public/data/.');
+        toast('Saved to tools/story-planner/data/.');
       } else {
         if (S.dirtyPlan) download('story-plan.json', planJson());
         if (S.dirtyEdits) download('story-edits.json', editsJson());
-        toast('No project folder open, so the files were downloaded. Put them in public/data/.');
+        toast('No project folder open, so the files were downloaded. Put them in tools/story-planner/data/.');
       }
     } catch (e) { toast('Save failed: ' + (e.message || e), true); }
   });
@@ -698,7 +698,7 @@
   }
   function applyInstructions() {
     const lines = [...S.edits].map(([key, e]) => '- `' + key + '`: "' + e.before.replace(/\n/g, '\\n') + '" → "' + e.after.replace(/\n/g, '\\n') + '"' + (e.note ? ' (' + e.note + ')' : ''));
-    return 'Please apply the pending story edits in public/data/story-edits.json to the game content (each key is a content catalog key: ' +
+    return 'Please apply the pending story edits in tools/story-planner/data/story-edits.json to the game content (each key is a content catalog key: ' +
       'find the authored text it comes from, change it, run `npm run i18n:sync`, re-translate the changed strings in de/es/fr/pt-BR and re-stamp them, ' +
       'run `npm run narrative:export`, and run the tests):\n\n' + lines.join('\n');
   }

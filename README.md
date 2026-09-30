@@ -38,9 +38,9 @@ npm test
 npm run build
 ```
 
-Content and planning tools (stand-alone pages served from `public/tools/`; see `docs/dev/`):
+Content and planning tools (stand-alone pages; see `docs/dev/`):
 
-- **Story Planner** (`docs/dev/story-planner-tool.md`): see everything the game has written, edit it, and plan chapters, storylines and beats. After changing game text, quests, assignments or translations, run `npm run narrative:export` to refresh its snapshot (`public/data/narrative-snapshot.json`); `npm test` fails when it is stale.
+- **Story Planner** (`docs/dev/story-planner-tool.md`): see everything the game has written, edit it, and plan chapters, storylines and beats. After changing game text, quests, assignments or translations, run `npm run narrative:export` to refresh its snapshot (`tools/story-planner/data/narrative-snapshot.json`); `npm test` fails when it is stale. It lives in `tools/`, outside `public/`, so it and the story plan are never part of the production build.
 - **Boulevard Art Director** (`docs/dev/boulevard-art-director-tool.md`) and **Walk-Cycle Director** (`docs/dev/walk-cycle-director-tool.md`).
 
 ## Controls
