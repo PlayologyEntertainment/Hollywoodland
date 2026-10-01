@@ -14,6 +14,8 @@ export interface MapRegion {
   readonly points: readonly MapPoint[];
   /** Where the name tag sits: clear of the region's main landmark. */
   readonly label: MapPoint;
+  /** Scales the spotlight ellipse fitted to the outline; 1 when absent. */
+  readonly spotlightScale?: number;
 }
 
 export const MAP_REGIONS: readonly MapRegion[] = Object.freeze([
@@ -40,6 +42,7 @@ export const MAP_REGIONS: readonly MapRegion[] = Object.freeze([
   {
     id: 'hollywood-boulevard',
     label: [900, 250],
+    spotlightScale: 0.8,
     points: [
       [330, 330], [430, 330], [560, 300], [650, 210], [700, 110], [790, 150], [900, 160], [1000, 185], [1120, 230], [1200, 300], [1300, 340],
       [1430, 410], [1536, 440], [1440, 450], [1340, 470], [1230, 520], [1140, 590], [1030, 680], [1000, 790], [930, 900], [900, 1024],

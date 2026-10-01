@@ -935,10 +935,10 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
 .bus-map-stage { position: relative; width: 100%; aspect-ratio: 3 / 2; max-height: calc(94vh - 9rem); margin-inline: auto; overflow: hidden; border: 1px solid rgb(216 173 88 / 55%); background: #120d09; container-type: inline-size; }
 .bus-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .bus-map-dim { filter: saturate(.28) brightness(.5) contrast(.95); }
-.bus-map-lit { opacity: 0; transition: opacity .25s ease; }
+.bus-map-lit { opacity: 0; transition: opacity .25s ease; pointer-events: none; }
 .bus-map-region { outline: none; cursor: pointer; }
-.bus-map-region.is-hover .bus-map-lit { opacity: .4; }
-.bus-map-region.is-selected .bus-map-lit { opacity: .7; }
+.bus-map-region.is-hover .bus-map-lit { opacity: .55; }
+.bus-map-region.is-selected .bus-map-lit { opacity: .85; }
 .bus-map-region[data-state="here"] .bus-map-lit { opacity: 1; }
 .bus-map-hit { fill: transparent; stroke: none; pointer-events: all; }
 .bus-map-tag {
