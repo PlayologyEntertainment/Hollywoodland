@@ -1105,6 +1105,8 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .touch .has-scene-art .scene-panel { padding: .9rem 1.1rem; }
   .touch .has-scene-art .scene-panel h2 { font-size: 1.25rem; }
   .touch .home-hub-dialog .scene-panel { padding-left: 3rem; }
+  /* Talk to the Landlady and Leave stay in view while the long list of assignments scrolls beneath them. */
+  .touch .home-hub-actions { position: sticky; bottom: -.9rem; margin: .5rem -1.1rem -.9rem; padding: .7rem 1.1rem .9rem; background: linear-gradient(rgb(17 14 15 / 0%), var(--panel) 40%); }
   .touch .bus-map-card {
     display: grid; grid-template-columns: auto minmax(10rem, 1fr); grid-template-rows: auto 1fr auto; column-gap: .8rem; row-gap: .4rem;
     height: 100dvh; padding: .5rem .8rem;
