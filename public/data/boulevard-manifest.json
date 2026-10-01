@@ -243,6 +243,38 @@
   ],
   "locations": [
     {
+      "id": "bus-depot",
+      "label": "Union Bus Depot",
+      "x": 555,
+      "promptLabel": "Board the bus",
+      "radius": 160,
+      "enterable": true,
+      "sign": {
+        "x": 553,
+        "y": 585,
+        "text": "UNION BUS DEPOT",
+        "fontSize": 30,
+        "textColor": "#0f4a45",
+        "boardColor": "#241609",
+        "boardWidth": 441,
+        "boardHeight": 49,
+        "textOnly": true
+      },
+      "extraSigns": [
+        {
+          "x": 660,
+          "y": 796,
+          "text": "TO ALL\nPOINTS",
+          "fontSize": 15,
+          "textColor": "#0f4a45",
+          "boardColor": "#241609",
+          "boardWidth": 111,
+          "boardHeight": 101,
+          "textOnly": true
+        }
+      ]
+    },
+    {
       "id": "boarding-house",
       "label": "Bellhaven Rooms",
       "x": 1431,

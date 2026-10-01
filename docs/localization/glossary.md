@@ -8,6 +8,8 @@ Proper names stay exactly as written in every language, including inside longer 
 
 Hollywoodland, Playology Entertainment, Hollywood Boulevard (the street name in `statusBar.hollywoodBoulevard`; the word "Boulevard" alone is translated), Bellhaven Rooms, Bellhaven, Sunset Casting Exchange, Sunset Casting, The Gilded Spoon, The Silver Thimble, The Klieg Light, The Celestial Palace, Monarch Pictures, Monarch, *The Corsair's Daughter*, and the contact address serdar@playologyentertainment.com.
 
+The map regions' names and the welcome signs' city names stay as written (Hollywood Bowl, Griffith Observatory, HOLLYWOOD, HOLLYWOOD HILLS, SANTA MONICA, GRIFFITH PARK, CULVER CITY); the signs' subtitles ("City of Los Angeles", "By the Sea", "Heart of Screenland") and the "WELCOME TO" and "POP." lines are translated. The Santa Monica Pier's name takes the language's own word for pier with the proper name kept (Muelle de Santa Monica, Jetée de Santa Monica, Santa-Monica-Pier, Píer de Santa Monica). "Union Bus Depot" is the depot's proper name and is never translated.
+
 The characters have no personal names; they are identified by role ("the clerk", "the landlady") and those roles are translated.
 
 ## Never change
@@ -34,6 +36,7 @@ Keep sentences about as long as the English. The interface has little room: butt
 | Career | Carrera | Carrière | Karriere | Carreira |
 | Assignment | Encargo | Mission | Aufgabe | Tarefa |
 | Quest | Misión | Quête | Auftrag | Missão |
+| Bus depot | estación de autobuses | gare routière | Busbahnhof | rodoviária |
 | Chapter | Capítulo | Chapitre | Kapitel | Capítulo |
 | Level (character) | Nivel | Niveau | Stufe | Nível |
 | Conclusion (of a chapter) | Conclusión | Conclusion | Abschluss | Conclusão |

@@ -318,7 +318,7 @@ describe('the Objective card in the app', () => {
   });
 
   it('waits for a conversation, an audition or the Home Menu to close before it starts the green beat', () => {
-    expect(appShell).toMatch(/\['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'\]\.some\(\(selector\) => assertElement\(selector, HTMLDialogElement\)\.open\)/);
+    expect(appShell).toMatch(/\['#interaction-dialog', '#home-hub-dialog', '#audition-dialog', '#bus-map-dialog'\]\.some\(\(selector\) => assertElement\(selector, HTMLDialogElement\)\.open\)/);
   });
 
   it('turns green for a completed goal, with a tick that has empty alt text, and eases the edge colour', () => {

@@ -154,7 +154,7 @@ Outside auditions and dialogue, conflict uses bespoke lightweight encounters (th
 
 ## 9. World and exploration
 
-Hollywood is organized into connected side-scrolling districts. Each district is a dense handcrafted sequence of exteriors and selected interiors with layered parallax, recurring NPC routines, secrets, environmental storytelling, shortcuts, and events that change by time or quest state.
+Hollywood is organized into connected side-scrolling districts, reached by bus from the Union Bus Depot on the Boulevard. The depot opens an illustrated 3/4-perspective map of Hollywoodland: the player's own region is lit and the others dim, a trip costs a small fare and some time, and arriving shows a roadside "Welcome to ..." sign with a period population. Places not yet built show on the map as coming soon. Each district is a dense handcrafted sequence of exteriors and selected interiors with layered parallax, recurring NPC routines, secrets, environmental storytelling, shortcuts, and events that change by time or quest state.
 
 Movement is grounded and responsive: walk, run, use stairs, enter doors, climb contextual ladders, navigate crowds, and interact. The vertical slice covers walking, doors, and interaction; stairs, ladders, and other vertical traversal are full-game features. Precision platforming is not required. Traversal exists to reveal people, place, humor, and opportunity.
 

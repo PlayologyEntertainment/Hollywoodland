@@ -1,6 +1,10 @@
 import type Phaser from 'phaser';
 
+import { BusMap } from './BusMap';
 import { ChapterTitlePage } from './ChapterTitlePage';
+import { WelcomeSign } from './WelcomeSign';
+import { DEFAULT_REGION, currentRegion, getRegionById, type RegionId } from '../domain/Travel';
+import { WORLD_MAP_IMAGE } from '../game/WorldMap';
 import { hasConcludedChapterOne, isChapterOneComplete } from '../domain/Chapters';
 import { FadingNotice } from './FadingNotice';
 import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
@@ -49,6 +53,7 @@ import { AUTO_LANGUAGE, LOCALES } from '../i18n/locales';
 import { formatDateTime } from '../i18n/format';
 import { assertElement } from '../shared/assert';
 import { assetUrl } from '../shared/assetUrl';
+import { regionCity, regionName, regionSubtitle } from '../i18n/content';
 import { assignmentDescription, assignmentTitle, auditionOptionLabel, auditionPrompt, auditionTitle, characterRole, dialogueChoiceLabel, dialogueSpeaker, dialogueText, housingTierLabel, itemDescription, itemName, sceneArtAlt, talentDescription, talentName } from '../i18n/content';
 import { SCENE_ART_ALT } from '../game/SceneArtText';
 
@@ -289,6 +294,8 @@ export class AppShell {
   private transition!: ScreenTransition;
   private chapterPage!: ChapterTitlePage;
   private conclusionPage!: ChapterTitlePage;
+  private welcomeSign!: WelcomeSign;
+  private busMap!: BusMap;
   /** The Chapter 1 Conclusion is on its way to the screen, on it, or on its way off; see `concludeChapter`. */
   private concluding = false;
   private careerState: CareerState = createDefaultCareerState();
@@ -345,6 +352,17 @@ export class AppShell {
     this.toastNotice = new FadingNotice(assertElement('#toast', HTMLElement));
     this.chapterPage = new ChapterTitlePage(assertElement('#chapter-title', HTMLElement));
     this.conclusionPage = new ChapterTitlePage(assertElement('#chapter-conclusion', HTMLElement));
+    this.welcomeSign = new WelcomeSign(assertElement('#welcome-sign', HTMLElement));
+    this.busMap = new BusMap({
+      dialog: assertElement('#bus-map-dialog', HTMLDialogElement),
+      stage: assertElement('#bus-map-stage', HTMLElement),
+      info: assertElement('#bus-map-info', HTMLElement),
+      closeButton: assertElement('#bus-map-close', HTMLButtonElement),
+      imageUrl: assetUrl(WORLD_MAP_IMAGE),
+      getState: () => this.careerState,
+      onTravel: (regionId) => void this.travelFromMap(regionId),
+      setGameplayActive: (active) => this.options.setGameplayActive(active),
+    });
     const characterCreator = assertElement('#character-creator', HTMLElement);
     const newCareer = assertElement('#new-career', HTMLButtonElement);
     const continueCareer = assertElement('#continue-career', HTMLButtonElement);
@@ -390,16 +408,22 @@ export class AppShell {
       this.openDialogue(KLIEG_LIGHT_DIALOGUE, 'The Klieg Light', 'klieg-light-office');
       this.announce(t('announce.kliegLight'));
     });
+    this.options.domainEvents.on('bus-depot-entered', () => {
+      this.busMap.open();
+      this.announce(t('announce.busDepot'));
+    });
     this.options.domainEvents.on('celestial-palace-entered', () => {
       this.openDialogue(CELESTIAL_PALACE_DIALOGUE, 'The Celestial Palace', 'celestial-palace');
       this.announce(t('announce.celestialPalace'));
     });
     this.options.domainEvents.on('career-state-changed', (state) => {
       this.careerState = state;
+      if (this.busMap.isOpen) this.busMap.refresh();
       this.renderCareerState(state);
     });
     // A new language re-draws everything the game wrote itself; the static markup is re-translated by main.ts.
     this.options.domainEvents.on('locale-changed', () => {
+      this.busMap.refresh();
       this.renderCareerState(this.careerState);
       assertElement('#film-mode', HTMLButtonElement).setAttribute(
         'aria-label',
@@ -579,10 +603,25 @@ export class AppShell {
    * button: a no-op (defensively) if the state has already gone missing by the time the click resolves. */
   private async resumeCareer(screens: MenuScreens, state: CareerState | undefined, toastMessage: string): Promise<void> {
     if (state === undefined) return;
-    await this.transition.run(async () => {
-      this.loadCareerState(state);
-      await this.enterGame(screens, state);
-    });
+    // The classic "Welcome to ..." sign for the region the career resumes in, with the music faded as for the chapter page.
+    this.onChapterPage = true;
+    this.syncAudio();
+    try {
+      const shown = await this.transition.run(() => this.showWelcomeSign(currentRegion(state)));
+      if (shown) await this.welcomeSign.play();
+      await this.transition.run(async () => {
+        this.welcomeSign.hide();
+        this.onChapterPage = false;
+        this.loadCareerState(state);
+        await this.enterGame(screens, state);
+      });
+    } finally {
+      this.welcomeSign.hide();
+      if (this.onChapterPage) {
+        this.onChapterPage = false;
+        this.syncAudio();
+      }
+    }
     this.toast(toastMessage);
   }
 
@@ -647,8 +686,15 @@ export class AppShell {
       });
       if (!shown) return;
       await this.chapterPage.play();
+      // Arriving at the depot: the Welcome to Hollywood sign, then the Boulevard.
+      const welcomed = await this.transition.run(() => {
+        this.chapterPage.hide();
+        this.showWelcomeSign(currentRegion(state));
+      });
+      if (welcomed) await this.welcomeSign.play();
       await this.transition.run(async () => {
         this.chapterPage.hide();
+        this.welcomeSign.hide();
         // Before the game starts, so that its own audio sync picks the Boulevard's music.
         this.onChapterPage = false;
         this.loadCareerState(state);
@@ -663,9 +709,44 @@ export class AppShell {
     }
   }
 
+  /** Fills in and shows the roadside "Welcome to ..." sign for a region (the screen is dipping to black as this runs). */
+  private showWelcomeSign(regionId: string): void {
+    const region = getRegionById(regionId) ?? getRegionById(DEFAULT_REGION);
+    if (region === undefined) return;
+    const city = regionCity(region);
+    const subtitle = regionSubtitle(region);
+    this.welcomeSign.prepare({ city, subtitle, population: t('welcomeSign.population', { count: region.population }) });
+    this.announce(t('welcomeSign.announce', { city, subtitle, count: region.population }));
+  }
+
+  /** The player chose a region on the map and can afford the trip: the scene takes the bus (fare, time, new region), then the
+   * "Welcome to ..." sign shows. When a region gets its own scene, this is where that scene loads, under the second fade. */
+  private async travelFromMap(regionId: RegionId): Promise<void> {
+    this.options.domainEvents.emit('travel-requested', { regionId });
+    const region = getRegionById(regionId);
+    if (region === undefined || this.transition.isRunning) return;
+    this.onChapterPage = true;
+    this.syncAudio();
+    this.options.setGameplayActive(false);
+    try {
+      const shown = await this.transition.run(() => this.showWelcomeSign(regionId));
+      if (shown) await this.welcomeSign.play();
+      await this.transition.run(() => {
+        this.welcomeSign.hide();
+        this.onChapterPage = false;
+      });
+      this.toast(t('toast.travelled', { region: regionName(region) }));
+    } finally {
+      this.welcomeSign.hide();
+      this.onChapterPage = false;
+      this.options.setGameplayActive(true);
+      this.syncAudio();
+    }
+  }
+
   /** True while a conversation, the Home Menu or an audition covers the whole picture. */
   private isPictureCovered(): boolean {
-    return ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog'].some((selector) => assertElement(selector, HTMLDialogElement).open);
+    return ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog', '#bus-map-dialog'].some((selector) => assertElement(selector, HTMLDialogElement).open);
   }
 
   /** Once every Chapter 1 quest is done, and the player has seen the last goal's green "complete" beat out on the open Boulevard,

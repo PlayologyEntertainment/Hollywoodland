@@ -3,6 +3,7 @@ import { DIALOGUE_GRAPHS } from '../domain/DialogueGraphs';
 import { HOUSING_TIERS } from '../domain/Housing';
 import { ALL_ITEMS } from '../domain/InventoryDefinitions';
 import { ORIGINS } from '../domain/Origins';
+import { REGIONS } from '../domain/Travel';
 import { ALL_AUDITIONS } from '../domain/PerformanceDefinitions';
 import { PLAYER_CHARACTERS } from '../domain/PlayerCharacters';
 import { ALL_QUESTS } from '../domain/QuestDefinitions';
@@ -62,6 +63,11 @@ export function collectContentStrings(): Record<string, string> {
     }
   }
 
+  for (const region of REGIONS) {
+    out[contentKeys.regionName(region.id)] = region.name;
+    out[contentKeys.regionCity(region.id)] = region.city;
+    out[contentKeys.regionSubtitle(region.id)] = region.subtitle;
+  }
   for (const location of DEFAULT_BOULEVARD_MANIFEST.locations) {
     if (location.promptLabel !== '') out[contentKeys.locationPrompt(location.id)] = location.promptLabel;
   }
