@@ -68,3 +68,29 @@ describe('the Playology logo link', () => {
     expect(shell).toContain('logoLink.blur()');
   });
 });
+
+describe('the tighter phone layout', () => {
+  const css = read('../src/styles.css');
+  const block = css.slice(css.lastIndexOf('/* Phones held sideways, round 2 of the tightening'));
+
+  it('keeps every change inside the phone-landscape media query and the touch class, so desktop is untouched', () => {
+    expect(block).toContain('@media (orientation: landscape) and (max-height: 560px) {');
+    const rules = block.slice(block.indexOf('{') + 1).split('\n').filter((line) => line.trim().startsWith('.') && !line.includes('::before') === true);
+    for (const rule of rules) expect(rule.trim().startsWith('.touch')).toBe(true);
+  });
+
+  it('shortens the header and its buttons, drops the film sprockets and halves the controls', () => {
+    expect(block).toContain('.touch .status-bar { min-height: 1.75rem;');
+    expect(block).toContain('.touch .chrome-button { min-height: 1.5rem;');
+    expect(block).toContain('--film-band: 0rem;');
+    expect(block).toContain('mask: none;');
+    expect(block).toContain('.touch-pad { left: .4rem; bottom: .6rem; width: 5.5rem;');
+    expect(block).toContain('.touch-interact { right: .4rem; bottom: .6rem; width: 4.7rem;');
+  });
+
+  it('shows one short word on the Interact button and keeps the place name as its accessible label', () => {
+    const controls = read('../src/app/TouchControls.ts');
+    expect(controls).toContain("t('touchControls.enter')");
+    expect(controls).toContain('this.interact.setAttribute(\'aria-label\', label)');
+  });
+});

@@ -126,8 +126,12 @@ interface InteractionPoint {
   readonly x: number;
   readonly radius: number;
   readonly label: string;
+  readonly kind: 'enter' | 'go';
   readonly onEnter: () => void;
 }
+
+/** Entrances that are doors into a building; every other interaction (the bus, the studio gate, rehearsing) is a plain 'go'. */
+const DOOR_LOCATION_IDS: ReadonlySet<string> = new Set(['boarding-house', 'costume-shop', 'diner', 'celestial-palace', 'casting-office', 'klieg-light-office']);
 
 /** Above the street, its buildings and the foreground, so a bird is never hidden behind a palm; below the confetti (60). */
 const BIRD_DEPTH = 40;
@@ -263,6 +267,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         x: location.x,
         radius: location.radius,
         label: locationPrompt(location),
+        kind: DOOR_LOCATION_IDS.has(location.id) ? ('enter' as const) : ('go' as const),
         onEnter: () => this.enterLocation(location.id),
       }));
 
@@ -328,7 +333,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     if (visible !== this.promptVisible || label !== this.promptLabel) {
       this.promptVisible = visible;
       this.promptLabel = label;
-      this.domainEvents.emit('interaction-proximity-changed', { visible, label });
+      this.domainEvents.emit('interaction-proximity-changed', { visible, label, kind: nearest?.kind ?? 'go' });
     }
     if (nearest !== undefined && this.inputController.consumePress('interact')) {
       nearest.onEnter();

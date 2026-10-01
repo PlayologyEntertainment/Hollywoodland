@@ -11,6 +11,8 @@ export interface InteractionProximityChangedPayload {
    * the player is nearest to, now that the Boulevard has more than one
    * (see BoulevardSpikeScene's casting-office/diner interaction points). */
   readonly label: string;
+  /** Whether the nearest interactable is a door to go into ('enter') or some other action ('go'); the touch Interact button shows one short word. */
+  readonly kind?: 'enter' | 'go';
 }
 
 export interface AuditionSubmittedPayload {

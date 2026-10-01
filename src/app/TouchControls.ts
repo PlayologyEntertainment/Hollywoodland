@@ -1,4 +1,5 @@
 import type { DomainEventBus } from '../domain/DomainEventBus';
+import { t } from '../i18n';
 import type { InputController } from '../input/InputController';
 
 /** Which way a drag on the walking pad means, from how far the finger is from the pad's middle: nothing inside the dead zone. */
@@ -16,7 +17,7 @@ export interface TouchControlsOptions {
 }
 
 /** On-screen controls for a touch device: a pad at the bottom left to slide left and right to walk, and a button at the bottom right
- * that appears when there is something to enter and says what. They press the same virtual keys the keyboard does, so the game
+ * that appears when there is something to enter, saying 'Enter' for a door or 'Go' for anything else. They press the same virtual keys the keyboard does, so the game
  * needs to know nothing about them. They step aside whenever gameplay is switched off (a dialog, the menu) or the Career panel is
  * open. Whether they show at all on a given device is the stylesheet's call (`.touch`). */
 export class TouchControls {
@@ -69,10 +70,11 @@ export class TouchControls {
       if (open) this.releasePad();
       this.paint();
     });
-    options.domainEvents.on('interaction-proximity-changed', ({ visible, label }) => {
+    options.domainEvents.on('interaction-proximity-changed', ({ visible, label, kind }) => {
       this.interact.hidden = !visible;
       if (visible) {
-        this.interact.textContent = label;
+        // One short word fits the narrow button; the full name of what is in reach is the accessible label.
+        this.interact.textContent = kind === 'enter' ? t('touchControls.enter') : t('touchControls.go');
         this.interact.setAttribute('aria-label', label);
       }
     });

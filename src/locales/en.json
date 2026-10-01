@@ -48,6 +48,8 @@
   "busMap.tapAgain": "Tap again to go",
   "rotatePrompt.title": "Turn your phone sideways",
   "rotatePrompt.text": "Hollywoodland plays in landscape.",
+  "touchControls.enter": "Enter",
+  "touchControls.go": "Go",
   "welcomeSign.welcomeTo": "WELCOME TO",
   "welcomeSign.population": "POP. {count}",
   "welcomeSign.hint": "Click or Press Enter",

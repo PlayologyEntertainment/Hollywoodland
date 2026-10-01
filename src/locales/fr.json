@@ -48,6 +48,8 @@
   "busMap.tapAgain": "Touchez à nouveau pour partir",
   "rotatePrompt.title": "Tournez votre téléphone",
   "rotatePrompt.text": "Hollywoodland se joue en mode paysage.",
+  "touchControls.enter": "Entrer",
+  "touchControls.go": "Aller",
   "welcomeSign.welcomeTo": "BIENVENUE À",
   "welcomeSign.population": "POP. {count}",
   "welcomeSign.hint": "Cliquez ou appuyez sur Entrée",
