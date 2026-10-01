@@ -1015,7 +1015,6 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .touch .chrome-button { min-height: 2.75rem; padding-inline: .8rem; font-size: .9rem; }
   .touch .chrome-button.icon-button { width: 2.75rem; height: 2.75rem; }
   .touch .hud-top { top: calc(var(--header-clear, 0px) + .3rem); }
-  .touch .notices { top: calc(var(--header-clear, 0px) + .4rem); }
   .touch .drawer { top: var(--header-clear, 0px); }
   .settings-legal { display: flex; justify-content: center; gap: 1.5rem; }
 }
@@ -1040,4 +1039,23 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .touch .objective-card { max-width: min(18rem, 40%); padding: calc(.35rem + var(--film-band)) .8rem calc(.35rem + var(--film-band)) .7rem; }
   .touch .objective-card strong { font-size: .95em; }
   .touch .objective-card small { display: none; }
+}
+
+/* Smaller pictures (the HUD's compact size: a window under 1180px wide, or too short for a wider picture). The footer's legal links
+   and logo scale with the window so they never reach Menu or Wait, and the entrance prompt and toast lose their film strip: plain
+   small text, kept clear of the Day/Time/Money bar by starting just below it (--notices-below-hud, measured in AppShell) at the
+   right as before. Narrower still (picture under 820px), everything steps down once more. */
+@container frame (max-width: 1180px), (max-height: 780px) {
+  .game-footer { padding-inline: clamp(.5rem, 2.5cqw, 3rem); }
+  .footer-center { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: clamp(.3rem, 1.2cqw, 1.1rem); }
+  .footer-legal-link { font-size: clamp(.5rem, 1.7cqw, .95rem); letter-spacing: 0; }
+  .footer-logo { height: clamp(1.6rem, 5cqw, 2.6rem); }
+  .notices { top: var(--notices-below-hud, calc(var(--header-h) + clamp(.4rem, 1.2vh, .8rem) + 3.6rem)); max-width: min(16rem, 34%); gap: .25rem; }
+  .interaction-prompt, .toast { padding: 0; font-size: .85rem; text-shadow: 0 1px 3px #000, 0 0 8px #000, 0 0 14px #000; }
+  .interaction-prompt::before, .toast::before { display: none; }
+}
+@container frame (max-width: 820px), (max-height: 600px) {
+  .game-footer .chrome-button { padding-inline: .6rem; font-size: .8rem; }
+  .interaction-prompt, .toast { font-size: .75rem; }
+  .interaction-prompt kbd { font-size: .9em; }
 }
