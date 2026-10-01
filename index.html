@@ -526,6 +526,12 @@
           </div>
           <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
         </div>
+        <!-- On-screen controls for touch devices (TouchControls.ts): slide the pad left or right to walk; the button, which names what is
+             in reach, appears at an entrance. Hidden by the stylesheet unless the page is in touch mode. -->
+        <div id="touch-controls" class="touch-controls" hidden>
+          <div class="touch-pad" role="presentation"><span class="touch-arrow" aria-hidden="true">&#9664;&#xFE0E;</span><span class="touch-knob" aria-hidden="true"></span><span class="touch-arrow" aria-hidden="true">&#9654;&#xFE0E;</span></div>
+          <button type="button" class="touch-interact" hidden></button>
+        </div>
         <div id="announcer" class="sr-only" aria-live="polite"></div>
       </section>
     </main>
