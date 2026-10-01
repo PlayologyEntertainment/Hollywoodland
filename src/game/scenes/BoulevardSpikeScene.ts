@@ -15,7 +15,7 @@ import {
 } from '../BirdFlight';
 import { isPictureCovered } from '../PictureCover';
 import { skyTileCount, skyTileLayout, SKY_DRIFT_PX_PER_SEC } from '../SkyDrift';
-import { blendLooks, easeInOut, TIME_FADE_MS, TIME_LOOKS, TIME_SKY_PATHS, type TimeLook } from '../TimeOfDay';
+import { blendLooks, easeInOut, lightFlipTimes, TIME_FADE_MS, TIME_LOOKS, TIME_SKY_PATHS, type TimeLook } from '../TimeOfDay';
 import type { TimeSlot } from '../../domain/TimeSystem';
 import {
   DEFAULT_WALK_CYCLE,
@@ -103,12 +103,15 @@ function buildingActiveKey(id: string): string {
  * Only buildings with an active-state texture are tracked. */
 interface DynamicBuilding {
   readonly image: Phaser.GameObjects.Image;
-  /** The active art, laid over the default art and faded in and out (rather than swapped) when the building lights up or goes dark. */
+  /** The active art, laid over the default art: shown (alpha 1) while the building is lit, hidden (alpha 0) otherwise. */
   readonly overlay: Phaser.GameObjects.Image;
   readonly rule: BoulevardActiveRule;
+  /** Whether the building should be lit for the current career state. */
   active: boolean;
-  /** What the overlay is fading toward (or has reached): 1 while active, 0 otherwise. */
-  shownTarget: number;
+  /** Whether the overlay is showing now. A light switches instantly, so this lags `active` only until its moment in a time change. */
+  lit: boolean;
+  /** The state the last time change set this light to go to (`lit` is already there, or will be when its moment comes). */
+  scheduled: boolean;
 }
 
 /** A single interactable point along the Boulevard: proximity radius,
@@ -171,6 +174,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
    * career or a load) rather than fade. The grade is two full-picture rectangles, one multiplying (tint, dim) and one adding (glow). */
   private timeSlot: TimeSlot | undefined;
   private timeBlend: Phaser.Tweens.Tween | undefined;
+  private lightTimers: Phaser.Time.TimerEvent[] = [];
   private appliedLook: TimeLook = TIME_LOOKS.afternoon;
   private snapTime = true;
   private gradeMultiply!: Phaser.GameObjects.Rectangle;
@@ -225,6 +229,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     // The scene is reused across a new career and Continue, so the time-of-day state starts fresh each time.
     this.timeSlot = undefined;
     this.timeBlend = undefined;
+    this.lightTimers = [];
     this.appliedLook = TIME_LOOKS.afternoon;
     this.snapTime = true;
     this.skyFadeCount = 0;
@@ -448,7 +453,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
           .setScale(building.scale)
           .setDepth(building.depth + 0.01)
           .setAlpha(0);
-        this.dynamicBuildings.push({ image, overlay, rule: building.activeWhen, active: false, shownTarget: 0 });
+        this.dynamicBuildings.push({ image, overlay, rule: building.activeWhen, active: false, lit: false, scheduled: false });
       }
     }
 
@@ -655,23 +660,23 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     for (const building of this.dynamicBuildings) building.active = isBuildingActive(building.rule, this.careerState);
   }
 
-  /** Brings the picture to the time of day in the career state: the sky for that time fades in over the one showing, the colour grade
-   * eases to its look, and each building's lit art fades in or out, all together over TIME_FADE_MS. The first call after a new career or
-   * a load (and any call with reduced motion on) jumps straight there instead. A change that arrives mid-fade carries on from where the
-   * picture is now. */
+  /** Brings the picture to the time of day in the career state: the sky for that time fades in over the one showing and the colour grade
+   * eases to its look, together over TIME_FADE_MS. Building lights do not fade (a light is on or it is off): each switches instantly, at
+   * its own moment around the middle of the blend (see lightFlipTimes). The first call after a new career or a load (and any call with
+   * reduced motion on) jumps straight there instead. A change that arrives mid-blend carries on from where the picture is now. */
   private syncTimeOfDay(): void {
     const slot = this.careerState.time.slot;
-    const lightsChanged = this.dynamicBuildings.some((building) => building.shownTarget !== (building.active ? 1 : 0));
+    const lightsChanged = this.dynamicBuildings.some((building) => building.scheduled !== building.active);
     if (slot === this.timeSlot && !lightsChanged) return;
     const animate = this.timeSlot !== undefined && !this.snapTime && !this.settings.reducedMotion;
     this.timeSlot = slot;
     this.snapTime = false;
     this.timeBlend?.stop();
+    for (const timer of this.lightTimers) timer.remove(false);
+    this.lightTimers = [];
 
     const fromLook = this.appliedLook;
     const toLook = TIME_LOOKS[slot];
-    const fromLights = this.dynamicBuildings.map((building) => building.overlay.alpha);
-    for (const building of this.dynamicBuildings) building.shownTarget = building.active ? 1 : 0;
 
     const incoming = this.skyLayers.get(slot) ?? this.skyLayers.get('afternoon');
     const changesSky = incoming !== undefined && incoming !== this.skyTop;
@@ -687,13 +692,15 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const apply = (t: number): void => {
       if (changesSky && incoming !== undefined) incoming.forEach((tile) => tile.setAlpha(t));
       this.applyLook(blendLooks(fromLook, toLook, t));
-      this.dynamicBuildings.forEach((building, index) => {
-        const from = fromLights[index] ?? 0;
-        building.overlay.setAlpha(from + (building.shownTarget - from) * t);
-      });
     };
+    const switchLight = (building: DynamicBuilding): void => {
+      building.lit = building.scheduled;
+      building.overlay.setAlpha(building.lit ? 1 : 0);
+    };
+    for (const building of this.dynamicBuildings) building.scheduled = building.active;
     const finish = (): void => {
       apply(1);
+      for (const building of this.dynamicBuildings) if (building.lit !== building.active) switchLight(building);
       if (!changesSky || incoming === undefined) return;
       this.skyTop = incoming;
       for (const tiles of this.skyLayers.values()) if (tiles !== incoming) this.setSkyLayer(tiles, 0);
@@ -704,6 +711,11 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       return;
     }
     apply(0);
+    const flipTimes = lightFlipTimes(this.dynamicBuildings.length);
+    this.dynamicBuildings.forEach((building, index) => {
+      if (building.lit === building.active) return;
+      this.lightTimers.push(this.time.delayedCall(flipTimes[index] ?? TIME_FADE_MS / 2, () => switchLight(building)));
+    });
     this.timeBlend = this.tweens.addCounter({
       from: 0,
       to: 1,
