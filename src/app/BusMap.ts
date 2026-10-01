@@ -28,8 +28,8 @@ export function visualStateFor(status: TravelStatus): RegionVisualState {
 
 /**
  * The Union Bus Depot's map of Hollywoodland. The picture is drawn dimmed and drained of colour, with a full-colour copy clipped to each
- * region on top, shown through a soft-edged elliptical spotlight, whose opacity says how lit it is: full where the player is; 40% when
- * hovered or focused; 70% when selected. There are no outlines. Choosing a region the player can reach (built, and the fare affordable) takes the bus; any other just selects
+ * region on top, shown through a soft-edged elliptical spotlight, whose opacity says how lit it is: full where the player is; 55% when
+ * hovered or focused; 85% when selected. There are no outlines. Choosing a region the player can reach (built, and the fare affordable) takes the bus; any other just selects
  * it and says why not. Each region is a keyboard-focusable button.
  */
 export class BusMap {
@@ -146,7 +146,7 @@ export class BusMap {
 
     const gradient = document.createElementNS(SVG_NS, 'radialGradient');
     gradient.setAttribute('id', `${id}-fade`);
-    for (const [offset, opacity] of [[0, 1], [0.45, 0.9], [1, 0]] as const) {
+    for (const [offset, opacity] of [[0, 1], [0.7, 1], [1, 0]] as const) {
       const stop = document.createElementNS(SVG_NS, 'stop');
       stop.setAttribute('offset', String(offset));
       stop.setAttribute('stop-color', '#fff');
@@ -157,8 +157,9 @@ export class BusMap {
     const ellipse = document.createElementNS(SVG_NS, 'ellipse');
     ellipse.setAttribute('cx', String((minX + maxX) / 2));
     ellipse.setAttribute('cy', String((minY + maxY) / 2));
-    ellipse.setAttribute('rx', String(((maxX - minX) / 2) * 1.15));
-    ellipse.setAttribute('ry', String(((maxY - minY) / 2) * 1.15));
+    const scale = 1.15 * (region.spotlightScale ?? 1);
+    ellipse.setAttribute('rx', String(((maxX - minX) / 2) * scale));
+    ellipse.setAttribute('ry', String(((maxY - minY) / 2) * scale));
     ellipse.setAttribute('fill', `url(#${id}-fade)`);
 
     const mask = document.createElementNS(SVG_NS, 'mask');
