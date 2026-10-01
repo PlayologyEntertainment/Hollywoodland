@@ -39,7 +39,7 @@ Status: Owner approved September 12, 2026. Track B canon (naming slate, cast, or
 | HUD | Minimal contextual HUD with expandable panels |
 | Display | Responsive 1920×1080/16:9 baseline; extend scenery for ultrawide |
 | Performance | 60 FPS at 1080p on documented midrange PCs; scalable effects |
-| Input | Desktop Chrome/Safari, keyboard and mouse; keyboard-only completion supported |
+| Input | Desktop Chrome/Safari, keyboard and mouse; keyboard-only completion supported. Phones held sideways also work through on-screen controls (2026-10-01) |
 | Accessibility | Robust launch baseline including remap, scaling, contrast, reduced motion, pause, timing assists |
 | Runtime AI | None; GPT-5.6 Sol and ChatGPT Images 2.5 are development tools only |
 | Monetization | Entire game free; no ads or purchases; sponsorship/voluntary support may be considered later |
@@ -168,6 +168,21 @@ Audit of the design documents against the build. Items the docs promised but the
 | Welcome signs | Owner approved: a classic roadside "Welcome to ..." sign with a 1930s population shows on every map trip, at the start of a new career (after the Chapter 1 card) and when a saved career is loaded; a click or Enter skips it, and Reduce Motion shows it whole. Real names and 1930 census figures (Los Angeles County Almanac): Los Angeles 1,238,048, Santa Monica 37,146, Culver City 5,669. Hollywood and its hills are districts of the City of Los Angeles and have no separate census figure, so their signs name the city and use its figure. The Hollywood Bowl and Griffith Park signs do the same; the studio lot's sign names Culver City ("Heart of Screenland"). The owner may want to check these names and figures |
 | Localization of this round | New English text is in the catalog with AI first drafts for es, fr, de and pt-BR (the four new assignments, the Conclusion, the Chapter 1 group label, the Chapter 2 objective, and the new Home-screen strings), still Beta and awaiting native review |
 
+## Approved 2026-10-01
+
+| Area | Decision |
+|---|---|
+| Map look | Region borders are gone. A soft elliptical spotlight lights the hovered (55%), selected (85%) or current (100%) region; Hollywood Boulevard's ellipse is 20% smaller. The title is centred and Close is at the bottom right |
+| Mobile scope | Mobile browser first, landscape only; upright shows a rotate prompt. PWA install, offline and native packaging are later (`MOBILE_PLAN.md`) |
+| Mobile controls | A walking pad (slide left or right) at the bottom left and an Interact button at the bottom right that says Enter for doors and Go for anything else, both half as wide as first built so they sit in the black margins; Career, Menu and Wait live in the header. The map needs a second tap to travel. Terms, Privacy and the Playology logo link move into Settings on phones |
+| Mobile sizes | Phone header 28px with 24px buttons and tap areas. The owner chose this over keeping the 44px touch minimum. Film sprockets are dropped on phones and the HUD overlays are kept short |
+| Notices | Desktop keeps the film-strip entry tips and toasts at the top right (scaled down only if they would touch the stats bar). Plain, smaller notices apply to touch devices only |
+| Footer | Terms and Privacy shrink with the window so they never touch Menu or Wait. The Playology logo links to `https://www.playologyentertainment.com/index.html` in a new tab, releasing focus after a click so Enter cannot reopen it. Held keys are dropped when the page loses focus |
+| Time of day | Three skies (Afternoon is the existing sky; Morning and Evening generated with GG). A colour grade matches each (Evening is tint `#ffe6c8`, glow `#ffb454` at 5%, after the first version proved too red). Sky, grade and lights change together over 3 seconds |
+| Building lights | They keep following each building's opening hours (not evening only) and switch on or off instantly, staggered around the midpoint of the blend, never fading |
+| Sky art | Skies tile mirrored side to side, so Evening has clouds only in the middle 60% and a clean gradient at both edges; Morning has an edge dissolve; all share the Afternoon's 3px blur look. The game's Afternoon sky is `sky-blur.webp` |
+| Dev tooling | `playwright` is a dev dependency for phone-size screenshots; CSS changes need `npm run build` as well as the tests |
+
 ## Open decisions
 
 | Area | Question | Raised |
@@ -178,3 +193,5 @@ Audit of the design documents against the build. Items the docs promised but the
 | The alley | The only Boulevard entrance without a scene | 2026-09-19 |
 | Slice portrait count | How many portraits ship in the slice, and when the remaining walk cycles are made | 2026-09-29 |
 | Per-portrait animation set | The slice player animation minimum (idle, run, interact, stairs, sit, reactions) is needed per portrait; frame counts and budget are not yet set | 2026-09-29 |
+| Mobile on real devices | Safe areas, the on-screen keyboard, finger feel on the walking pad and the 24px header buttons have only been checked in emulation (`MOBILE_AUDIT.md`) | 2026-10-01 |
+| Audition dialog on phones | Not reached in the emulated pass | 2026-10-01 |

@@ -23,6 +23,8 @@ The pain points this answers: HUD and text too small; no way to walk or interact
 
 Phases 1–5 are done. What was checked, and what was not, is in [MOBILE_AUDIT.md](MOBILE_AUDIT.md).
 
+Changes after the plan, at the owner's request (2026-10-01; details under "Later changes" in the audit): a tighter phone header and overlays, with 24px header buttons chosen over keeping the 44px touch minimum; half-width touch controls with an Enter/Go label; desktop keeps the film-strip notices; and the Playology logo link.
+
 ## Phases
 
 ### Phase 1: Foundation

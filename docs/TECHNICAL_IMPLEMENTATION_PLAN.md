@@ -37,7 +37,7 @@ As built (2026-09-29). The originally proposed layout used `src/systems/`, `src/
 │   ├── content/               # Content validators (quests, dialogue, talents, localization, ...)
 │   ├── save/                  # Envelope, migration, IndexedDB, import/export
 │   ├── settings/              # Settings model and repository
-│   ├── input/                 # Input action abstraction
+│   ├── input/                 # Input actions: keyboard, plus the on-screen touch controls (virtual keys)
 │   ├── audio/                 # Audio director, cues, Web Audio engine
 │   ├── analytics/             # Event boundary (currently a no-op client)
 │   ├── i18n/, locales/        # Localization service and per-language catalogs
@@ -66,6 +66,7 @@ As built (2026-09-29). The originally proposed layout used `src/systems/`, `src/
 - Title/profile/save selection.
 - Character Creator.
 - District world scene with background, midground, walk plane, foreground, lighting/effects, and interaction layers.
+- Time-of-day treatment on the Boulevard (`src/game/TimeOfDay.ts`): three skies (Afternoon is the base sky plane, Morning and Evening are optional extra sky layers that fall back to Afternoon if their art is missing), a multiply-and-glow colour grade over the whole picture, and the lit art of buildings. Sky and grade blend over `TIME_FADE_MS` (3 s) when the slot changes; building lights switch instantly, staggered around the midpoint (`lightFlipTimes`). A new career, a load and Reduce Motion jump straight to the right look.
 - Cinematic/performance scene for living-film sequences.
 - Persistent DOM shell for dialogue, HUD, journal, settings, and accessibility.
 
@@ -140,6 +141,8 @@ Required release matrix:
 
 Use feature detection rather than user-agent branching. Provide a readable unsupported-mode screen when a required capability fails. Pointer lock is unnecessary. Fullscreen is optional and must never be required to access controls or exit.
 
+Mobile browsers (added 2026-10-01, landscape only; see `MOBILE_PLAN.md` and `MOBILE_AUDIT.md`): `src/app/TouchMode.ts` puts a `touch` class on `<html>` from `(pointer: coarse)` (`?touch=1` or `?touch=0` forces it), and phone rules apply under `.touch` and `(orientation: landscape) and (max-height: 560px)`. `src/app/TouchControls.ts` drives a walking pad and an Interact button through virtual keys on `InputController`, which also drops every held key when the page loses focus. Touch devices held upright get a rotate prompt. Safe areas, `100dvh` and gesture rules are in `src/styles.css`.
+
 ## 10. Accessibility implementation
 
 - DOM controls use correct semantic elements, programmatic names, logical focus order, visible focus, and escape routes from every modal.
@@ -162,7 +165,7 @@ Target WCAG 2.2 AA for DOM-based screens and equivalent functional access for ca
 
 ## 12. CI and release gates
 
-Every change must pass type checking, unit tests, content validation, and the production build (as built). A bundle-size and asset-budget check is added once the Phase 1 budgets are set. Formatting, linting, and browser smoke tests are release-candidate gates from Phase 5. Release candidates additionally require:
+Every change must pass type checking, unit tests, content validation, and the production build (as built). Run `npm run build` after CSS changes: the production minifier rejects some rules browsers ignore, such as a comma-separated `@container` condition. `playwright` is a dev dependency for visual checks at phone sizes. A bundle-size and asset-budget check is added once the Phase 1 budgets are set. Formatting, linting, and browser smoke tests are release-candidate gates from Phase 5. Release candidates additionally require:
 
 - Chrome/Safari manual pass.
 - Save migration and import corruption tests.
