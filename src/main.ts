@@ -3,6 +3,7 @@ import { AudioDirector } from './audio/AudioDirector';
 import { WebAudioEngine } from './audio/WebAudioEngine';
 import { SplashScreen } from './app/SplashScreen';
 import { applyTouchMode } from './app/TouchMode';
+import { TouchControls } from './app/TouchControls';
 import { NoOpAnalyticsClient, type AnalyticsEvent } from './analytics/Analytics';
 import { createDefaultCareerState, type CareerState } from './domain/CareerState';
 import { DomainEventBus } from './domain/DomainEventBus';
@@ -14,6 +15,7 @@ import { BrowserSettingsRepository } from './settings/SettingsRepository';
 import { i18n } from './i18n';
 import { isLoadableLocale, resolveLocale } from './i18n/locales';
 import { applyStaticTranslations } from './i18n/staticText';
+import { assertElement } from './shared/assert';
 
 applyTouchMode(document.documentElement, (query) => window.matchMedia(query), window.location.search);
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
@@ -165,6 +167,7 @@ const shell = new AppShell({
 });
 
 shell.mount();
+new TouchControls({ root: assertElement('#touch-controls', HTMLElement), input, domainEvents });
 void shell.refreshContinue();
 new SplashScreen().mount(() => {
   audio.unlock();

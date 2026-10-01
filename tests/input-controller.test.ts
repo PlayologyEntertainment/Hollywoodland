@@ -109,3 +109,42 @@ describe('input controller', () => {
     expect(input.isDown('moveLeft')).toBe(true);
   });
 });
+
+describe('input controller: on-screen touch controls', () => {
+  it('holds an action like a key, and only while gameplay is active', () => {
+    const input = new InputController(new FakeWindow());
+    input.setVirtualDown('moveRight', true);
+    expect(input.isDown('moveRight')).toBe(false);
+    input.setGameplayActive(true);
+    input.setVirtualDown('moveRight', true);
+    expect(input.isDown('moveRight')).toBe(true);
+    input.setVirtualDown('moveRight', false);
+    expect(input.isDown('moveRight')).toBe(false);
+  });
+
+  it('reports one press per touch, like a key, and drops it on release', () => {
+    const input = new InputController(new FakeWindow());
+    input.setGameplayActive(true);
+    input.setVirtualDown('interact', true);
+    input.setVirtualDown('interact', true);
+    expect(input.consumePress('interact')).toBe(true);
+    expect(input.consumePress('interact')).toBe(false);
+    input.setVirtualDown('interact', false);
+    input.setVirtualDown('interact', true);
+    expect(input.consumePress('interact')).toBe(true);
+    input.setVirtualDown('interact', false);
+    expect(input.consumePress('interact')).toBe(false);
+  });
+
+  it('lets go of everything when gameplay switches off, and says so', () => {
+    const input = new InputController(new FakeWindow());
+    const seen: boolean[] = [];
+    input.onGameplayActiveChange((active) => seen.push(active));
+    input.setGameplayActive(true);
+    input.setVirtualDown('moveLeft', true);
+    input.setGameplayActive(false);
+    input.setGameplayActive(true);
+    expect(input.isDown('moveLeft')).toBe(false);
+    expect(seen).toEqual([true, false, true]);
+  });
+});

@@ -15,6 +15,10 @@ export class InputController {
   private readonly pressed = new Set<string>();
   private readonly justPressed = new Set<string>();
   private gameplayActive = false;
+  /** Actions held by on-screen touch controls, which behave exactly like held keys. */
+  private readonly virtualDown = new Set<InputAction>();
+  private readonly virtualPressed = new Set<InputAction>();
+  private readonly activeListeners = new Set<(active: boolean) => void>();
 
   public constructor(
     private readonly eventTarget: Pick<Window, 'addEventListener' | 'removeEventListener'>,
@@ -29,15 +33,37 @@ export class InputController {
     if (!active) {
       this.pressed.clear();
       this.justPressed.clear();
+      this.virtualDown.clear();
+      this.virtualPressed.clear();
     }
+    for (const listener of this.activeListeners) listener(active);
+  }
+
+  /** Tells the on-screen touch controls when gameplay switches on and off (a dialog opening, the menu), so they can step aside. */
+  public onGameplayActiveChange(listener: (active: boolean) => void): () => void {
+    this.activeListeners.add(listener);
+    return () => this.activeListeners.delete(listener);
+  }
+
+  /** An on-screen control holding an action down or letting go, the touch twin of a key going down or up. */
+  public setVirtualDown(action: InputAction, down: boolean): void {
+    if (!down) {
+      this.virtualDown.delete(action);
+      this.virtualPressed.delete(action);
+      return;
+    }
+    if (!this.gameplayActive || this.virtualDown.has(action)) return;
+    this.virtualDown.add(action);
+    this.virtualPressed.add(action);
   }
 
   public isDown(action: InputAction): boolean {
-    return this.gameplayActive && this.bindings[action].some((code) => this.pressed.has(code));
+    return this.gameplayActive && (this.virtualDown.has(action) || this.bindings[action].some((code) => this.pressed.has(code)));
   }
 
   public consumePress(action: InputAction): boolean {
     if (!this.gameplayActive) return false;
+    if (this.virtualPressed.delete(action)) return true;
     const code = this.bindings[action].find((candidate) => this.justPressed.has(candidate));
     if (code === undefined) return false;
     this.justPressed.delete(code);
@@ -49,6 +75,9 @@ export class InputController {
     this.eventTarget.removeEventListener('keyup', this.onKeyUp as EventListener);
     this.pressed.clear();
     this.justPressed.clear();
+    this.virtualDown.clear();
+    this.virtualPressed.clear();
+    this.activeListeners.clear();
   }
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
