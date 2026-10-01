@@ -130,11 +130,9 @@ describe('the map screen and the welcome sign in index.html', () => {
     expect(sign).toContain('hidden');
   });
 
-  it('shows the welcome sign at the start of a career, when a save is loaded, and after a bus trip', () => {
+  it('keeps the full-screen welcome sign switched off for now', () => {
     const shell = read('../src/app/AppShell.ts');
-    expect(shell.match(/this\.showWelcomeSign\(/g)?.length).toBe(3);
-    expect(shell).toMatch(/startNewCareer[\s\S]*Welcome to Hollywood sign[\s\S]*this\.welcomeSign\.play\(\)/);
-    expect(shell).toMatch(/resumeCareer[\s\S]*this\.showWelcomeSign\(currentRegion\(state\)\)/);
-    expect(shell).toMatch(/travelFromMap[\s\S]*this\.showWelcomeSign\(regionId\)/);
+    expect(shell).not.toContain('WelcomeSign');
+    expect(shell).not.toContain('welcomeSign');
   });
 });
