@@ -218,7 +218,10 @@
           <button id="return-menu" class="chrome-button deco-label" type="button" data-i18n="returnMenu.menu">Menu</button>
           <div class="footer-center">
             <button id="footer-tos" class="footer-legal-link deco-label" type="button" data-i18n="footerTos.termsOfService">Terms of Service</button>
-            <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" data-i18n-attr="alt:gameFooter.playologyEntertainment" />
+            <!-- Opens playologyentertainment.com in a new tab, so the game in this one is untouched. -->
+            <a id="footer-logo-link" class="footer-logo-link" href="https://www.playologyentertainment.com/index.html" target="_blank" rel="noopener noreferrer" aria-label="Playology Entertainment (opens in a new tab)" data-i18n-attr="aria-label:gameFooter.playologyLink">
+              <img class="footer-logo" src="/assets/ui/playology-logo.webp" alt="Playology Entertainment" data-i18n-attr="alt:gameFooter.playologyEntertainment" />
+            </a>
             <button id="footer-privacy" class="footer-legal-link deco-label" type="button" data-i18n="footerPrivacy.privacyPolicy">Privacy Policy</button>
           </div>
           <div class="footer-right">

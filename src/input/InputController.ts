@@ -30,6 +30,7 @@ export class InputController {
   ) {
     this.eventTarget.addEventListener('keydown', this.onKeyDown as EventListener);
     this.eventTarget.addEventListener('keyup', this.onKeyUp as EventListener);
+    this.eventTarget.addEventListener('blur', this.onBlur as EventListener);
   }
 
   public setGameplayActive(active: boolean): void {
@@ -83,6 +84,7 @@ export class InputController {
   public destroy(): void {
     this.eventTarget.removeEventListener('keydown', this.onKeyDown as EventListener);
     this.eventTarget.removeEventListener('keyup', this.onKeyUp as EventListener);
+    this.eventTarget.removeEventListener('blur', this.onBlur as EventListener);
     this.pressed.clear();
     this.justPressed.clear();
     this.virtualDown.clear();
@@ -96,6 +98,15 @@ export class InputController {
     this.pressed.add(event.code);
     const action = this.actionForCode(event.code);
     if (action !== undefined && PREVENT_DEFAULT_ACTIONS.has(action)) event.preventDefault();
+  };
+
+  /** The page lost focus (another tab or window came forward), so a key lifted over there would never be seen here: let go of everything held
+   * rather than come back to a character that is still walking. */
+  private readonly onBlur = (): void => {
+    this.pressed.clear();
+    this.justPressed.clear();
+    this.virtualDown.clear();
+    this.virtualPressed.clear();
   };
 
   private readonly onKeyUp = (event: KeyboardEvent): void => {

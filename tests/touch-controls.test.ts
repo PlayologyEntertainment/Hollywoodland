@@ -48,3 +48,23 @@ describe('small-screen rules for the title, splash, creator and Career panel', (
     expect(css).toMatch(/@media \(max-width: 640px\), \(orientation: landscape\) and \(max-height: 560px\) \{\s*\.drawer \{ z-index: 30; inset: 0;/);
   });
 });
+
+describe('the Playology logo link', () => {
+  const html = read('../index.html');
+  const link = html.match(/<a id="footer-logo-link"[^>]*>/)?.[0] ?? '';
+
+  it('opens the company site in a new tab without handing it the game window', () => {
+    expect(link).toContain('href="https://www.playologyentertainment.com/index.html"');
+    expect(link).toContain('target="_blank"');
+    expect(link).toContain('rel="noopener noreferrer"');
+    expect(link).toContain('aria-label=');
+    expect(html).toMatch(/<a id="footer-logo-link"[\s\S]*?<img class="footer-logo"[\s\S]*?<\/a>/);
+  });
+
+  it('is labelled in every language, goes to Settings on phones, and lets go of focus after a click', () => {
+    for (const code of ['en', 'de', 'es', 'fr', 'pt-BR']) expect(read(`../src/locales/${code}.json`), code).toContain('"gameFooter.playologyLink"');
+    const shell = read('../src/app/AppShell.ts');
+    expect(shell).toContain("'#footer-logo-link'");
+    expect(shell).toContain('logoLink.blur()');
+  });
+});

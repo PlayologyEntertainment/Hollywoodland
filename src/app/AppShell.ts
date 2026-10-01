@@ -587,6 +587,12 @@ export class AppShell {
     fileInput.addEventListener('change', () => void this.importSave(fileInput, screens));
     this.mountLegalDialog('#footer-tos', '#legal-terms-dialog', '#legal-terms-close');
     this.mountLegalDialog('#footer-privacy', '#legal-privacy-dialog', '#legal-privacy-close');
+    // The Playology logo opens the company site in a new tab. After a mouse or touch click it lets go of keyboard focus: Enter is the
+    // game's Interact key, so a link left focused would open the site again the next time the player pressed Enter at a door.
+    const logoLink = assertElement('#footer-logo-link', HTMLAnchorElement);
+    logoLink.addEventListener('click', (event) => {
+      if (event.detail !== 0) logoLink.blur();
+    });
   }
 
   public async refreshContinue(): Promise<void> {
@@ -614,17 +620,17 @@ export class AppShell {
   private phoneBarLayout(footer: HTMLElement): (phone: boolean) => void {
     const actions = assertElement('.status-actions', HTMLElement);
     const settingsLegal = assertElement('#settings-legal', HTMLElement);
-    const homes = (['#return-menu', '#advance-time', '#footer-tos', '#footer-privacy'] as const).map((selector) => {
+    const homes = (['#return-menu', '#advance-time', '#footer-tos', '#footer-privacy', '#footer-logo-link'] as const).map((selector) => {
       const element = assertElement(selector, HTMLElement);
       return { element, parent: element.parentElement as HTMLElement, next: element.nextSibling };
     });
-    const phoneParents = [actions, actions, settingsLegal, settingsLegal];
+    const phoneParents = [actions, actions, settingsLegal, settingsLegal, settingsLegal];
     let current = false;
     return (phone) => {
       if (phone === current) return;
       current = phone;
       homes.forEach((home, index) => {
-        if (phone) (phoneParents[index] as HTMLElement).prepend(home.element);
+        if (phone) (index < 2 ? (phoneParents[index] as HTMLElement).prepend(home.element) : (phoneParents[index] as HTMLElement).append(home.element));
         else home.parent.insertBefore(home.element, home.next);
       });
       // Back in the footer, Menu comes first and Wait last, as built; in the header they sit before the view buttons.
@@ -672,6 +678,33 @@ export class AppShell {
     // The notices stack drops below the stats row, and below the assignment countdown when one is showing, once the Career panel
     // is open; the column they must clear grows and shrinks with that countdown, so watch it.
     new ResizeObserver(() => this.syncNoticesTop()).observe(assertElement('.hud-center', HTMLElement));
+    // Desktop notices keep their place at the top right and shrink to fit instead: re-fit whenever what is showing, the stats bar or the
+    // picture changes size.
+    const fit = (): void => this.fitNotices();
+    const notices = assertElement('#notices', HTMLElement);
+    new ResizeObserver(fit).observe(notices);
+    new ResizeObserver(fit).observe(assertElement('.hud-center', HTMLElement));
+    new ResizeObserver(fit).observe(assertElement('#game-root', HTMLElement));
+  }
+
+  /** On a desktop window (touch devices have their own compact notices), scales the entrance prompt and toast down toward their top right
+   * corner just enough that their left edge stays clear of the Day/Time/Money bar when they share its row, never below 55%. Publishes the
+   * scale as `--notice-scale` on the notices container. */
+  private fitNotices(): void {
+    const notices = assertElement('#notices', HTMLElement);
+    const width = notices.offsetWidth;
+    let scale = 1;
+    if (!document.documentElement.classList.contains('touch') && width > 0) {
+      const stats = assertElement('.hud-center', HTMLElement).getBoundingClientRect();
+      const box = notices.getBoundingClientRect();
+      const sharesRow = stats.height > 0 && box.top < stats.bottom && box.bottom > stats.top;
+      if (sharesRow) {
+        const free = box.right - stats.right - 12;
+        scale = Math.min(1, Math.max(0.55, free / width));
+      }
+    }
+    const value = scale.toFixed(3);
+    if (notices.style.getPropertyValue('--notice-scale') !== value) notices.style.setProperty('--notice-scale', value);
   }
 
   /** Publishes where the header stats column (the Day/Time/Money bar and, under it, the assignment countdown) ends, measured from
