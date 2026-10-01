@@ -99,7 +99,7 @@ Optional content must reinforce the core loop and not turn the slice into a cont
 |---|---|
 | Character Creator | Portrait selector: name, portrait, origin |
 | Movement/exploration | Production-quality core controls and interactions |
-| Time | Morning, afternoon, evening; flexible advancement |
+| Time | Morning, afternoon, evening; flexible advancement. Each slot has its own sky, colour grade and building lights, blending over three seconds |
 | Economy | Money, energy, reputation with visible tradeoffs |
 | Dialogue | Branching tree, conditions, remembered flags |
 | Relationships | Several state changes across 8–10 characters |

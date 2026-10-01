@@ -60,7 +60,7 @@ runtime_files: public/assets/environments/boulevard-v3/sky-evening.webp
 
 ## Seam fix (2026-10-01)
 
-The sky tiles alternate with their mirror image (`src/game/SkyDrift.ts`), so any cloud that runs diagonally at a tile edge meets its reflection in a V. All three skies (Morning, Afternoon, Evening) now have the outer 20% of each side blended toward the sky's own horizontal colour gradient (a 6-column average of each row, blended with weight `(1 - x/band)^1.3`), so clouds dissolve into plain sky at the seam. The Afternoon sky's original is kept at `art/generated/sky-afternoon-original.webp`; the live `sky.webp` was rebuilt from it and re-encoded at WebP quality 88. Review images: `art/review/` (untracked).
+The sky tiles alternate with their mirror image (`src/game/SkyDrift.ts`), so any cloud that runs diagonally at a tile edge meets its reflection in a V. All three skies (Morning, Afternoon, Evening) now have the outer 20% of each side blended toward the sky's own horizontal colour gradient (a 6-column average of each row, blended with weight `(1 - x/band)^1.3`), so clouds dissolve into plain sky at the seam. The Afternoon sky's original is kept at `art/generated/sky-afternoon-original.webp`; the live `sky.webp` was rebuilt from it and re-encoded at WebP quality 88. (The comparison images made for that review were deleted afterwards.)
 
 ## Evening grade
 

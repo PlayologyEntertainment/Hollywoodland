@@ -176,7 +176,7 @@ The first slice introduces a background-extra job on Monarch Pictures' swashbuck
 
 Exploration uses a layered 2.5D side view with parallax. Key interactions may shift into cinematic close-ups, staged angles, and subtle fisheye compositions. Menus, landmarks, and connective scenes use vivid storybook color; selected “living film” performance sequences use expressive black and white. UI accents use restrained gold and period geometry.
 
-The HUD is minimal and contextual. Its dark bands (the quest helper, the stats, the assignment countdown, the notices) are drawn as strips of film, with rows of sprocket holes along the top and bottom. Small ambient touches, such as a flock of birds crossing the sky now and then, add life without asking for attention; they stop for Reduce Motion. Immediate prompts and essential state appear during play; money, energy, reputation, time, quests, relationships, inventory, scrapbook, and settings live in elegant expandable panels.
+The HUD is minimal and contextual. Its dark bands (the quest helper, the stats, the assignment countdown, the notices) are drawn as strips of film, with rows of sprocket holes along the top and bottom. Small ambient touches, such as a flock of birds crossing the sky now and then, add life without asking for attention; they stop for Reduce Motion. On phones the sprocket holes are dropped and the bands are kept as short as their text allows. The Boulevard changes with the time slot: the sky is Morning (pale, a little muted, only thin cirrus), Afternoon (the base sky) or Evening (golden-hour clouds), a colour grade is laid over the whole scene, and sky, grade and building lights blend together over three seconds when time advances. A building's lit windows follow its opening hours, and a light switches on or off at once, never by fading. Immediate prompts and essential state appear during play; money, energy, reputation, time, quests, relationships, inventory, scrapbook, and settings live in elegant expandable panels.
 
 Audio emphasizes an adaptive period-inspired jazz/orchestral score, environmental sound, Foley, and responsive stingers. Dialogue is text-only. The plan does not require voiceover.
 
@@ -209,5 +209,5 @@ Hollywoodland is free, with no advertisements or purchases. Sponsorship or volun
 - Runtime AI, procedural dialogue, or generated quests.
 - Full voice acting.
 - Conventional combat system.
-- Mobile/touch-first support or native app-store packaging.
+- Native app-store packaging, and a touch-first design (the game is built for mouse and keyboard). A landscape-only mobile browser pass was added on 2026-10-01: see `MOBILE_PLAN.md` and `MOBILE_AUDIT.md`.
 - Monetization, ads, purchases, or live-service events.

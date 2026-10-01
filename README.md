@@ -14,6 +14,7 @@ The design package was approved by the owner on September 12, 2026. The current 
 6. [`PHASE_1_VISUAL_SPIKE.md`](docs/PHASE_1_VISUAL_SPIKE.md) — the original visual spike proof and review checklist.
 7. [`DECISION_LOG.md`](docs/DECISION_LOG.md) — approved decisions and open questions; the source of truth when documents disagree.
 8. [`LOCALIZATION_PLAN.md`](docs/LOCALIZATION_PLAN.md), [`AUDIO_PROVENANCE.md`](docs/AUDIO_PROVENANCE.md) and [`deploy.md`](docs/deploy.md) — localization, audio licensing, and Hostinger deployment.
+9. [`MOBILE_PLAN.md`](docs/MOBILE_PLAN.md) and [`MOBILE_AUDIT.md`](docs/MOBILE_AUDIT.md) — the landscape-only phone pass, and what was and was not checked.
 
 ## Development gate
 
@@ -38,6 +39,10 @@ npm test
 npm run build
 ```
 
+CSS changes: run `npm run build` too, not just the tests. The production minifier rejects some rules that browsers silently ignore (for example a comma in an `@container` condition; use `or`), and CI fails on them.
+
+Visual checks: `playwright` is a dev dependency (browsers install with `npx playwright install chromium`). Write a throwaway script that drives the dev server with a phone-sized viewport (`hasTouch` and `isMobile`) and takes screenshots; `?touch=1` forces touch mode in any browser.
+
 Content and planning tools (stand-alone pages; see `docs/dev/`):
 
 - **Story Planner** (`docs/dev/story-planner-tool.md`): see everything the game has written, edit it, and plan chapters, storylines and beats. After changing game text, quests, assignments or translations, run `npm run narrative:export` to refresh its snapshot (`tools/story-planner/data/narrative-snapshot.json`); `npm test` fails when it is stale. It lives in `tools/`, outside `public/`, so it and the story plan are never part of the production build.
@@ -47,12 +52,13 @@ Content and planning tools (stand-alone pages; see `docs/dev/`):
 
 - `A`/`D` or Left/Right Arrow — walk
 - `E` or Enter — interact
+- Touch (a phone held sideways) — slide the pad at the bottom left to walk; the button at the bottom right says Enter or Go when something is in reach; Career, Menu and Wait are in the header
 - `Esc` — close an open dialog
 - On-screen controls — Film Look, Fullscreen, Career, Wait and Menu; Save Options (save slots, export, import) and Settings are on the Main Menu
 
 ## Product constraints
 
-- Desktop Chrome and Safari; keyboard and mouse.
+- Desktop Chrome and Safari; keyboard and mouse. Phones held sideways in a mobile browser are also supported, with on-screen controls (upright, a rotate prompt is shown). Add `?touch=1` to the address to see the phone layout in a desktop browser.
 - Hosted as a fullscreen-capable app at `playologyentertainment.com/hollywoodland`.
 - Responsive 16:9 baseline at 1920×1080, with ultrawide scenery extension.
 - Target 60 FPS at 1080p on a midrange desktop.

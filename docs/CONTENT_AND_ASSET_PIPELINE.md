@@ -57,7 +57,7 @@ Each district scene is delivered as registered layers:
 6. Foreground occlusion.
 7. Lighting, weather, smoke, crowds, and optional effects masks.
 
-Create clean plates without characters, baked UI, or gameplay text. Doors, breakable/altered props, signs with quest states, and time-of-day changes must be separate assets. Generated perspective is corrected to the shared district guide before approval.
+Create clean plates without characters, baked UI, or gameplay text. Doors, breakable/altered props, signs with quest states, and time-of-day changes must be separate assets. Generated perspective is corrected to the shared district guide before approval. The Boulevard's sky has three versions, Morning, Afternoon and Evening (`art/prompts/boulevard-sky-times-of-day.md`); the sky tiles mirrored side to side, so clouds are kept away from its left and right edges.
 
 The production brief for the 3,240 × 1,080 Boulevard redesign is recorded in
 `art/prompts/boulevard-five-plane-v2.md`. It defines the five registered planes,

@@ -19,7 +19,7 @@ Playwright (a dev dependency) drives headless Chromium with touch and a mobile v
 | 700×1000, no touch | narrow, tall desktop window | works; Quest Helper drops to a strip under the footer |
 | 1280×720, no touch | desktop | unchanged |
 
-On every touch size: no page errors, no page scroll in either direction, and no control under 44px tall.
+On every touch size at the time of this audit: no page errors, no page scroll in either direction, and no control under 44px tall. (The phone-landscape header buttons were deliberately shrunk afterwards; see "Later changes".)
 
 ## What each phase delivered, as seen
 
@@ -43,3 +43,14 @@ On every touch size: no page errors, no page scroll in either direction, and no 
 - **The creator** stacks into one scrolling column under 640px wide, so on the smallest phones the portrait and origin are below the fold.
 - **Hover tooltips** are off on touch; icon buttons rely on their icons.
 - **PWA, offline and native wrapping** are not started (see the plan's "Later").
+
+## Later changes (2026-10-01)
+
+Made after the audit above, at the owner's request, and checked with the same Playwright method (screenshots and measurements at 568x320, 667x375, 844x390 and 932x430, plus desktop windows):
+
+- **Tighter phone header and overlays.** The header is 28px (was 49px) with 24px buttons (was 44px), and the tap area is the same size, by the owner's choice over keeping the 44px minimum. The quest helper, stats bar, countdown and toasts lose the film sprocket holes and their padding band (quest helper 84px to 55px, stats bar 69px to 30px).
+- **Half-width controls.** The walking pad is 88px wide and the Interact button 75px (both 72px tall), in the screen corners; the black margins are 75px at 844 wide and 84px at 932, none at 667 and 568. The Interact button says Enter (doors) or Go.
+- **Notices.** The compact plain-text notices apply to touch devices only. Desktop windows of any size keep the film-strip notices at the top right (scaled down only if they would touch the stats bar). This also corrected a CSS error: `@container a, b` is invalid (use `or`), which the production build rejected and browsers ignored until it was fixed.
+- **Footer logo link.** The Playology logo opens the company site in a new tab, in Settings on phones. Held keys are dropped when the page loses focus.
+
+Still not checked: tapping 24px buttons and the narrow walking pad on a real phone, and the audition dialog on a phone.

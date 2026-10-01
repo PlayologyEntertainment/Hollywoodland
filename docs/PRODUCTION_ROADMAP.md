@@ -129,7 +129,7 @@ GPT-5.6 Sol may perform implementation tasks and ChatGPT Images 2.5 may generate
 - New systems require removal or deferral of comparable effort unless the owner expands scope explicitly.
 - Repeatable content must use the same underlying systems as authored quests.
 - Placeholder breadth does not count as production value.
-- No mobile, multiplayer, cloud account, runtime AI, monetization, full voiceover, or conventional combat work during the slice.
+- No mobile, multiplayer, cloud account, runtime AI, monetization, full voiceover, or conventional combat work during the slice. (Exception, at the owner's request on 2026-10-01: a landscape-only mobile browser pass, recorded in `MOBILE_PLAN.md` and `MOBILE_AUDIT.md`. Native packaging and a touch-first redesign remain out of scope.)
 
 ## 5. Major risks and mitigations
 
