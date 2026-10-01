@@ -15,11 +15,12 @@ import type { TimeSlot } from '../domain/TimeSystem';
 
 export type BoulevardPlaneId = 'sky' | 'hills' | 'distant-buildings' | 'sidewalk-street';
 
-/** The eight street entrances plus two lot-access points that sit inside the
+/** The nine street entrances (the Union Bus Depot, which opens the map, and the eight below it) plus two lot-access points that sit inside the
  * Monarch gate module until the studio-lot map exists (`extras-corral`,
  * `soundstage`). `backlot-gate` is the Monarch Pictures gate; its id is kept
  * so existing events, scene art, and saves keep working. */
 export type BoulevardLocationId =
+  | 'bus-depot'
   | 'boarding-house'
   | 'costume-shop'
   | 'diner'
@@ -131,6 +132,8 @@ export interface BoulevardLocation {
   readonly enterable: boolean;
   /** Null for lot-access points and the alley, which have no sign of their own. */
   readonly sign: BoulevardSign | null;
+  /** Further signs on the same building, drawn the same way as `sign` (the Bus Depot's wall plaque under its header sign). */
+  readonly extraSigns?: readonly BoulevardSign[];
 }
 
 export interface BoulevardManifest {
@@ -146,6 +149,7 @@ export interface BoulevardManifest {
 const PLANE_IDS: readonly BoulevardPlaneId[] = ['sky', 'hills', 'distant-buildings', 'sidewalk-street'];
 
 const LOCATION_IDS: readonly BoulevardLocationId[] = [
+  'bus-depot',
   'boarding-house',
   'costume-shop',
   'diner',
@@ -272,7 +276,8 @@ function isLocation(value: unknown): value is BoulevardLocation {
     typeof value.promptLabel === 'string' &&
     typeof value.radius === 'number' &&
     typeof value.enterable === 'boolean' &&
-    (value.sign === null || isSign(value.sign))
+    (value.sign === null || isSign(value.sign)) &&
+    (value.extraSigns === undefined || (Array.isArray(value.extraSigns) && value.extraSigns.every(isSign)))
   );
 }
 
@@ -546,6 +551,38 @@ const DEFAULT_BOULEVARD_MANIFEST_VALUE: BoulevardManifest = {
     },
   ],
   locations: [
+    {
+      id: 'bus-depot',
+      label: 'Union Bus Depot',
+      x: 555,
+      promptLabel: 'Board the bus',
+      radius: 160,
+      enterable: true,
+      sign: {
+        x: 553,
+        y: 585,
+        text: 'UNION BUS DEPOT',
+        fontSize: 30,
+        textColor: '#0f4a45',
+        boardColor: '#241609',
+        boardWidth: 441,
+        boardHeight: 49,
+        textOnly: true,
+      },
+      extraSigns: [
+        {
+          x: 660,
+          y: 796,
+          text: 'TO ALL\nPOINTS',
+          fontSize: 15,
+          textColor: '#0f4a45',
+          boardColor: '#241609',
+          boardWidth: 111,
+          boardHeight: 101,
+          textOnly: true,
+        },
+      ],
+    },
     {
       id: 'boarding-house',
       label: 'Bellhaven Rooms',

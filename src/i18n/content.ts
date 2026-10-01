@@ -23,6 +23,9 @@ export const assignmentDescription = (assignment: { id: string; description: str
   text(contentKeys.assignmentDescription(assignment.id), assignment.description);
 
 export const characterRole = (character: { id: string; role: string }): string => text(contentKeys.characterRole(character.id), character.role);
+export const regionName = (region: { id: string; name: string }): string => text(contentKeys.regionName(region.id), region.name);
+export const regionCity = (region: { id: string; city: string }): string => text(contentKeys.regionCity(region.id), region.city);
+export const regionSubtitle = (region: { id: string; subtitle: string }): string => text(contentKeys.regionSubtitle(region.id), region.subtitle);
 export const housingTierLabel = (tier: { tier: string; label: string }): string => text(contentKeys.housingTier(tier.tier), tier.label);
 export const originName = (origin: { id: string; name: string }): string => text(contentKeys.originName(origin.id), origin.name);
 export const originBlurb = (origin: { id: string; blurb: string }): string => text(contentKeys.originBlurb(origin.id), origin.blurb);

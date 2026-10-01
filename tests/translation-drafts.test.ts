@@ -14,6 +14,9 @@ const drafts = LOCALES.filter((locale) => locale.code !== 'en').map((locale) => 
 /** Proper names stay exactly as written in every language (owner decision; docs/localization/glossary.md). */
 const PROPER_NAMES = [
   'Hollywoodland',
+  'Hollywood Bowl',
+  'Griffith Observatory',
+  'Union Bus Depot',
   'Playology Entertainment',
   'Bellhaven Rooms',
   'Sunset Casting Exchange',

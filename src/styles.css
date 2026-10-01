@@ -923,3 +923,67 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
    spaces (or, for a very long word, anywhere rather than overflow). */
 :root:is(:lang(ja), :lang(zh)) { line-break: strict; overflow-wrap: anywhere; }
 :root:lang(ko) { word-break: keep-all; line-break: strict; overflow-wrap: break-word; }
+
+/* The Union Bus Depot's map of Hollywoodland. The picture is shown twice: once dimmed and drained of colour, and once in full colour
+   clipped to the lit regions on top of it. The region you are in is always lit; a hovered or focused one lights part-way; a selected
+   one is lit with a gold outline. The outline polygons are the hit areas. */
+.bus-map-dialog { width: min(96vw, 78rem); max-height: 94vh; overflow: hidden; }
+.bus-map-dialog[open] { display: flex; flex-direction: column; }
+.bus-map-card { display: flex; flex-direction: column; gap: .6rem; min-height: 0; padding: 1.1rem 1.4rem 1.2rem; }
+.bus-map-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.bus-map-heading h2 { margin: 0; color: var(--gold-bright); font-family: var(--deco-font); font-weight: 400; font-synthesis: none; font-size: clamp(1.2rem, 2.4vw, 1.8rem); }
+.bus-map-stage { position: relative; width: 100%; aspect-ratio: 3 / 2; max-height: calc(94vh - 9rem); margin-inline: auto; overflow: hidden; border: 1px solid rgb(216 173 88 / 55%); background: #120d09; container-type: inline-size; }
+.bus-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.bus-map-dim { filter: saturate(.28) brightness(.5) contrast(.95); }
+.bus-map-lit { opacity: 0; transition: opacity .25s ease; }
+.bus-map-region { outline: none; cursor: pointer; }
+.bus-map-region[data-state="here"] .bus-map-lit, .bus-map-region.is-selected .bus-map-lit { opacity: 1; }
+.bus-map-region.is-hover .bus-map-lit { opacity: .72; }
+.bus-map-region[data-state="here"].is-hover .bus-map-lit { opacity: 1; }
+.bus-map-hit { fill: transparent; stroke: transparent; stroke-width: 6; stroke-linejoin: round; transition: stroke .2s ease; pointer-events: all; vector-effect: non-scaling-stroke; }
+.bus-map-region.is-hover .bus-map-hit { stroke: rgb(255 220 139 / 70%); stroke-width: 3; }
+.bus-map-region.is-selected .bus-map-hit, .bus-map-region:focus-visible .bus-map-hit { stroke: var(--gold-bright); stroke-width: 4; stroke-dasharray: 14 8; }
+.bus-map-region[data-state="here"] .bus-map-hit { stroke: rgb(var(--complete-rgb) / 85%); stroke-width: 3; }
+.bus-map-tag {
+  position: absolute; z-index: 2; transform: translate(-50%, -50%); display: grid; gap: .1rem; justify-items: center; padding: .25rem .8rem .3rem;
+  border: 1px solid rgb(216 173 88 / 70%); background: linear-gradient(#2b1f12e6, #120d09e6); color: var(--ink); text-align: center; pointer-events: none;
+  font-family: var(--deco-font); font-weight: 400; font-synthesis: none; letter-spacing: .04em; white-space: nowrap; box-shadow: 0 .25rem .8rem rgb(0 0 0 / 55%);
+  font-size: clamp(.55rem, 1.6cqw, 1.05rem);
+}
+.bus-map-tag small { font-family: var(--sans-font); font-size: .72em; letter-spacing: .02em; color: var(--muted); }
+.bus-map-region-tag[data-state="here"] { border-color: rgb(var(--complete-rgb)); }
+.bus-map-region-tag[data-state="here"] small { color: rgb(var(--complete-rgb)); }
+.bus-map-region-tag[data-state="locked"] { opacity: .8; }
+.bus-map-info { min-height: 1.5em; margin: 0; color: var(--ink); text-align: center; }
+.bus-map-info b { color: var(--gold-bright); font-weight: 600; }
+.bus-map-info.is-warning { color: #f0a79b; }
+
+/* The roadside "Welcome to ..." sign: a deep-green enamel board with a cream double border and gold Art Deco lettering, on two
+   posts against a dusk sky. Fades in with the screen transition; any click or Enter skips it. */
+.welcome-sign {
+  position: absolute; z-index: 46; inset: 0; display: grid; place-items: center; align-content: center; gap: 1rem; overflow: hidden; cursor: pointer;
+  background: linear-gradient(#25173b 0%, #8a3f5f 38%, #e8935c 58%, #f3c27a 66%, #3a2a1c 66.2%, #1a120a 100%);
+  font-family: var(--deco-font); font-weight: 400; font-synthesis: none;
+}
+.welcome-sign[hidden] { display: none; }
+.welcome-sign:focus { outline: none; }
+.welcome-scene { position: absolute; inset: 0; pointer-events: none; }
+.welcome-post { position: absolute; bottom: 34%; width: clamp(.7rem, 1.6vw, 1.4rem); height: 26%; background: linear-gradient(90deg, #3c2a18, #6a4a2a 45%, #3c2a18); box-shadow: 0 .4rem 1rem rgb(0 0 0 / 45%); }
+.welcome-post-left { left: 28%; } .welcome-post-right { right: 28%; }
+.welcome-board {
+  position: relative; z-index: 1; display: grid; justify-items: center; gap: .35rem; width: min(78%, 46rem); padding: clamp(1rem, 3.4vh, 2.2rem) clamp(1.2rem, 4vw, 3rem);
+  border: clamp(.35rem, .9vw, .6rem) double #f3e2b4; border-radius: .4rem; text-align: center; color: #f6d98c;
+  background: radial-gradient(ellipse at 50% 35%, #1f5a43, #123a2a 70%); box-shadow: 0 1.4rem 3rem rgb(0 0 0 / 55%), inset 0 0 0 .2rem #0c2a1e;
+}
+.welcome-kicker { margin: 0; color: #f3e2b4; font-size: clamp(.8rem, 2.4vw, 1.4rem); letter-spacing: .5em; }
+.welcome-city { margin: 0; color: #ffdc8b; font-weight: 400; font-size: clamp(1.9rem, 7vw, 4.4rem); line-height: 1.05; text-shadow: 0 .12em 0 #6b4414, 0 .3em .6em rgb(0 0 0 / 50%); }
+.welcome-subtitle { margin: 0; color: #f3e2b4; font-size: clamp(.8rem, 2vw, 1.25rem); letter-spacing: .12em; }
+.welcome-rule { display: flex; align-items: center; gap: .6rem; width: min(22rem, 70%); }
+.welcome-rule::before, .welcome-rule::after { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #d8ad58); content: ''; }
+.welcome-rule::after { background: linear-gradient(270deg, transparent, #d8ad58); }
+.welcome-rule span { width: .5rem; height: .5rem; background: #d8ad58; transform: rotate(45deg); }
+.welcome-population { margin: 0; color: #f3e2b4; font-size: clamp(1rem, 3vw, 1.9rem); letter-spacing: .18em; font-variant-numeric: lining-nums; }
+.welcome-hint { position: relative; z-index: 1; margin: 0; color: #f3e2b4cc; font-size: clamp(.75rem, 1.8vw, 1rem); letter-spacing: .3em; text-transform: uppercase; }
+.welcome-sign [data-reveal] { opacity: 0; transition: opacity .8s ease; }
+.welcome-sign [data-reveal].shown { opacity: 1; }
+.reduced-motion .bus-map-lit, .reduced-motion .bus-map-hit { transition: none; }

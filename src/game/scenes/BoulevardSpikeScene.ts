@@ -25,6 +25,7 @@ import {
 import { getAssignmentById, resolveActiveAssignment, startAssignment } from '../../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../../domain/AssignmentDefinitions';
 import { CHAPTER_ONE_CONCLUDED_FACT } from '../../domain/Chapters';
+import { isRegionId, travelTo } from '../../domain/Travel';
 import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
 import { applyDialogueChoiceById, type DialogueChoiceSelectedPayload } from '../../domain/Dialogue';
@@ -32,6 +33,7 @@ import { getDialogueGraphById } from '../../domain/DialogueGraphs';
 import type {
   AssignmentStartRequestedPayload,
   ChapterConcludedPayload,
+  TravelRequestedPayload,
   AuditionSubmittedPayload,
   DomainEventBus,
   StatusPanelVisibilityChangedPayload,
@@ -239,6 +241,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('assignment-start-requested', this.onAssignmentStartRequested),
       this.domainEvents.on('housing-upgrade-requested', this.onHousingUpgradeRequested),
       this.domainEvents.on('chapter-concluded', this.onChapterConcluded),
+      this.domainEvents.on('travel-requested', this.onTravelRequested),
       this.domainEvents.on('level-up-celebration', this.onLevelUpCelebration),
       this.domainEvents.on('status-panel-visibility-changed', this.onStatusPanelVisibilityChanged),
     ];
@@ -364,6 +367,9 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       case 'celestial-palace':
         this.domainEvents.emit('celestial-palace-entered', undefined);
         return;
+      case 'bus-depot':
+        this.domainEvents.emit('bus-depot-entered', undefined);
+        return;
       default:
         return;
     }
@@ -426,13 +432,15 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     }
 
     for (const location of this.manifest.locations) {
-      if (location.sign === null || location.sign.painted === true) continue;
-      if (location.sign.textOnly) {
-        this.createSignText(location.sign);
-        continue;
+      for (const sign of [location.sign, ...(location.extraSigns ?? [])]) {
+        if (sign === null || sign.painted === true) continue;
+        if (sign.textOnly) {
+          this.createSignText(sign);
+          continue;
+        }
+        this.createSignGlow(sign.x, sign.y);
+        this.createHangingSign(sign);
       }
-      this.createSignGlow(location.sign.x, location.sign.y);
-      this.createHangingSign(location.sign);
     }
 
     for (let index = 0; index < 22; index += 1) {
@@ -705,6 +713,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     const definition = getAssignmentById(ALL_ASSIGNMENTS, payload.assignmentId);
     if (definition === undefined) return;
     this.careerState = startAssignment(this.careerState, definition, Date.now());
+    this.emitState();
+  };
+
+  private readonly onTravelRequested = (payload: TravelRequestedPayload): void => {
+    if (!isRegionId(payload.regionId)) return;
+    this.careerState = travelTo(this.careerState, payload.regionId);
     this.emitState();
   };
 

@@ -2972,6 +2972,150 @@
     "pt-BR": "ok"
    }
   },
+  "content.region.hollywood-boulevard.name": {
+   "en": "Hollywood Boulevard",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.hollywood-boulevard.city": {
+   "en": "HOLLYWOOD",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.hollywood-boulevard.subtitle": {
+   "en": "City of Los Angeles",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.hollywood-bowl.name": {
+   "en": "Hollywood Bowl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.hollywood-bowl.city": {
+   "en": "HOLLYWOOD HILLS",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.hollywood-bowl.subtitle": {
+   "en": "City of Los Angeles",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.santa-monica-pier.name": {
+   "en": "Santa Monica Pier",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.santa-monica-pier.city": {
+   "en": "SANTA MONICA",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.santa-monica-pier.subtitle": {
+   "en": "By the Sea",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.griffith-observatory.name": {
+   "en": "Griffith Observatory",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.griffith-observatory.city": {
+   "en": "GRIFFITH PARK",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.griffith-observatory.subtitle": {
+   "en": "City of Los Angeles",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.monarch-lot.name": {
+   "en": "Monarch Pictures Studio Lot",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.monarch-lot.city": {
+   "en": "CULVER CITY",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.region.monarch-lot.subtitle": {
+   "en": "Heart of Screenland",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.location.bus-depot.prompt": {
+   "en": "Board the bus",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.location.boarding-house.prompt": {
    "en": "Enter Bellhaven Rooms",
    "tr": {
@@ -4963,6 +5107,12 @@
    }
   ],
   "locations": [
+   {
+    "id": "bus-depot",
+    "label": "Union Bus Depot",
+    "prompt": "content.location.bus-depot.prompt",
+    "enterable": true
+   },
    {
     "id": "boarding-house",
     "label": "Bellhaven Rooms",

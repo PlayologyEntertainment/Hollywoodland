@@ -32,6 +32,10 @@ export interface HomeHubEnteredPayload {
   readonly resolution: AssignmentResolution | undefined;
 }
 
+export interface TravelRequestedPayload {
+  readonly regionId: string;
+}
+
 export interface ChapterConcludedPayload {
   readonly chapter: number;
 }
@@ -68,6 +72,10 @@ export interface DomainEventMap {
   readonly 'costume-shop-entered': undefined;
   readonly 'klieg-light-entered': undefined;
   readonly 'celestial-palace-entered': undefined;
+  /** The player used the Union Bus Depot entrance: the shell opens the map of Hollywoodland. */
+  readonly 'bus-depot-entered': undefined;
+  /** The player chose a region on the map; the scene takes the bus if the trip is allowed (see domain/Travel.ts). */
+  readonly 'travel-requested': TravelRequestedPayload;
   readonly 'advance-time-requested': undefined;
   readonly 'dialogue-choice-selected': DialogueChoiceSelectedPayload;
   readonly 'talent-unlock-requested': TalentUnlockRequestedPayload;

@@ -68,6 +68,9 @@ export interface CareerState {
    * a time for now; a later housing tier could raise this to multiple
    * concurrent slots without changing this field's shape. */
   readonly assignments: AssignmentsState;
+  /** Which region of the map the player is in (see domain/Travel.ts). Absent on a new career and on older saves, which means the
+   * Boulevard, so adding it needed no save migration. */
+  readonly region?: string;
 
   // Quest graph progress (round 3) deliberately does NOT get its own field
   // here — it's tracked through `facts` (see domain/Quests.ts), the same
@@ -238,6 +241,7 @@ export function isCareerStateShape(value: unknown): value is CareerState {
   return (
     isCareerStateShapeV6(value) &&
     isHousingState((value as Record<string, unknown>).housing) &&
-    isAssignmentsState((value as Record<string, unknown>).assignments)
+    isAssignmentsState((value as Record<string, unknown>).assignments) &&
+    (((value as Record<string, unknown>).region === undefined) || typeof (value as Record<string, unknown>).region === 'string')
   );
 }

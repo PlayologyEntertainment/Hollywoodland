@@ -130,14 +130,17 @@ render.
 
 ## 4. Locations mode — the interactable points
 
-The sidebar lists the Boulevard's fixed interactable locations: the eight
-street entrances (Bellhaven Rooms, The Silver Thimble, The Gilded Spoon,
+The sidebar lists the Boulevard's fixed interactable locations: the nine
+street entrances (the Union Bus Depot, which opens the map of Hollywoodland
+(see `docs/dev/world-map.md`), Bellhaven Rooms, The Silver Thimble, The Gilded Spoon,
 the alley, The Celestial Palace, Sunset Casting Exchange, The Klieg Light,
 the Monarch Pictures gate) plus two lot-access points (the extras corral and
 the soundstage) that sit inside the Monarch gate module until the studio-lot
-map exists. Their ids are `boarding-house`, `costume-shop`, `diner`,
+map exists. Their ids are `bus-depot`, `boarding-house`, `costume-shop`, `diner`,
 `alley`, `celestial-palace`, `casting-office`, `klieg-light-office`,
-`backlot-gate`, `extras-corral`, and `soundstage`. This tool only lets you edit the ones that already
+`backlot-gate`, `extras-corral`, and `soundstage`. The depot's second sign, the wall plaque (`extraSigns` in the manifest), is
+lettered in code like its header sign but this tool does not show or edit it; change it in
+the manifest file. This tool only lets you edit the ones that already
 exist — adding a new one that does something new still needs a domain
 event wired into `BoulevardSpikeScene.ts`'s `enterLocation()` switch (and
 its id added to `BoulevardLocationId`/`LOCATION_IDS` in

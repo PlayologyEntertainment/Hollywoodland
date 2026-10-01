@@ -69,6 +69,8 @@ const PLACES: Readonly<Record<string, PlaceKind>> = {
   'costume-shop': 'building',
   'klieg-light-office': 'building',
   'celestial-palace': 'building',
+  // The depot opens the map rather than a room; it is listed so every entrance has a kind, and the map keeps the street music.
+  'bus-depot': 'building',
   'backlot-gate': 'studio',
   'extras-corral': 'studio',
   soundstage: 'studio',

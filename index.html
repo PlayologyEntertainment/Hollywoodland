@@ -149,6 +149,20 @@
           </div>
         </section>
 
+        <!-- The classic roadside "Welcome to ..." sign, shown on arriving in a region: at the start of a career, when a saved career is
+             loaded, and after a bus trip (see WelcomeSign.ts). The words are filled in by AppShell from the region's catalog entries. -->
+        <section id="welcome-sign" class="welcome-sign" aria-labelledby="welcome-city" aria-describedby="welcome-hint" tabindex="-1" hidden>
+          <div class="welcome-scene" aria-hidden="true"><span class="welcome-post welcome-post-left"></span><span class="welcome-post welcome-post-right"></span></div>
+          <div class="welcome-board">
+            <p class="welcome-kicker" data-i18n="welcomeSign.welcomeTo">WELCOME TO</p>
+            <h2 id="welcome-city" class="welcome-city">HOLLYWOOD</h2>
+            <p id="welcome-subtitle" class="welcome-subtitle">City of Los Angeles</p>
+            <div class="welcome-rule" aria-hidden="true"><span></span></div>
+            <p id="welcome-population" class="welcome-population">POP. 1,238,048</p>
+          </div>
+          <p id="welcome-hint" class="welcome-hint" data-i18n="welcomeSign.hint">Click or Press Enter</p>
+        </section>
+
         <!-- The stage is exactly the size and place of the game picture (see .stage in styles.css), so everything that hangs
              over the picture - the objective card, the Wait and Menu buttons, the entrance prompt - is anchored to the picture. -->
         <div id="stage" class="stage">
@@ -313,6 +327,18 @@
                 <button id="home-hub-close" type="button" class="primary-button" data-i18n="homeHubClose.leave">Leave</button>
               </div>
             </div>
+          </div>
+        </dialog>
+
+        <dialog id="bus-map-dialog" class="bus-map-dialog" aria-labelledby="bus-map-title">
+          <div class="bus-map-card">
+            <div class="bus-map-heading">
+              <h2 id="bus-map-title" data-i18n="busMap.title">Map of Hollywoodland</h2>
+              <button id="bus-map-close" type="button" class="chrome-button deco-label" data-i18n="busMap.close">Close</button>
+            </div>
+            <!-- The regions are drawn by BusMap.ts from WorldMap.ts; each is a focusable button laid over the picture. -->
+            <div id="bus-map-stage" class="bus-map-stage"></div>
+            <p id="bus-map-info" class="bus-map-info" role="status" aria-live="polite"></p>
           </div>
         </dialog>
 

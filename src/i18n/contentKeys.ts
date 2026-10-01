@@ -23,6 +23,9 @@ export const contentKeys = {
   dialogueSpeaker: (graphId: string, nodeId: string): string => `content.dialogue.${graphId}.${nodeId}.speaker`,
   dialogueText: (graphId: string, nodeId: string): string => `content.dialogue.${graphId}.${nodeId}.text`,
   dialogueChoice: (graphId: string, nodeId: string, choiceId: string): string => `content.dialogue.${graphId}.${nodeId}.choice.${choiceId}`,
+  regionName: (regionId: string): string => `content.region.${regionId}.name`,
+  regionCity: (regionId: string): string => `content.region.${regionId}.city`,
+  regionSubtitle: (regionId: string): string => `content.region.${regionId}.subtitle`,
   locationPrompt: (locationId: string): string => `content.location.${locationId}.prompt`,
   sceneArtAlt: (locationKey: string): string => `content.sceneArt.${locationKey}.alt`,
 };
