@@ -198,9 +198,15 @@ export class BusMap {
     this.refresh();
   }
 
-  /** Selecting is what a click always does; if the trip is allowed it also sets off. */
+  /** Selecting is what a click always does; if the trip is allowed it also sets off. On a touch screen, where a finger cannot hover to
+   * look first, the first tap only selects (and shows the fare) and a second tap on the same place sets off. */
   private choose(id: RegionId): void {
+    const needsConfirm = document.documentElement.classList.contains('touch') && this.selected !== id;
     this.selected = id;
+    if (needsConfirm) {
+      this.refresh();
+      return;
+    }
     const state = this.options.getState();
     if (travelStatus(state, id) === 'ready') {
       this.options.dialog.close();
@@ -235,6 +241,7 @@ export class BusMap {
     info.classList.toggle('is-warning', status === 'cannot-afford');
     const name = document.createElement('b');
     name.textContent = regionName(region);
-    info.replaceChildren(name, ` — ${this.statusText(state, focus, status)}`);
+    const touchHint = status === 'ready' && this.selected === focus && document.documentElement.classList.contains('touch');
+    info.replaceChildren(name, ` — ${this.statusText(state, focus, status)}${touchHint ? ` · ${t('busMap.tapAgain')}` : ''}`);
   }
 }

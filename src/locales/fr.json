@@ -45,6 +45,7 @@
   "busMap.comingSoon": "Bientôt disponible",
   "busMap.trip": "${fare} · {slots, plural, one {# créneau} other {# créneaux}}",
   "busMap.cannotAfford": "Il faut ${fare}",
+  "busMap.tapAgain": "Touchez à nouveau pour partir",
   "rotatePrompt.title": "Tournez votre téléphone",
   "rotatePrompt.text": "Hollywoodland se joue en mode paysage.",
   "welcomeSign.welcomeTo": "BIENVENUE À",

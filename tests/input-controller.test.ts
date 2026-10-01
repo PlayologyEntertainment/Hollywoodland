@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_BINDINGS, InputController } from '../src/input/InputController';
 
@@ -122,7 +122,7 @@ describe('input controller: on-screen touch controls', () => {
     expect(input.isDown('moveRight')).toBe(false);
   });
 
-  it('reports one press per touch, like a key, and drops it on release', () => {
+  it('reports one press per touch, like a key, even when the tap is over before the game looks', () => {
     const input = new InputController(new FakeWindow());
     input.setGameplayActive(true);
     input.setVirtualDown('interact', true);
@@ -131,9 +131,20 @@ describe('input controller: on-screen touch controls', () => {
     expect(input.consumePress('interact')).toBe(false);
     input.setVirtualDown('interact', false);
     input.setVirtualDown('interact', true);
-    expect(input.consumePress('interact')).toBe(true);
     input.setVirtualDown('interact', false);
+    expect(input.consumePress('interact')).toBe(true);
+  });
+
+  it('drops a released press that nobody looked at in time, so it cannot fire later', () => {
+    const input = new InputController(new FakeWindow());
+    input.setGameplayActive(true);
+    let now = 1000;
+    const spy = vi.spyOn(performance, 'now').mockImplementation(() => now);
+    input.setVirtualDown('interact', true);
+    input.setVirtualDown('interact', false);
+    now += 500;
     expect(input.consumePress('interact')).toBe(false);
+    spy.mockRestore();
   });
 
   it('lets go of everything when gameplay switches off, and says so', () => {

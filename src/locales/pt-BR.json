@@ -45,6 +45,7 @@
   "busMap.comingSoon": "Em breve",
   "busMap.trip": "${fare} · {slots, plural, one {# período} other {# períodos}}",
   "busMap.cannotAfford": "Você precisa de ${fare}",
+  "busMap.tapAgain": "Toque de novo para ir",
   "rotatePrompt.title": "Vire o celular na horizontal",
   "rotatePrompt.text": "Hollywoodland é jogado na horizontal.",
   "welcomeSign.welcomeTo": "BEM-VINDO A",

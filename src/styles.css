@@ -880,6 +880,10 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .build-label { display: none; }
   .splash-medallion { height: 64px; }
   .splash-art { border-radius: 1rem; }
+}
+/* The Character Creator stacks into one scrolling column on a narrow window. A short but wide one (a phone held sideways) keeps the
+   three panes, just tighter (see the short-screen rules below). */
+@media (max-width: 639px), (max-width: 780px) and (min-height: 621px) {
   .creator-body { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-rows: auto; align-content: start; overflow: auto; }
   .creator-body > * { grid-column: auto; grid-row: auto; }
   .creator-title-left { order: 1; }
@@ -1015,7 +1019,6 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
   .touch .chrome-button { min-height: 2.75rem; padding-inline: .8rem; font-size: .9rem; }
   .touch .chrome-button.icon-button { width: 2.75rem; height: 2.75rem; }
   .touch .hud-top { top: calc(var(--header-clear, 0px) + .3rem); }
-  .touch .drawer { top: var(--header-clear, 0px); }
   .settings-legal { display: flex; justify-content: center; gap: 1.5rem; }
 }
 .settings-legal:empty { display: none; }
@@ -1083,3 +1086,80 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
 }
 .touch-interact[hidden] { display: none; }
 .touch-interact:active { background: linear-gradient(#6a4c2c, #3a2812); }
+
+/* Touch devices, any size: comfortable targets (44px), and no zoom-on-focus on iOS, which happens to fields under 16px. */
+.touch .chrome-button, .touch .footer-legal-link, .touch .legal-close { min-height: 2.75rem; }
+.touch input:not([type='checkbox']):not([type='radio']):not([type='range']), .touch select, .touch textarea { min-height: 2.75rem; font-size: 16px; }
+.touch input[type='range'] { min-height: 2.75rem; }
+.touch .check-row { min-height: 2.75rem; align-items: center; }
+.touch input[type='checkbox'], .touch input[type='radio'] { width: 1.4rem; height: 1.4rem; }
+
+/* Phones held sideways: dialogs become full-screen sheets (inside the notch's safe area) that scroll inside, and the map lays out as
+   the picture at the left, as tall as the screen allows, with the title, info line and Close in a column beside it. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .touch dialog {
+    --dialog-max-h: 100dvh;
+    width: calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-width: none; max-height: 100dvh;
+  }
+  .touch .scene-dialog.has-scene-art { height: 100dvh; aspect-ratio: auto; }
+  .touch .has-scene-art .scene-panel { padding: .9rem 1.1rem; }
+  .touch .has-scene-art .scene-panel h2 { font-size: 1.25rem; }
+  .touch .home-hub-dialog .scene-panel { padding-left: 3rem; }
+  .touch .bus-map-card {
+    display: grid; grid-template-columns: auto minmax(10rem, 1fr); grid-template-rows: auto 1fr auto; column-gap: .8rem; row-gap: .4rem;
+    height: 100dvh; padding: .5rem .8rem;
+  }
+  .touch .bus-map-stage {
+    grid-column: 1; grid-row: 1 / -1; align-self: center; margin: 0; max-height: none; height: auto;
+    width: min(calc((100dvh - 1rem) * 1.5), calc(100vw - 14rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  }
+  .touch .bus-map-heading { grid-column: 2; grid-row: 1; }
+  .touch .bus-map-heading h2 { font-size: 1.15rem; }
+  .touch .bus-map-footer { display: contents; }
+  .touch .bus-map-info { grid-column: 2; grid-row: 2; align-self: center; }
+  .touch .bus-map-footer .chrome-button { grid-column: 2; grid-row: 3; justify-self: end; }
+}
+
+/* Phones held sideways, and any window this short: the title slate, splash and Character Creator. The slate is sized by the screen's
+   HEIGHT as well as its width (the narrow-window rule above sized it by width alone, and the clapper art alone is a third of that
+   height, so on a short screen the panel had no room left for the logo and menu and they were cut off behind it). Its logo and menu
+   are smaller to fit what is left; the splash puts its picture beside the logo, "Presents" line and Play button instead of above them. */
+@media (orientation: landscape) and (max-height: 620px) {
+  .title-panel { --slate-w: min(calc(100vw - 1rem), calc((100dvh - 1rem) * 1.4761)); max-height: none; overflow: visible; }
+  .title-panel h1 { margin: 0 0 .3rem; }
+  .title-logo { width: calc(var(--slate-w) * .36); }
+  .title-panel .menu { grid-template-columns: 1fr 1fr; }
+  .splash-screen { padding: .75rem; }
+  .splash-content {
+    display: grid; grid-template-columns: auto minmax(10rem, 16rem); grid-template-rows: auto auto 1fr; align-content: center; align-items: center;
+    justify-items: center; column-gap: 2rem; row-gap: .75rem; max-width: 100%;
+  }
+  .splash-art { grid-column: 1; grid-row: 1 / span 3; width: auto; height: auto; max-width: 60vw; max-height: calc(100dvh - 1.5rem); }
+  .splash-medallion { grid-column: 2; grid-row: 1; height: 48px; }
+  .splash-presents { grid-column: 2; grid-row: 2; }
+  .splash-enter { grid-column: 2; grid-row: 3; align-self: start; }
+  .splash-enter.deco-label { font-size: 1.5rem; }
+  .creator { --creator-pad: .5rem; --title-size: 1.2rem; gap: .3rem; }
+  .creator-body { column-gap: .5rem; row-gap: .25rem; }
+  .creator-panel { padding: .5rem; }
+  .creator-form { gap: .4rem; }
+  .creator-footer { gap: .5rem; }
+  .creator-footer button { min-height: 2.75rem; }
+  /* Settings: each slider on one row (name, slider, value) and Save always in reach. */
+  .settings-form { gap: .35rem; }
+  .settings-form label:not(.check-row):has(input[type='range']) { grid-template-columns: minmax(7rem, 12rem) 1fr 3.5rem; align-items: center; }
+  .settings-form input[type='range'] { grid-column: auto; }
+  .settings-form .primary-button { position: sticky; bottom: 0; box-shadow: 0 0 0 .75rem #110e0f; }
+}
+
+/* The Career panel (Status, with the quest log) on a phone or any narrow window: a window over everything, the HUD and header
+   included, filling the game view, with its heading fixed and the body scrolling beneath it. A 44px Close button. */
+@media (max-width: 640px), (orientation: landscape) and (max-height: 560px) {
+  .drawer { z-index: 30; inset: 0; width: auto; border-left: 0; background: #110e0f; box-shadow: none; padding-top: .6rem; }
+  .drawer-heading { padding-inline: 1rem; }
+  .drawer-scroll { padding-inline: 1rem; padding-bottom: 1rem; }
+  #close-status { width: 2.75rem; height: 2.75rem; font-size: 1.5rem; }
+}
+
+/* On a touch screen the Interact button already says what is in reach, so the text prompt would only repeat it. */
+.touch .interaction-prompt { display: none; }
