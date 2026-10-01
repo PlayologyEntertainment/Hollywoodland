@@ -1171,3 +1171,34 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
 
 /* On a touch screen the Interact button already says what is in reach, so the text prompt would only repeat it. */
 .touch .interaction-prompt { display: none; }
+
+/* Phones held sideways, round 2 of the tightening: the header and every translucent overlay are as short as their text allows, the film
+   sprockets and the band of padding that held them are gone, and the touch controls are half as wide (taller than wide, tucked into the
+   corners and, where the picture leaves black margins, mostly in them). The header buttons are about 24px tall with a tap area to match,
+   by the owner's choice. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .touch .status-bar { min-height: 1.75rem; padding-block: .1rem; gap: .4rem; }
+  .touch .hud-place strong { font-size: .85rem; line-height: 1.1; }
+  .touch .status-actions { gap: .3rem; }
+  .touch .chrome-button { min-height: 1.5rem; padding: 0 .6rem; font-size: .78rem; line-height: 1; }
+  .touch .chrome-button.icon-button { width: 1.5rem; height: 1.5rem; padding: 0; }
+  .touch .icon-button img { width: 1rem; height: 1rem; }
+
+  .touch .objective-card, .touch .hud-stats, .touch .hud-assignment-timer, .touch .interaction-prompt, .touch .toast { --film-band: 0rem; }
+  .touch .objective-card::before, .touch .hud-stats::before, .touch .hud-assignment-timer::before, .touch .interaction-prompt::before, .touch .toast::before { mask: none; -webkit-mask: none; }
+  .touch .hud-top { top: calc(var(--header-clear, 0px) + .2rem); }
+  .touch .hud-stats { padding-block: .15rem; }
+  .touch .hud-stat { padding-block: 0; gap: .05rem; }
+  .touch .hud-label { font-size: .5rem; }
+  .touch .hud-value { font-size: .85rem; line-height: 1.1; }
+  .touch .hud-assignment-timer { padding-block: .1rem; }
+  .touch .objective-card { padding: .3rem .8rem .3rem .6rem; }
+  .touch .objective-card .eyebrow { font-size: .6rem; }
+  .touch .objective-card strong { font-size: .9rem; }
+  .touch .toast { padding: .25rem 1.4rem; }
+
+  .touch-pad { left: .4rem; bottom: .6rem; width: 5.5rem; padding-inline: 0; justify-content: center; }
+  .touch-pad .touch-arrow { display: none; }
+  .touch-knob { width: 2.6rem; height: 2.6rem; margin: -1.3rem 0 0 -1.3rem; }
+  .touch-interact { right: .4rem; bottom: .6rem; width: 4.7rem; min-width: 0; max-width: none; padding: .2rem; font-size: .85rem; }
+}
