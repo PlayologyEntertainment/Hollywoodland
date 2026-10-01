@@ -1036,7 +1036,7 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
     display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .7rem; padding-block: calc(.45rem + var(--film-band));
   }
   .objective-card small { display: none; }
-  .objective-card .eyebrow::after { margin-left: .7rem; color: var(--gold); content: '2'; }
+  .objective-card .eyebrow::after { margin-left: .7rem; color: var(--gold); content: '\2022'; }
 }
 @media (orientation: landscape) and (max-height: 560px) {
   .touch .objective-card { max-width: min(18rem, 40%); padding: calc(.35rem + var(--film-band)) .8rem calc(.35rem + var(--film-band)) .7rem; }
@@ -1067,7 +1067,7 @@ body.reduced-motion *, body.reduced-motion *::before, body.reduced-motion *::aft
    bottom right that names what is in reach. Clear of the footer where there is one (phones held sideways have none). */
 .touch-controls { display: none; }
 .touch .touch-controls:not([hidden]) {
-  position: absolute; z-index: 6; inset: 0 0 var(--footer-h, 0px); display: block; pointer-events: none;
+  position: absolute; z-index: 6; inset: var(--header-h, 0px) 0 auto; height: calc(var(--stage-w) * 9 / 16); display: block; pointer-events: none;
   user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
 }
 .touch-pad, .touch-interact { position: absolute; bottom: 1rem; pointer-events: auto; touch-action: none; }

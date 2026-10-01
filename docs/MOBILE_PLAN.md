@@ -19,6 +19,10 @@ The pain points this answers: HUD and text too small; no way to walk or interact
 - Fluid `clamp()` sizing, with breakpoints at 640 / 480 / 360px.
 - The lesson of its mobile audit (`docs/design/11-mobile-audit.md`, inherited from Fibs & Flannel): test at real device widths. One action bar silently dropped a button below about 390px.
 
+## Status
+
+Phases 1–5 are done. What was checked, and what was not, is in [MOBILE_AUDIT.md](MOBILE_AUDIT.md).
+
 ## Phases
 
 ### Phase 1: Foundation
