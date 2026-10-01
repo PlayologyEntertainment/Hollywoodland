@@ -28,8 +28,8 @@ export function visualStateFor(status: TravelStatus): RegionVisualState {
 
 /**
  * The Union Bus Depot's map of Hollywoodland. The picture is drawn dimmed and drained of colour, with a full-colour copy clipped to each
- * region on top whose opacity says how lit it is: always lit where the player is; part-way when hovered or focused; fully lit with a gold
- * outline when selected. Choosing a region the player can reach (built, and the fare affordable) takes the bus; any other just selects
+ * region on top, shown through a soft-edged elliptical spotlight, whose opacity says how lit it is: full where the player is; 40% when
+ * hovered or focused; 70% when selected. There are no outlines. Choosing a region the player can reach (built, and the fare affordable) takes the bus; any other just selects
  * it and says why not. Each region is a keyboard-focusable button.
  */
 export class BusMap {
@@ -99,10 +99,7 @@ export class BusMap {
     this.svg.append(defs);
     this.svg.append(this.image('bus-map-dim'));
     for (const mapRegion of MAP_REGIONS) {
-      const clip = document.createElementNS(SVG_NS, 'clipPath');
-      clip.setAttribute('id', `bus-map-clip-${mapRegion.id}`);
-      clip.append(this.polygon(mapRegion));
-      defs.append(clip);
+      defs.append(this.spotlight(mapRegion));
 
       const group = document.createElementNS(SVG_NS, 'g');
       group.setAttribute('class', 'bus-map-region');
@@ -110,7 +107,7 @@ export class BusMap {
       group.setAttribute('tabindex', '0');
       group.dataset['region'] = mapRegion.id;
       const lit = document.createElementNS(SVG_NS, 'g');
-      lit.setAttribute('clip-path', `url(#bus-map-clip-${mapRegion.id})`);
+      lit.setAttribute('mask', `url(#bus-map-spot-${mapRegion.id})`);
       lit.append(this.image('bus-map-lit'));
       group.append(lit, this.polygon(mapRegion, 'bus-map-hit'));
       this.attach(group, mapRegion.id);
@@ -138,6 +135,41 @@ export class BusMap {
     image.setAttribute('preserveAspectRatio', 'none');
     image.setAttribute('class', className);
     return image;
+  }
+
+  /** A mask holding a soft-edged ellipse fitted to the region: solid in the middle, feathering to nothing at the rim. */
+  private spotlight(region: MapRegion): SVGMaskElement {
+    const xs = region.points.map(([x]) => x);
+    const ys = region.points.map(([, y]) => y);
+    const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+    const id = `bus-map-spot-${region.id}`;
+
+    const gradient = document.createElementNS(SVG_NS, 'radialGradient');
+    gradient.setAttribute('id', `${id}-fade`);
+    for (const [offset, opacity] of [[0, 1], [0.45, 0.9], [1, 0]] as const) {
+      const stop = document.createElementNS(SVG_NS, 'stop');
+      stop.setAttribute('offset', String(offset));
+      stop.setAttribute('stop-color', '#fff');
+      stop.setAttribute('stop-opacity', String(opacity));
+      gradient.append(stop);
+    }
+
+    const ellipse = document.createElementNS(SVG_NS, 'ellipse');
+    ellipse.setAttribute('cx', String((minX + maxX) / 2));
+    ellipse.setAttribute('cy', String((minY + maxY) / 2));
+    ellipse.setAttribute('rx', String(((maxX - minX) / 2) * 1.15));
+    ellipse.setAttribute('ry', String(((maxY - minY) / 2) * 1.15));
+    ellipse.setAttribute('fill', `url(#${id}-fade)`);
+
+    const mask = document.createElementNS(SVG_NS, 'mask');
+    mask.setAttribute('id', id);
+    mask.setAttribute('maskUnits', 'userSpaceOnUse');
+    mask.setAttribute('x', '0');
+    mask.setAttribute('y', '0');
+    mask.setAttribute('width', String(WORLD_MAP_SIZE.width));
+    mask.setAttribute('height', String(WORLD_MAP_SIZE.height));
+    mask.append(gradient, ellipse);
+    return mask;
   }
 
   private polygon(region: MapRegion, className?: string): SVGPolygonElement {

@@ -334,11 +334,13 @@
           <div class="bus-map-card">
             <div class="bus-map-heading">
               <h2 id="bus-map-title" data-i18n="busMap.title">Map of Hollywoodland</h2>
-              <button id="bus-map-close" type="button" class="chrome-button deco-label" data-i18n="busMap.close">Close</button>
             </div>
             <!-- The regions are drawn by BusMap.ts from WorldMap.ts; each is a focusable button laid over the picture. -->
             <div id="bus-map-stage" class="bus-map-stage"></div>
-            <p id="bus-map-info" class="bus-map-info" role="status" aria-live="polite"></p>
+            <div class="bus-map-footer">
+              <p id="bus-map-info" class="bus-map-info" role="status" aria-live="polite"></p>
+              <button id="bus-map-close" type="button" class="chrome-button deco-label" data-i18n="busMap.close">Close</button>
+            </div>
           </div>
         </dialog>
 
