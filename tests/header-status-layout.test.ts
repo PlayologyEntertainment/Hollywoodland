@@ -33,8 +33,8 @@ describe('the black status header', () => {
 
   it('publishes its height (and the footer\'s) to the game frame before the game boots, and re-fits Phaser when it changes', () => {
     expect(appShell).toContain("frame.style.setProperty(name, value)");
-    expect(appShell).toContain("['--header-h', header]");
-    expect(appShell).toContain("['--footer-h', footer]");
+    expect(appShell).toContain("['--header-h', phone || header.hidden ? 0 : header.getBoundingClientRect().height]");
+    expect(appShell).toContain("['--footer-h', phone || footer.hidden ? 0 : footer.getBoundingClientRect().height]");
     expect(appShell).toMatch(/screens\.statusBar\.hidden = false;[\s\S]*?this\.syncBarHeights\(\);[\s\S]*?this\.options\.onStart\(state\)/);
     expect(appShell).toContain('this.game?.scale.refresh()');
   });

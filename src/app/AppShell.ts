@@ -9,6 +9,7 @@ import { FadingNotice } from './FadingNotice';
 import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
 import { FpsReadout } from './FpsReadout';
 import { releaseFocusAfterMouseClick } from './ReleaseFocusAfterClick';
+import { PHONE_LANDSCAPE_QUERY } from './TouchMode';
 import { describeHud } from './HudStats';
 import { chooseObjective, isObjectiveAccomplished, ObjectiveTracker, type Objective } from './Objective';
 import { buildQuestLog } from './QuestLog';
@@ -607,15 +608,50 @@ export class AppShell {
     this.toast(toastMessage);
   }
 
+  /** On a phone the footer is empty of everything but its Menu, Wait and legal links, and is not shown: Menu and Wait join the buttons
+   * in the header and the Terms and Privacy links move into Settings. Moving the buttons themselves keeps their click handlers.
+   * Returns a function that puts everything where it belongs for the layout it is given. */
+  private phoneBarLayout(footer: HTMLElement): (phone: boolean) => void {
+    const actions = assertElement('.status-actions', HTMLElement);
+    const settingsLegal = assertElement('#settings-legal', HTMLElement);
+    const homes = (['#return-menu', '#advance-time', '#footer-tos', '#footer-privacy'] as const).map((selector) => {
+      const element = assertElement(selector, HTMLElement);
+      return { element, parent: element.parentElement as HTMLElement, next: element.nextSibling };
+    });
+    const phoneParents = [actions, actions, settingsLegal, settingsLegal];
+    let current = false;
+    return (phone) => {
+      if (phone === current) return;
+      current = phone;
+      homes.forEach((home, index) => {
+        if (phone) (phoneParents[index] as HTMLElement).prepend(home.element);
+        else home.parent.insertBefore(home.element, home.next);
+      });
+      // Back in the footer, Menu comes first and Wait last, as built; in the header they sit before the view buttons.
+      footer.classList.toggle('is-phone', phone);
+    };
+  }
+
   /** Publishes the heights of the black header and footer as `--header-h` and `--footer-h` on the game frame (0 while a bar is
    * hidden), so the game view fits between them and the Status panel can start below the header. A ResizeObserver keeps
    * them right when the header wraps or the text scale changes. */
   private trackBarHeights(header: HTMLElement, footer: HTMLElement): void {
     const frame = assertElement('#game-frame', HTMLElement);
+    const phoneQuery = window.matchMedia(PHONE_LANDSCAPE_QUERY);
+    const phoneLayout = this.phoneBarLayout(footer);
     const sync = (): void => {
+      // On a phone held sideways the bars float over the picture, so the game gets the whole height; `--header-clear` is how far down
+      // the header reaches, for the things that sit at the top of the picture to stay clear of it.
+      const phone = document.documentElement.classList.contains('touch') && phoneQuery.matches;
+      phoneLayout(phone);
       let changed = false;
-      for (const [name, bar] of [['--header-h', header], ['--footer-h', footer]] as const) {
-        const value = `${bar.hidden ? 0 : Math.round(bar.getBoundingClientRect().height)}px`;
+      const heights: Array<readonly [string, number]> = [
+        ['--header-h', phone || header.hidden ? 0 : header.getBoundingClientRect().height],
+        ['--footer-h', phone || footer.hidden ? 0 : footer.getBoundingClientRect().height],
+        ['--header-clear', phone && !header.hidden ? header.getBoundingClientRect().height : 0],
+      ];
+      for (const [name, height] of heights) {
+        const value = `${Math.round(height)}px`;
         if (frame.style.getPropertyValue(name) === value) continue;
         frame.style.setProperty(name, value);
         changed = true;
@@ -624,6 +660,7 @@ export class AppShell {
       // not when the parent changes size on its own, so re-fit it here.
       if (changed) this.game?.scale.refresh();
     };
+    phoneQuery.addEventListener('change', sync);
     const observer = new ResizeObserver(sync);
     observer.observe(header);
     observer.observe(footer);

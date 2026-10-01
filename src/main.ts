@@ -15,7 +15,7 @@ import { i18n } from './i18n';
 import { isLoadableLocale, resolveLocale } from './i18n/locales';
 import { applyStaticTranslations } from './i18n/staticText';
 
-applyTouchMode(document.documentElement, (query) => window.matchMedia(query));
+applyTouchMode(document.documentElement, (query) => window.matchMedia(query), window.location.search);
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
 const saveRepository = new IndexedDbSaveRepository();
 const domainEvents = new DomainEventBus();
