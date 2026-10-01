@@ -45,6 +45,8 @@
   "busMap.comingSoon": "Coming soon",
   "busMap.trip": "${fare} · {slots, plural, one {# time slot} other {# time slots}}",
   "busMap.cannotAfford": "Needs ${fare}",
+  "rotatePrompt.title": "Turn your phone sideways",
+  "rotatePrompt.text": "Hollywoodland plays in landscape.",
   "welcomeSign.welcomeTo": "WELCOME TO",
   "welcomeSign.population": "POP. {count}",
   "welcomeSign.hint": "Click or Press Enter",

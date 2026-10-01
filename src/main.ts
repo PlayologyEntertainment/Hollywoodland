@@ -2,6 +2,7 @@ import { AppShell } from './app/AppShell';
 import { AudioDirector } from './audio/AudioDirector';
 import { WebAudioEngine } from './audio/WebAudioEngine';
 import { SplashScreen } from './app/SplashScreen';
+import { applyTouchMode } from './app/TouchMode';
 import { NoOpAnalyticsClient, type AnalyticsEvent } from './analytics/Analytics';
 import { createDefaultCareerState, type CareerState } from './domain/CareerState';
 import { DomainEventBus } from './domain/DomainEventBus';
@@ -14,6 +15,7 @@ import { i18n } from './i18n';
 import { isLoadableLocale, resolveLocale } from './i18n/locales';
 import { applyStaticTranslations } from './i18n/staticText';
 
+applyTouchMode(document.documentElement, (query) => window.matchMedia(query));
 const settingsRepository = new BrowserSettingsRepository(window.localStorage);
 const saveRepository = new IndexedDbSaveRepository();
 const domainEvents = new DomainEventBus();

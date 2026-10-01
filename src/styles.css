@@ -50,7 +50,23 @@
 
 * { box-sizing: border-box; }
 html, body, #app { width: 100%; min-width: 320px; height: 100%; margin: 0; overflow: hidden; background: #100d10; color: var(--ink); }
-body { font-size: calc(1rem * var(--text-scale, 1)); }
+body { font-size: calc(1rem * var(--text-scale, 1)); touch-action: manipulation; }
+/* Phones: follow the visible viewport (the address bar comes and goes), keep clear of notches and the home indicator, and let
+   the game canvas own every gesture over it. */
+@supports (height: 100dvh) { html, body, #app { height: 100dvh; } }
+#app { padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+#game-root canvas { touch-action: none; }
+/* The game is landscape: a touch device held upright gets a rotate prompt over everything. */
+.rotate-prompt { display: none; }
+@media (orientation: portrait) {
+  .touch .rotate-prompt {
+    position: fixed; z-index: 1000; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem;
+    padding: 2rem; background: #100d10; color: var(--ink); text-align: center;
+  }
+  .rotate-prompt p { margin: 0; }
+  .rotate-prompt-icon { color: var(--gold-bright); font-size: 4rem; line-height: 1; }
+  .rotate-prompt-title { color: var(--gold-bright); font-size: 1.5rem; }
+}
 button, input { font: inherit; }
 button {
   min-height: 2.75rem;
