@@ -175,6 +175,8 @@ describe('the shipped catalogs', () => {
     for (const key of Object.keys(collectContentStrings())) used.add(key);
     // Keys the code builds at run time from an enum; tests/i18n.test.ts checks each family is complete.
     const families = ['time.slot.', 'time.weekday.', 'relationship.label.', 'audition.outcome.', 'audition.source.', 'attribute.', 'item.category.', 'talent.branch.', 'title.career.', 'title.home.'];
+    // The welcome sign is switched off for now (its strings stay for when it returns).
+    families.push('welcomeSign.');
     expect(used.size, 'the scan found the keys in use').toBeGreaterThan(300);
     expect(findUnusedKeys(english, used, families)).toEqual([]);
   });
