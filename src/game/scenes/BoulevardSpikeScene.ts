@@ -15,6 +15,8 @@ import {
 } from '../BirdFlight';
 import { isPictureCovered } from '../PictureCover';
 import { skyTileCount, skyTileLayout, SKY_DRIFT_PX_PER_SEC } from '../SkyDrift';
+import { blendLooks, easeInOut, TIME_FADE_MS, TIME_LOOKS, TIME_SKY_PATHS, type TimeLook } from '../TimeOfDay';
+import type { TimeSlot } from '../../domain/TimeSystem';
 import {
   DEFAULT_WALK_CYCLE,
   distanceForFrame,
@@ -89,6 +91,10 @@ function buildingKey(id: string): string {
   return `building:${id}`;
 }
 
+function timeSkyKey(slot: string): string {
+  return `sky:${slot}`;
+}
+
 function buildingActiveKey(id: string): string {
   return `building:${id}:active`;
 }
@@ -97,10 +103,12 @@ function buildingActiveKey(id: string): string {
  * Only buildings with an active-state texture are tracked. */
 interface DynamicBuilding {
   readonly image: Phaser.GameObjects.Image;
-  readonly baseKey: string;
-  readonly activeKey: string;
+  /** The active art, laid over the default art and faded in and out (rather than swapped) when the building lights up or goes dark. */
+  readonly overlay: Phaser.GameObjects.Image;
   readonly rule: BoulevardActiveRule;
   active: boolean;
+  /** What the overlay is fading toward (or has reached): 1 while active, 0 otherwise. */
+  shownTarget: number;
 }
 
 /** A single interactable point along the Boulevard: proximity radius,
@@ -151,8 +159,22 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private lastEmittedLevel = 1;
   /** The sky plane's accumulated drift offset and its pool of alternating-mirror tiles — see SkyDrift.ts. */
   private skyDriftX = 0;
-  private skyTiles: Phaser.GameObjects.Image[] = [];
+  /** One pool of sky tiles per time of day that has a sky (Afternoon always; Morning and Evening once their art exists), stacked at the
+   * same place. The one on top fades in over the one beneath when the time changes. */
+  private skyLayers = new Map<TimeSlot, Phaser.GameObjects.Image[]>();
+  /** The sky pool fully showing underneath any fade in progress. */
+  private skyTop: Phaser.GameObjects.Image[] | undefined;
   private skyTileWidth = 0;
+  private skyPlaneDepth = 0;
+  private skyFadeCount = 0;
+  /** Time of day: the slot last shown, the blend in progress, the grade on screen now, and whether the next change should jump (a new
+   * career or a load) rather than fade. The grade is two full-picture rectangles, one multiplying (tint, dim) and one adding (glow). */
+  private timeSlot: TimeSlot | undefined;
+  private timeBlend: Phaser.Tweens.Tween | undefined;
+  private appliedLook: TimeLook = TIME_LOOKS.afternoon;
+  private snapTime = true;
+  private gradeMultiply!: Phaser.GameObjects.Rectangle;
+  private gradeGlow!: Phaser.GameObjects.Rectangle;
   /** The ambient flock crossing the top of the screen (see BirdFlight.ts): empty between flights. */
   private birds: Array<{ readonly plan: BirdPlan; readonly image: Phaser.GameObjects.Image }> = [];
   private flockElapsedMs = 0;
@@ -184,6 +206,8 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     for (const prop of this.manifest.props) {
       this.load.image(propKey(prop.id), assetUrl(prop.path));
     }
+    // Optional skies: if one is not there yet the load just fails and the Afternoon sky stands in (see TimeOfDay.ts).
+    for (const [slot, path] of Object.entries(TIME_SKY_PATHS)) this.load.image(timeSkyKey(slot), assetUrl(path));
     this.walkCycle = (this.registry.get('walkCycle') as WalkCycle | undefined) ?? DEFAULT_WALK_CYCLE;
     this.playerTextureKey = `player:${(this.registry.get('playerCharacterId') as string | undefined) ?? 'white-male'}`;
     this.load.spritesheet(this.playerTextureKey, assetUrl(this.walkCycle.sheet), {
@@ -198,6 +222,12 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.domainEvents = this.registry.get('domainEvents') as DomainEventBus;
     this.careerState = createDefaultCareerState();
     this.lastEmittedLevel = this.careerState.progression.level;
+    // The scene is reused across a new career and Continue, so the time-of-day state starts fresh each time.
+    this.timeSlot = undefined;
+    this.timeBlend = undefined;
+    this.appliedLook = TIME_LOOKS.afternoon;
+    this.snapTime = true;
+    this.skyFadeCount = 0;
     // Phaser reuses this scene object when the game restarts it (Continue, a new career), so forget the last prompt: the
     // page has taken it down, and it must be announced again if the player is standing at an entrance.
     this.promptVisible = false;
@@ -412,13 +442,13 @@ export class BoulevardSpikeScene extends Phaser.Scene {
         .setScale(building.scale)
         .setDepth(building.depth);
       if (building.activePath !== null && building.activeWhen !== null) {
-        this.dynamicBuildings.push({
-          image,
-          baseKey: buildingKey(building.id),
-          activeKey: buildingActiveKey(building.id),
-          rule: building.activeWhen,
-          active: false,
-        });
+        const overlay = this.add
+          .image(building.x, building.y, buildingActiveKey(building.id))
+          .setOrigin(0, 1)
+          .setScale(building.scale)
+          .setDepth(building.depth + 0.01)
+          .setAlpha(0);
+        this.dynamicBuildings.push({ image, overlay, rule: building.activeWhen, active: false, shownTarget: 0 });
       }
     }
 
@@ -464,38 +494,71 @@ export class BoulevardSpikeScene extends Phaser.Scene {
 
     const vignette = this.add.graphics().setScrollFactor(0).setDepth(50);
     vignette.lineStyle(100, 0x261713, 0.12).strokeRect(-32, -32, 1984, 1144);
+
+    // The time-of-day grade sits over the whole picture (player, props and birds included) and under the vignette.
+    const { width, height } = this.scale;
+    this.gradeMultiply = this.add
+      .rectangle(0, 0, width, height, 0xffffff)
+      .setOrigin(0)
+      .setScrollFactor(0)
+      .setDepth(45)
+      .setBlendMode(Phaser.BlendModes.MULTIPLY)
+      .setVisible(false);
+    this.gradeGlow = this.add
+      .rectangle(0, 0, width, height, 0xffffff, 0)
+      .setOrigin(0)
+      .setScrollFactor(0)
+      .setDepth(46)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setVisible(false);
   }
 
   /** Builds the sky's pool of alternating-mirror tiles (see SkyDrift.ts) and places them once, so there is no
    * one-frame flash at the wrong position before the first update(). Re-run in full every create() (the scene is
    * reused across Continue/a new career), so the drift offset and the tile pool both reset with it. */
   private createSkyTiles(plane: BoulevardPlane): void {
-    const key = planeKey(plane.id);
+    const afternoonKey = planeKey(plane.id);
     this.skyDriftX = 0;
-    this.skyTileWidth = this.textures.get(key).getSourceImage().width * plane.scale;
-    this.skyTiles = Array.from({ length: skyTileCount(this.skyTileWidth, this.cameras.main.width) }, () =>
-      this.add
-        .image(0, plane.offsetY, key)
-        .setOrigin(0)
-        .setScale(plane.scale)
-        .setScrollFactor(plane.scrollFactor)
-        .setDepth(plane.depth)
-        // The drift is deliberately sub-pixel-per-frame (SKY_DRIFT_PX_PER_SEC is slow), so the game's global
-        // roundPixels snapping (createGame.ts) would hold each tile at the same rounded position for several
-        // frames, then jump it a whole pixel — the "jittery, not smooth" motion. Every other GameObject in the
-        // scene still wants that crisp snapping; only these tiles need real sub-pixel motion to look smooth.
-        .setVertexRoundMode('off'),
-    );
+    this.skyTileWidth = this.textures.get(afternoonKey).getSourceImage().width * plane.scale;
+    this.skyPlaneDepth = plane.depth;
+    this.skyLayers = new Map();
+    this.skyTop = undefined;
+    const count = skyTileCount(this.skyTileWidth, this.cameras.main.width);
+    for (const slot of ['afternoon', 'morning', 'evening'] as const) {
+      const key = slot === 'afternoon' ? afternoonKey : timeSkyKey(slot);
+      if (!this.textures.exists(key)) continue;
+      // Every sky is shown the same width however many pixels it was painted at, so they line up tile for tile.
+      const scale = this.skyTileWidth / this.textures.get(key).getSourceImage().width;
+      const tiles = Array.from({ length: count }, () =>
+        this.add
+          .image(0, plane.offsetY, key)
+          .setOrigin(0)
+          .setScale(scale)
+          .setScrollFactor(plane.scrollFactor)
+          .setDepth(plane.depth)
+          .setAlpha(slot === 'afternoon' ? 1 : 0)
+          .setVisible(slot === 'afternoon')
+          // The drift is deliberately sub-pixel-per-frame (SKY_DRIFT_PX_PER_SEC is slow), so the game's global
+          // roundPixels snapping (createGame.ts) would hold each tile at the same rounded position for several
+          // frames, then jump it a whole pixel — the "jittery, not smooth" motion. Every other GameObject in the
+          // scene still wants that crisp snapping; only these tiles need real sub-pixel motion to look smooth.
+          .setVertexRoundMode('off'),
+      );
+      this.skyLayers.set(slot, tiles);
+    }
+    this.skyTop = this.skyLayers.get('afternoon');
     this.applySkyTileLayout();
   }
 
   private applySkyTileLayout(): void {
-    const layout = skyTileLayout(this.skyDriftX, this.skyTileWidth, this.skyTiles.length);
-    this.skyTiles.forEach((tile, index) => {
-      const placement = layout[index];
-      if (placement === undefined) return;
-      tile.setX(placement.x).setFlipX(placement.flipped);
-    });
+    for (const tiles of this.skyLayers.values()) {
+      const layout = skyTileLayout(this.skyDriftX, this.skyTileWidth, tiles.length);
+      tiles.forEach((tile, index) => {
+        const placement = layout[index];
+        if (placement === undefined) return;
+        tile.setX(placement.x).setFlipX(placement.flipped);
+      });
+    }
   }
 
   /** The soft pulsing glow behind a hanging sign — factored out once round
@@ -589,12 +652,75 @@ export class BoulevardSpikeScene extends Phaser.Scene {
    * the current career state (time slot, world flags). Called from
    * emitState, so it runs on the same beat as every other state change. */
   private applyBuildingStates(): void {
-    for (const building of this.dynamicBuildings) {
-      const active = isBuildingActive(building.rule, this.careerState);
-      if (active === building.active) continue;
-      building.active = active;
-      building.image.setTexture(active ? building.activeKey : building.baseKey);
+    for (const building of this.dynamicBuildings) building.active = isBuildingActive(building.rule, this.careerState);
+  }
+
+  /** Brings the picture to the time of day in the career state: the sky for that time fades in over the one showing, the colour grade
+   * eases to its look, and each building's lit art fades in or out, all together over TIME_FADE_MS. The first call after a new career or
+   * a load (and any call with reduced motion on) jumps straight there instead. A change that arrives mid-fade carries on from where the
+   * picture is now. */
+  private syncTimeOfDay(): void {
+    const slot = this.careerState.time.slot;
+    const lightsChanged = this.dynamicBuildings.some((building) => building.shownTarget !== (building.active ? 1 : 0));
+    if (slot === this.timeSlot && !lightsChanged) return;
+    const animate = this.timeSlot !== undefined && !this.snapTime && !this.settings.reducedMotion;
+    this.timeSlot = slot;
+    this.snapTime = false;
+    this.timeBlend?.stop();
+
+    const fromLook = this.appliedLook;
+    const toLook = TIME_LOOKS[slot];
+    const fromLights = this.dynamicBuildings.map((building) => building.overlay.alpha);
+    for (const building of this.dynamicBuildings) building.shownTarget = building.active ? 1 : 0;
+
+    const incoming = this.skyLayers.get(slot) ?? this.skyLayers.get('afternoon');
+    const changesSky = incoming !== undefined && incoming !== this.skyTop;
+    if (incoming !== undefined && !changesSky) {
+      // Already the sky underneath: just clear away anything left half-faded on top of it.
+      for (const tiles of this.skyLayers.values()) if (tiles !== incoming) this.setSkyLayer(tiles, 0);
     }
+    if (changesSky && incoming !== undefined) {
+      this.skyFadeCount += 1;
+      incoming.forEach((tile) => tile.setDepth(this.skyPlaneDepth + this.skyFadeCount * 0.001).setAlpha(0).setVisible(true));
+    }
+
+    const apply = (t: number): void => {
+      if (changesSky && incoming !== undefined) incoming.forEach((tile) => tile.setAlpha(t));
+      this.applyLook(blendLooks(fromLook, toLook, t));
+      this.dynamicBuildings.forEach((building, index) => {
+        const from = fromLights[index] ?? 0;
+        building.overlay.setAlpha(from + (building.shownTarget - from) * t);
+      });
+    };
+    const finish = (): void => {
+      apply(1);
+      if (!changesSky || incoming === undefined) return;
+      this.skyTop = incoming;
+      for (const tiles of this.skyLayers.values()) if (tiles !== incoming) this.setSkyLayer(tiles, 0);
+    };
+
+    if (!animate) {
+      finish();
+      return;
+    }
+    apply(0);
+    this.timeBlend = this.tweens.addCounter({
+      from: 0,
+      to: 1,
+      duration: TIME_FADE_MS,
+      onUpdate: (tween) => apply(easeInOut(tween.getValue() ?? 0)),
+      onComplete: finish,
+    });
+  }
+
+  private setSkyLayer(tiles: Phaser.GameObjects.Image[], alpha: number): void {
+    tiles.forEach((tile) => tile.setAlpha(alpha).setVisible(alpha > 0));
+  }
+
+  private applyLook(look: TimeLook): void {
+    this.appliedLook = look;
+    this.gradeMultiply.setFillStyle(look.multiply, 1).setVisible(look.multiply !== 0xffffff);
+    this.gradeGlow.setFillStyle(look.glow, look.glowAlpha).setVisible(look.glowAlpha > 0);
   }
 
   private createPlayer(): void {
@@ -637,6 +763,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
   private emitState(): void {
     this.careerState = { ...this.careerState, playerX: Math.round(this.player.x) };
     this.applyBuildingStates();
+    this.syncTimeOfDay();
     const level = this.careerState.progression.level;
     if (level > this.lastEmittedLevel) this.domainEvents.emit('level-up', { level });
     this.lastEmittedLevel = level;
@@ -674,6 +801,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.lastEmittedLevel = state.progression.level;
     this.resolvePendingAssignment();
     this.cameras.main.centerOn(this.player.x, this.player.y);
+    this.snapTime = true;
     this.emitState();
   };
 
