@@ -29,3 +29,22 @@ describe('the touch controls in the page', () => {
     expect(css).toContain('.touch .touch-controls:not([hidden])');
   });
 });
+
+describe('the map on touch', () => {
+  it('needs a second tap on the same place to travel, with a hint in every language', () => {
+    expect(read('../src/app/BusMap.ts')).toContain("document.documentElement.classList.contains('touch') && this.selected !== id");
+    for (const code of ['en', 'de', 'es', 'fr', 'pt-BR']) expect(read(`../src/locales/${code}.json`), code).toContain('"busMap.tapAgain"');
+  });
+});
+
+describe('small-screen rules for the title, splash, creator and Career panel', () => {
+  const css = read('../src/styles.css');
+
+  it('size the title slate by the screen height too on a short landscape screen, so its logo and menu are not cut off', () => {
+    expect(css).toMatch(/@media \(orientation: landscape\) and \(max-height: 620px\) \{\s*\.title-panel \{ --slate-w: min\(calc\(100vw - 1rem\), calc\(\(100dvh - 1rem\) \* 1\.4761\)\); max-height: none; overflow: visible; \}/);
+  });
+
+  it('make the Career panel a full window above the HUD on small screens', () => {
+    expect(css).toMatch(/@media \(max-width: 640px\), \(orientation: landscape\) and \(max-height: 560px\) \{\s*\.drawer \{ z-index: 30; inset: 0;/);
+  });
+});

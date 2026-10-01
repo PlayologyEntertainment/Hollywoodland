@@ -3,7 +3,9 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "start": "vite --open",
     "dev": "vite",
@@ -16,6 +18,13 @@
     "narrative:export": "node -e \"process.env.NARRATIVE_EXPORT=1;require('child_process').spawnSync('npx',['vitest','run','tests/narrative-snapshot.test.ts'],{stdio:'inherit',shell:true,env:process.env})\"",
     "i18n:sync": "node -e \"process.env.I18N_SYNC=1;require('child_process').spawnSync('npx',['vitest','run','tests/content-catalog.test.ts'],{stdio:'inherit',shell:true,env:process.env})\""
   },
-  "dependencies": { "phaser": "4.2.1" },
-  "devDependencies": { "typescript": "7.0.2", "vite": "8.3.0", "vitest": "5.0.0" }
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.0",
+    "vitest": "5.0.0"
+  }
 }

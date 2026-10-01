@@ -9,6 +9,9 @@ export const DEFAULT_BINDINGS: InputBindings = Object.freeze({
   pause: ['Escape'],
 });
 
+/** How long a touch press still counts after the finger lifts. */
+const VIRTUAL_PRESS_GRACE_MS = 150;
+
 const PREVENT_DEFAULT_ACTIONS = new Set<InputAction>(['moveLeft', 'moveRight', 'interact']);
 
 export class InputController {
@@ -17,7 +20,8 @@ export class InputController {
   private gameplayActive = false;
   /** Actions held by on-screen touch controls, which behave exactly like held keys. */
   private readonly virtualDown = new Set<InputAction>();
-  private readonly virtualPressed = new Set<InputAction>();
+  /** Each held press and the moment it stops counting (Infinity while the finger is still down). */
+  private readonly virtualPressed = new Map<InputAction, number>();
   private readonly activeListeners = new Set<(active: boolean) => void>();
 
   public constructor(
@@ -49,12 +53,14 @@ export class InputController {
   public setVirtualDown(action: InputAction, down: boolean): void {
     if (!down) {
       this.virtualDown.delete(action);
-      this.virtualPressed.delete(action);
+      // A quick tap can be over before the game's next frame looks, so a press outlives its release for a moment (and is then dropped, so
+      // it cannot fire later when the player has walked up to something).
+      if (this.virtualPressed.has(action)) this.virtualPressed.set(action, performance.now() + VIRTUAL_PRESS_GRACE_MS);
       return;
     }
     if (!this.gameplayActive || this.virtualDown.has(action)) return;
     this.virtualDown.add(action);
-    this.virtualPressed.add(action);
+    this.virtualPressed.set(action, Infinity);
   }
 
   public isDown(action: InputAction): boolean {
@@ -63,7 +69,11 @@ export class InputController {
 
   public consumePress(action: InputAction): boolean {
     if (!this.gameplayActive) return false;
-    if (this.virtualPressed.delete(action)) return true;
+    const expires = this.virtualPressed.get(action);
+    if (expires !== undefined) {
+      this.virtualPressed.delete(action);
+      if (expires > performance.now()) return true;
+    }
     const code = this.bindings[action].find((candidate) => this.justPressed.has(candidate));
     if (code === undefined) return false;
     this.justPressed.delete(code);
