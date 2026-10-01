@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#11100f" />
     <meta name="description" content="Rise from unknown extra to silver-screen star in a romanticized 1935 Hollywood. Audition, network, and build your film career in this browser game." />
     <title>Hollywoodland - From Rags to Riches in 1930s Hollywood</title>
@@ -28,6 +28,12 @@
   </head>
   <body>
     <a class="skip-link" href="#main-menu" data-i18n="page.skipToMenu">Skip to menu</a>
+    <!-- Shown by CSS only on a touch device held upright: the game is landscape. -->
+    <div id="rotate-prompt" class="rotate-prompt" role="alert">
+      <p class="rotate-prompt-icon" aria-hidden="true">&#8635;</p>
+      <p class="rotate-prompt-title deco-label" data-i18n="rotatePrompt.title">Turn your phone sideways</p>
+      <p class="rotate-prompt-text" data-i18n="rotatePrompt.text">Hollywoodland plays in landscape.</p>
+    </div>
     <main id="app" class="app-shell">
       <section id="game-frame" class="game-frame" aria-label="Hollywoodland game view" data-i18n-attr="aria-label:gameFrame.hollywoodlandGameView">
         <div id="game-root" aria-hidden="true"></div>
@@ -360,6 +366,8 @@
               <label class="check-row"><input id="show-fps" type="checkbox" /> <span data-i18n="settingsDialog.showFpsCounter">Show frames per second</span></label>
               <label class="check-row"><input id="analytics-enabled" type="checkbox" checked /> <span data-i18n="settingsDialog.shareAnonymousPerformanceAnalytics">Share anonymous performance analytics</span></label>
             </div>
+            <!-- On a phone the footer is gone; its Terms and Privacy links move here (see AppShell.trackBarHeights). -->
+            <div id="settings-legal" class="settings-legal"></div>
             <p class="privacy-note" data-i18n="settingsDialog.noPlayerNameDialogue">No player name, dialogue text, or save data is collected.</p>
             <button class="primary-button" value="confirm" data-i18n="settingsDialog.save">Save</button>
           </form>

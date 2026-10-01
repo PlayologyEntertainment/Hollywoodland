@@ -45,6 +45,8 @@
   "busMap.comingSoon": "Próximamente",
   "busMap.trip": "${fare} · {slots, plural, one {# franja horaria} other {# franjas horarias}}",
   "busMap.cannotAfford": "Necesitas ${fare}",
+  "rotatePrompt.title": "Gira el teléfono",
+  "rotatePrompt.text": "Hollywoodland se juega en horizontal.",
   "welcomeSign.welcomeTo": "BIENVENIDO A",
   "welcomeSign.population": "HAB. {count}",
   "welcomeSign.hint": "Haz clic o pulsa Intro",
