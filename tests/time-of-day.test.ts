@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { blendLooks, easeInOut, lerpColor, TIME_FADE_MS, TIME_LOOKS, TIME_SKY_PATHS } from '../src/game/TimeOfDay';
+import { blendLooks, easeInOut, lerpColor, lightFlipTimes, TIME_FADE_MS, TIME_LOOKS, TIME_SKY_PATHS } from '../src/game/TimeOfDay';
 
 describe('time of day looks', () => {
   it('leave the afternoon exactly as drawn, and give morning and evening their own grade', () => {
@@ -17,9 +17,9 @@ describe('time of day looks', () => {
     expect(blue(TIME_LOOKS.morning.multiply)).toBeGreaterThan(red(TIME_LOOKS.morning.multiply));
   });
 
-  it('fade over one to two seconds', () => {
+  it('fade over one to four seconds', () => {
     expect(TIME_FADE_MS).toBeGreaterThanOrEqual(1000);
-    expect(TIME_FADE_MS).toBeLessThanOrEqual(2000);
+    expect(TIME_FADE_MS).toBeLessThanOrEqual(4000);
   });
 
   it('blend colours channel by channel and land exactly on both ends', () => {
@@ -41,6 +41,19 @@ describe('time of day looks', () => {
   });
 });
 
+describe('building light timing', () => {
+  it('spreads the switches around the middle of the blend, in a fixed order', () => {
+    const times = lightFlipTimes(4);
+    expect(times).toEqual(lightFlipTimes(4));
+    expect(new Set(times).size).toBe(4);
+    for (const t of times) {
+      expect(t).toBeGreaterThanOrEqual(TIME_FADE_MS / 2 - 500);
+      expect(t).toBeLessThanOrEqual(TIME_FADE_MS / 2 + 500);
+    }
+    expect(lightFlipTimes(1, 3000, 1000)).toEqual([1000]);
+  });
+});
+
 describe('the scene and the time of day', () => {
   const scene = readFileSync(new URL('../src/game/scenes/BoulevardSpikeScene.ts', import.meta.url), 'utf8');
 
@@ -49,9 +62,11 @@ describe('the scene and the time of day', () => {
     expect(scene).toContain('Object.entries(TIME_SKY_PATHS)');
   });
 
-  it('fades lit building art over the default art rather than swapping textures', () => {
-    expect(scene).toContain('overlay');
+  it('switches lit building art on and off instantly, never fading it', () => {
+    expect(scene).toContain('overlay.setAlpha(building.lit ? 1 : 0)');
+    expect(scene).toContain('lightFlipTimes(this.dynamicBuildings.length)');
     expect(scene).not.toContain('building.image.setTexture');
+    expect(scene).not.toContain('fromLights');
   });
 
   it('jumps straight to the right look after a load or a new career, and fades on any other change', () => {
