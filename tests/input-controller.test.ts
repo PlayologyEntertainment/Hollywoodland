@@ -17,6 +17,10 @@ class FakeWindow implements Pick<Window, 'addEventListener' | 'removeEventListen
     this.listeners.get(type)?.delete(listener as (event: Event) => void);
   }
 
+  public dispatchEvent(type: 'blur'): void {
+    for (const listener of this.listeners.get(type) ?? []) listener({ type } as unknown as Event);
+  }
+
   public dispatch(type: 'keydown' | 'keyup', code: string, repeat = false): void {
     const event = { code, repeat, preventDefault: () => {} } as unknown as KeyboardEvent;
     for (const listener of this.listeners.get(type) ?? []) listener(event);
@@ -157,5 +161,20 @@ describe('input controller: on-screen touch controls', () => {
     input.setGameplayActive(true);
     expect(input.isDown('moveLeft')).toBe(false);
     expect(seen).toEqual([true, false, true]);
+  });
+});
+
+describe('input controller: losing focus', () => {
+  it('lets go of held keys when the page loses focus, so nothing keeps walking after another tab was in front', () => {
+    const win = new FakeWindow();
+    const input = new InputController(win);
+    input.setGameplayActive(true);
+    press(win, 'ArrowRight');
+    input.setVirtualDown('moveLeft', true);
+    expect(input.isDown('moveRight')).toBe(true);
+    win.dispatchEvent('blur');
+    expect(input.isDown('moveRight')).toBe(false);
+    expect(input.isDown('moveLeft')).toBe(false);
+    expect(input.consumePress('moveRight')).toBe(false);
   });
 });
