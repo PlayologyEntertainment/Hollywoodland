@@ -64,10 +64,9 @@ export interface ChapterCard {
 }
 
 /**
- * The card to show next, if the career owes one. A finished Chapter 1 gets its Conclusion, then Chapter 2 opens; a finished
- * Chapter 2 gets its Conclusion. Each is remembered as a fact once seen, so a card plays once per career, and a save made
- * after Chapter 1 but before Chapter 2 existed opens Chapter 2 the next time it is loaded. Pure, so the order is tested
- * without a browser.
+ * The Conclusion the career owes next, if any: a finished Chapter 1 gets its Conclusion, and a finished Chapter 2 gets its own.
+ * Each is remembered as a fact once seen, so it plays once per career. Openings are not here: a chapter's opening page plays
+ * only when the player asks for it (see `isChapterTwoPending`), never on its own. Pure, so the order is tested without a browser.
  */
 export function nextChapterCard(
   state: CareerState,
@@ -78,9 +77,16 @@ export function nextChapterCard(
   if (!hasConcludedChapterOne(state)) {
     return isChapterOneComplete(state, quests, roster, items) ? { kind: 'conclusion', chapter: 1 } : undefined;
   }
-  if (!hasStartedChapterTwo(state)) return { kind: 'opening', chapter: 2 };
-  if (!hasConcludedChapterTwo(state) && isChapterTwoComplete(state, quests, roster, items)) return { kind: 'conclusion', chapter: 2 };
+  if (hasStartedChapterTwo(state)) {
+    return !hasConcludedChapterTwo(state) && isChapterTwoComplete(state, quests, roster, items) ? { kind: 'conclusion', chapter: 2 } : undefined;
+  }
   return undefined;
+}
+
+/** Chapter 1 is concluded but the player has not yet started Chapter 2: the Quest Helper offers a Start button, and Chapter 2's
+ * quests and conversations stay hidden until its opening page has played. Remembered by the facts, so it survives save and load. */
+export function isChapterTwoPending(state: CareerState): boolean {
+  return hasConcludedChapterOne(state) && !hasStartedChapterTwo(state);
 }
 
 /** The fact a card leaves behind once the player has read it and left. */

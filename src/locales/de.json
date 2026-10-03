@@ -1035,5 +1035,7 @@
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Den Hauptdarsteller zum Tanz auffordern. (-10 Energie)",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Hauptdarsteller",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Du schaffst es gerade noch, die Hand auszustrecken, bevor dich der Mut verlässt. Der Hauptdarsteller sieht sie an, dann dich, und grinst, denn er weiß genau, wie sich das anfühlt. „Mir geht es genauso“, sagt er ganz leise. „Komm. Wir sind zusammen nervös.“",
-  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Tief durchatmen und mit dem Tanz weitermachen."
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Tief durchatmen und mit dem Tanz weitermachen.",
+  "objective.chapter2.ready": "Eine kleine Rolle",
+  "objectiveStart.start": "Start"
 }

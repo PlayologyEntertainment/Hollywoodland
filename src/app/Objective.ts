@@ -1,5 +1,5 @@
 import type { CareerState } from '../domain/CareerState';
-import { isChapterComplete } from '../domain/Chapters';
+import { isChapterComplete, isChapterTwoPending } from '../domain/Chapters';
 import type { InventoryItemDefinition } from '../domain/Inventory';
 import { getActiveStage, getActiveStageIndex, getQuestStatus, questChapter, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
@@ -8,8 +8,9 @@ import { questStageDescription, questTitle } from '../i18n/content';
 
 /** What the Objective card is telling the player to do. */
 export interface Objective {
-  /** `quest` for a real goal, `idle` when there is nothing open. */
-  readonly kind: 'quest' | 'idle';
+  /** `quest` for a real goal, `idle` when there is nothing open, `chapter-start` when a chapter is ready and waits for the player
+   * to press Start. */
+  readonly kind: 'quest' | 'idle' | 'chapter-start';
   readonly questId: string | undefined;
   readonly stageId: string | undefined;
   /** The small line above the goal: the quest's name. */
@@ -49,6 +50,11 @@ function nextUnbuiltChapter(
   return chapters.includes(finished + 1) ? undefined : finished + 1;
 }
 
+/** Chapter 2 is ready: the card names it and offers Start, which plays its opening page. */
+function chapterTwoReadyObjective(): Objective {
+  return Object.freeze({ kind: 'chapter-start', questId: undefined, stageId: undefined, title: t('objective.chapter2.title'), goal: t('objective.chapter2.ready') });
+}
+
 /** The idle objective in the active language. */
 function idleObjective(): Objective {
   return Object.freeze({ ...IDLE_OBJECTIVE, title: t('objective.idle.title'), goal: t('objective.idle.goal') });
@@ -65,6 +71,7 @@ export function chooseObjective(
   roster: readonly RelationshipCharacter[],
   items: readonly InventoryItemDefinition[] = [],
 ): Objective {
+  if (isChapterTwoPending(state)) return chapterTwoReadyObjective();
   const open = quests
     .map((quest) => ({ quest, status: getQuestStatus(state, quest, quests, roster, items) }))
     .filter(({ status }) => status === 'active' || status === 'available');

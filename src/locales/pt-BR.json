@@ -1035,5 +1035,7 @@
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Convidar o galã para dançar. (-10 Energia)",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Galã",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Você chega a estender a mão antes que a coragem acabe. O galã olha para ela, depois para você, e sorri, porque sabe exatamente como é. “Eu também”, diz bem baixinho. “Vamos. Ficamos nervosos juntos.”",
-  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Respirar fundo e seguir com a dança."
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Respirar fundo e seguir com a dança.",
+  "objective.chapter2.ready": "Um pequeno papel",
+  "objectiveStart.start": "Começar"
 }

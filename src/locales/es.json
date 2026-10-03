@@ -1035,5 +1035,7 @@
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Invitar a bailar al galán. (-10 Energía)",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Galán",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Llegas a extender la mano antes de que te falle el valor. El galán la mira, luego a ti, y sonríe, porque sabe exactamente cómo se siente. «Yo también», dice, muy bajo. «Vamos. Estaremos nerviosos juntos.»",
-  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Respirar hondo y seguir con el baile."
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Respirar hondo y seguir con el baile.",
+  "objective.chapter2.ready": "Un papel pequeño",
+  "objectiveStart.start": "Empezar"
 }

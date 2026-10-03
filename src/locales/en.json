@@ -306,6 +306,8 @@
   "objective.idle.goal": "Explore the Boulevard",
   "objective.chapter2.title": "Chapter 2",
   "objective.chapter2.goal": "Coming Soon",
+  "objective.chapter2.ready": "A Small Part",
+  "objectiveStart.start": "Start",
   "objective.chapter3.title": "Chapter 3",
   "objective.chapter3.goal": "Coming Soon",
   "audition.factor.attributeCarried": "{attribute} carried it",

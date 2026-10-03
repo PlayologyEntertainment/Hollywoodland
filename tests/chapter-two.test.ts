@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { chooseObjective } from '../src/app/Objective';
 import { createDefaultCareerState, type CareerState } from '../src/domain/CareerState';
 import {
   CHAPTER_ONE_CONCLUDED_FACT,
@@ -7,6 +8,7 @@ import {
   CHAPTER_TWO_STARTED_FACT,
   chapterCardFact,
   isChapterComplete,
+  isChapterTwoPending,
   nextChapterCard,
 } from '../src/domain/Chapters';
 import {
@@ -122,19 +124,34 @@ describe('the chapter cards', () => {
     return current;
   };
 
-  it('follow the Chapter 1 Conclusion with the Chapter 2 opening, then wait for Chapter 2 to be done', () => {
+  it('owe the Chapter 1 Conclusion first, and never owe the Chapter 2 opening on their own', () => {
     let state = allOne(createDefaultCareerState());
     expect(nextChapterCard(state, ALL_QUESTS, roster, ALL_ITEMS)).toEqual({ kind: 'conclusion', chapter: 1 });
+    expect(isChapterTwoPending(state)).toBe(false);
     state = { ...state, facts: { ...state.facts, [chapterCardFact({ kind: 'conclusion', chapter: 1 }) as string]: true } };
-    expect(nextChapterCard(state, ALL_QUESTS, roster, ALL_ITEMS)).toEqual({ kind: 'opening', chapter: 2 });
+    expect(nextChapterCard(state, ALL_QUESTS, roster, ALL_ITEMS)).toBeUndefined();
+    expect(isChapterTwoPending(state)).toBe(true);
     state = { ...state, facts: { ...state.facts, [chapterCardFact({ kind: 'opening', chapter: 2 }) as string]: true } };
+    expect(isChapterTwoPending(state)).toBe(false);
     expect(nextChapterCard(state, ALL_QUESTS, roster, ALL_ITEMS)).toBeUndefined();
   });
 
-  it('owe nothing to a new career, and open Chapter 2 for a Chapter 1 career saved before it existed', () => {
+  it('owe nothing to a new career, and leave Chapter 2 waiting for Start in a Chapter 1 career saved before it existed', () => {
     expect(nextChapterCard(createDefaultCareerState(), ALL_QUESTS, roster, ALL_ITEMS)).toBeUndefined();
+    expect(isChapterTwoPending(createDefaultCareerState())).toBe(false);
     const saved = { ...createDefaultCareerState(), facts: { [CHAPTER_ONE_CONCLUDED_FACT]: true } };
-    expect(nextChapterCard(saved, ALL_QUESTS, roster, ALL_ITEMS)).toEqual({ kind: 'opening', chapter: 2 });
+    expect(nextChapterCard(saved, ALL_QUESTS, roster, ALL_ITEMS)).toBeUndefined();
+    expect(isChapterTwoPending(saved)).toBe(true);
+  });
+
+  it('keep Chapter 2 hidden until its opening has played, and offer Start on the Quest Helper meanwhile', () => {
+    const done = allOne(createDefaultCareerState());
+    const waiting = { ...done, facts: { ...done.facts, [CHAPTER_ONE_CONCLUDED_FACT]: true } };
+    for (const quest of ALL_QUESTS.filter((candidate) => questChapter(candidate) === 2)) expect(status(waiting, quest.id), quest.id).toBe('locked');
+    expect(chooseObjective(waiting, ALL_QUESTS, roster, ALL_ITEMS)).toMatchObject({ kind: 'chapter-start', title: 'Chapter 2', goal: 'A Small Part' });
+    for (const graph of Object.values(DIALOGUE_GRAPHS)) expect(getDialogueEntryNodeId(waiting, graph, ALL_QUESTS, roster, ALL_ITEMS), graph.id).toBe('root');
+    const started = { ...waiting, facts: { ...waiting.facts, [CHAPTER_TWO_STARTED_FACT]: true } };
+    expect(chooseObjective(started, ALL_QUESTS, roster, ALL_ITEMS)).toMatchObject({ kind: 'quest', questId: 'the-lookout' });
   });
 
   it('are remembered as facts, and a chapter with no card leaves none', () => {

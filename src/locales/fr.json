@@ -1035,5 +1035,7 @@
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Inviter le jeune premier à danser. (-10 Énergie)",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Jeune premier",
   "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Vous parvenez à tendre la main avant que le courage ne vous abandonne. Le jeune premier la regarde, puis vous, et sourit, car il sait exactement ce que c'est. « Moi aussi », dit-il très bas. « Allez. On sera nerveux ensemble. »",
-  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Reprendre votre souffle et poursuivre la danse."
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Reprendre votre souffle et poursuivre la danse.",
+  "objective.chapter2.ready": "Un petit rôle",
+  "objectiveStart.start": "Commencer"
 }

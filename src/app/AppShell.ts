@@ -4,7 +4,7 @@ import { BusMap } from './BusMap';
 import { ChapterTitlePage } from './ChapterTitlePage';
 import { getRegionById, type RegionId } from '../domain/Travel';
 import { WORLD_MAP_IMAGE } from '../game/WorldMap';
-import { nextChapterCard, type ChapterCard } from '../domain/Chapters';
+import { isChapterTwoPending, nextChapterCard, type ChapterCard } from '../domain/Chapters';
 import { FadingNotice } from './FadingNotice';
 import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
 import { FpsReadout } from './FpsReadout';
@@ -784,6 +784,13 @@ export class AppShell {
     if (card !== undefined) void this.playChapterCards(card, state);
   }
 
+  /** The player pressed Start on the Quest Helper: plays Chapter 2's opening page, after which its quests open. Ignored while
+   * anything else is on its way to the screen, and when Chapter 2 is not the thing waiting. */
+  private startChapterTwo(): void {
+    if (this.concluding || !this.inGame || this.transition.isRunning || this.isPictureCovered() || !isChapterTwoPending(this.careerState)) return;
+    void this.playChapterCards({ kind: 'opening', chapter: 2 }, this.careerState);
+  }
+
   /** The title page for a card: a Conclusion, or a chapter's opening. */
   private cardPage(card: ChapterCard): ChapterTitlePage {
     if (card.chapter === 1) return this.conclusionPage;
@@ -1208,11 +1215,17 @@ export class AppShell {
     const card = assertElement('#objective-card', HTMLElement);
     const title = assertElement('#objective-title', HTMLElement);
     const goal = assertElement('#objective-goal', HTMLElement);
+    const start = assertElement('#objective-start', HTMLButtonElement);
+    releaseFocusAfterMouseClick(card);
+    start.addEventListener('click', () => this.startChapterTwo());
     return {
       show: (objective, complete) => {
         title.textContent = objective.title;
         goal.textContent = objective.goal;
         card.classList.toggle('objective-complete', complete);
+        // A chapter that is ready shows its Start button in place of the controls hint.
+        start.hidden = objective.kind !== 'chapter-start';
+        card.classList.toggle('objective-chapter-start', objective.kind === 'chapter-start');
       },
     };
   }
