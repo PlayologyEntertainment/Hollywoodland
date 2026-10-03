@@ -4,7 +4,7 @@ import { BusMap } from './BusMap';
 import { ChapterTitlePage } from './ChapterTitlePage';
 import { getRegionById, type RegionId } from '../domain/Travel';
 import { WORLD_MAP_IMAGE } from '../game/WorldMap';
-import { hasConcludedChapterOne, isChapterOneComplete } from '../domain/Chapters';
+import { nextChapterCard, type ChapterCard } from '../domain/Chapters';
 import { FadingNotice } from './FadingNotice';
 import { choiceUsesEnergy, describeDialogueChoice } from './DialogueChoiceState';
 import { FpsReadout } from './FpsReadout';
@@ -21,7 +21,7 @@ import type { AudioController } from '../audio/AudioDirector';
 import { assignmentLock, type AssignmentDefinition, type AssignmentReward, type AssignmentResolution } from '../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../domain/AssignmentDefinitions';
 import { createDefaultCareerState, createInitialCareerState, type CareerState, type IdentityState } from '../domain/CareerState';
-import { type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
+import { getDialogueEntryNodeId, type DialogueChoice, type DialogueGraph, type DialogueNode } from '../domain/Dialogue';
 import {
   CASTING_OFFICE_DIALOGUE,
   CELESTIAL_PALACE_DIALOGUE,
@@ -293,9 +293,12 @@ export class AppShell {
   private assignmentListKey = '';
   private transition!: ScreenTransition;
   private chapterPage!: ChapterTitlePage;
+  /** The cards that open and close the chapters after the first (the first opens on `chapterPage`); see `cardPage`. */
   private conclusionPage!: ChapterTitlePage;
+  private chapterTwoPage!: ChapterTitlePage;
+  private chapterTwoConclusionPage!: ChapterTitlePage;
   private busMap!: BusMap;
-  /** The Chapter 1 Conclusion is on its way to the screen, on it, or on its way off; see `concludeChapter`. */
+  /** A chapter card (a Conclusion, or the next chapter's opening) is on its way to the screen, on it, or on its way off; see `playChapterCards`. */
   private concluding = false;
   private careerState: CareerState = createDefaultCareerState();
   private activeDialogueGraph: DialogueGraph | undefined;
@@ -351,6 +354,8 @@ export class AppShell {
     this.toastNotice = new FadingNotice(assertElement('#toast', HTMLElement));
     this.chapterPage = new ChapterTitlePage(assertElement('#chapter-title', HTMLElement));
     this.conclusionPage = new ChapterTitlePage(assertElement('#chapter-conclusion', HTMLElement));
+    this.chapterTwoPage = new ChapterTitlePage(assertElement('#chapter-two-title', HTMLElement));
+    this.chapterTwoConclusionPage = new ChapterTitlePage(assertElement('#chapter-two-conclusion', HTMLElement));
     this.busMap = new BusMap({
       dialog: assertElement('#bus-map-dialog', HTMLDialogElement),
       stage: assertElement('#bus-map-stage', HTMLElement),
@@ -768,38 +773,60 @@ export class AppShell {
     return ['#interaction-dialog', '#home-hub-dialog', '#audition-dialog', '#bus-map-dialog'].some((selector) => assertElement(selector, HTMLDialogElement).open);
   }
 
-  /** Once every Chapter 1 quest is done, and the player has seen the last goal's green "complete" beat out on the open Boulevard,
-   * fades to the Chapter 1 Conclusion, once per career. Career state arrives several times a second, so anything that is not
-   * quite ready yet (a conversation still open, the beat still playing, another fade running, a finished save that is still
-   * loading in) is simply retried on the next update. */
-  private maybeConcludeChapter(state: CareerState): void {
+  /** Once a chapter's last quest is done, and the player has seen the last goal's green "complete" beat out on the open
+   * Boulevard, fades to that chapter's Conclusion; the next chapter's opening page follows it. Each card is shown once per
+   * career (see `nextChapterCard`). Career state arrives several times a second, so anything that is not quite ready yet (a
+   * conversation still open, the beat still playing, another fade running, a finished save that is still loading in) is simply
+   * retried on the next update. */
+  private maybeShowChapterCard(state: CareerState): void {
     if (this.concluding || !this.inGame || this.transition.isRunning || this.objectives.isHolding || this.isPictureCovered()) return;
-    if (hasConcludedChapterOne(state) || !isChapterOneComplete(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS)) return;
-    void this.concludeChapter(state);
+    const card = nextChapterCard(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
+    if (card !== undefined) void this.playChapterCards(card, state);
   }
 
-  /** Dips through black to the Conclusion card, waits for the player to leave it (music off, controls off), then dips back to
-   * the Boulevard. The scene is told only once the card has been dismissed, so a career closed in the meantime still has
-   * it to show. */
-  private async concludeChapter(state: CareerState): Promise<void> {
+  /** The title page for a card: a Conclusion, or a chapter's opening. */
+  private cardPage(card: ChapterCard): ChapterTitlePage {
+    if (card.chapter === 1) return this.conclusionPage;
+    return card.kind === 'opening' ? this.chapterTwoPage : this.chapterTwoConclusionPage;
+  }
+
+  /** Dips through black to a card, waits for the player to leave it (music off, controls off), and, when another card is owed
+   * straight after it (a Conclusion is followed by the next chapter's opening), dips straight on to that one, without showing
+   * the Boulevard in between. Only then dips back to the Boulevard. The scene is told as each card is dismissed, so a career
+   * closed in the meantime still has the rest to show. */
+  private async playChapterCards(first: ChapterCard, state: CareerState): Promise<void> {
     this.concluding = true;
     this.onChapterPage = true;
     this.syncAudio();
     this.options.setGameplayActive(false);
+    let showing: ChapterTitlePage | undefined;
     try {
-      const shown = await this.transition.run(() => {
-        this.fillConclusionRecap(state);
-        this.conclusionPage.prepare();
-      });
-      if (!shown) return;
-      await this.conclusionPage.play();
-      this.options.domainEvents.emit('chapter-concluded', { chapter: 1 });
+      let card: ChapterCard | undefined = first;
+      let current = state;
+      while (card !== undefined) {
+        const page: ChapterTitlePage = this.cardPage(card);
+        const previous: ChapterTitlePage | undefined = showing;
+        const shown = await this.transition.run(() => {
+          previous?.hide();
+          if (card?.kind === 'conclusion') this.fillConclusionRecap(card.chapter, current);
+          page.prepare();
+        });
+        if (!shown) return;
+        showing = page;
+        await page.play();
+        this.options.domainEvents.emit(card.kind === 'opening' ? 'chapter-opened' : 'chapter-concluded', { chapter: card.chapter });
+        // The bus is synchronous, so the scene has already remembered the card and `careerState` is up to date.
+        current = this.careerState;
+        card = nextChapterCard(current, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
+      }
       await this.transition.run(() => {
-        this.conclusionPage.hide();
+        showing?.hide();
         this.onChapterPage = false;
       });
     } finally {
       this.conclusionPage.hide();
+      this.chapterTwoPage.hide();
+      this.chapterTwoConclusionPage.hide();
       this.onChapterPage = false;
       this.options.setGameplayActive(true);
       this.syncAudio();
@@ -807,11 +834,12 @@ export class AppShell {
     }
   }
 
-  /** The recap's opening line speaks to the player by name when they have one. */
-  private fillConclusionRecap(state: CareerState): void {
+  /** A Conclusion's recap opens by speaking to the player by name when they have one. */
+  private fillConclusionRecap(chapter: number, state: CareerState): void {
     const name = state.identity.name;
-    assertElement('#chapter-conclusion-recap', HTMLElement).textContent =
-      name.length > 0 ? t('chapterConclusion.recap.named', { name }) : t('chapterConclusion.recap.unnamed');
+    const recap = assertElement(chapter === 1 ? '#chapter-conclusion-recap' : '#chapter-two-conclusion-recap', HTMLElement);
+    if (chapter === 1) recap.textContent = name.length > 0 ? t('chapterConclusion.recap.named', { name }) : t('chapterConclusion.recap.unnamed');
+    else recap.textContent = name.length > 0 ? t('chapterTwoConclusion.recap.named', { name }) : t('chapterTwoConclusion.recap.unnamed');
   }
 
   /** Starts the game and resolves once the Boulevard has created its first frame, so a fade-in never shows a blank canvas.
@@ -865,7 +893,7 @@ export class AppShell {
   private openDialogue(graph: DialogueGraph, location: string, locationId: string): void {
     this.place = placeForLocation(locationId) ?? this.place;
     this.activeDialogueGraph = graph;
-    this.activeDialogueNodeId = graph.rootNodeId;
+    this.activeDialogueNodeId = getDialogueEntryNodeId(this.careerState, graph, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
     assertElement('#dialogue-location', HTMLElement).textContent = location;
     this.renderDialogueNode();
     void this.applySceneArt(locationId).then(() => {
@@ -1198,7 +1226,7 @@ export class AppShell {
 
   private renderCareerState(state: CareerState): void {
     this.objectives.update(state);
-    this.maybeConcludeChapter(state);
+    this.maybeShowChapterCard(state);
     assertElement('#status-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'career');
     assertElement('#home-hub-title', HTMLElement).textContent = possessiveTitle(state.identity.name, 'home');
     const hud = describeHud(state);
@@ -1250,17 +1278,23 @@ export class AppShell {
 
   /** Locked quests are omitted entirely rather than shown as "???" —
    * consistent with round 2's principle of distinguishing unavailable
-   * choices without revealing every hidden consequence. */
+   * choices without revealing every hidden consequence. Each chapter has its own collapsible group, and a chapter's group
+   * stays hidden until one of its quests is open. */
   private renderQuests(state: CareerState): void {
-    const list = assertElement('#status-quests-list', HTMLUListElement);
-    // Open quests first, then completed ones under them, which are drawn green (see .quest-complete).
-    const items = buildQuestLog(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS).map((entry) => {
-      const item = document.createElement('li');
-      item.textContent = `${entry.title} — ${entry.label}`;
-      item.classList.toggle('quest-complete', entry.completed);
-      return item;
-    });
-    list.replaceChildren(...items);
+    const entries = buildQuestLog(state, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_ITEMS);
+    for (const [chapter, listId, groupId] of [[1, '#status-quests-list', undefined], [2, '#status-quests-list-2', '#status-chapter-2'], ] as const) {
+      // Open quests first, then completed ones under them, which are drawn green (see .quest-complete).
+      const items = entries
+        .filter((entry) => entry.chapter === chapter)
+        .map((entry) => {
+          const item = document.createElement('li');
+          item.textContent = `${entry.title} — ${entry.label}`;
+          item.classList.toggle('quest-complete', entry.completed);
+          return item;
+        });
+      assertElement(listId, HTMLUListElement).replaceChildren(...items);
+      if (groupId !== undefined) assertElement(groupId, HTMLElement).hidden = items.length === 0;
+    }
   }
 
   /** A character with no relationship-state entry yet is omitted rather

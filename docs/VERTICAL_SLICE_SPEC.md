@@ -16,7 +16,7 @@ The player creates an aspiring performer, arrives on Hollywood Boulevard in 1935
 - New Career, Continue, Load, Import Save, Accessibility, and Credits.
 - Character Creator as a portrait selector: name, a portrait from the slice roster (each with its own walk cycle), and an origin.
 - Origin summary and initial allocation across Presence, Craft, Wit, Nerve, and Grit.
-- A chapter title page, followed by player control on the Boulevard. The bus or train arrival sequence is a full-game feature. Completing every quest plays a Chapter 1 Conclusion card with a short story recap, then returns to the Boulevard with "Chapter 2 - Coming Soon" in the quest helper.
+- A chapter title page, followed by player control on the Boulevard. The bus or train arrival sequence is a full-game feature. Completing every quest plays a Chapter 1 Conclusion card with a short story recap, followed by the Chapter 2 title page ("A Small Part", built on 2026-10-03: see `DECISION_LOG.md`), then returns to the Boulevard. Finishing Chapter 2 plays its own Conclusion and leaves "Chapter 3 - Coming Soon" in the quest helper.
 
 ### Hollywood Boulevard district
 

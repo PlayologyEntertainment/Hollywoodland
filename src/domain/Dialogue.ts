@@ -80,9 +80,19 @@ export interface DialogueNode {
   readonly choices: readonly DialogueChoice[];
 }
 
+/** A different place to start the conversation once its conditions hold, so a place can open on later-chapter talk while the
+ * earlier chapter's `rootNodeId` stays reachable from it. */
+export interface DialogueEntryVariant {
+  readonly conditions: readonly DialogueCondition[];
+  readonly rootNodeId: string;
+}
+
 export interface DialogueGraph {
   readonly id: string;
   readonly rootNodeId: string;
+  /** Checked last to first, so a later chapter's entry wins over an earlier one. The first to hold names the node the
+   * conversation opens on; with none, it opens on `rootNodeId`. */
+  readonly entryVariants?: readonly DialogueEntryVariant[];
   readonly nodes: readonly DialogueNode[];
 }
 
@@ -159,6 +169,22 @@ export function applyDialogueChoice(
     (current, effect) => applyDialogueEffect(current, effect, quests, roster, items),
     state,
   );
+}
+
+/** The node a conversation opens on: the latest entry variant whose conditions hold, else the graph's own root. */
+export function getDialogueEntryNodeId(
+  state: CareerState,
+  graph: DialogueGraph,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[] = [],
+): string {
+  const variants = graph.entryVariants ?? [];
+  for (let index = variants.length - 1; index >= 0; index -= 1) {
+    const variant = variants[index] as DialogueEntryVariant;
+    if (variant.conditions.every((condition) => evaluateCondition(state, condition, quests, roster, items))) return variant.rootNodeId;
+  }
+  return graph.rootNodeId;
 }
 
 export function getDialogueNode(graph: DialogueGraph, nodeId: string): DialogueNode | undefined {

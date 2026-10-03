@@ -69,10 +69,16 @@ describe('the story plan', () => {
     }
   });
 
-  it('keeps every Chapter 1 beat tied to real content and every later beat as a plan only', () => {
+  it('keeps every Chapter 2 beat tied to real content and every later beat as a plan only', () => {
     plan.chapters.forEach((chapter, index) => {
       for (const beat of chapter.arcs.flatMap((arc) => arc.beats)) {
         if (index === 0) continue;
+        if (index === 1) {
+          expect(beat.status, beat.id).toBe('in-game');
+          expect(beat.links.quests.length, beat.id).toBeGreaterThan(0);
+          expect(beat.links.dialogue.length, beat.id).toBeGreaterThan(0);
+          continue;
+        }
         expect(beat.status, beat.id).toBe('idea');
         expect(beat.links.quests.length + beat.links.dialogue.length, beat.id).toBe(0);
       }

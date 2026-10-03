@@ -93,6 +93,8 @@ export interface DomainEventMap {
   readonly 'housing-upgrade-requested': undefined;
   /** The player has read a chapter's Conclusion screen and left it; the scene remembers that so it is shown once. */
   readonly 'chapter-concluded': ChapterConcludedPayload;
+  /** The player has read a chapter's opening title page and left it; the scene remembers that so it is shown once. */
+  readonly 'chapter-opened': ChapterConcludedPayload;
   /** Fired once from BoulevardSpikeScene.emitState when progression.level rises — the raw fact of a level-up,
    * which may happen mid-dialogue. See 'level-up-celebration' for the moment it's actually safe to show it. */
   readonly 'level-up': LevelUpPayload;

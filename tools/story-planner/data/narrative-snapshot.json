@@ -371,6 +371,267 @@
     "pt-BR": "ok"
    }
   },
+  "content.quest.the-lookout.title": {
+   "en": "The Lookout",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-lookout.summary": {
+   "en": "Hear what Monarch made of your screen test, and get your call time for The Corsair's Daughter.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-lookout.stage.hear-the-verdict": {
+   "en": "Hear the verdict on your screen test at Sunset Casting.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-lookout.stage.sign-the-call-sheet": {
+   "en": "Get your call time from the production coordinator at the extras corral.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.harbor-market-wardrobe.title": {
+   "en": "Harbor-Market Wardrobe",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.harbor-market-wardrobe.summary": {
+   "en": "Get fitted for the Lookout at The Silver Thimble.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.harbor-market-wardrobe.stage.fitted": {
+   "en": "Get fitted for the Lookout's costume at The Silver Thimble.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.first-day-on-set.title": {
+   "en": "First Day on Set",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.first-day-on-set.summary": {
+   "en": "Shoot your one scene as the Lookout on The Corsair's Daughter.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.first-day-on-set.stage.report-to-set": {
+   "en": "Report to the soundstage and shoot your scene.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.first-day-on-set.stage.earn-your-credit": {
+   "en": "See the day out on the soundstage.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.a-week-of-rehearsals.title": {
+   "en": "A Week of Rehearsals",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.a-week-of-rehearsals.summary": {
+   "en": "Spend your free evenings between shoots getting to know the company.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.a-week-of-rehearsals.stage.first-evening": {
+   "en": "Spend a free evening with someone from the company.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.a-week-of-rehearsals.stage.second-evening": {
+   "en": "Spend another evening with someone different.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-wrap-party.title": {
+   "en": "The Wrap Party",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-wrap-party.summary": {
+   "en": "Save a dance at The Celestial Palace, and decide who gets it.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-wrap-party.stage.the-dance": {
+   "en": "Give your dance at the wrap party at The Celestial Palace.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.delphines-warning.title": {
+   "en": "The Rival's Warning",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.delphines-warning.summary": {
+   "en": "The other hopeful at the Monarch gate has something to say about your first credit.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.delphines-warning.stage.face-her": {
+   "en": "Hear her out at the Monarch Pictures gate.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-helpful-man.title": {
+   "en": "The Helpful Man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-helpful-man.summary": {
+   "en": "A very helpful man from Monarch's publicity department has taken an interest in you.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-helpful-man.stage.hear-the-offer": {
+   "en": "Hear what the publicity man is offering on the soundstage.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.the-helpful-man.stage.answer-the-newsman": {
+   "en": "Settle things with the newsman at The Klieg Light.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.under-the-stars.title": {
+   "en": "Under the Stars",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.under-the-stars.summary": {
+   "en": "A friend has a pair of tickets to the Hollywood Bowl, and someone he wants you to see.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.under-the-stars.stage.get-the-invitation": {
+   "en": "Hear the invitation from the veteran extra at the extras corral.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.quest.under-the-stars.stage.dress-for-the-evening": {
+   "en": "Borrow something fit for an evening out from Bellhaven Rooms.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.talent.drama-1.name": {
    "en": "Method Study",
    "tr": {
@@ -749,6 +1010,96 @@
     "pt-BR": "ok"
    }
   },
+  "content.item.lookout-sides.name": {
+   "en": "The Lookout's Sides",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.lookout-sides.description": {
+   "en": "Three pages of pencilled script: the pickpocket in the harbor market who warns the heroine.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.lookout-costume.name": {
+   "en": "Harbor-Market Costume",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.lookout-costume.description": {
+   "en": "A patched waistcoat, a striped sash and a cap pulled low: the Lookout, ready for the camera.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.first-screen-credit.name": {
+   "en": "Your First Screen Credit",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.first-screen-credit.description": {
+   "en": "A line on the call sheet of The Corsair's Daughter: the Lookout, with your name beside it.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.publicity-card.name": {
+   "en": "Publicity Card",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.publicity-card.description": {
+   "en": "A cream card with a gold studio crest and a telephone number. \"Anything you need,\" it says, in a very small hand.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.wrap-party-ribbon.name": {
+   "en": "Wrap Party Ribbon",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.item.wrap-party-ribbon.description": {
+   "en": "A silk ribbon from the Celestial Palace ballroom, kept from the night the company of The Corsair's Daughter wrapped.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.assignment.scene-study-class.title": {
    "en": "Scene Study Class",
    "tr": {
@@ -994,6 +1345,24 @@
   },
   "content.character.house-manager.role": {
    "en": "Movie-palace house manager",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.character.leading-man.role": {
+   "en": "Leading man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.character.publicity-chief.role": {
+   "en": "Studio publicity chief",
    "tr": {
     "es": "ok",
     "fr": "ok",
@@ -1469,6 +1838,231 @@
     "pt-BR": "ok"
    }
   },
+  "content.audition.lookout-first-day.title": {
+   "en": "The Lookout, Take One",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.check.0": {
+   "en": "You came to the set in your fitted costume.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.check.1": {
+   "en": "You learned your three lines on the way over.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.check.2": {
+   "en": "You and the wardrobe mistress thought about how the costume would move on camera.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.check.3": {
+   "en": "You have a fourth line to land, and you have been practicing it.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.category.intention.prompt": {
+   "en": "Why does the Lookout warn the heroine?",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.intention-genuine-warning": {
+   "en": "Because she has spent a lifetime reading danger.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.intention-guilty-conscience": {
+   "en": "Because she is trying to make up for something.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.intention-steal-the-scene": {
+   "en": "Because it is your one chance to be noticed.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.category.delivery.prompt": {
+   "en": "How do you deliver your three lines?",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.delivery-low-and-quick": {
+   "en": "Low and quick, like someone who does not want to be heard.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.delivery-over-the-shoulder": {
+   "en": "Over your shoulder, on the move.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.delivery-to-the-back-row": {
+   "en": "Pitched to the back of the soundstage.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.category.blocking.prompt": {
+   "en": "The chalk marks put you at the edge of the crowd. What do you do with them?",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.blocking-trust-the-mark": {
+   "en": "Hit your mark and hold it.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.blocking-drift-into-frame": {
+   "en": "Drift a half-step toward the lens.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.blocking-play-it-safe": {
+   "en": "Stay hidden behind the barrels.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.category.improvisation.prompt": {
+   "en": "The leading man fumbles his cue and the stuck prop crate will not budge. Do you take the opening?",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.improv-hold-the-script": {
+   "en": "Stay in the script and let the director sort it.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.improv-cover-the-flub": {
+   "en": "Improvise a line that covers for him.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.improv-overreach": {
+   "en": "Improvise big and hope it lands.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.category.adaptation.prompt": {
+   "en": "The director shouts for a second take with the crate still jammed. What do you do?",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.adapt-take-the-blame": {
+   "en": "Take the blame for the crate and keep your place.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.adapt-hold-the-scene": {
+   "en": "Quietly work the crate loose between takes.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.audition.lookout-first-day.option.adapt-freeze": {
+   "en": "Freeze until someone tells you what to do.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.casting-office-intro.root.speaker": {
    "en": "Clerk",
    "tr": {
@@ -1829,6 +2423,348 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.casting-office-intro.c2-root.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.text": {
+   "en": "For the first time since you walked in, the clerk looks up from her folder. \"Monarch has been ringing this desk all morning,\" she says. \"Sit. Don't touch anything.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-breakthrough": {
+   "en": "Ask what Monarch made of your screen test.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-promising": {
+   "en": "Ask what Monarch made of your screen test.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-wrong-role": {
+   "en": "Ask what Monarch made of your screen test.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-setback": {
+   "en": "Ask what Monarch made of your screen test.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-breakthrough.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-breakthrough.text": {
+   "en": "\"The assistant director watched your test twice,\" the clerk says, and something that is almost a smile crosses her face. \"The Lookout, harbor market, three lines, and a fourth they wrote in after the dailies. Monarch wants you.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-breakthrough.choice.take-the-part": {
+   "en": "Take the part, and the fourth line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-promising.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-promising.text": {
+   "en": "\"They liked it. They also had questions,\" the clerk says, in the voice of someone who has learned not to say more. \"The Lookout, three lines. The part is yours; the questions can wait.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-promising.choice.take-the-part": {
+   "en": "Take the part as offered.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-promising.choice.push-with-charm": {
+   "en": "Charm her into one more line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-promising.choice.push-with-wit": {
+   "en": "Joke your way to one more line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-promising.choice.push-anyway": {
+   "en": "Ask for one more line anyway.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-wrong-role.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-wrong-role.text": {
+   "en": "\"You weren't what they were testing for,\" the clerk says. \"But the casting director saw something, and there is a small part going: the Lookout, harbor market, three lines and a pickpocket's cap. Take it before somebody else sees what he saw.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.take-the-part": {
+   "en": "Take the part as offered.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.push-with-charm": {
+   "en": "Charm her into one more line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.push-with-wit": {
+   "en": "Joke your way to one more line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.push-anyway": {
+   "en": "Ask for one more line anyway.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-setback.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-setback.text": {
+   "en": "\"It wasn't your best day,\" the clerk says, not unkindly. \"But the assistant director argued for you, and the Lookout is still unfilled. Three lines. Don't make me regret this.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-setback.choice.take-the-part": {
+   "en": "Take the part as offered.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-setback.choice.push-with-charm": {
+   "en": "Charm her into one more line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-setback.choice.push-with-wit": {
+   "en": "Joke your way to one more line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-setback.choice.push-anyway": {
+   "en": "Ask for one more line anyway.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-taken.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-taken.text": {
+   "en": "She slides three pencilled pages across the counter. \"Your sides. The Lookout warns the heroine in the harbor market, and then she runs. Take them to the wardrobe mistress at The Silver Thimble, and the extras corral will give you a call time.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-taken.choice.take-the-sides": {
+   "en": "Take the pages and thank her.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-pushed.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-pushed.text": {
+   "en": "She looks at you for a long moment, then pulls a pencil from her hair and scrawls a line at the bottom of the last page. \"A fourth line. Don't let it go to your head.\" She slides the pages across. \"Wardrobe at The Silver Thimble, then the extras corral for a call time.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-pushed.choice.take-the-sides-pushed": {
+   "en": "Take the pages, and the extra line.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-refused.speaker": {
+   "en": "Clerk",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-refused.text": {
+   "en": "\"No,\" she says, flatly, and the pencil goes back in her hair. \"Three lines is three lines.\" She slides the pages across anyway. \"Wardrobe at The Silver Thimble, then the extras corral for a call time. Next time ask nicer, or ask later.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.casting-office-intro.c2-verdict-refused.choice.take-the-sides-refused": {
+   "en": "Take the pages and let it go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.sunset-diner-intro.root.speaker": {
    "en": "Counter Girl",
    "tr": {
@@ -1973,6 +2909,159 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.sunset-diner-intro.c2-root.speaker": {
+   "en": "Counter Girl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-root.text": {
+   "en": "\"Well, if it isn't the picture person,\" the counter girl says, already sliding over a slice of pie nobody ordered. \"Sit. Eat. The pie is on the house until the day you're famous enough to pay for it twice.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-root.choice.first-evening-frankie": {
+   "en": "Stay after close and help count the tips.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-root.choice.another-evening-frankie": {
+   "en": "Stay after close and help count the tips.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie.speaker": {
+   "en": "Counter Girl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie.text": {
+   "en": "The last customer is gone and the chairs are up on the tables, and she is sitting on the counter with her shoes off, counting a coffee can of coins into piles. \"Tips,\" she says. \"Half of it is from people who'll be on a poster by Christmas, and the other half is from people who want to be.\" She nudges a pile toward you. \"Do you ever wonder which you are?\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie.choice.frankie-be-candid": {
+   "en": "Say that you wonder every single day, and that you are glad of the pie. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie.choice.frankie-keep-it-light": {
+   "en": "Say you intend to be on the poster, and tip accordingly. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie.choice.frankie-not-tonight": {
+   "en": "Say you are too tired tonight, and come back another evening.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie-warm.speaker": {
+   "en": "Counter Girl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie-warm.text": {
+   "en": "She stops counting. \"Well,\" she says, and for once there is no joke after it. \"The pie is a good thing to be glad of.\" She scoops the coins into the can and swings her feet. \"Whatever you are, you'll always have a stool here. I mean that. It's the only promise I make.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie-warm.choice.frankie-warm-leave": {
+   "en": "Take the stool, and the promise.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie-awkward.speaker": {
+   "en": "Counter Girl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie-awkward.text": {
+   "en": "She laughs and pockets the coin you tip, but the laugh is a beat late. \"Sure. Poster. Don't forget the diner.\" She starts stacking the cups, faster than she needs to. \"I mean it as a joke. Mostly.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.sunset-diner-intro.c2-evening-frankie-awkward.choice.frankie-awkward-leave": {
+   "en": "Help her stack the cups.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.boarding-house-intro.root.speaker": {
    "en": "Landlady",
    "tr": {
@@ -2099,6 +3188,150 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.boarding-house-intro.c2-root.speaker": {
+   "en": "Landlady",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-root.text": {
+   "en": "The landlady looks up from her ledger, and then, very deliberately, at the call sheet sticking out of your pocket. \"Well,\" she says. \"Look at that. Rent's still due Friday, but I'll allow myself to be proud for ten minutes.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-root.choice.ask-for-an-evening-outfit": {
+   "en": "Ask whether she has anything fit for an evening out.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": {
+   "en": "Head upstairs.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit.speaker": {
+   "en": "Landlady",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit.text": {
+   "en": "\"The Hollywood Bowl?\" She puts down her pen, which she does for nothing. \"Well. There's a good wool jacket in the hall trunk that belonged to a boarder who left in the middle of the night, owing me. And a hamper in the pantry, if someone were to chip in for a chicken.\" She raises an eyebrow. \"Hold still. I'll need to take in the shoulders.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit.choice.chip-in-for-the-hamper": {
+   "en": "Chip in $10 for the chicken. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit.choice.owe-her-one": {
+   "en": "Tell her you'll owe her one. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit-paid.speaker": {
+   "en": "Landlady",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit-paid.text": {
+   "en": "She pins the shoulders with a brisk, practiced hand and, when she is done, steps back and does something she does not do: she smooths your lapel. \"There. Take the hamper. Eat the chicken while it's warm, and for pity's sake, enjoy yourself.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit-paid.choice.paid-leave": {
+   "en": "Thank her, and take the hamper.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit-owed.speaker": {
+   "en": "Landlady",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit-owed.text": {
+   "en": "\"You owe me one,\" she agrees, and writes something in her ledger that is probably not rent. The jacket is a little large and a great deal better than anything you have, and when she takes in the shoulders, her hands are surprisingly gentle. \"Go. Enjoy yourself. And come back and tell me every word.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.boarding-house-intro.c2-outfit-owed.choice.owed-leave": {
+   "en": "Promise to tell her every word.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.backlot-gate-intro.root.speaker": {
    "en": "Rival",
    "tr": {
@@ -2209,6 +3442,330 @@
   },
   "content.dialogue.backlot-gate-intro.audition-reply.choice.keep-her-secret": {
    "en": "Keep it to yourself.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.text": {
+   "en": "The rival is perched on the low wall by the gate, swinging one foot, a copy of the call sheet folded small in her fist. \"So you're the new name on the Lookout,\" she says. \"I'm not sorry to see a rival. I'm just not sure you are one.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.choice.hear-her-warning": {
+   "en": "Ask what she means.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.choice.first-evening-delphine": {
+   "en": "Spend an evening on the lot with the rival.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.choice.another-evening-delphine": {
+   "en": "Spend an evening on the lot with the rival.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-warning.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-warning.text": {
+   "en": "\"Small parts open big doors in this town,\" she says, \"and then they close them behind you. Everyone on that lot is going to be very kind to you this month. I'd think about why.\" She slides off the wall. \"I'm not telling you for your sake. I'd like you to be good, so that when I beat you, it counts.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.stand-your-ground": {
+   "en": "Tell her you earned that call sheet, and you will keep it. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.match-her-edge": {
+   "en": "Tell her you were just about to say the same. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.offer-a-truce": {
+   "en": "Offer her half your sandwich, and a truce. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.read-what-she-wants": {
+   "en": "Notice that she has not once looked at the call sheet. She is looking at the gate. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-ground.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-ground.text": {
+   "en": "She studies you for a long moment, the way a card player studies a hand, and her mouth twitches. \"All right,\" she says. \"We'll see how long you hold it.\" She hops down from the wall. \"I'm going to be watching, you know. Closely.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-ground.choice.ground-leave": {
+   "en": "Let her watch.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-edge.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-edge.text": {
+   "en": "\"Oh, I like you,\" she says, and it is not entirely a compliment. \"That makes it so much more fun when I win.\" She salutes with the call sheet. \"May the best name on the marquee win.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-edge.choice.edge-leave": {
+   "en": "Salute her back.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-truce.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-truce.text": {
+   "en": "She looks at the sandwich, and then at you, and a laugh escapes her before she can stop it. \"Half?\" She takes it, and the bite is considered. \"A truce. Fine. But it's only until one of us is on a marquee, and then I'm afraid it's every woman for herself.\" She looks briefly, startlingly shy. \"Thank you. Nobody shares anything on this lot.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-truce.choice.truce-leave": {
+   "en": "Finish your half of the sandwich.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-read.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-read.text": {
+   "en": "She goes very still. \"You noticed that,\" she says, softly. \"I've been through that gate eleven times, and every time, somebody at the booth tells me it's the wrong day. I don't want your part. I want the other side of that gate.\" She exhales. \"Nobody's ever noticed. Don't tell anyone.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-delphine-read.choice.read-leave": {
+   "en": "Promise you will not.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine.text": {
+   "en": "The lot is empty at dusk, and she is rehearsing a speech to the painted wall of a soundstage, hands pressed flat to the plaster. She stops when she hears you. \"Don't laugh,\" she says. \"Everyone laughs. The voice in my head is much meaner than you could be.\" She steps aside. \"Take the other half. Give me something to push against.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine.choice.delphine-be-candid": {
+   "en": "Read the other half honestly, and tell her what moved you. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine.choice.delphine-keep-it-light": {
+   "en": "Play it for laughs, and see if she can stay in character. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine.choice.delphine-not-tonight": {
+   "en": "Say you are too tired tonight, and come back another evening.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine-warm.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine-warm.text": {
+   "en": "She does not laugh. She goes through the speech from the top, and this time her voice does not shake, and when it ends there is a silence that does not need filling. \"That's the first time that's worked,\" she says, at last. \"I hate that it was you.\" But she is smiling. \"Come back tomorrow, and I'll hate it again.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine-warm.choice.delphine-warm-leave": {
+   "en": "Promise to come back.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine-awkward.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine-awkward.text": {
+   "en": "She plays along for nearly a minute, and then her face closes. \"I wasn't asking for a joke,\" she says. \"I was asking for a scene partner.\" She smooths her skirt and turns her face to the wall. \"Another time. Perhaps.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.backlot-gate-intro.c2-evening-delphine-awkward.choice.delphine-awkward-leave": {
+   "en": "Apologize and go.",
    "tr": {
     "es": "ok",
     "fr": "ok",
@@ -2333,6 +3890,177 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.extras-corral-intro.c2-root.speaker": {
+   "en": "Production Coordinator",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-root.text": {
+   "en": "The assistant director is pinning call sheets to the corral board with a thumbtack in his teeth. \"The Lookout,\" he says around it. \"Good. I was hoping it would be someone who shows up.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-root.choice.get-your-call-time": {
+   "en": "Ask for your call time. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-root.choice.meet-the-veteran-extra": {
+   "en": "Join the veteran extra at the end of the bench.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-call-sheet.speaker": {
+   "en": "Production Coordinator",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-call-sheet.text": {
+   "en": "\"Soundstage, seven sharp, harbor-market set,\" he says, tearing a sheet off the board and pressing a day-rate advance into your hand. \"Costume on, lines in your head, and don't talk to the camera operator. He bites.\" He pauses. \"Good luck. The Lookout is a small part. Small parts are how I got started.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-call-sheet.choice.pocket-the-call-sheet": {
+   "en": "Pocket the call sheet.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-invitation.speaker": {
+   "en": "Veteran Extra",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-invitation.text": {
+   "en": "The old hand who taught you which end of a crowd scene to stand in is leaning on a barrel, working a crossword in pencil. \"Kid,\" he says, without looking up, \"I've got two tickets to the Hollywood Bowl and a friend who plays there summers. Somebody I want you to see. A good suit, a free evening, and nobody's business but ours.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-invitation.choice.accept-the-tickets": {
+   "en": "I'll be there.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-invitation.choice.go-later": {
+   "en": "Let me see how the week goes.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-glad.speaker": {
+   "en": "Veteran Extra",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-glad.text": {
+   "en": "\"Good.\" He tucks the pencil behind his ear and, for once, the crossword stays unfilled. \"Ask the landlady for something that fits. Wear shoes you can stand in. And if I get a little sentimental, humor an old man.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-glad.choice.grin-and-go": {
+   "en": "Grin and promise to.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-later.speaker": {
+   "en": "Veteran Extra",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-later.text": {
+   "en": "\"Tickets keep,\" he says, and goes back to his crossword. \"People don't. Don't take too long.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.extras-corral-intro.c2-veteran-later.choice.leave-the-bench": {
+   "en": "Leave him to it.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.soundstage-intro.root.speaker": {
    "en": "Scene Partner",
    "tr": {
@@ -2443,6 +4171,600 @@
   },
   "content.dialogue.soundstage-intro.first-role-reply.choice.take-the-tip": {
    "en": "Take the tip and return to your mark.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.speaker": {
+   "en": "Production Coordinator",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.text": {
+   "en": "The soundstage is a cathedral of cables, canvas and painted harbor. Somewhere above the rigging, the assistant director is calling names through a megaphone, and yours is on the list.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.report-for-the-shot": {
+   "en": "Report for the harbor-market scene.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.run-the-scene-again": {
+   "en": "Ask for another go at the scene.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-breakthrough": {
+   "en": "See the day out.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-promising-complication": {
+   "en": "See the day out.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-wrong-role-right-notice": {
+   "en": "See the day out.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-memorable-setback": {
+   "en": "See the day out.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.meet-the-glossy-man": {
+   "en": "Return the wave of the glossy man by the cable trunks.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.first-evening-corinne": {
+   "en": "Spend an evening with the scene partner, running lines.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.another-evening-corinne": {
+   "en": "Spend an evening with the scene partner, running lines.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.first-evening-theo": {
+   "en": "Spend an evening with the leading man.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.another-evening-theo": {
+   "en": "Spend an evening with the leading man.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-set-briefing.speaker": {
+   "en": "Production Coordinator",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-set-briefing.text": {
+   "en": "\"You're the Lookout,\" the assistant director says, steering you onto a chalk mark by the elbow. \"Three lines. Then the heroine runs, the leading man chases, and you flatten yourself against that crate. Don't look at the lens. Don't look at me. Places!\" The crate, you notice, has been nailed down by someone in a great hurry.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-set-briefing.choice.take-your-place": {
+   "en": "Take your place on the mark.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-day-wrap-clean.speaker": {
+   "en": "Production Coordinator",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-day-wrap-clean.text": {
+   "en": "\"That's a wrap on the harbor market!\" The assistant director claps his clipboard shut. \"Your name is on the call sheet, which in this business is what we call a credit.\" The leading man gives you a two-fingered salute across the set, and a glossy man in a gray suit scribbles something in a notebook, smiling at you with every tooth.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-day-wrap-clean.choice.clean-leave": {
+   "en": "Walk off the set with your head high.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-day-wrap-rough.speaker": {
+   "en": "Production Coordinator",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-day-wrap-rough.text": {
+   "en": "\"That's a wrap, and it could have been worse,\" the assistant director says, and thumps your shoulder. \"Everyone has a first day. Mine involved a horse.\" Your name is on the call sheet all the same, and a glossy man in a gray suit is watching you from the cable trunks as though you were more interesting than you feel.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-day-wrap-rough.choice.rough-leave": {
+   "en": "Walk off the set, a little wiser.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.speaker": {
+   "en": "Publicity Chief",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.text": {
+   "en": "\"A new face on my set should never have to worry about their image,\" the glossy man says, producing a cream card from nowhere. \"Newcomers worry about the wrong things: the lighting, the lines. I worry about the right ones, which is what people say about you before you open your mouth.\" Behind him, in the window above the stage, a silver-haired man stands very still, watching the floor. \"The studio's owner likes to know who's new,\" he adds. \"I like to make that easy for him.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.choice.accept-his-help": {
+   "en": "Accept: let him look after your image.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.choice.use-his-help": {
+   "en": "Accept, and ask for the photographer's fee up front.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.choice.spot-the-hook": {
+   "en": "Ask what it will cost.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.choice.refuse-politely": {
+   "en": "Refuse, politely.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-offer.choice.send-him-to-the-newsman": {
+   "en": "Say you would rather do business with the newsman at The Klieg Light.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-hook.speaker": {
+   "en": "Publicity Chief",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-hook.text": {
+   "en": "\"Cost?\" He laughs, and it is the first thing about him that looks entirely real. \"Nothing at all. Today.\" He lets that sit between you. \"You're sharp. I like sharp. Sharp people remember a favor, and the people who remember them are the ones who get on in this town.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-hook.choice.accept-knowing": {
+   "en": "Accept, with your eyes open.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-hook.choice.refuse-knowing": {
+   "en": "Refuse, and say that you will remember he offered.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-accepted.speaker": {
+   "en": "Publicity Chief",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-accepted.text": {
+   "en": "\"Splendid.\" The card changes hands, and the glossy man's smile never quite changes with it. \"Anything you need, just say. A photographer, a column inch, a quiet word with the right person. It's all small, and it's all on the house.\" He is already walking away. \"Nothing in this town is free, of course, but I'm so very flexible about when it's due.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-accepted.choice.pocket-the-card": {
+   "en": "Pocket the card.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-refused.speaker": {
+   "en": "Publicity Chief",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-refused.text": {
+   "en": "\"A pity, and a wise one,\" he says, with exactly the same smile. \"Keep the card, if you like. People change their minds. I do so enjoy being there when they do.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-refused.choice.decline-the-card": {
+   "en": "Leave the card where it is.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-deflected.speaker": {
+   "en": "Publicity Chief",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-deflected.text": {
+   "en": "For half a second the glossy man stops smiling. Then he finds it again. \"The Klieg Light. Of course. They do so love a trade.\" He tips an imaginary hat. \"Do mention me to him. He'll know who you mean.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-pike-deflected.choice.let-him-go": {
+   "en": "Watch him go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne.speaker": {
+   "en": "Scene Partner",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne.text": {
+   "en": "The harbor set is dark, and she is in a canvas chair in a pool of work light, mending the sleeve of her heroine's blouse with a very small needle. \"Sit,\" she says, patting the next chair. \"I've been told we're friends now. I'd like to find out if that is true, preferably without a script.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne.choice.corinne-be-candid": {
+   "en": "Admit that the part scared you more than you let anyone see. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne.choice.corinne-keep-it-light": {
+   "en": "Keep it light, and do your best impression of the director. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne.choice.corinne-not-tonight": {
+   "en": "Say you are too tired tonight, and come back another evening.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne-warm.speaker": {
+   "en": "Scene Partner",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne-warm.text": {
+   "en": "\"Everyone is scared,\" she says, quietly. \"The ones who say they aren't are lying, or they're the director.\" She smiles at you, and for a minute there is no set, no studio, no schedule, only the two of you and a very small needle. \"Thank you for telling me. I don't get told things.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne-warm.choice.corinne-warm-leave": {
+   "en": "Say goodnight.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne-awkward.speaker": {
+   "en": "Scene Partner",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne-awkward.text": {
+   "en": "Your impression is, you are told, uncannily accurate, and she laughs until she has to put the needle down. But somewhere in the laughing, she goes quiet, and looks at you as though she had expected something else. \"You do that very well,\" she says. \"Making a joke. I wonder what you'd say if you didn't.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-corinne-awkward.choice.corinne-awkward-leave": {
+   "en": "Say goodnight, a little thoughtfully.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo.speaker": {
+   "en": "Leading Man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo.text": {
+   "en": "The leading man is sitting on an apple box in the wings, taping his knuckles out of habit and gazing at nothing. \"Stunt rider, before this,\" he says, when he notices you. \"Nobody ever told me you had to talk and fall off a horse at the same time. I keep waiting for someone to notice I'm not a real actor.\" He looks up. \"You did well today. How'd you do it?\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo.choice.theo-be-candid": {
+   "en": "Tell him the truth: nobody feels like a real actor, not for years. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo.choice.theo-keep-it-light": {
+   "en": "Tell him it is easy: you just pretend to be someone who isn't scared. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo.choice.theo-not-tonight": {
+   "en": "Say you are too tired tonight, and come back another evening.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo-warm.speaker": {
+   "en": "Leading Man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo-warm.text": {
+   "en": "He laughs, a real, startled laugh, and the tape stops mid-wrap. \"Years. Good grief. I'd have signed for months.\" He studies you a moment, and then lets out a long breath. \"Thank you. That helped more than a pat on the back would have. Will you do me the favor of running a scene with me tomorrow? Just so I'm not on my own.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo-warm.choice.theo-warm-leave": {
+   "en": "Say you will.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo-awkward.speaker": {
+   "en": "Leading Man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo-awkward.text": {
+   "en": "\"Pretend not to be scared,\" he repeats, slowly, and the smile he gives you is a polite one. \"I've tried that. It works until someone says action.\" He stands, brushing off his knees, and the moment closes like a stage door. \"Well. Goodnight. See you on the lot.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.soundstage-intro.c2-evening-theo-awkward.choice.theo-awkward-leave": {
+   "en": "Wish him goodnight.",
    "tr": {
     "es": "ok",
     "fr": "ok",
@@ -2587,6 +4909,186 @@
   },
   "content.dialogue.silver-thimble-intro.fitting-reply.choice.thank-her": {
    "en": "Thank her and promise to come back.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-root.speaker": {
+   "en": "Wardrobe Mistress",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-root.text": {
+   "en": "The wardrobe mistress peers at you over a pincushion strapped to her wrist. \"Monarch sent your measurements ahead. Stand on the box. And stop looking at the door; the harbor market isn't going anywhere.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-root.choice.get-fitted": {
+   "en": "Step onto the fitting box.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitting.speaker": {
+   "en": "Wardrobe Mistress",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitting.text": {
+   "en": "\"Black photographs gray, white blooms, and a stripe will crawl on film if you let it,\" she mutters through a mouthful of pins. \"So. The Lookout. A pickpocket in a harbor market. Do you want to be seen, to move, or to blend in?\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-bold": {
+   "en": "Be seen: a bright sash and a cap with a feather. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-practical": {
+   "en": "Move: nothing that will snag or crawl on film. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-camera-ready": {
+   "en": "Ask how each layer will photograph, and plan the costume around the lens. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-borrowed": {
+   "en": "Blend in: something off the rack that has been on a hundred extras. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-bold.speaker": {
+   "en": "Wardrobe Mistress",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-bold.text": {
+   "en": "She stabs a last pin into the sash and steps back, squinting. \"The camera will find you in that, for better or worse. Mostly better. Don't blame me if the director tells you to tone it down.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-bold.choice.bold-leave": {
+   "en": "Take the costume and go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-practical.speaker": {
+   "en": "Wardrobe Mistress",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-practical.text": {
+   "en": "She nods slowly, the way someone does when a customer says the right thing without being told. \"Good. Nothing to snag, nothing to crawl. You'll look like you grew up in that waistcoat.\" She starts pulling the pins. \"Hold still.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-practical.choice.practical-leave": {
+   "en": "Take the costume and go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-borrowed.speaker": {
+   "en": "Wardrobe Mistress",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-borrowed.text": {
+   "en": "\"Third pickpocket this month,\" she sighs, taking in the seams the previous wearers let out. \"It'll do. But you owe me one, and I don't mean the rental fee.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.silver-thimble-intro.c2-fitted-borrowed.choice.borrowed-leave": {
+   "en": "Take the costume and go.",
    "tr": {
     "es": "ok",
     "fr": "ok",
@@ -2792,6 +5294,231 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.klieg-light-intro.c2-root.speaker": {
+   "en": "Newspaper Stringer",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-root.text": {
+   "en": "The newsman peers over a half-typed column, sleeves rolled, ink on his chin. \"The gossip says you're in pictures now,\" he says. \"Gossip is usually late. I'd like to be early.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-root.choice.trade-with-the-newsman": {
+   "en": "Hear what he is offering.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-root.choice.trade-with-the-newsman-knowing": {
+   "en": "Hear what he is offering.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade.speaker": {
+   "en": "Newspaper Stringer",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade.text": {
+   "en": "\"A first credit is a story,\" he says, rolling a sheet of copy paper out of his machine. \"Not a big one. But I run small ones next to ads for toothpaste, and nobody reads the toothpaste. What I'd like is the first word, in your own words, in exchange for a column inch you can use.\" He eyes you. \"Everyone in this business trades. I just prefer to be honest about the price.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade.choice.feed-him-the-first-word": {
+   "en": "Give him the first word on your Lookout. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade.choice.keep-it-off-the-record": {
+   "en": "Ask him to hold it for now. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade.choice.bargain-hard": {
+   "en": "Bargain him up to a fee for the first word. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.speaker": {
+   "en": "Newspaper Stringer",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.text": {
+   "en": "The newsman stops typing. \"I hear Monarch's publicity man has taken a shine to you,\" he says carefully. \"Be careful whose favors you collect, friend. Not because anything is wrong with them. Because, in this town, the ones who give them have a very long memory.\" He rolls out his copy paper. \"I'd still like the first word, if you're offering. Mine is cheaper, and it comes with fewer strings.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.choice.feed-him-the-first-word": {
+   "en": "Give him the first word on your Lookout. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.choice.keep-it-off-the-record": {
+   "en": "Ask him to hold it for now. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.choice.bargain-hard": {
+   "en": "Bargain him up to a fee for the first word. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-fed.speaker": {
+   "en": "Newspaper Stringer",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-fed.text": {
+   "en": "He types for a full minute without looking up, then tears the sheet free with a flourish. \"'Newcomer wins the Lookout,' with your name spelled correctly, which I assure you is a courtesy.\" He pins it to the board behind his desk. \"You gave me something. I won't forget it.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-fed.choice.fed-leave": {
+   "en": "Shake his hand and go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-held.speaker": {
+   "en": "Newspaper Stringer",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-held.text": {
+   "en": "\"Off the record.\" He lowers his pencil with visible reluctance, then smiles. \"I admire that, even if my editor won't. I'll hold it. Come back when you have something you want printed.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-held.choice.held-leave": {
+   "en": "Thank him and go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-bargained.speaker": {
+   "en": "Newspaper Stringer",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-bargained.text": {
+   "en": "\"A fee, for a first word.\" He laughs, and then counts out three bills and some change anyway. \"You've got the instincts of a publicist, and I mean that as a compliment, mostly. Here. Don't spend it all on hats.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.klieg-light-intro.c2-nick-bargained.choice.bargained-leave": {
+   "en": "Pocket the money and go.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.celestial-palace-lobby.root.speaker": {
    "en": "House Manager",
    "tr": {
@@ -2965,6 +5692,249 @@
   },
   "content.dialogue.celestial-palace-lobby.voucher-reply.choice.accept-the-matinee-pass": {
    "en": "Promise to come by.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-root.speaker": {
+   "en": "House Manager",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-root.text": {
+   "en": "The house manager has thrown the ballroom doors open, and somewhere behind him a trio is warming up. \"The company of The Corsair's Daughter has the Palace tonight,\" he says, \"and I have the honor of keeping order in it. I do hope you've brought your dancing shoes.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-root.choice.go-to-the-wrap-party": {
+   "en": "Step into the ballroom.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-root.choice.c2-something-else": {
+   "en": "Talk about something else.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-root.choice.c2-leave": {
+   "en": "Step back outside.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.speaker": {
+   "en": "House Manager",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.text": {
+   "en": "The ballroom is gold and low light and the bright chatter of a company at the end of a picture. The scene partner stands by the punch bowl in a silver dress, the leading man is trying not to look as though he is waiting for someone, the counter girl has come straight from her shift with a flower pinned to her apron, and the rival leans in the doorway with the air of someone who does not intend to dance. \"There is time for exactly one dance before the band takes its break,\" the house manager murmurs at your shoulder. \"Who is it to be?\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne": {
+   "en": "Ask the scene partner to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie": {
+   "en": "Ask the counter girl to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine": {
+   "en": "Ask the rival to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo": {
+   "en": "Ask the leading man to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-everyone": {
+   "en": "Dance with no one in particular, and with everyone in turn. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne.speaker": {
+   "en": "Scene Partner",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne.text": {
+   "en": "She takes your hand without a word, and the band, as if it had been waiting, slips into something slow. You dance with the careful, startled grace of two people who have rehearsed every beat of a scene and have just been told to forget it. \"I hoped you'd ask,\" she says, very low. Her hand stays in yours a moment longer than the music needs.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne.choice.corinne-leave-the-ballroom": {
+   "en": "Leave the ballroom, a little dazed.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie.speaker": {
+   "en": "Counter Girl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie.text": {
+   "en": "\"Me?\" she says, flushing to her hairline, and then, in a rush: \"Well, I should hope so, I came all the way over here.\" The flower on her apron is slightly crushed, and she smells of coffee and lilac. She dances badly, and cheerfully, and without any of her usual jokes, and when the song ends she keeps hold of your sleeve. \"That was swell,\" she says. \"That was really swell.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie.choice.frankie-leave-the-ballroom": {
+   "en": "Leave the ballroom, a little dazed.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine.text": {
+   "en": "\"You're joking,\" she says, and when you aren't, she lifts her chin. \"I'm leading.\" She does. She dances the way she does everything, as if the floor were a stage and every other couple a rival, and halfway through, the stiffness goes out of her shoulders, and for four bars she simply dances. \"Don't tell anyone,\" she mutters. \"It's a truce. Not a surrender.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine.choice.delphine-leave-the-ballroom": {
+   "en": "Leave the ballroom, a little dazed.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo.speaker": {
+   "en": "Leading Man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo.text": {
+   "en": "\"Oh, I should warn you,\" the leading man says, as he takes your hand, \"I fall off things.\" He does not; he dances with a rider's balance, steady and careful and unexpectedly light, and when you tell him so, he flushes. \"That's the nicest thing anyone's said to me this year.\" The music lingers, and so does he.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo.choice.theo-leave-the-ballroom": {
+   "en": "Leave the ballroom, a little dazed.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-none.speaker": {
+   "en": "House Manager",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-none.text": {
+   "en": "You spend the evening wherever the music carries you: a waltz with the scene partner, a lindy hop with the counter girl, a tango with the rival that turns into a competition, and a clumsy turn about the floor with the leading man, who steps on your foot and apologizes four times. By the end, everyone is laughing. \"A wise choice,\" the house manager says, passing you a glass of lemonade. \"The evening is long, and the studio is longer.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-none.choice.none-leave-the-ballroom": {
+   "en": "Leave the ballroom, a little dazed.",
    "tr": {
     "es": "ok",
     "fr": "ok",
@@ -3599,12 +6569,363 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.casting-office-intro.c2-root.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "ask-about-the-test-breakthrough",
+       "label": "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-breakthrough",
+       "next": "c2-verdict-breakthrough",
+       "conditions": [
+        "quest \"the-lookout\" is available",
+        "fact \"screen-test:outcome:breakthrough\" is set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "ask-about-the-test-promising",
+       "label": "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-promising",
+       "next": "c2-verdict-promising",
+       "conditions": [
+        "quest \"the-lookout\" is available",
+        "fact \"screen-test:outcome:promising-complication\" is set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "ask-about-the-test-wrong-role",
+       "label": "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-wrong-role",
+       "next": "c2-verdict-wrong-role",
+       "conditions": [
+        "quest \"the-lookout\" is available",
+        "fact \"screen-test:outcome:wrong-role-right-notice\" is set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "ask-about-the-test-setback",
+       "label": "content.dialogue.casting-office-intro.c2-root.choice.ask-about-the-test-setback",
+       "next": "c2-verdict-setback",
+       "conditions": [
+        "quest \"the-lookout\" is available",
+        "fact \"screen-test:outcome:memorable-setback\" is set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.casting-office-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.casting-office-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-breakthrough",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-breakthrough.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-breakthrough.text",
+     "choices": [
+      {
+       "id": "take-the-part",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-breakthrough.choice.take-the-part",
+       "next": "c2-verdict-taken",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +4",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-promising",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-promising.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-promising.text",
+     "choices": [
+      {
+       "id": "take-the-part",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-promising.choice.take-the-part",
+       "next": "c2-verdict-taken",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +2"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-with-charm",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-promising.choice.push-with-charm",
+       "next": "c2-verdict-pushed",
+       "conditions": [
+        "talent \"charm-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +3",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-with-wit",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-promising.choice.push-with-wit",
+       "next": "c2-verdict-pushed",
+       "conditions": [
+        "talent \"comedy-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +3",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-anyway",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-promising.choice.push-anyway",
+       "next": "c2-verdict-refused",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: tension +3"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-wrong-role",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-wrong-role.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-wrong-role.text",
+     "choices": [
+      {
+       "id": "take-the-part",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.take-the-part",
+       "next": "c2-verdict-taken",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +2"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-with-charm",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.push-with-charm",
+       "next": "c2-verdict-pushed",
+       "conditions": [
+        "talent \"charm-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +3",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-with-wit",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.push-with-wit",
+       "next": "c2-verdict-pushed",
+       "conditions": [
+        "talent \"comedy-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +3",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-anyway",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-wrong-role.choice.push-anyway",
+       "next": "c2-verdict-refused",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: tension +3"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-setback",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-setback.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-setback.text",
+     "choices": [
+      {
+       "id": "take-the-part",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-setback.choice.take-the-part",
+       "next": "c2-verdict-taken",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +1"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-with-charm",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-setback.choice.push-with-charm",
+       "next": "c2-verdict-pushed",
+       "conditions": [
+        "talent \"charm-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +2",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-with-wit",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-setback.choice.push-with-wit",
+       "next": "c2-verdict-pushed",
+       "conditions": [
+        "talent \"comedy-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: trust +2",
+        "sets fact \"lookout:fourth-line\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "push-anyway",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-setback.choice.push-anyway",
+       "next": "c2-verdict-refused",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-lookout\"",
+        "complete-stage quest \"the-lookout\" (stage \"hear-the-verdict\")",
+        "grants item \"lookout-sides\"",
+        "casting-gatekeeper: tension +3"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-taken",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-taken.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-taken.text",
+     "choices": [
+      {
+       "id": "take-the-sides",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-taken.choice.take-the-sides",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-pushed",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-pushed.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-pushed.text",
+     "choices": [
+      {
+       "id": "take-the-sides-pushed",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-pushed.choice.take-the-sides-pushed",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-verdict-refused",
+     "speaker": "content.dialogue.casting-office-intro.c2-verdict-refused.speaker",
+     "text": "content.dialogue.casting-office-intro.c2-verdict-refused.text",
+     "choices": [
+      {
+       "id": "take-the-sides-refused",
+       "label": "content.dialogue.casting-office-intro.c2-verdict-refused.choice.take-the-sides-refused",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
      "first-audition",
-     "screen-test"
+     "screen-test",
+     "the-lookout"
     ],
     "characters": [
      "casting-gatekeeper"
@@ -3741,10 +7062,144 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.sunset-diner-intro.c2-root.speaker",
+     "text": "content.dialogue.sunset-diner-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "first-evening-frankie",
+       "label": "content.dialogue.sunset-diner-intro.c2-root.choice.first-evening-frankie",
+       "next": "c2-evening-frankie",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is available",
+        "fact \"rehearsal:frankie\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "another-evening-frankie",
+       "label": "content.dialogue.sunset-diner-intro.c2-root.choice.another-evening-frankie",
+       "next": "c2-evening-frankie",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is active",
+        "fact \"rehearsal:frankie\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.sunset-diner-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.sunset-diner-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-frankie",
+     "speaker": "content.dialogue.sunset-diner-intro.c2-evening-frankie.speaker",
+     "text": "content.dialogue.sunset-diner-intro.c2-evening-frankie.text",
+     "choices": [
+      {
+       "id": "frankie-be-candid",
+       "label": "content.dialogue.sunset-diner-intro.c2-evening-frankie.choice.frankie-be-candid",
+       "next": "c2-evening-frankie-warm",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:frankie\"",
+        "diner-confidant: trust +4, attraction +4",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "frankie-keep-it-light",
+       "label": "content.dialogue.sunset-diner-intro.c2-evening-frankie.choice.frankie-keep-it-light",
+       "next": "c2-evening-frankie-awkward",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:frankie\"",
+        "diner-confidant: trust +1, attraction +2, tension +2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "frankie-not-tonight",
+       "label": "content.dialogue.sunset-diner-intro.c2-evening-frankie.choice.frankie-not-tonight",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-frankie-warm",
+     "speaker": "content.dialogue.sunset-diner-intro.c2-evening-frankie-warm.speaker",
+     "text": "content.dialogue.sunset-diner-intro.c2-evening-frankie-warm.text",
+     "choices": [
+      {
+       "id": "frankie-warm-leave",
+       "label": "content.dialogue.sunset-diner-intro.c2-evening-frankie-warm.choice.frankie-warm-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-frankie-awkward",
+     "speaker": "content.dialogue.sunset-diner-intro.c2-evening-frankie-awkward.speaker",
+     "text": "content.dialogue.sunset-diner-intro.c2-evening-frankie-awkward.text",
+     "choices": [
+      {
+       "id": "frankie-awkward-leave",
+       "label": "content.dialogue.sunset-diner-intro.c2-evening-frankie-awkward.choice.frankie-awkward-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
+     "a-week-of-rehearsals",
      "diner-introductions"
     ],
     "characters": [
@@ -3880,11 +7335,129 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.boarding-house-intro.c2-root.speaker",
+     "text": "content.dialogue.boarding-house-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "ask-for-an-evening-outfit",
+       "label": "content.dialogue.boarding-house-intro.c2-root.choice.ask-for-an-evening-outfit",
+       "next": "c2-outfit",
+       "conditions": [
+        "quest \"under-the-stars\" is active",
+        "fact \"quest:under-the-stars:stage:get-the-invitation:complete\" is set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-head-upstairs",
+       "label": "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": true,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.boarding-house-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.boarding-house-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-outfit",
+     "speaker": "content.dialogue.boarding-house-intro.c2-outfit.speaker",
+     "text": "content.dialogue.boarding-house-intro.c2-outfit.text",
+     "choices": [
+      {
+       "id": "chip-in-for-the-hamper",
+       "label": "content.dialogue.boarding-house-intro.c2-outfit.choice.chip-in-for-the-hamper",
+       "next": "c2-outfit-paid",
+       "conditions": [
+        "money is at least 10",
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"under-the-stars\" (stage \"dress-for-the-evening\")",
+        "money -10",
+        "landlady: trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "owe-her-one",
+       "label": "content.dialogue.boarding-house-intro.c2-outfit.choice.owe-her-one",
+       "next": "c2-outfit-owed",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"under-the-stars\" (stage \"dress-for-the-evening\")",
+        "landlady: obligation -2, trust +1",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-outfit-paid",
+     "speaker": "content.dialogue.boarding-house-intro.c2-outfit-paid.speaker",
+     "text": "content.dialogue.boarding-house-intro.c2-outfit-paid.text",
+     "choices": [
+      {
+       "id": "paid-leave",
+       "label": "content.dialogue.boarding-house-intro.c2-outfit-paid.choice.paid-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-outfit-owed",
+     "speaker": "content.dialogue.boarding-house-intro.c2-outfit-owed.speaker",
+     "text": "content.dialogue.boarding-house-intro.c2-outfit-owed.text",
+     "choices": [
+      {
+       "id": "owed-leave",
+       "label": "content.dialogue.boarding-house-intro.c2-outfit-owed.choice.owed-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
-     "making-rent"
+     "making-rent",
+     "under-the-stars"
     ],
     "characters": [
      "landlady"
@@ -4009,11 +7582,299 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-root.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "hear-her-warning",
+       "label": "content.dialogue.backlot-gate-intro.c2-root.choice.hear-her-warning",
+       "next": "c2-delphine-warning",
+       "conditions": [
+        "quest \"delphines-warning\" is available"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "first-evening-delphine",
+       "label": "content.dialogue.backlot-gate-intro.c2-root.choice.first-evening-delphine",
+       "next": "c2-evening-delphine",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is available",
+        "fact \"rehearsal:delphine\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "another-evening-delphine",
+       "label": "content.dialogue.backlot-gate-intro.c2-root.choice.another-evening-delphine",
+       "next": "c2-evening-delphine",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is active",
+        "fact \"rehearsal:delphine\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.backlot-gate-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-delphine-warning",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-delphine-warning.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-delphine-warning.text",
+     "choices": [
+      {
+       "id": "stand-your-ground",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.stand-your-ground",
+       "next": "c2-delphine-ground",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"delphines-warning\"",
+        "complete-stage quest \"delphines-warning\" (stage \"face-her\")",
+        "sets fact \"delphine-path:test\"",
+        "rival: tension +3, trust +2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "match-her-edge",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.match-her-edge",
+       "next": "c2-delphine-edge",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"delphines-warning\"",
+        "complete-stage quest \"delphines-warning\" (stage \"face-her\")",
+        "sets fact \"delphine-path:rivalry\"",
+        "rival: tension +5",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "offer-a-truce",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.offer-a-truce",
+       "next": "c2-delphine-truce",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"delphines-warning\"",
+        "complete-stage quest \"delphines-warning\" (stage \"face-her\")",
+        "sets fact \"delphine-path:truce\"",
+        "rival: trust +5, tension -3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "read-what-she-wants",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-warning.choice.read-what-she-wants",
+       "next": "c2-delphine-read",
+       "conditions": [
+        "talent \"observation-1\" is unlocked",
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"delphines-warning\"",
+        "complete-stage quest \"delphines-warning\" (stage \"face-her\")",
+        "sets fact \"delphine-path:truce\"",
+        "rival: trust +4, tension -2",
+        "5 XP",
+        "sets fact \"delphine:insight\"",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-delphine-ground",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-delphine-ground.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-delphine-ground.text",
+     "choices": [
+      {
+       "id": "ground-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-ground.choice.ground-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-delphine-edge",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-delphine-edge.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-delphine-edge.text",
+     "choices": [
+      {
+       "id": "edge-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-edge.choice.edge-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-delphine-truce",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-delphine-truce.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-delphine-truce.text",
+     "choices": [
+      {
+       "id": "truce-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-truce.choice.truce-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-delphine-read",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-delphine-read.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-delphine-read.text",
+     "choices": [
+      {
+       "id": "read-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-delphine-read.choice.read-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-delphine",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-evening-delphine.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-evening-delphine.text",
+     "choices": [
+      {
+       "id": "delphine-be-candid",
+       "label": "content.dialogue.backlot-gate-intro.c2-evening-delphine.choice.delphine-be-candid",
+       "next": "c2-evening-delphine-warm",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:delphine\"",
+        "rival: trust +4, attraction +4",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "delphine-keep-it-light",
+       "label": "content.dialogue.backlot-gate-intro.c2-evening-delphine.choice.delphine-keep-it-light",
+       "next": "c2-evening-delphine-awkward",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:delphine\"",
+        "rival: trust +1, attraction +2, tension +2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "delphine-not-tonight",
+       "label": "content.dialogue.backlot-gate-intro.c2-evening-delphine.choice.delphine-not-tonight",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-delphine-warm",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-evening-delphine-warm.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-evening-delphine-warm.text",
+     "choices": [
+      {
+       "id": "delphine-warm-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-evening-delphine-warm.choice.delphine-warm-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-delphine-awkward",
+     "speaker": "content.dialogue.backlot-gate-intro.c2-evening-delphine-awkward.speaker",
+     "text": "content.dialogue.backlot-gate-intro.c2-evening-delphine-awkward.text",
+     "choices": [
+      {
+       "id": "delphine-awkward-leave",
+       "label": "content.dialogue.backlot-gate-intro.c2-evening-delphine-awkward.choice.delphine-awkward-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
-     "backlot-rivalry"
+     "a-week-of-rehearsals",
+     "backlot-rivalry",
+     "delphines-warning"
     ],
     "characters": [
      "rival"
@@ -4140,13 +8001,147 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.extras-corral-intro.c2-root.speaker",
+     "text": "content.dialogue.extras-corral-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "get-your-call-time",
+       "label": "content.dialogue.extras-corral-intro.c2-root.choice.get-your-call-time",
+       "next": "c2-call-sheet",
+       "conditions": [
+        "quest \"the-lookout\" is active",
+        "fact \"quest:the-lookout:stage:hear-the-verdict:complete\" is set",
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-lookout\" (stage \"sign-the-call-sheet\")",
+        "production-coordinator: trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "meet-the-veteran-extra",
+       "label": "content.dialogue.extras-corral-intro.c2-root.choice.meet-the-veteran-extra",
+       "next": "c2-veteran-invitation",
+       "conditions": [
+        "quest \"under-the-stars\" is available"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.extras-corral-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.extras-corral-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-call-sheet",
+     "speaker": "content.dialogue.extras-corral-intro.c2-call-sheet.speaker",
+     "text": "content.dialogue.extras-corral-intro.c2-call-sheet.text",
+     "choices": [
+      {
+       "id": "pocket-the-call-sheet",
+       "label": "content.dialogue.extras-corral-intro.c2-call-sheet.choice.pocket-the-call-sheet",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-veteran-invitation",
+     "speaker": "content.dialogue.extras-corral-intro.c2-veteran-invitation.speaker",
+     "text": "content.dialogue.extras-corral-intro.c2-veteran-invitation.text",
+     "choices": [
+      {
+       "id": "accept-the-tickets",
+       "label": "content.dialogue.extras-corral-intro.c2-veteran-invitation.choice.accept-the-tickets",
+       "next": "c2-veteran-glad",
+       "conditions": [],
+       "effects": [
+        "start quest \"under-the-stars\"",
+        "complete-stage quest \"under-the-stars\" (stage \"get-the-invitation\")",
+        "mentor-extra: trust +4",
+        "sets fact \"stars:invited\""
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "go-later",
+       "label": "content.dialogue.extras-corral-intro.c2-veteran-invitation.choice.go-later",
+       "next": "c2-veteran-later",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-veteran-glad",
+     "speaker": "content.dialogue.extras-corral-intro.c2-veteran-glad.speaker",
+     "text": "content.dialogue.extras-corral-intro.c2-veteran-glad.text",
+     "choices": [
+      {
+       "id": "grin-and-go",
+       "label": "content.dialogue.extras-corral-intro.c2-veteran-glad.choice.grin-and-go",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-veteran-later",
+     "speaker": "content.dialogue.extras-corral-intro.c2-veteran-later.speaker",
+     "text": "content.dialogue.extras-corral-intro.c2-veteran-later.text",
+     "choices": [
+      {
+       "id": "leave-the-bench",
+       "label": "content.dialogue.extras-corral-intro.c2-veteran-later.choice.leave-the-bench",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
-     "extras-call"
+     "extras-call",
+     "the-lookout",
+     "under-the-stars"
     ],
     "characters": [
+     "mentor-extra",
      "production-coordinator"
     ]
    }
@@ -4275,13 +8270,568 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.soundstage-intro.c2-root.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "report-for-the-shot",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.report-for-the-shot",
+       "next": "c2-set-briefing",
+       "conditions": [
+        "quest \"first-day-on-set\" is available"
+       ],
+       "effects": [
+        "start quest \"first-day-on-set\"",
+        "complete-stage quest \"first-day-on-set\" (stage \"report-to-set\")"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "run-the-scene-again",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.run-the-scene-again",
+       "next": "c2-set-briefing",
+       "conditions": [
+        "quest \"first-day-on-set\" is active",
+        "fact \"quest:first-day-on-set:stage:report-to-set:complete\" is set",
+        "fact \"first-day:done\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "see-the-day-out-breakthrough",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-breakthrough",
+       "next": "c2-day-wrap-clean",
+       "conditions": [
+        "quest \"first-day-on-set\" is active",
+        "fact \"first-day:done\" is set",
+        "fact \"first-day:outcome:breakthrough\" is set"
+       ],
+       "effects": [
+        "complete-stage quest \"first-day-on-set\" (stage \"earn-your-credit\")"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "see-the-day-out-promising-complication",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-promising-complication",
+       "next": "c2-day-wrap-clean",
+       "conditions": [
+        "quest \"first-day-on-set\" is active",
+        "fact \"first-day:done\" is set",
+        "fact \"first-day:outcome:promising-complication\" is set"
+       ],
+       "effects": [
+        "complete-stage quest \"first-day-on-set\" (stage \"earn-your-credit\")"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "see-the-day-out-wrong-role-right-notice",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-wrong-role-right-notice",
+       "next": "c2-day-wrap-rough",
+       "conditions": [
+        "quest \"first-day-on-set\" is active",
+        "fact \"first-day:done\" is set",
+        "fact \"first-day:outcome:wrong-role-right-notice\" is set"
+       ],
+       "effects": [
+        "complete-stage quest \"first-day-on-set\" (stage \"earn-your-credit\")"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "see-the-day-out-memorable-setback",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.see-the-day-out-memorable-setback",
+       "next": "c2-day-wrap-rough",
+       "conditions": [
+        "quest \"first-day-on-set\" is active",
+        "fact \"first-day:done\" is set",
+        "fact \"first-day:outcome:memorable-setback\" is set"
+       ],
+       "effects": [
+        "complete-stage quest \"first-day-on-set\" (stage \"earn-your-credit\")"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "meet-the-glossy-man",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.meet-the-glossy-man",
+       "next": "c2-pike-offer",
+       "conditions": [
+        "quest \"the-helpful-man\" is available"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "first-evening-corinne",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.first-evening-corinne",
+       "next": "c2-evening-corinne",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is available",
+        "fact \"rehearsal:corinne\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "another-evening-corinne",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.another-evening-corinne",
+       "next": "c2-evening-corinne",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is active",
+        "fact \"rehearsal:corinne\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "first-evening-theo",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.first-evening-theo",
+       "next": "c2-evening-theo",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is available",
+        "fact \"rehearsal:theo\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "another-evening-theo",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.another-evening-theo",
+       "next": "c2-evening-theo",
+       "conditions": [
+        "quest \"a-week-of-rehearsals\" is active",
+        "fact \"rehearsal:theo\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.soundstage-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-set-briefing",
+     "speaker": "content.dialogue.soundstage-intro.c2-set-briefing.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-set-briefing.text",
+     "choices": [
+      {
+       "id": "take-your-place",
+       "label": "content.dialogue.soundstage-intro.c2-set-briefing.choice.take-your-place",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": "lookout-first-day"
+      }
+     ]
+    },
+    {
+     "id": "c2-day-wrap-clean",
+     "speaker": "content.dialogue.soundstage-intro.c2-day-wrap-clean.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-day-wrap-clean.text",
+     "choices": [
+      {
+       "id": "clean-leave",
+       "label": "content.dialogue.soundstage-intro.c2-day-wrap-clean.choice.clean-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-day-wrap-rough",
+     "speaker": "content.dialogue.soundstage-intro.c2-day-wrap-rough.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-day-wrap-rough.text",
+     "choices": [
+      {
+       "id": "rough-leave",
+       "label": "content.dialogue.soundstage-intro.c2-day-wrap-rough.choice.rough-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-pike-offer",
+     "speaker": "content.dialogue.soundstage-intro.c2-pike-offer.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-pike-offer.text",
+     "choices": [
+      {
+       "id": "accept-his-help",
+       "label": "content.dialogue.soundstage-intro.c2-pike-offer.choice.accept-his-help",
+       "next": "c2-pike-accepted",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-helpful-man\"",
+        "complete-stage quest \"the-helpful-man\" (stage \"hear-the-offer\")",
+        "sets fact \"ledger:pike-help\"",
+        "grants item \"publicity-card\"",
+        "publicity-chief: trust +3, obligation -3"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "use-his-help",
+       "label": "content.dialogue.soundstage-intro.c2-pike-offer.choice.use-his-help",
+       "next": "c2-pike-accepted",
+       "conditions": [
+        "talent \"hustle-1\" is unlocked"
+       ],
+       "effects": [
+        "start quest \"the-helpful-man\"",
+        "complete-stage quest \"the-helpful-man\" (stage \"hear-the-offer\")",
+        "sets fact \"ledger:pike-help\"",
+        "grants item \"publicity-card\"",
+        "publicity-chief: trust +3, obligation -3",
+        "money +15"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "spot-the-hook",
+       "label": "content.dialogue.soundstage-intro.c2-pike-offer.choice.spot-the-hook",
+       "next": "c2-pike-hook",
+       "conditions": [
+        "talent \"observation-1\" is unlocked"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "refuse-politely",
+       "label": "content.dialogue.soundstage-intro.c2-pike-offer.choice.refuse-politely",
+       "next": "c2-pike-refused",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-helpful-man\"",
+        "complete-stage quest \"the-helpful-man\" (stage \"hear-the-offer\")",
+        "publicity-chief: trust +1"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "send-him-to-the-newsman",
+       "label": "content.dialogue.soundstage-intro.c2-pike-offer.choice.send-him-to-the-newsman",
+       "next": "c2-pike-deflected",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-helpful-man\"",
+        "complete-stage quest \"the-helpful-man\" (stage \"hear-the-offer\")",
+        "sets fact \"pike:deflected\"",
+        "publicity-chief: tension +2"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-pike-hook",
+     "speaker": "content.dialogue.soundstage-intro.c2-pike-hook.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-pike-hook.text",
+     "choices": [
+      {
+       "id": "accept-knowing",
+       "label": "content.dialogue.soundstage-intro.c2-pike-hook.choice.accept-knowing",
+       "next": "c2-pike-accepted",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-helpful-man\"",
+        "complete-stage quest \"the-helpful-man\" (stage \"hear-the-offer\")",
+        "sets fact \"ledger:pike-help\"",
+        "grants item \"publicity-card\"",
+        "publicity-chief: trust +3, obligation -3",
+        "5 XP"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "refuse-knowing",
+       "label": "content.dialogue.soundstage-intro.c2-pike-hook.choice.refuse-knowing",
+       "next": "c2-pike-refused",
+       "conditions": [],
+       "effects": [
+        "start quest \"the-helpful-man\"",
+        "complete-stage quest \"the-helpful-man\" (stage \"hear-the-offer\")",
+        "publicity-chief: trust +2",
+        "5 XP"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-pike-accepted",
+     "speaker": "content.dialogue.soundstage-intro.c2-pike-accepted.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-pike-accepted.text",
+     "choices": [
+      {
+       "id": "pocket-the-card",
+       "label": "content.dialogue.soundstage-intro.c2-pike-accepted.choice.pocket-the-card",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-pike-refused",
+     "speaker": "content.dialogue.soundstage-intro.c2-pike-refused.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-pike-refused.text",
+     "choices": [
+      {
+       "id": "decline-the-card",
+       "label": "content.dialogue.soundstage-intro.c2-pike-refused.choice.decline-the-card",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-pike-deflected",
+     "speaker": "content.dialogue.soundstage-intro.c2-pike-deflected.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-pike-deflected.text",
+     "choices": [
+      {
+       "id": "let-him-go",
+       "label": "content.dialogue.soundstage-intro.c2-pike-deflected.choice.let-him-go",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-corinne",
+     "speaker": "content.dialogue.soundstage-intro.c2-evening-corinne.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-evening-corinne.text",
+     "choices": [
+      {
+       "id": "corinne-be-candid",
+       "label": "content.dialogue.soundstage-intro.c2-evening-corinne.choice.corinne-be-candid",
+       "next": "c2-evening-corinne-warm",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:corinne\"",
+        "scene-partner: trust +4, attraction +4",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "corinne-keep-it-light",
+       "label": "content.dialogue.soundstage-intro.c2-evening-corinne.choice.corinne-keep-it-light",
+       "next": "c2-evening-corinne-awkward",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:corinne\"",
+        "scene-partner: trust +1, attraction +2, tension +2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "corinne-not-tonight",
+       "label": "content.dialogue.soundstage-intro.c2-evening-corinne.choice.corinne-not-tonight",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-corinne-warm",
+     "speaker": "content.dialogue.soundstage-intro.c2-evening-corinne-warm.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-evening-corinne-warm.text",
+     "choices": [
+      {
+       "id": "corinne-warm-leave",
+       "label": "content.dialogue.soundstage-intro.c2-evening-corinne-warm.choice.corinne-warm-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-corinne-awkward",
+     "speaker": "content.dialogue.soundstage-intro.c2-evening-corinne-awkward.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-evening-corinne-awkward.text",
+     "choices": [
+      {
+       "id": "corinne-awkward-leave",
+       "label": "content.dialogue.soundstage-intro.c2-evening-corinne-awkward.choice.corinne-awkward-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-theo",
+     "speaker": "content.dialogue.soundstage-intro.c2-evening-theo.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-evening-theo.text",
+     "choices": [
+      {
+       "id": "theo-be-candid",
+       "label": "content.dialogue.soundstage-intro.c2-evening-theo.choice.theo-be-candid",
+       "next": "c2-evening-theo-warm",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:theo\"",
+        "leading-man: trust +4, attraction +4",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "theo-keep-it-light",
+       "label": "content.dialogue.soundstage-intro.c2-evening-theo.choice.theo-keep-it-light",
+       "next": "c2-evening-theo-awkward",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"second-evening\")",
+        "start quest \"a-week-of-rehearsals\"",
+        "complete-stage quest \"a-week-of-rehearsals\" (stage \"first-evening\")",
+        "sets fact \"rehearsal:theo\"",
+        "leading-man: trust +1, attraction +2, tension +2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "theo-not-tonight",
+       "label": "content.dialogue.soundstage-intro.c2-evening-theo.choice.theo-not-tonight",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-theo-warm",
+     "speaker": "content.dialogue.soundstage-intro.c2-evening-theo-warm.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-evening-theo-warm.text",
+     "choices": [
+      {
+       "id": "theo-warm-leave",
+       "label": "content.dialogue.soundstage-intro.c2-evening-theo-warm.choice.theo-warm-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-evening-theo-awkward",
+     "speaker": "content.dialogue.soundstage-intro.c2-evening-theo-awkward.speaker",
+     "text": "content.dialogue.soundstage-intro.c2-evening-theo-awkward.text",
+     "choices": [
+      {
+       "id": "theo-awkward-leave",
+       "label": "content.dialogue.soundstage-intro.c2-evening-theo-awkward.choice.theo-awkward-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
-     "scene-rehearsal"
+     "a-week-of-rehearsals",
+     "first-day-on-set",
+     "scene-rehearsal",
+     "the-helpful-man"
     ],
     "characters": [
+     "leading-man",
+     "publicity-chief",
      "scene-partner"
     ]
    }
@@ -4418,11 +8968,173 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.silver-thimble-intro.c2-root.speaker",
+     "text": "content.dialogue.silver-thimble-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "get-fitted",
+       "label": "content.dialogue.silver-thimble-intro.c2-root.choice.get-fitted",
+       "next": "c2-fitting",
+       "conditions": [
+        "quest \"harbor-market-wardrobe\" is available"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.silver-thimble-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.silver-thimble-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-fitting",
+     "speaker": "content.dialogue.silver-thimble-intro.c2-fitting.speaker",
+     "text": "content.dialogue.silver-thimble-intro.c2-fitting.text",
+     "choices": [
+      {
+       "id": "wear-it-bold",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-bold",
+       "next": "c2-fitted-bold",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"harbor-market-wardrobe\"",
+        "complete-stage quest \"harbor-market-wardrobe\" (stage \"fitted\")",
+        "sets fact \"lookout:costume:bold\"",
+        "wardrobe-mentor: tension +1, trust +1",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "wear-it-practical",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-practical",
+       "next": "c2-fitted-practical",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"harbor-market-wardrobe\"",
+        "complete-stage quest \"harbor-market-wardrobe\" (stage \"fitted\")",
+        "sets fact \"lookout:costume:practical\"",
+        "wardrobe-mentor: trust +2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "wear-it-camera-ready",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-camera-ready",
+       "next": "c2-fitted-practical",
+       "conditions": [
+        "talent \"stagecraft-1\" is unlocked",
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"harbor-market-wardrobe\"",
+        "complete-stage quest \"harbor-market-wardrobe\" (stage \"fitted\")",
+        "sets fact \"lookout:costume:practical\"",
+        "wardrobe-mentor: trust +4",
+        "5 XP",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "wear-it-borrowed",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-borrowed",
+       "next": "c2-fitted-borrowed",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"harbor-market-wardrobe\"",
+        "complete-stage quest \"harbor-market-wardrobe\" (stage \"fitted\")",
+        "sets fact \"lookout:costume:borrowed\"",
+        "wardrobe-mentor: obligation -2",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-fitted-bold",
+     "speaker": "content.dialogue.silver-thimble-intro.c2-fitted-bold.speaker",
+     "text": "content.dialogue.silver-thimble-intro.c2-fitted-bold.text",
+     "choices": [
+      {
+       "id": "bold-leave",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitted-bold.choice.bold-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-fitted-practical",
+     "speaker": "content.dialogue.silver-thimble-intro.c2-fitted-practical.speaker",
+     "text": "content.dialogue.silver-thimble-intro.c2-fitted-practical.text",
+     "choices": [
+      {
+       "id": "practical-leave",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitted-practical.choice.practical-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-fitted-borrowed",
+     "speaker": "content.dialogue.silver-thimble-intro.c2-fitted-borrowed.speaker",
+     "text": "content.dialogue.silver-thimble-intro.c2-fitted-borrowed.text",
+     "choices": [
+      {
+       "id": "borrowed-leave",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitted-borrowed.choice.borrowed-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
-     "costume-fitting"
+     "costume-fitting",
+     "harbor-market-wardrobe"
     ],
     "characters": [
      "wardrobe-mentor"
@@ -4597,12 +9309,224 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.klieg-light-intro.c2-root.speaker",
+     "text": "content.dialogue.klieg-light-intro.c2-root.text",
+     "choices": [
+      {
+       "id": "trade-with-the-newsman",
+       "label": "content.dialogue.klieg-light-intro.c2-root.choice.trade-with-the-newsman",
+       "next": "c2-nick-trade",
+       "conditions": [
+        "quest \"the-helpful-man\" is active",
+        "fact \"quest:the-helpful-man:stage:hear-the-offer:complete\" is set",
+        "fact \"ledger:pike-help\" is not set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "trade-with-the-newsman-knowing",
+       "label": "content.dialogue.klieg-light-intro.c2-root.choice.trade-with-the-newsman-knowing",
+       "next": "c2-nick-trade-knowing",
+       "conditions": [
+        "quest \"the-helpful-man\" is active",
+        "fact \"quest:the-helpful-man:stage:hear-the-offer:complete\" is set",
+        "fact \"ledger:pike-help\" is set"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.klieg-light-intro.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.klieg-light-intro.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-nick-trade",
+     "speaker": "content.dialogue.klieg-light-intro.c2-nick-trade.speaker",
+     "text": "content.dialogue.klieg-light-intro.c2-nick-trade.text",
+     "choices": [
+      {
+       "id": "feed-him-the-first-word",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-trade.choice.feed-him-the-first-word",
+       "next": "c2-nick-fed",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-helpful-man\" (stage \"answer-the-newsman\")",
+        "reputation +2",
+        "reporter: obligation +3, trust +2",
+        "sets fact \"nick:exclusive-given\"",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "keep-it-off-the-record",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-trade.choice.keep-it-off-the-record",
+       "next": "c2-nick-held",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-helpful-man\" (stage \"answer-the-newsman\")",
+        "reporter: trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "bargain-hard",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-trade.choice.bargain-hard",
+       "next": "c2-nick-bargained",
+       "conditions": [
+        "talent \"hustle-1\" is unlocked",
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-helpful-man\" (stage \"answer-the-newsman\")",
+        "money +15",
+        "reporter: obligation +1",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-nick-trade-knowing",
+     "speaker": "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.speaker",
+     "text": "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.text",
+     "choices": [
+      {
+       "id": "feed-him-the-first-word",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.choice.feed-him-the-first-word",
+       "next": "c2-nick-fed",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-helpful-man\" (stage \"answer-the-newsman\")",
+        "reputation +2",
+        "reporter: obligation +3, trust +2",
+        "sets fact \"nick:exclusive-given\"",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "keep-it-off-the-record",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.choice.keep-it-off-the-record",
+       "next": "c2-nick-held",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-helpful-man\" (stage \"answer-the-newsman\")",
+        "reporter: trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "bargain-hard",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-trade-knowing.choice.bargain-hard",
+       "next": "c2-nick-bargained",
+       "conditions": [
+        "talent \"hustle-1\" is unlocked",
+        "energy is at least 10"
+       ],
+       "effects": [
+        "complete-stage quest \"the-helpful-man\" (stage \"answer-the-newsman\")",
+        "money +15",
+        "reporter: obligation +1",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-nick-fed",
+     "speaker": "content.dialogue.klieg-light-intro.c2-nick-fed.speaker",
+     "text": "content.dialogue.klieg-light-intro.c2-nick-fed.text",
+     "choices": [
+      {
+       "id": "fed-leave",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-fed.choice.fed-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-nick-held",
+     "speaker": "content.dialogue.klieg-light-intro.c2-nick-held.speaker",
+     "text": "content.dialogue.klieg-light-intro.c2-nick-held.text",
+     "choices": [
+      {
+       "id": "held-leave",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-held.choice.held-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-nick-bargained",
+     "speaker": "content.dialogue.klieg-light-intro.c2-nick-bargained.speaker",
+     "text": "content.dialogue.klieg-light-intro.c2-nick-bargained.text",
+     "choices": [
+      {
+       "id": "bargained-leave",
+       "label": "content.dialogue.klieg-light-intro.c2-nick-bargained.choice.bargained-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
      "extras-call",
-     "on-the-record"
+     "on-the-record",
+     "the-helpful-man"
     ],
     "characters": [
      "reporter"
@@ -4757,14 +9681,235 @@
        "startsAudition": null
       }
      ]
+    },
+    {
+     "id": "c2-root",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-root.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-root.text",
+     "choices": [
+      {
+       "id": "go-to-the-wrap-party",
+       "label": "content.dialogue.celestial-palace-lobby.c2-root.choice.go-to-the-wrap-party",
+       "next": "c2-wrap-party",
+       "conditions": [
+        "quest \"the-wrap-party\" is available"
+       ],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-something-else",
+       "label": "content.dialogue.celestial-palace-lobby.c2-root.choice.c2-something-else",
+       "next": "root",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "c2-leave",
+       "label": "content.dialogue.celestial-palace-lobby.c2-root.choice.c2-leave",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-wrap-party",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-wrap-party.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-wrap-party.text",
+     "choices": [
+      {
+       "id": "dance-with-corinne",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne",
+       "next": "c2-dance-corinne",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:corinne\"",
+        "scene-partner: memory \"love-interest\"",
+        "scene-partner: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-frankie",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie",
+       "next": "c2-dance-frankie",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:frankie\"",
+        "diner-confidant: memory \"love-interest\"",
+        "diner-confidant: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-delphine",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine",
+       "next": "c2-dance-delphine",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:delphine\"",
+        "rival: memory \"love-interest\"",
+        "rival: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-theo",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo",
+       "next": "c2-dance-theo",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:theo\"",
+        "leading-man: memory \"love-interest\"",
+        "leading-man: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-everyone",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-everyone",
+       "next": "c2-dance-none",
+       "conditions": [
+        "energy is at least 10"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:none\"",
+        "scene-partner: trust +2",
+        "diner-confidant: trust +2",
+        "rival: trust +2",
+        "leading-man: trust +2",
+        "house-manager: trust +1",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-corinne",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-corinne.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-corinne.text",
+     "choices": [
+      {
+       "id": "corinne-leave-the-ballroom",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-corinne.choice.corinne-leave-the-ballroom",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-frankie",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-frankie.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-frankie.text",
+     "choices": [
+      {
+       "id": "frankie-leave-the-ballroom",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-frankie.choice.frankie-leave-the-ballroom",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-delphine",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-delphine.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-delphine.text",
+     "choices": [
+      {
+       "id": "delphine-leave-the-ballroom",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-delphine.choice.delphine-leave-the-ballroom",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-theo",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-theo.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-theo.text",
+     "choices": [
+      {
+       "id": "theo-leave-the-ballroom",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-theo.choice.theo-leave-the-ballroom",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-none",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-none.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-none.text",
+     "choices": [
+      {
+       "id": "none-leave-the-ballroom",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-none.choice.none-leave-the-ballroom",
+       "next": null,
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
     }
    ],
    "touches": {
     "quests": [
-     "palace-matinee"
+     "palace-matinee",
+     "the-wrap-party"
     ],
     "characters": [
-     "house-manager"
+     "diner-confidant",
+     "house-manager",
+     "leading-man",
+     "rival",
+     "scene-partner"
     ]
    }
   }
@@ -4976,6 +10121,185 @@
      ]
     }
    ]
+  },
+  {
+   "id": "the-lookout",
+   "title": "content.quest.the-lookout.title",
+   "summary": "content.quest.the-lookout.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set"
+   ],
+   "stages": [
+    {
+     "id": "hear-the-verdict",
+     "text": "content.quest.the-lookout.stage.hear-the-verdict",
+     "rewards": [
+      "reputation +3"
+     ]
+    },
+    {
+     "id": "sign-the-call-sheet",
+     "text": "content.quest.the-lookout.stage.sign-the-call-sheet",
+     "rewards": [
+      "money +25",
+      "10 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "harbor-market-wardrobe",
+   "title": "content.quest.harbor-market-wardrobe.title",
+   "summary": "content.quest.harbor-market-wardrobe.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "fact \"quest:the-lookout:stage:hear-the-verdict:complete\" is set"
+   ],
+   "stages": [
+    {
+     "id": "fitted",
+     "text": "content.quest.harbor-market-wardrobe.stage.fitted",
+     "rewards": [
+      "grants item \"lookout-costume\"",
+      "reputation +2",
+      "15 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "first-day-on-set",
+   "title": "content.quest.first-day-on-set.title",
+   "summary": "content.quest.first-day-on-set.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "quest \"the-lookout\" is completed",
+    "quest \"harbor-market-wardrobe\" is completed"
+   ],
+   "stages": [
+    {
+     "id": "report-to-set",
+     "text": "content.quest.first-day-on-set.stage.report-to-set",
+     "rewards": []
+    },
+    {
+     "id": "earn-your-credit",
+     "text": "content.quest.first-day-on-set.stage.earn-your-credit",
+     "rewards": [
+      "grants item \"first-screen-credit\"",
+      "reputation +6",
+      "30 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a-week-of-rehearsals",
+   "title": "content.quest.a-week-of-rehearsals.title",
+   "summary": "content.quest.a-week-of-rehearsals.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "quest \"first-day-on-set\" is completed"
+   ],
+   "stages": [
+    {
+     "id": "first-evening",
+     "text": "content.quest.a-week-of-rehearsals.stage.first-evening",
+     "rewards": []
+    },
+    {
+     "id": "second-evening",
+     "text": "content.quest.a-week-of-rehearsals.stage.second-evening",
+     "rewards": [
+      "15 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "the-wrap-party",
+   "title": "content.quest.the-wrap-party.title",
+   "summary": "content.quest.the-wrap-party.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "quest \"a-week-of-rehearsals\" is completed"
+   ],
+   "stages": [
+    {
+     "id": "the-dance",
+     "text": "content.quest.the-wrap-party.stage.the-dance",
+     "rewards": [
+      "grants item \"wrap-party-ribbon\"",
+      "reputation +3",
+      "20 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "delphines-warning",
+   "title": "content.quest.delphines-warning.title",
+   "summary": "content.quest.delphines-warning.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "quest \"first-day-on-set\" is completed"
+   ],
+   "stages": [
+    {
+     "id": "face-her",
+     "text": "content.quest.delphines-warning.stage.face-her",
+     "rewards": [
+      "15 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "the-helpful-man",
+   "title": "content.quest.the-helpful-man.title",
+   "summary": "content.quest.the-helpful-man.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "quest \"first-day-on-set\" is completed"
+   ],
+   "stages": [
+    {
+     "id": "hear-the-offer",
+     "text": "content.quest.the-helpful-man.stage.hear-the-offer",
+     "rewards": []
+    },
+    {
+     "id": "answer-the-newsman",
+     "text": "content.quest.the-helpful-man.stage.answer-the-newsman",
+     "rewards": [
+      "reputation +3",
+      "15 XP"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "under-the-stars",
+   "title": "content.quest.under-the-stars.title",
+   "summary": "content.quest.under-the-stars.summary",
+   "prerequisites": [
+    "fact \"chapter:2:started\" is set",
+    "quest \"the-wrap-party\" is completed"
+   ],
+   "stages": [
+    {
+     "id": "get-the-invitation",
+     "text": "content.quest.under-the-stars.stage.get-the-invitation",
+     "rewards": []
+    },
+    {
+     "id": "dress-for-the-evening",
+     "text": "content.quest.under-the-stars.stage.dress-for-the-evening",
+     "rewards": [
+      "10 XP"
+     ]
+    }
+   ]
   }
  ],
  "cast": {
@@ -5028,6 +10352,16 @@
    {
     "id": "house-manager",
     "role": "content.character.house-manager.role",
+    "supportsAttraction": false
+   },
+   {
+    "id": "leading-man",
+    "role": "content.character.leading-man.role",
+    "supportsAttraction": true
+   },
+   {
+    "id": "publicity-chief",
+    "role": "content.character.publicity-chief.role",
     "supportsAttraction": false
    }
   ],
@@ -5464,6 +10798,41 @@
     "name": "content.item.background-extra-voucher.name",
     "description": "content.item.background-extra-voucher.description",
     "unlockSource": "extras-call quest — cleared-for-call dialogue choice (granted directly, not a stage reward)"
+   },
+   {
+    "id": "lookout-sides",
+    "category": "prop",
+    "name": "content.item.lookout-sides.name",
+    "description": "content.item.lookout-sides.description",
+    "unlockSource": "the-lookout quest — verdict dialogue choice (granted directly)"
+   },
+   {
+    "id": "lookout-costume",
+    "category": "costume",
+    "name": "content.item.lookout-costume.name",
+    "description": "content.item.lookout-costume.description",
+    "unlockSource": "harbor-market-wardrobe quest — fitted stage reward"
+   },
+   {
+    "id": "first-screen-credit",
+    "category": "credit",
+    "name": "content.item.first-screen-credit.name",
+    "description": "content.item.first-screen-credit.description",
+    "unlockSource": "first-day-on-set quest — earn-your-credit stage reward"
+   },
+   {
+    "id": "publicity-card",
+    "category": "prop",
+    "name": "content.item.publicity-card.name",
+    "description": "content.item.publicity-card.description",
+    "unlockSource": "the-helpful-man quest — Pike's card, accepted (granted directly)"
+   },
+   {
+    "id": "wrap-party-ribbon",
+    "category": "home-display",
+    "name": "content.item.wrap-party-ribbon.name",
+    "description": "content.item.wrap-party-ribbon.description",
+    "unlockSource": "the-wrap-party quest — the-dance stage reward"
    }
   ],
   "auditions": [
@@ -5600,6 +10969,109 @@
        {
         "id": "adapt-freeze",
         "label": "content.audition.screen-test.option.adapt-freeze"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "lookout-first-day",
+    "title": "content.audition.lookout-first-day.title",
+    "scenePartnerId": "scene-partner",
+    "checks": [
+     "content.audition.lookout-first-day.check.0",
+     "content.audition.lookout-first-day.check.1",
+     "content.audition.lookout-first-day.check.2",
+     "content.audition.lookout-first-day.check.3"
+    ],
+    "categories": [
+     {
+      "kind": "intention",
+      "prompt": "content.audition.lookout-first-day.category.intention.prompt",
+      "options": [
+       {
+        "id": "intention-genuine-warning",
+        "label": "content.audition.lookout-first-day.option.intention-genuine-warning"
+       },
+       {
+        "id": "intention-guilty-conscience",
+        "label": "content.audition.lookout-first-day.option.intention-guilty-conscience"
+       },
+       {
+        "id": "intention-steal-the-scene",
+        "label": "content.audition.lookout-first-day.option.intention-steal-the-scene"
+       }
+      ]
+     },
+     {
+      "kind": "delivery",
+      "prompt": "content.audition.lookout-first-day.category.delivery.prompt",
+      "options": [
+       {
+        "id": "delivery-low-and-quick",
+        "label": "content.audition.lookout-first-day.option.delivery-low-and-quick"
+       },
+       {
+        "id": "delivery-over-the-shoulder",
+        "label": "content.audition.lookout-first-day.option.delivery-over-the-shoulder"
+       },
+       {
+        "id": "delivery-to-the-back-row",
+        "label": "content.audition.lookout-first-day.option.delivery-to-the-back-row"
+       }
+      ]
+     },
+     {
+      "kind": "blocking",
+      "prompt": "content.audition.lookout-first-day.category.blocking.prompt",
+      "options": [
+       {
+        "id": "blocking-trust-the-mark",
+        "label": "content.audition.lookout-first-day.option.blocking-trust-the-mark"
+       },
+       {
+        "id": "blocking-drift-into-frame",
+        "label": "content.audition.lookout-first-day.option.blocking-drift-into-frame"
+       },
+       {
+        "id": "blocking-play-it-safe",
+        "label": "content.audition.lookout-first-day.option.blocking-play-it-safe"
+       }
+      ]
+     },
+     {
+      "kind": "improvisation",
+      "prompt": "content.audition.lookout-first-day.category.improvisation.prompt",
+      "options": [
+       {
+        "id": "improv-hold-the-script",
+        "label": "content.audition.lookout-first-day.option.improv-hold-the-script"
+       },
+       {
+        "id": "improv-cover-the-flub",
+        "label": "content.audition.lookout-first-day.option.improv-cover-the-flub"
+       },
+       {
+        "id": "improv-overreach",
+        "label": "content.audition.lookout-first-day.option.improv-overreach"
+       }
+      ]
+     },
+     {
+      "kind": "adaptation",
+      "prompt": "content.audition.lookout-first-day.category.adaptation.prompt",
+      "options": [
+       {
+        "id": "adapt-take-the-blame",
+        "label": "content.audition.lookout-first-day.option.adapt-take-the-blame"
+       },
+       {
+        "id": "adapt-hold-the-scene",
+        "label": "content.audition.lookout-first-day.option.adapt-hold-the-scene"
+       },
+       {
+        "id": "adapt-freeze",
+        "label": "content.audition.lookout-first-day.option.adapt-freeze"
        }
       ]
      }

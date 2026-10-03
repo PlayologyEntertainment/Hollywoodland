@@ -307,7 +307,7 @@
       "id": "ch2",
       "title": "Chapter 2 - A Small Part",
       "summary": "The screen test lands the player a small speaking part in The Corsair's Daughter, their first real credit. On set they meet the leading man, glimpse the man who owns the studio, and have to decide whom their heart is pointing toward.",
-      "status": "idea",
+      "status": "in-game",
       "location": "The Boulevard",
       "timeframe": "Spring 1935, April to early May",
       "targets": {
@@ -322,14 +322,14 @@
           "id": "ch2-cast",
           "title": "Cast",
           "summary": "From screen test result to first day on the soundstage.",
-          "status": "idea",
+          "status": "in-game",
           "notes": "",
           "beats": [
             {
               "id": "ch2-the-test-lands",
               "title": "The test lands",
               "summary": "Selma Pruitt and Ray Kessler deliver the verdict on the screen test: a small speaking part in The Corsair's Daughter, the Lookout, a harbor-market pickpocket with three lines who warns the heroine. A strong test earns a fourth line and a better call time; a partial one still gets the part.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "casting-gatekeeper",
                 "production-coordinator"
@@ -339,8 +339,13 @@
                 "extras-corral"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "the-lookout"
+                ],
+                "dialogue": [
+                  "casting-office-intro",
+                  "extras-corral-intro"
+                ],
                 "assignments": []
               },
               "choices": "Accept the part as offered, or push for one more line (Presence or Wit check).",
@@ -352,7 +357,7 @@
               "id": "ch2-fitted-for-the-harbor-market",
               "title": "Fitted for the harbor market",
               "summary": "Ola Whitfield fits the Lookout's costume at The Silver Thimble and quietly teaches the player how a garment photographs. Studio-Lot Hand-Me-Down players get the wardrobe shortcut.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "wardrobe-mentor"
               ],
@@ -360,38 +365,46 @@
                 "costume-shop"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "harbor-market-wardrobe"
+                ],
+                "dialogue": [
+                  "silver-thimble-intro"
+                ],
                 "assignments": []
               },
               "choices": "How the player wears the costume: bold, practical or borrowed.",
               "routes": "Craft + Stagecraft for camera-ready detail.",
               "effects": "Costume item for the home display. Ola's trust.",
-              "notes": ""
+              "notes": "Built without the Studio-Lot Hand-Me-Down shortcut: dialogue has no origin condition yet, so every origin gets the same fitting. Camera-ready detail is gated on Stagecraft I."
             },
             {
               "id": "ch2-first-day-on-the-set",
               "title": "First day on the set",
               "summary": "The big day on the soundstage: Ray runs the call, Corinne Lake and Theo Marchetti are filming the harbor-market chase, and the player has one scene. A flubbed line, a stuck prop and a nervous director turn it into a small Read the Room: hit the mark, read the cue, recover.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "production-coordinator",
                 "scene-partner",
-                "theo",
-                "pike"
+                "leading-man",
+                "publicity-chief"
               ],
               "locations": [
                 "soundstage"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "first-day-on-set"
+                ],
+                "dialogue": [
+                  "soundstage-intro"
+                ],
                 "assignments": []
               },
               "choices": "Stay in the script, improvise around the flub, or take the blame for the stuck prop.",
               "routes": "Craft + Drama (clean take); Wit + Comedy (improvise); Nerve + Stagecraft (hold the scene together).",
               "effects": "XP and reputation by take quality. Corinne and Theo meet the player. Pike takes the publicity stills and notes the newcomer.",
-              "notes": ""
+              "notes": "The set day is a Read the Room scene (lookout-first-day) with five categories; the three choices in the draft are its improvisation and adaptation options."
             }
           ]
         },
@@ -399,19 +412,19 @@
           "id": "ch2-heart",
           "title": "The Heart's Choice",
           "summary": "A week of small scenes with four people, then a dance.",
-          "status": "idea",
+          "status": "in-game",
           "notes": "",
           "beats": [
             {
               "id": "ch2-a-week-of-rehearsals",
               "title": "A week of rehearsals",
               "summary": "Between shoots the player spends time with the four people the story lets them choose between: Corinne Lake at the soundstage, Frankie Dolan at the diner counter, Delphine Voss at the gate, and Theo Marchetti on set. Each has a short warm scene and one awkward one. Nothing is committed yet.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "scene-partner",
                 "diner-confidant",
                 "rival",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "soundstage",
@@ -419,8 +432,14 @@
                 "backlot-gate"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "a-week-of-rehearsals"
+                ],
+                "dialogue": [
+                  "soundstage-intro",
+                  "sunset-diner-intro",
+                  "backlot-gate-intro"
+                ],
                 "assignments": []
               },
               "choices": "Who to spend each free evening with; how candid to be.",
@@ -432,26 +451,30 @@
               "id": "ch2-wrap-party-at-the-celestial-palace",
               "title": "Wrap party at The Celestial Palace",
               "summary": "Lucian Vale opens the Palace ballroom for the company's wrap party. There is one dance to give. The player chooses a love interest (or chooses to keep everyone as friends). Longing looks and a dance only: no kiss.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "house-manager",
                 "scene-partner",
                 "diner-confidant",
                 "rival",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "celestial-palace"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "the-wrap-party"
+                ],
+                "dialogue": [
+                  "celestial-palace-lobby"
+                ],
                 "assignments": []
               },
               "choices": "Corinne Lake, Frankie Dolan, Delphine Voss, Theo Marchetti, or no one yet.",
               "routes": "Any build can be charming; a low Presence costs the dance an extra nervous beat.",
               "effects": "The love interest is chosen and recorded. Friends-only is a full, equally rewarded path.",
-              "notes": "Every romance-capable character is attraction-flexible as already approved; the love interest reads the player's portrait."
+              "notes": "Built without the extra nervous beat for low Presence: dialogue has no attribute condition yet. Nobody is locked out of any dance."
             }
           ]
         },
@@ -459,14 +482,14 @@
           "id": "ch2-whispers",
           "title": "Whispers",
           "summary": "Rivalry and the first hint of who runs the town.",
-          "status": "idea",
+          "status": "in-game",
           "notes": "",
           "beats": [
             {
               "id": "ch2-delphine-s-warning",
               "title": "Delphine's warning",
               "summary": "Delphine Voss corners the player outside the gate: she is not sorry to see a rival, and she is not sure she is one. Depending on earlier choices she sabotages, tests or offers an alliance.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "rival"
               ],
@@ -474,8 +497,12 @@
                 "backlot-gate"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "delphines-warning"
+                ],
+                "dialogue": [
+                  "backlot-gate-intro"
+                ],
                 "assignments": []
               },
               "choices": "Stand your ground, match her edge, or offer a truce.",
@@ -487,9 +514,9 @@
               "id": "ch2-the-helpful-man",
               "title": "The helpful man",
               "summary": "Hollis Pike introduces himself with a business card and an offer to \"look after\" the player's image, and Leopold Maddox is seen once through the office window above the soundstage. Nick Ferro offers a trade for an exclusive. Every favor is small, and the player notices none of them is free.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
-                "pike",
+                "publicity-chief",
                 "maddox",
                 "reporter"
               ],
@@ -498,8 +525,13 @@
                 "klieg-light-office"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "the-helpful-man"
+                ],
+                "dialogue": [
+                  "soundstage-intro",
+                  "klieg-light-intro"
+                ],
                 "assignments": []
               },
               "choices": "Accept Pike's help, refuse politely, or bargain with Nick instead.",
@@ -511,7 +543,7 @@
               "id": "ch2-an-invitation-under-the-stars",
               "title": "An invitation under the stars",
               "summary": "Gus Albrecht, with a rare twinkle, invites the player to the Hollywood Bowl: a friend's tickets, a summer evening and \"someone I want you to see\". Bellhaven will lend an evening outfit.",
-              "status": "idea",
+              "status": "in-game",
               "cast": [
                 "mentor-extra",
                 "landlady"
@@ -521,14 +553,19 @@
                 "boarding-house"
               ],
               "links": {
-                "quests": [],
-                "dialogue": [],
+                "quests": [
+                  "under-the-stars"
+                ],
+                "dialogue": [
+                  "extras-corral-intro",
+                  "boarding-house-intro"
+                ],
                 "assignments": []
               },
               "choices": "Go, or go later.",
               "routes": "",
               "effects": "Opens the Hollywood Bowl. First assignment-style task to earn the evening money.",
-              "notes": ""
+              "notes": "The evening money is a $10 chip-in at Bellhaven or a favor owed to the landlady, not a new assignment (assignment balance is unchanged)."
             }
           ]
         }
@@ -610,7 +647,7 @@
                 "arnaud",
                 "coralie",
                 "maddox",
-                "pike",
+                "publicity-chief",
                 "rival"
               ],
               "locations": [
@@ -688,7 +725,7 @@
               "cast": [
                 "reiss",
                 "billie",
-                "pike"
+                "publicity-chief"
               ],
               "locations": [
                 "hollywood-bowl"
@@ -759,7 +796,7 @@
                 "mentor-extra",
                 "scene-partner",
                 "diner-confidant",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "hollywood-bowl"
@@ -781,7 +818,7 @@
               "status": "idea",
               "cast": [
                 "coralie",
-                "pike",
+                "publicity-chief",
                 "rival"
               ],
               "locations": [
@@ -836,7 +873,7 @@
               "cast": [
                 "reiss",
                 "billie",
-                "pike"
+                "publicity-chief"
               ],
               "locations": [
                 "hollywood-bowl"
@@ -979,7 +1016,7 @@
               "status": "idea",
               "cast": [
                 "coralie",
-                "pike",
+                "publicity-chief",
                 "dizzy"
               ],
               "locations": [
@@ -1072,7 +1109,7 @@
                 "scene-partner",
                 "diner-confidant",
                 "rival",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "santa-monica-pier"
@@ -1096,7 +1133,7 @@
                 "scene-partner",
                 "diner-confidant",
                 "rival",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "santa-monica-pier"
@@ -1120,8 +1157,8 @@
                 "scene-partner",
                 "diner-confidant",
                 "rival",
-                "theo",
-                "pike",
+                "leading-man",
+                "publicity-chief",
                 "maddox"
               ],
               "locations": [
@@ -1247,14 +1284,14 @@
               "status": "idea",
               "cast": [
                 "maddox",
-                "pike",
+                "publicity-chief",
                 "reiss",
                 "billie",
                 "reporter",
                 "lavinia",
                 "rival",
                 "scene-partner",
-                "theo",
+                "leading-man",
                 "whitcombe"
               ],
               "locations": [
@@ -1277,7 +1314,7 @@
               "status": "idea",
               "cast": [
                 "maddox",
-                "pike"
+                "publicity-chief"
               ],
               "locations": [
                 "griffith-observatory"
@@ -1375,8 +1412,8 @@
                 "finch",
                 "rival",
                 "reporter",
-                "pike",
-                "theo",
+                "publicity-chief",
+                "leading-man",
                 "scene-partner",
                 "whitcombe"
               ],
@@ -1450,8 +1487,8 @@
               "cast": [
                 "rival",
                 "reporter",
-                "pike",
-                "theo",
+                "publicity-chief",
+                "leading-man",
                 "scene-partner",
                 "whitcombe"
               ],
@@ -1474,7 +1511,7 @@
               "summary": "Finch is watching the front; the roof, the service corridor and Pike's borrowed office are not. A short stealth and hustle sequence to reach the decanter and a missing page of the ledger.",
               "status": "idea",
               "cast": [
-                "pike"
+                "publicity-chief"
               ],
               "locations": [
                 "griffith-observatory"
@@ -1526,7 +1563,7 @@
               "status": "idea",
               "cast": [
                 "finch",
-                "pike",
+                "publicity-chief",
                 "rival",
                 "reporter",
                 "whitcombe",
@@ -1574,7 +1611,7 @@
               "status": "idea",
               "cast": [
                 "maddox",
-                "pike",
+                "publicity-chief",
                 "finch"
               ],
               "locations": [
@@ -1672,7 +1709,7 @@
                 "billie",
                 "kit",
                 "scene-partner",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "monarch-lot"
@@ -1751,7 +1788,7 @@
                 "mentor-extra",
                 "scene-partner",
                 "diner-confidant",
-                "theo",
+                "leading-man",
                 "rival"
               ],
               "locations": [
@@ -1829,7 +1866,7 @@
                 "kit",
                 "billie",
                 "scene-partner",
-                "theo"
+                "leading-man"
               ],
               "locations": [
                 "monarch-lot"
@@ -1883,7 +1920,7 @@
               "status": "idea",
               "cast": [
                 "maddox",
-                "pike",
+                "publicity-chief",
                 "reiss",
                 "reporter"
               ],
@@ -1915,7 +1952,7 @@
                 "rival",
                 "scene-partner",
                 "diner-confidant",
-                "theo",
+                "leading-man",
                 "landlady"
               ],
               "locations": [
@@ -1972,24 +2009,6 @@
         "romance": false,
         "presence": "Glimpsed on the Boulevard (Ch2); the Observatory gala (Ch7-8); his office on the Monarch lot (Ch9-10).",
         "summary": "Fifties, silver-haired, soft-spoken, always the calmest man in the room. Built Monarch from a nickelodeon chain and believes every career is a loan he has extended. Generous, charming and entirely transactional: his favors are real, and so is the ledger that records them. Never raises his voice and never touches anything himself. The engine of the grand story: the price of the rise."
-      },
-      {
-        "id": "theo",
-        "name": "Theo Marchetti",
-        "role": "Monarch contract player, the corsair opposite Corinne",
-        "debut": "2",
-        "romance": true,
-        "presence": "The soundstage and the Monarch gate (Ch2); the Pier as a guest (Ch5-6); the Monarch lot (Ch9-10).",
-        "summary": "Late twenties, a former stunt rider who talked his way into the leading-man line. Self-deprecating, physically fearless, privately afraid of being found out as not a real actor. The new male romance-capable lead; attraction-flexible like every romanceable character. Friend, romance or steady ally."
-      },
-      {
-        "id": "pike",
-        "name": "Hollis Pike",
-        "role": "Monarch's publicity chief and fixer",
-        "debut": "2",
-        "romance": false,
-        "presence": "The Boulevard around the soundstage (Ch2); the Bowl and the Pier in the background (Ch3-6); the Observatory gala (Ch7-8).",
-        "summary": "Forties, glossy, relentlessly helpful, remembers every name and every debt. Keeps the ledger: Maddox's private record of favors, payments to columnists and quiet silences. Offers the player help from the first week, and each offer is a small hook. The culprit of the Observatory mystery, acting to protect the ledger and Maddox."
       },
       {
         "id": "reiss",
@@ -2110,6 +2129,8 @@
     "scene-partner": "Corinne Lake",
     "reporter": "Nick Ferro",
     "wardrobe-mentor": "Ola Whitfield",
-    "house-manager": "Lucian Vale"
+    "house-manager": "Lucian Vale",
+    "leading-man": "Theo Marchetti",
+    "publicity-chief": "Hollis Pike"
   }
 }

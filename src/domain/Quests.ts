@@ -50,15 +50,24 @@ export interface QuestDef {
   readonly id: string;
   readonly title: string;
   readonly summary: string;
+  /** The chapter the quest belongs to; a quest with none is a Chapter 1 quest. */
+  readonly chapter?: number;
   readonly prerequisites?: readonly QuestCondition[];
   readonly stages: readonly QuestStage[];
+}
+
+/** The chapter a quest belongs to: Chapter 1 unless the quest says otherwise. */
+export function questChapter(quest: QuestDef): number {
+  return quest.chapter ?? 1;
 }
 
 function startedFact(questId: string): string {
   return `quest:${questId}:started`;
 }
 
-function stageCompleteFact(questId: string, stageId: string): string {
+/** The fact a quest stage leaves behind when it completes, for content that wants to wait on a stage without waiting on the
+ * whole quest. */
+export function stageCompleteFact(questId: string, stageId: string): string {
   return `quest:${questId}:stage:${stageId}:complete`;
 }
 

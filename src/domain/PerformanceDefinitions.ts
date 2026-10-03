@@ -1,7 +1,14 @@
 import { validateAuditions } from '../content/PerformanceValidator';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import type { AuditionDefinition } from './Performance';
-import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER, SCENE_PARTNER } from './RelationshipDefinitions';
+import {
+  ALL_RELATIONSHIP_CHARACTERS,
+  CASTING_GATEKEEPER,
+  LEADING_MAN,
+  PRODUCTION_COORDINATOR,
+  PUBLICITY_CHIEF,
+  SCENE_PARTNER,
+} from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
 
 /** Debug content for the Read the Room foundation round: the vertical
@@ -130,7 +137,127 @@ export const SCREEN_TEST_AUDITION: AuditionDefinition = {
   },
 };
 
-export const ALL_AUDITIONS: readonly AuditionDefinition[] = [SCREEN_TEST_AUDITION];
+/** Chapter 2's first day on the soundstage (docs/DRAFT_CHAPTERS_2_10_CANON_PROPOSAL.md): the Lookout's one scene in *The
+ * Corsair's Daughter*, played as a small Read the Room. A flubbed line, a stuck prop and a nervous director are the cues to
+ * react to; the player can hold the script, improvise around the flub, or take the blame for the prop. Every result leaves the
+ * `first-day:done` fact, so the quest's second stage can always be reached: a bad take writes the next scene rather than ending
+ * the day. Preparation leans on the costume and the sides from the quests before it. */
+export const LOOKOUT_FIRST_DAY_AUDITION: AuditionDefinition = {
+  id: 'lookout-first-day',
+  title: 'The Lookout, Take One',
+  featuredAttribute: 'craft',
+  scenePartnerId: SCENE_PARTNER.id,
+  preparationChecks: [
+    {
+      condition: { kind: 'item-owned', itemId: 'lookout-costume' },
+      label: 'You came to the set in your fitted costume.',
+      points: 1,
+    },
+    {
+      condition: { kind: 'item-owned', itemId: 'lookout-sides' },
+      label: 'You learned your three lines on the way over.',
+      points: 1,
+    },
+    {
+      condition: { kind: 'fact', fact: 'lookout:costume:practical' },
+      label: 'You and the wardrobe mistress thought about how the costume would move on camera.',
+      points: 1,
+    },
+    {
+      condition: { kind: 'fact', fact: 'lookout:fourth-line' },
+      label: 'You have a fourth line to land, and you have been practicing it.',
+      points: 1,
+    },
+  ],
+  categories: [
+    {
+      kind: 'intention',
+      prompt: 'Why does the Lookout warn the heroine?',
+      options: [
+        { id: 'intention-genuine-warning', label: 'Because she has spent a lifetime reading danger.', fit: 2, attribute: 'craft' },
+        { id: 'intention-guilty-conscience', label: 'Because she is trying to make up for something.', fit: 1, attribute: 'wit' },
+        { id: 'intention-steal-the-scene', label: 'Because it is your one chance to be noticed.', fit: 0, attribute: 'presence' },
+      ],
+    },
+    {
+      kind: 'delivery',
+      prompt: 'How do you deliver your three lines?',
+      options: [
+        { id: 'delivery-low-and-quick', label: 'Low and quick, like someone who does not want to be heard.', fit: 2, attribute: 'craft' },
+        { id: 'delivery-over-the-shoulder', label: 'Over your shoulder, on the move.', fit: 1, attribute: 'wit' },
+        { id: 'delivery-to-the-back-row', label: 'Pitched to the back of the soundstage.', fit: 0, attribute: 'presence' },
+      ],
+    },
+    {
+      kind: 'blocking',
+      prompt: 'The chalk marks put you at the edge of the crowd. What do you do with them?',
+      options: [
+        { id: 'blocking-trust-the-mark', label: 'Hit your mark and hold it.', fit: 1, talentId: 'stagecraft-1' },
+        { id: 'blocking-drift-into-frame', label: 'Drift a half-step toward the lens.', fit: 0, attribute: 'presence' },
+        { id: 'blocking-play-it-safe', label: 'Stay hidden behind the barrels.', fit: -1 },
+      ],
+    },
+    {
+      kind: 'improvisation',
+      prompt: 'The leading man fumbles his cue and the stuck prop crate will not budge. Do you take the opening?',
+      options: [
+        { id: 'improv-hold-the-script', label: 'Stay in the script and let the director sort it.', fit: 0 },
+        { id: 'improv-cover-the-flub', label: 'Improvise a line that covers for him.', fit: 2, attribute: 'wit', talentId: 'comedy-1' },
+        { id: 'improv-overreach', label: 'Improvise big and hope it lands.', fit: -1, attribute: 'nerve' },
+      ],
+    },
+    {
+      kind: 'adaptation',
+      prompt: 'The director shouts for a second take with the crate still jammed. What do you do?',
+      options: [
+        { id: 'adapt-take-the-blame', label: 'Take the blame for the crate and keep your place.', fit: 2, attribute: 'nerve', talentId: 'hustle-2' },
+        { id: 'adapt-hold-the-scene', label: 'Quietly work the crate loose between takes.', fit: 1, attribute: 'grit', talentId: 'stagecraft-2' },
+        { id: 'adapt-freeze', label: 'Freeze until someone tells you what to do.', fit: -1 },
+      ],
+    },
+  ],
+  outcomeEffects: {
+    breakthrough: [
+      { kind: 'resource-delta', delta: { reputation: 8 } },
+      { kind: 'xp-grant', amount: 35 },
+      { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 6 } },
+      { kind: 'relationship-delta', characterId: LEADING_MAN.id, delta: { trust: 6 } },
+      { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 5 } },
+      { kind: 'relationship-delta', characterId: PUBLICITY_CHIEF.id, delta: { trust: 2 } },
+      { kind: 'set-fact', fact: 'first-day:outcome:breakthrough' },
+      { kind: 'set-fact', fact: 'first-day:done' },
+    ],
+    'promising-complication': [
+      { kind: 'resource-delta', delta: { reputation: 5 } },
+      { kind: 'xp-grant', amount: 25 },
+      { kind: 'relationship-delta', characterId: SCENE_PARTNER.id, delta: { trust: 3, tension: 3 } },
+      { kind: 'relationship-delta', characterId: LEADING_MAN.id, delta: { trust: 4 } },
+      { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 3 } },
+      { kind: 'relationship-delta', characterId: PUBLICITY_CHIEF.id, delta: { trust: 2 } },
+      { kind: 'set-fact', fact: 'first-day:outcome:promising-complication' },
+      { kind: 'set-fact', fact: 'first-day:done' },
+    ],
+    'wrong-role-right-notice': [
+      { kind: 'resource-delta', delta: { reputation: 3 } },
+      { kind: 'xp-grant', amount: 15 },
+      { kind: 'relationship-delta', characterId: LEADING_MAN.id, delta: { trust: 3 } },
+      { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 2 } },
+      { kind: 'relationship-delta', characterId: PUBLICITY_CHIEF.id, delta: { trust: 3 } },
+      { kind: 'set-fact', fact: 'first-day:outcome:wrong-role-right-notice' },
+      { kind: 'set-fact', fact: 'first-day:done' },
+    ],
+    'memorable-setback': [
+      { kind: 'resource-delta', delta: { reputation: 1 } },
+      { kind: 'xp-grant', amount: 10 },
+      { kind: 'relationship-delta', characterId: LEADING_MAN.id, delta: { trust: 4 } },
+      { kind: 'relationship-delta', characterId: PRODUCTION_COORDINATOR.id, delta: { trust: 4 } },
+      { kind: 'set-fact', fact: 'first-day:outcome:memorable-setback' },
+      { kind: 'set-fact', fact: 'first-day:done' },
+    ],
+  },
+};
+
+export const ALL_AUDITIONS: readonly AuditionDefinition[] = [SCREEN_TEST_AUDITION, LOOKOUT_FIRST_DAY_AUDITION];
 
 validateAuditions(ALL_AUDITIONS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
 

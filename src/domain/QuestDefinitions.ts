@@ -1,8 +1,9 @@
 import { validateQuestGraph } from '../content/QuestValidator';
+import { CHAPTER_TWO_STARTED_FACT } from './Chapters';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_RELATIONSHIP_CHARACTERS, CASTING_GATEKEEPER } from './RelationshipDefinitions';
 import { ALL_TALENTS } from './TalentDefinitions';
-import type { QuestDef } from './Quests';
+import { stageCompleteFact, type QuestDef, type QuestCondition } from './Quests';
 
 /** The Silver Thimble's quest: the wardrobe mistress promises a proper fitting once the player has a callback (her
  * `fitting-reply` line says as much), so `fitted` waits on the callback slip from First Audition. */
@@ -226,6 +227,179 @@ export const SCREEN_TEST_QUEST: QuestDef = {
   ],
 };
 
+/* ---------------------------------------------------------------------------------------------------------------------
+ * Chapter 2: A Small Part (docs/DRAFT_CHAPTERS_2_10_CANON_PROPOSAL.md). Every quest below waits on the Chapter 2 title page,
+ * so none opens before the chapter that introduces it. Quests are tied together through the facts their stages leave behind
+ * (see `stageCompleteFact`), so a later quest can wait on an early stage without waiting on the whole earlier quest.
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+const CHAPTER_TWO_OPEN: QuestCondition = { kind: 'fact', fact: CHAPTER_TWO_STARTED_FACT };
+
+/** The test lands: the casting office gives the verdict on the screen test (its result decides the wording, and a strong one
+ * earns a fourth line), then the extras corral gives the call time. Finishing it is the player's way onto the call sheet. */
+export const THE_LOOKOUT_QUEST: QuestDef = {
+  id: 'the-lookout',
+  chapter: 2,
+  title: 'The Lookout',
+  summary: 'Hear what Monarch made of your screen test, and get your call time for The Corsair\'s Daughter.',
+  prerequisites: [CHAPTER_TWO_OPEN],
+  stages: [
+    {
+      id: 'hear-the-verdict',
+      description: 'Hear the verdict on your screen test at Sunset Casting.',
+      rewards: [{ kind: 'resource-delta', delta: { reputation: 3 } }],
+    },
+    {
+      id: 'sign-the-call-sheet',
+      description: 'Get your call time from the production coordinator at the extras corral.',
+      rewards: [
+        { kind: 'resource-delta', delta: { money: 25 } },
+        { kind: 'xp-grant', amount: 10 },
+      ],
+    },
+  ],
+};
+
+/** The Silver Thimble fits the Lookout's costume once the part is confirmed. How it is worn is the player's choice. */
+export const HARBOR_MARKET_WARDROBE_QUEST: QuestDef = {
+  id: 'harbor-market-wardrobe',
+  chapter: 2,
+  title: 'Harbor-Market Wardrobe',
+  summary: 'Get fitted for the Lookout at The Silver Thimble.',
+  prerequisites: [CHAPTER_TWO_OPEN, { kind: 'fact', fact: stageCompleteFact('the-lookout', 'hear-the-verdict') }],
+  stages: [
+    {
+      id: 'fitted',
+      description: 'Get fitted for the Lookout\'s costume at The Silver Thimble.',
+      rewards: [
+        { kind: 'item-grant', itemId: 'lookout-costume' },
+        { kind: 'resource-delta', delta: { reputation: 2 } },
+        { kind: 'xp-grant', amount: 15 },
+      ],
+    },
+  ],
+};
+
+/** The first day on the soundstage. `report-to-set` hands off to the Read the Room scene (`lookout-first-day`); every result,
+ * even a poor one, leaves the `first-day:done` fact behind, so the second stage can always be completed: a bad day writes the
+ * next scene rather than a dead end. */
+export const FIRST_DAY_ON_SET_QUEST: QuestDef = {
+  id: 'first-day-on-set',
+  chapter: 2,
+  title: 'First Day on Set',
+  summary: 'Shoot your one scene as the Lookout on The Corsair\'s Daughter.',
+  prerequisites: [
+    CHAPTER_TWO_OPEN,
+    { kind: 'quest-status', questId: 'the-lookout', status: 'completed' },
+    { kind: 'quest-status', questId: 'harbor-market-wardrobe', status: 'completed' },
+  ],
+  stages: [
+    { id: 'report-to-set', description: 'Report to the soundstage and shoot your scene.' },
+    {
+      id: 'earn-your-credit',
+      description: 'See the day out on the soundstage.',
+      rewards: [
+        { kind: 'item-grant', itemId: 'first-screen-credit' },
+        { kind: 'resource-delta', delta: { reputation: 6 } },
+        { kind: 'xp-grant', amount: 30 },
+      ],
+    },
+  ],
+};
+
+/** The Heart's Choice, part one: two free evenings with two different people from among the four the story lets the player
+ * choose between. Nobody is locked out; the choice itself is made at the wrap party. */
+export const A_WEEK_OF_REHEARSALS_QUEST: QuestDef = {
+  id: 'a-week-of-rehearsals',
+  chapter: 2,
+  title: 'A Week of Rehearsals',
+  summary: 'Spend your free evenings between shoots getting to know the company.',
+  prerequisites: [CHAPTER_TWO_OPEN, { kind: 'quest-status', questId: 'first-day-on-set', status: 'completed' }],
+  stages: [
+    { id: 'first-evening', description: 'Spend a free evening with someone from the company.' },
+    {
+      id: 'second-evening',
+      description: 'Spend another evening with someone different.',
+      rewards: [{ kind: 'xp-grant', amount: 15 }],
+    },
+  ],
+};
+
+/** The Heart's Choice, part two: the dance at the Celestial Palace, where the player chooses a love interest, or chooses no one. */
+export const THE_WRAP_PARTY_QUEST: QuestDef = {
+  id: 'the-wrap-party',
+  chapter: 2,
+  title: 'The Wrap Party',
+  summary: 'Save a dance at The Celestial Palace, and decide who gets it.',
+  prerequisites: [CHAPTER_TWO_OPEN, { kind: 'quest-status', questId: 'a-week-of-rehearsals', status: 'completed' }],
+  stages: [
+    {
+      id: 'the-dance',
+      description: 'Give your dance at the wrap party at The Celestial Palace.',
+      rewards: [
+        { kind: 'item-grant', itemId: 'wrap-party-ribbon' },
+        { kind: 'resource-delta', delta: { reputation: 3 } },
+        { kind: 'xp-grant', amount: 20 },
+      ],
+    },
+  ],
+};
+
+/** Whispers, one: the rival's warning at the Monarch gate. How the player answers sets the rest of her story. */
+export const DELPHINES_WARNING_QUEST: QuestDef = {
+  id: 'delphines-warning',
+  chapter: 2,
+  title: 'The Rival\'s Warning',
+  summary: 'The other hopeful at the Monarch gate has something to say about your first credit.',
+  prerequisites: [CHAPTER_TWO_OPEN, { kind: 'quest-status', questId: 'first-day-on-set', status: 'completed' }],
+  stages: [
+    {
+      id: 'face-her',
+      description: 'Hear her out at the Monarch Pictures gate.',
+      rewards: [{ kind: 'xp-grant', amount: 15 }],
+    },
+  ],
+};
+
+/** Whispers, two: Monarch's publicity chief offers to "look after" the player, and the newsman offers a trade of his own.
+ * Accepting a favor is remembered as a `ledger:` fact, which later chapters will count. Declining costs nothing now. */
+export const THE_HELPFUL_MAN_QUEST: QuestDef = {
+  id: 'the-helpful-man',
+  chapter: 2,
+  title: 'The Helpful Man',
+  summary: 'A very helpful man from Monarch\'s publicity department has taken an interest in you.',
+  prerequisites: [CHAPTER_TWO_OPEN, { kind: 'quest-status', questId: 'first-day-on-set', status: 'completed' }],
+  stages: [
+    { id: 'hear-the-offer', description: 'Hear what the publicity man is offering on the soundstage.' },
+    {
+      id: 'answer-the-newsman',
+      description: 'Settle things with the newsman at The Klieg Light.',
+      rewards: [
+        { kind: 'resource-delta', delta: { reputation: 3 } },
+        { kind: 'xp-grant', amount: 15 },
+      ],
+    },
+  ],
+};
+
+/** Whispers, three: the invitation to the Hollywood Bowl, which opens Chapter 3. Both stages can always be completed: the
+ * second is paid for in cash or in a favor owed to the landlady. */
+export const UNDER_THE_STARS_QUEST: QuestDef = {
+  id: 'under-the-stars',
+  chapter: 2,
+  title: 'Under the Stars',
+  summary: 'A friend has a pair of tickets to the Hollywood Bowl, and someone he wants you to see.',
+  prerequisites: [CHAPTER_TWO_OPEN, { kind: 'quest-status', questId: 'the-wrap-party', status: 'completed' }],
+  stages: [
+    { id: 'get-the-invitation', description: 'Hear the invitation from the veteran extra at the extras corral.' },
+    {
+      id: 'dress-for-the-evening',
+      description: 'Borrow something fit for an evening out from Bellhaven Rooms.',
+      rewards: [{ kind: 'xp-grant', amount: 10 }],
+    },
+  ],
+};
+
 export const ALL_QUESTS: readonly QuestDef[] = [
   FIRST_AUDITION_QUEST,
   SCREEN_TEST_QUEST,
@@ -237,6 +411,14 @@ export const ALL_QUESTS: readonly QuestDef[] = [
   COSTUME_FITTING_QUEST,
   ON_THE_RECORD_QUEST,
   PALACE_MATINEE_QUEST,
+  THE_LOOKOUT_QUEST,
+  HARBOR_MARKET_WARDROBE_QUEST,
+  FIRST_DAY_ON_SET_QUEST,
+  A_WEEK_OF_REHEARSALS_QUEST,
+  THE_WRAP_PARTY_QUEST,
+  DELPHINES_WARNING_QUEST,
+  THE_HELPFUL_MAN_QUEST,
+  UNDER_THE_STARS_QUEST,
 ];
 
 validateQuestGraph(ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

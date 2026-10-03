@@ -183,11 +183,28 @@ Audit of the design documents against the build. Items the docs promised but the
 | Sky art | Skies tile mirrored side to side, so Evening has clouds only in the middle 60% and a clean gradient at both edges; Morning has an edge dissolve; all share the Afternoon's 3px blur look. The game's Afternoon sky is `sky-blur.webp` |
 | Dev tooling | `playwright` is a dev dependency for phone-size screenshots; CSS changes need `npm run build` as well as the tests |
 
+## Chapter 2 built (2026-10-03)
+
+Owner approved the Chapter 2 plan in `DRAFT_CHAPTERS_2_10_CANON_PROPOSAL.md` as written ("A Small Part") and asked for everything to be built, with art prompts only for the new characters. The rest of the Chapters 2-10 draft (Chapters 3-10, the ledger payoff, the culprit, the endings) is still awaiting review.
+
+| Area | Decision |
+|---|---|
+| Chapter 2 quests | Eight quests, all `chapter: 2`: The Lookout, Harbor-Market Wardrobe, First Day on Set, A Week of Rehearsals, The Wrap Party, Delphine's Warning, The Helpful Man and Under the Stars. All wait on the Chapter 2 title page (`chapter:2:started`). The first-day scene is a Read the Room audition (`lookout-first-day`, five categories, all four result families reachable); every result leaves `first-day:done`, so a bad take never blocks the credit. `src/domain/QuestDefinitions.ts`, `PerformanceDefinitions.ts` |
+| Chapter cards | One flow for every chapter (`nextChapterCard` in `Chapters.ts`): the Chapter 1 Conclusion, then straight on to the Chapter 2 opening page, with no Boulevard in between; the Chapter 2 Conclusion follows the last quest. Each is a saved fact (`chapter:1:concluded`, `chapter:2:started`, `chapter:2:concluded`), so a career saved after Chapter 1 opens Chapter 2 the next time it loads. After Chapter 2 the quest helper reads "Chapter 3 / Coming Soon" |
+| Chapter quest groups | `QuestDef.chapter` (default 1). The Career panel has a collapsible "Chapter 2 Quests" group under Chapter 1's, hidden until a Chapter 2 quest is open |
+| Place dialogue | Every Boulevard place keeps its Chapter 1 conversation and gains a Chapter 2 hub (`c2-root`) via the new `DialogueGraph.entryVariants`; "Talk about something else" returns to the Chapter 1 conversation. The new dialogue is `src/domain/Chapter2Dialogue.ts`. Speakers stay roles ("Leading Man", "Publicity Chief"), as in Chapter 1; names appear only in the planner |
+| New cast | Roster entries `leading-man` (Theo Marchetti, attraction supported) and `publicity-chief` (Hollis Pike, none). Leopold Maddox is only seen through a window and has no roster entry. Art briefs are in `art/prompts/`; neither has a portrait, so they speak with the scene partner's or the place's portrait behind them until approved |
+| The love interest | Chosen at the wrap party and remembered as `love-interest:corinne|frankie|delphine|theo|none` and a `love-interest` pivotal flag on the person. Nobody is locked out, and "everyone" is a full path. A dance only; no kiss |
+| The ledger | Accepting Hollis Pike's help sets `ledger:pike-help`, grants the Publicity Card and puts the player in his debt (obligation -3). Declining, or sending him to the newsman, costs nothing now. The newsman's answers (`nick:exclusive-given`) are favors the player gives, not takes. Later chapters count these facts |
+| Delphine's path | `delphine-path:truce|test|rivalry` (and `delphine:insight` for a player with Observation I) record how the player answered her. Her later arc reads them |
+| Not built yet | The Studio-Lot Hand-Me-Down wardrobe shortcut (no origin condition in dialogue) and the extra nervous beat for low Presence (no attribute condition); the evening money is a $10 chip-in or a favor owed to the landlady rather than a new assignment, so assignment balance is unchanged. Recorded in the planner beat notes |
+| Localization of this round | New English text is in the catalog with AI first drafts for es, fr, de and pt-BR, still Beta and awaiting native review |
+
 ## Open decisions
 
 | Area | Question | Raised |
 |---|---|---|
-| Chapters 2-10 canon | Review `DRAFT_CHAPTERS_2_10_CANON_PROPOSAL.md`: the new names, the Maddox and ledger through-line, Hollis Pike as the Observatory culprit, Theo Marchetti as the new male love interest, the three endings and their gates, the five signature talents, and the favors / evidence / allies counters. Accepted parts are then folded into the design docs as the Track B canon was | 2026-09-30 |
+| Chapters 3-10 canon | Chapter 2 is approved and built (see above). Review the rest of `DRAFT_CHAPTERS_2_10_CANON_PROPOSAL.md`: the new names, the Maddox and ledger through-line, Hollis Pike as the Observatory culprit, Theo Marchetti as the new male love interest, the three endings and their gates, the five signature talents, and the favors / evidence / allies counters. Accepted parts are then folded into the design docs as the Track B canon was | 2026-09-30 |
 | Phase 1 visual tweaks | Owner will outline minor tweaks to the approved Phase 1 visual spike | 2026-09-19 |
 | Phase 1 exit | Measured feasibility report and final asset/frame budgets are still needed (`PRODUCTION_ROADMAP.md`) | 2026-09-19 |
 | The alley | The only Boulevard entrance without a scene | 2026-09-19 |

@@ -1,4 +1,15 @@
 import { validateDialogueGraph } from '../content/DialogueGraphValidator';
+import {
+  BACKLOT_GATE_CHAPTER_TWO,
+  BOARDING_HOUSE_CHAPTER_TWO,
+  CASTING_OFFICE_CHAPTER_TWO,
+  CELESTIAL_PALACE_CHAPTER_TWO,
+  COSTUME_SHOP_CHAPTER_TWO,
+  DINER_CHAPTER_TWO,
+  EXTRAS_CORRAL_CHAPTER_TWO,
+  KLIEG_LIGHT_CHAPTER_TWO,
+  SOUNDSTAGE_CHAPTER_TWO,
+} from './Chapter2Dialogue';
 import { ALL_ITEMS } from './InventoryDefinitions';
 import { ALL_AUDITIONS } from './PerformanceDefinitions';
 import { ALL_QUESTS } from './QuestDefinitions';
@@ -220,7 +231,9 @@ export const CASTING_OFFICE_DIALOGUE: DialogueGraph = {
       text: '"Don’t make me regret this. Monday, then — first thing."',
       choices: [{ id: 'leave', label: 'Step outside.', next: null }],
     },
+    ...CASTING_OFFICE_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [CASTING_OFFICE_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(CASTING_OFFICE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS, ALL_AUDITIONS);
@@ -322,7 +335,9 @@ export const DINER_DIALOGUE: DialogueGraph = {
       text: '"Ask around enough and you will hear it all — who is bankable, who is trouble, and who is both."',
       choices: [{ id: 'leave', label: 'Thanks for the coffee.', next: null }],
     },
+    ...DINER_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [DINER_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(DINER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
@@ -430,7 +445,9 @@ export const LANDLADY_DIALOGUE: DialogueGraph = {
       text: '"Every one of them slept in your room once," she says, tapping a frame of a young man in a borrowed tuxedo. "Two got a contract. One got a husband. The rest went home and swear they never wanted it." She turns the ledger a quarter-inch straighter. "Rent is due Friday, all the same."',
       choices: [{ id: 'head-upstairs', label: 'Head upstairs.', next: null, opensHomeHub: true }],
     },
+    ...BOARDING_HOUSE_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [BOARDING_HOUSE_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(LANDLADY_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
@@ -533,7 +550,9 @@ export const RIVAL_DIALOGUE: DialogueGraph = {
       text: '"They liked me. They always like me," she says, then looks away. "That is the trouble. Liked is not the same as chosen." A beat, and the smile is back. "Do not repeat that."',
       choices: [{ id: 'keep-her-secret', label: 'Keep it to yourself.', next: null }],
     },
+    ...BACKLOT_GATE_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [BACKLOT_GATE_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(RIVAL_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
@@ -640,7 +659,9 @@ export const PRODUCTION_COORDINATOR_DIALOGUE: DialogueGraph = {
       text: '"Hit your mark, hold your mark, and never look at the camera," he says, without lifting his pen. "Extras who do that get remembered. Extras who wave get replaced." He glances up, just once. "Take that free."',
       choices: [{ id: 'take-it-to-heart', label: 'Take it to heart and get back behind the rope.', next: null }],
     },
+    ...EXTRAS_CORRAL_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [EXTRAS_CORRAL_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(PRODUCTION_COORDINATOR_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
@@ -756,10 +777,12 @@ export const SCENE_PARTNER_DIALOGUE: DialogueGraph = {
       text: '"A corpse in a two-reel comedy," she laughs. "Eleven takes, and the director told me I had a wonderful stillness." She lowers her sides. "The trick is that you never stop acting, even lying down."',
       choices: [{ id: 'take-the-tip', label: 'Take the tip and return to your mark.', next: null }],
     },
+    ...SOUNDSTAGE_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [SOUNDSTAGE_CHAPTER_TWO.entry],
 };
 
-validateDialogueGraph(SCENE_PARTNER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
+validateDialogueGraph(SCENE_PARTNER_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS, ALL_AUDITIONS);
 
 /** The Silver Thimble: the `wardrobe-mentor` roster entry's first content.
  * Every gain is one-time (gated on a `fact` that the same choice sets), so
@@ -843,7 +866,9 @@ export const COSTUME_SHOP_DIALOGUE: DialogueGraph = {
       text: '"Chin level, shoulders down, and do not breathe in," she says, chalk already moving. "A costume that fits is worth more to a career than a good headshot. Come back when you have a callback."',
       choices: [{ id: 'thank-her', label: 'Thank her and promise to come back.', next: null }],
     },
+    ...COSTUME_SHOP_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [COSTUME_SHOP_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(COSTUME_SHOP_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
@@ -955,7 +980,9 @@ export const KLIEG_LIGHT_DIALOGUE: DialogueGraph = {
       text: '"Everybody\'s got something," he says, tipping his hat back with the pencil. "You know where the desk is."',
       choices: [{ id: 'leave', label: 'Walk back out onto the Boulevard.', next: null }],
     },
+    ...KLIEG_LIGHT_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [KLIEG_LIGHT_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(KLIEG_LIGHT_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);
@@ -1054,7 +1081,9 @@ export const CELESTIAL_PALACE_DIALOGUE: DialogueGraph = {
         },
       ],
     },
+    ...CELESTIAL_PALACE_CHAPTER_TWO.nodes,
   ],
+  entryVariants: [CELESTIAL_PALACE_CHAPTER_TWO.entry],
 };
 
 validateDialogueGraph(CELESTIAL_PALACE_DIALOGUE, ALL_QUESTS, ALL_RELATIONSHIP_CHARACTERS, ALL_TALENTS, ALL_ITEMS);

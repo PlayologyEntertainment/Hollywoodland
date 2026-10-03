@@ -1,7 +1,7 @@
 import type { CareerState } from '../domain/CareerState';
-import { isChapterOneComplete } from '../domain/Chapters';
+import { isChapterComplete } from '../domain/Chapters';
 import type { InventoryItemDefinition } from '../domain/Inventory';
-import { getActiveStage, getActiveStageIndex, getQuestStatus, type QuestDef } from '../domain/Quests';
+import { getActiveStage, getActiveStageIndex, getQuestStatus, questChapter, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
 import { t } from '../i18n';
 import { questStageDescription, questTitle } from '../i18n/content';
@@ -27,9 +27,26 @@ export const IDLE_OBJECTIVE: Objective = Object.freeze({
   goal: 'Explore the Boulevard',
 });
 
-/** What the card says once every Chapter 1 quest is done: the next chapter is not built yet. */
-function chapterTwoObjective(): Objective {
-  return Object.freeze({ kind: 'idle', questId: undefined, stageId: undefined, title: t('objective.chapter2.title'), goal: t('objective.chapter2.goal') });
+/** What the card says once a chapter's quests are all done and the next chapter is not built yet: the chapter after it is coming
+ * soon. Only the chapters that can be the next one have wording, so there is nothing to show for the rest. */
+function comingSoonObjective(chapter: number): Objective | undefined {
+  if (chapter === 2) return Object.freeze({ kind: 'idle', questId: undefined, stageId: undefined, title: t('objective.chapter2.title'), goal: t('objective.chapter2.goal') });
+  if (chapter === 3) return Object.freeze({ kind: 'idle', questId: undefined, stageId: undefined, title: t('objective.chapter3.title'), goal: t('objective.chapter3.goal') });
+  return undefined;
+}
+
+/** The chapter to announce as coming soon: the one after the latest chapter whose quests are all done, unless it has quests of
+ * its own (it is built, and simply has not opened yet). */
+function nextUnbuiltChapter(
+  state: CareerState,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+  items: readonly InventoryItemDefinition[],
+): number | undefined {
+  const chapters = [...new Set(quests.map(questChapter))].sort((a, b) => b - a);
+  const finished = chapters.find((chapter) => isChapterComplete(chapter, state, quests, roster, items));
+  if (finished === undefined) return undefined;
+  return chapters.includes(finished + 1) ? undefined : finished + 1;
 }
 
 /** The idle objective in the active language. */
@@ -52,7 +69,10 @@ export function chooseObjective(
     .map((quest) => ({ quest, status: getQuestStatus(state, quest, quests, roster, items) }))
     .filter(({ status }) => status === 'active' || status === 'available');
   const chosen = open.find(({ status }) => status === 'active') ?? open[0];
-  if (chosen === undefined) return isChapterOneComplete(state, quests, roster, items) ? chapterTwoObjective() : idleObjective();
+  if (chosen === undefined) {
+    const soon = nextUnbuiltChapter(state, quests, roster, items);
+    return (soon === undefined ? undefined : comingSoonObjective(soon)) ?? idleObjective();
+  }
   const stage = (chosen.status === 'active' ? getActiveStage(state, chosen.quest) : undefined) ?? chosen.quest.stages[0];
   if (stage === undefined) return idleObjective();
   return { kind: 'quest', questId: chosen.quest.id, stageId: stage.id, title: questTitle(chosen.quest), goal: questStageDescription(chosen.quest, stage) };
