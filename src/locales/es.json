@@ -1018,5 +1018,22 @@
   "content.dialogue.celestial-palace-lobby.c2-dance-none.speaker": "Gerente del cine",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.text": "Pasas la velada adonde te lleve la música: un vals con la compañera de escena, un lindy hop con la chica del mostrador, un tango con la rival que acaba en competición, y una vuelta torpe por la pista con el galán, que te pisa el pie y se disculpa cuatro veces. Al final, todos ríen. «Una sabia elección», dice el gerente del cine, ofreciéndote un vaso de limonada. «La noche es larga, y el estudio lo es más.»",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.choice.none-leave-the-ballroom": "Salir del salón, con la cabeza dando vueltas.",
-  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Sube a tu habitación."
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Sube a tu habitación.",
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.pick-it-yourself": "Decirle que creciste remendando vestuario en un estudio, y elegir por tu cuenta las prendas adecuadas.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne-nervous": "Invitar a bailar a la compañera de escena. (-10 Energía)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.speaker": "Compañera de escena",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.text": "Tienes la boca seca y los pies han olvidado todo lo que sabían. Abres la boca para invitarla, y lo que sale es media frase y una tos. Ella espera, con gran amabilidad, el resto. «Tómate tu tiempo», murmura. «No me voy a ninguna parte.»",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.choice.corinne-dance-on": "Respirar hondo y seguir con el baile.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie-nervous": "Invitar a bailar a la chica del mostrador. (-10 Energía)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.speaker": "Chica del mostrador",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.text": "Se te quiebra la voz en la primera palabra, y a la chica del mostrador se le arquean las cejas. «Respira, cariño», susurra, apretándote la mano. «Solo es un baile. Te he visto aguantar la hora del almuerzo.»",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.choice.frankie-dance-on": "Respirar hondo y seguir con el baile.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine-nervous": "Invitar a bailar a la rival. (-10 Energía)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.speaker": "Rival",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.text": "Te quedas frente a ella un largo y silencioso momento, y ella te deja, con una ceja que sube despacio. «¿Y bien?», dice al fin, pero sin dureza. «No voy a morderte. Mucho.»",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.choice.delphine-dance-on": "Respirar hondo y seguir con el baile.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Invitar a bailar al galán. (-10 Energía)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Galán",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Llegas a extender la mano antes de que te falle el valor. El galán la mira, luego a ti, y sonríe, porque sabe exactamente cómo se siente. «Yo también», dice, muy bajo. «Vamos. Estaremos nerviosos juntos.»",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Respirar hondo y seguir con el baile."
 }

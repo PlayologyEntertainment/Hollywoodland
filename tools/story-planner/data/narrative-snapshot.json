@@ -5006,6 +5006,15 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.pick-it-yourself": {
+   "en": "Tell her you grew up mending costumes on a lot, and pick the right pieces yourself.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-borrowed": {
    "en": "Blend in: something off the rack that has been on a hundred extras. (-10 Energy)",
    "tr": {
@@ -5771,7 +5780,25 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne-nervous": {
+   "en": "Ask the scene partner to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie": {
+   "en": "Ask the counter girl to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie-nervous": {
    "en": "Ask the counter girl to dance. (-10 Energy)",
    "tr": {
     "es": "ok",
@@ -5789,7 +5816,25 @@
     "pt-BR": "ok"
    }
   },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine-nervous": {
+   "en": "Ask the rival to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo": {
+   "en": "Ask the leading man to dance. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": {
    "en": "Ask the leading man to dance. (-10 Energy)",
    "tr": {
     "es": "ok",
@@ -5800,6 +5845,114 @@
   },
   "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-everyone": {
    "en": "Dance with no one in particular, and with everyone in turn. (-10 Energy)",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.speaker": {
+   "en": "Scene Partner",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.text": {
+   "en": "Your mouth has gone dry and your feet have forgotten everything they ever knew. You open your mouth to ask, and what comes out is half a sentence and a cough. She waits, with great kindness, for the rest. \"Take your time,\" she murmurs. \"I'm not going anywhere.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.choice.corinne-dance-on": {
+   "en": "Take a breath and go on with the dance.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.speaker": {
+   "en": "Counter Girl",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.text": {
+   "en": "Your voice cracks on the first word, and the counter girl's eyebrows climb. \"Breathe, honey,\" she whispers, squeezing your hand. \"It's just a dance. I've seen you handle a lunch rush.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.choice.frankie-dance-on": {
+   "en": "Take a breath and go on with the dance.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.speaker": {
+   "en": "Rival",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.text": {
+   "en": "You stand in front of her for a long, silent moment, and she lets you, one eyebrow slowly rising. \"Well?\" she says at last, but not unkindly. \"I'm not going to bite. Much.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.choice.delphine-dance-on": {
+   "en": "Take a breath and go on with the dance.",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": {
+   "en": "Leading Man",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": {
+   "en": "You get as far as holding out your hand before your nerve goes. The leading man looks at it, and then at you, and grins, because he knows exactly how this feels. \"Me too,\" he says, very low. \"Come on. We'll be nervous together.\"",
+   "tr": {
+    "es": "ok",
+    "fr": "ok",
+    "de": "ok",
+    "pt-BR": "ok"
+   }
+  },
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": {
+   "en": "Take a breath and go on with the dance.",
    "tr": {
     "es": "ok",
     "fr": "ok",
@@ -9064,6 +9217,22 @@
        "startsAudition": null
       },
       {
+       "id": "pick-it-yourself",
+       "label": "content.dialogue.silver-thimble-intro.c2-fitting.choice.pick-it-yourself",
+       "next": "c2-fitted-practical",
+       "conditions": [
+        "{\"kind\":\"origin-is\",\"originId\":\"studio-lot-hand-me-down\"}"
+       ],
+       "effects": [
+        "start quest \"harbor-market-wardrobe\"",
+        "complete-stage quest \"harbor-market-wardrobe\" (stage \"fitted\")",
+        "sets fact \"lookout:costume:practical\"",
+        "wardrobe-mentor: trust +4"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
        "id": "wear-it-borrowed",
        "label": "content.dialogue.silver-thimble-intro.c2-fitting.choice.wear-it-borrowed",
        "next": "c2-fitted-borrowed",
@@ -9728,7 +9897,27 @@
        "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne",
        "next": "c2-dance-corinne",
        "conditions": [
-        "energy is at least 10"
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5}"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:corinne\"",
+        "scene-partner: memory \"love-interest\"",
+        "scene-partner: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-corinne-nervous",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne-nervous",
+       "next": "c2-dance-corinne-nervous",
+       "conditions": [
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5,\"equals\":false}"
        ],
        "effects": [
         "start quest \"the-wrap-party\"",
@@ -9746,7 +9935,27 @@
        "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie",
        "next": "c2-dance-frankie",
        "conditions": [
-        "energy is at least 10"
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5}"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:frankie\"",
+        "diner-confidant: memory \"love-interest\"",
+        "diner-confidant: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-frankie-nervous",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie-nervous",
+       "next": "c2-dance-frankie-nervous",
+       "conditions": [
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5,\"equals\":false}"
        ],
        "effects": [
         "start quest \"the-wrap-party\"",
@@ -9764,7 +9973,27 @@
        "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine",
        "next": "c2-dance-delphine",
        "conditions": [
-        "energy is at least 10"
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5}"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:delphine\"",
+        "rival: memory \"love-interest\"",
+        "rival: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-delphine-nervous",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine-nervous",
+       "next": "c2-dance-delphine-nervous",
+       "conditions": [
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5,\"equals\":false}"
        ],
        "effects": [
         "start quest \"the-wrap-party\"",
@@ -9782,7 +10011,27 @@
        "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo",
        "next": "c2-dance-theo",
        "conditions": [
-        "energy is at least 10"
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5}"
+       ],
+       "effects": [
+        "start quest \"the-wrap-party\"",
+        "complete-stage quest \"the-wrap-party\" (stage \"the-dance\")",
+        "sets fact \"love-interest:theo\"",
+        "leading-man: memory \"love-interest\"",
+        "leading-man: attraction +6, trust +3",
+        "energy -10"
+       ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      },
+      {
+       "id": "dance-with-theo-nervous",
+       "label": "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous",
+       "next": "c2-dance-theo-nervous",
+       "conditions": [
+        "energy is at least 10",
+        "{\"kind\":\"attribute-at-least\",\"attribute\":\"presence\",\"minimum\":5,\"equals\":false}"
        ],
        "effects": [
         "start quest \"the-wrap-party\"",
@@ -9813,6 +10062,70 @@
         "house-manager: trust +1",
         "energy -10"
        ],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-corinne-nervous",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.text",
+     "choices": [
+      {
+       "id": "corinne-dance-on",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.choice.corinne-dance-on",
+       "next": "c2-dance-corinne",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-frankie-nervous",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.text",
+     "choices": [
+      {
+       "id": "frankie-dance-on",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.choice.frankie-dance-on",
+       "next": "c2-dance-frankie",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-delphine-nervous",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.text",
+     "choices": [
+      {
+       "id": "delphine-dance-on",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.choice.delphine-dance-on",
+       "next": "c2-dance-delphine",
+       "conditions": [],
+       "effects": [],
+       "opensHomeHub": false,
+       "startsAudition": null
+      }
+     ]
+    },
+    {
+     "id": "c2-dance-theo-nervous",
+     "speaker": "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker",
+     "text": "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text",
+     "choices": [
+      {
+       "id": "theo-dance-on",
+       "label": "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on",
+       "next": "c2-dance-theo",
+       "conditions": [],
+       "effects": [],
        "opensHomeHub": false,
        "startsAudition": null
       }

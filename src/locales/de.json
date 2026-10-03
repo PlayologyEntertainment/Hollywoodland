@@ -1018,5 +1018,22 @@
   "content.dialogue.celestial-palace-lobby.c2-dance-none.speaker": "Kinoleiter",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.text": "Du verbringst den Abend, wohin die Musik dich trägt: ein Walzer mit der Szenenpartnerin, ein Lindy Hop mit der Bedienung vom Tresen, ein Tango mit der Rivalin, der in einen Wettstreit übergeht, und eine unbeholfene Runde über die Tanzfläche mit dem Hauptdarsteller, der dir auf den Fuß tritt und sich viermal entschuldigt. Am Ende lachen alle. „Eine weise Wahl“, sagt der Kinoleiter und reicht dir ein Glas Limonade. „Der Abend ist lang, und das Studio ist länger.“",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.choice.none-leave-the-ballroom": "Den Ballsaal verlassen, mit schwirrendem Kopf.",
-  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Geh nach oben."
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Geh nach oben.",
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.pick-it-yourself": "Ihr sagen, dass du auf einem Studiogelände aufgewachsen bist und Kostüme geflickt hast, und die richtigen Teile selbst aussuchen.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne-nervous": "Die Szenenpartnerin zum Tanz auffordern. (-10 Energie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.speaker": "Szenenpartnerin",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.text": "Dein Mund ist trocken, und deine Füße haben alles vergessen, was sie je wussten. Du öffnest den Mund, um sie zu fragen, und heraus kommen ein halber Satz und ein Husten. Sie wartet mit großer Freundlichkeit auf den Rest. „Lass dir Zeit“, murmelt sie. „Ich laufe nicht weg.“",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.choice.corinne-dance-on": "Tief durchatmen und mit dem Tanz weitermachen.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie-nervous": "Die Bedienung vom Tresen zum Tanz auffordern. (-10 Energie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.speaker": "Bedienung am Tresen",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.text": "Deine Stimme bricht beim ersten Wort, und die Augenbrauen der Bedienung am Tresen wandern nach oben. „Atme, Schätzchen“, flüstert sie und drückt deine Hand. „Es ist nur ein Tanz. Ich habe dich im Mittagsansturm erlebt.“",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.choice.frankie-dance-on": "Tief durchatmen und mit dem Tanz weitermachen.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine-nervous": "Die Rivalin zum Tanz auffordern. (-10 Energie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.speaker": "Rivalin",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.text": "Du stehst lange schweigend vor ihr, und sie lässt dich, eine Augenbraue hebt sich langsam. „Na?“, sagt sie schließlich, aber nicht unfreundlich. „Ich beiße nicht. Jedenfalls nicht sehr.“",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.choice.delphine-dance-on": "Tief durchatmen und mit dem Tanz weitermachen.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Den Hauptdarsteller zum Tanz auffordern. (-10 Energie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Hauptdarsteller",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Du schaffst es gerade noch, die Hand auszustrecken, bevor dich der Mut verlässt. Der Hauptdarsteller sieht sie an, dann dich, und grinst, denn er weiß genau, wie sich das anfühlt. „Mir geht es genauso“, sagt er ganz leise. „Komm. Wir sind zusammen nervös.“",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Tief durchatmen und mit dem Tanz weitermachen."
 }

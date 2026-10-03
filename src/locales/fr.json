@@ -1018,5 +1018,22 @@
   "content.dialogue.celestial-palace-lobby.c2-dance-none.speaker": "Directeur de salle",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.text": "Vous passez la soirée où la musique vous porte : une valse avec la partenaire de scène, un lindy hop avec la serveuse du comptoir, un tango avec la rivale qui tourne à la compétition, et un tour maladroit de la piste avec le jeune premier, qui vous marche sur le pied et s'excuse quatre fois. À la fin, tout le monde rit. « Un sage choix », dit le directeur de salle en vous tendant un verre de limonade. « La soirée est longue, et le studio l'est davantage. »",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.choice.none-leave-the-ballroom": "Quitter la salle de bal, la tête qui tourne.",
-  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Montez à votre chambre."
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Montez à votre chambre.",
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.pick-it-yourself": "Lui dire que vous avez grandi à rapiécer des costumes dans un studio, et choisir vous-même les bonnes pièces.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne-nervous": "Inviter la partenaire de scène à danser. (-10 Énergie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.speaker": "Partenaire de scène",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.text": "Votre bouche est sèche et vos pieds ont oublié tout ce qu'ils savaient. Vous ouvrez la bouche pour l'inviter, et il en sort la moitié d'une phrase et une toux. Elle attend la suite, avec beaucoup de bonté. « Prenez votre temps », murmure-t-elle. « Je ne vais nulle part. »",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.choice.corinne-dance-on": "Reprendre votre souffle et poursuivre la danse.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie-nervous": "Inviter la serveuse du comptoir à danser. (-10 Énergie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.speaker": "Serveuse du comptoir",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.text": "Votre voix se brise sur le premier mot, et les sourcils de la serveuse du comptoir se haussent. « Respirez, ma belle », chuchote-t-elle en vous serrant la main. « Ce n'est qu'une danse. Je vous ai vu tenir un coup de feu du déjeuner. »",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.choice.frankie-dance-on": "Reprendre votre souffle et poursuivre la danse.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine-nervous": "Inviter la rivale à danser. (-10 Énergie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.speaker": "Rivale",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.text": "Vous restez devant elle un long moment silencieux, et elle vous laisse faire, un sourcil se levant lentement. « Alors ? » dit-elle enfin, sans méchanceté. « Je ne vais pas vous mordre. Pas trop. »",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.choice.delphine-dance-on": "Reprendre votre souffle et poursuivre la danse.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Inviter le jeune premier à danser. (-10 Énergie)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Jeune premier",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Vous parvenez à tendre la main avant que le courage ne vous abandonne. Le jeune premier la regarde, puis vous, et sourit, car il sait exactement ce que c'est. « Moi aussi », dit-il très bas. « Allez. On sera nerveux ensemble. »",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Reprendre votre souffle et poursuivre la danse."
 }

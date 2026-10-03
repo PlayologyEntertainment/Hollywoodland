@@ -346,3 +346,27 @@ describe('energy costs in Chapter 2 dialogue', () => {
     expect(available(rested, CELESTIAL_PALACE_DIALOGUE, 'c2-wrap-party', 'dance-with-theo')).toBe(true);
   });
 });
+
+describe('origin and attribute conditions in Chapter 2', () => {
+  it('gives the Studio-Lot Hand-Me-Down the wardrobe shortcut, and no one else', () => {
+    const lot: CareerState = { ...chapterTwoCareer(), identity: { ...createDefaultCareerState().identity, originId: 'studio-lot-hand-me-down' }, facts: { ...chapterTwoCareer().facts, 'quest:the-lookout:started': true, 'quest:the-lookout:stage:hear-the-verdict:complete': true } };
+    expect(available(lot, COSTUME_SHOP_DIALOGUE, 'c2-fitting', 'pick-it-yourself')).toBe(true);
+    const done = pick(lot, COSTUME_SHOP_DIALOGUE, 'c2-fitting', 'pick-it-yourself');
+    expect(status(done, 'harbor-market-wardrobe')).toBe('completed');
+    expect(done.resources.energy).toBe(lot.resources.energy);
+    const other = { ...lot, identity: { ...lot.identity, originId: 'small-town-hopeful' } };
+    expect(available(other, COSTUME_SHOP_DIALOGUE, 'c2-fitting', 'pick-it-yourself')).toBe(false);
+  });
+
+  it('adds a nervous beat to the dance for low Presence, and lets every player dance', () => {
+    const base = chapterTwoCareer();
+    const low: CareerState = { ...base, attributes: { ...base.attributes, presence: 2 } };
+    expect(available(low, CELESTIAL_PALACE_DIALOGUE, 'c2-wrap-party', 'dance-with-theo')).toBe(false);
+    expect(available(low, CELESTIAL_PALACE_DIALOGUE, 'c2-wrap-party', 'dance-with-theo-nervous')).toBe(true);
+    expect(available(base, CELESTIAL_PALACE_DIALOGUE, 'c2-wrap-party', 'dance-with-theo')).toBe(true);
+    expect(available(base, CELESTIAL_PALACE_DIALOGUE, 'c2-wrap-party', 'dance-with-theo-nervous')).toBe(false);
+    const danced = pick(low, CELESTIAL_PALACE_DIALOGUE, 'c2-wrap-party', 'dance-with-theo-nervous');
+    expect(danced.facts['love-interest:theo']).toBe(true);
+    expect(getDialogueNode(CELESTIAL_PALACE_DIALOGUE, 'c2-dance-theo-nervous')?.choices[0]?.next).toBe('c2-dance-theo');
+  });
+});

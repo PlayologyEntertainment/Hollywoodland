@@ -376,7 +376,7 @@
               "choices": "How the player wears the costume: bold, practical or borrowed.",
               "routes": "Craft + Stagecraft for camera-ready detail.",
               "effects": "Costume item for the home display. Ola's trust.",
-              "notes": "Built without the Studio-Lot Hand-Me-Down shortcut: dialogue has no origin condition yet, so every origin gets the same fitting. Camera-ready detail is gated on Stagecraft I."
+              "notes": "Studio-Lot Hand-Me-Down players pick the costume themselves (origin-is condition, no energy cost). Camera-ready detail is gated on Stagecraft I."
             },
             {
               "id": "ch2-first-day-on-the-set",
@@ -474,7 +474,7 @@
               "choices": "Corinne Lake, Frankie Dolan, Delphine Voss, Theo Marchetti, or no one yet.",
               "routes": "Any build can be charming; a low Presence costs the dance an extra nervous beat.",
               "effects": "The love interest is chosen and recorded. Friends-only is a full, equally rewarded path.",
-              "notes": "Built without the extra nervous beat for low Presence: dialogue has no attribute condition yet. Nobody is locked out of any dance."
+              "notes": "Presence below 5 adds one nervous beat before the dance (attribute-at-least condition); the dance itself is unchanged. Nobody is locked out of any dance."
             }
           ]
         },

@@ -296,6 +296,17 @@ export const COSTUME_SHOP_CHAPTER_TWO: ChapterTwoPlace = {
           ]),
           conditions: [{ kind: 'talent-unlocked', talentId: 'stagecraft-1' }, ENERGY_CONDITION],
         },
+        {
+          id: 'pick-it-yourself',
+          label: 'Tell her you grew up mending costumes on a lot, and pick the right pieces yourself.',
+          next: 'c2-fitted-practical',
+          conditions: [{ kind: 'origin-is', originId: 'studio-lot-hand-me-down' }],
+          effects: [
+            ...beginQuest('harbor-market-wardrobe', 'fitted'),
+            setFact('lookout:costume:practical'),
+            rel(WARDROBE_MENTOR.id, { trust: 4 }),
+          ],
+        },
         fittedChoice('wear-it-borrowed', 'Blend in: something off the rack that has been on a hundred extras.', 'borrowed', [rel(WARDROBE_MENTOR.id, { obligation: -2 })]),
       ],
     },
@@ -825,18 +836,33 @@ export const DINER_CHAPTER_TWO: ChapterTwoPlace = {
 type LoveInterest = 'corinne' | 'frankie' | 'delphine' | 'theo';
 type Dancer = LoveInterest | 'none';
 
-const danceChoice = (who: LoveInterest, label: string, characterId: string): DialogueChoice => ({
-  id: `dance-with-${who}`,
-  label: `${label}${ENERGY_COST_LABEL}`,
-  next: `c2-dance-${who}`,
-  conditions: [ENERGY_CONDITION],
-  effects: [
-    ...beginQuest('the-wrap-party', 'the-dance'),
-    setFact(`love-interest:${who}`),
-    { kind: 'relationship-pivotal-flag', characterId, flag: 'love-interest' },
-    rel(characterId, { attraction: 6, trust: 3 }),
-    ENERGY_EFFECT,
-  ],
+const LOW_PRESENCE: DialogueCondition = { kind: 'attribute-at-least', attribute: 'presence', minimum: 5, equals: false };
+const PRESENCE_OK: DialogueCondition = { kind: 'attribute-at-least', attribute: 'presence', minimum: 5 };
+
+/** The dance choice for one person. A player with low Presence goes through one extra nervous beat before the dance itself;
+ * the dance, and what it does, are the same. */
+const danceChoices = (who: LoveInterest, label: string, characterId: string): DialogueChoice[] => {
+  const base: DialogueChoice = {
+    id: `dance-with-${who}`,
+    label: `${label}${ENERGY_COST_LABEL}`,
+    next: `c2-dance-${who}`,
+    conditions: [ENERGY_CONDITION, PRESENCE_OK],
+    effects: [
+      ...beginQuest('the-wrap-party', 'the-dance'),
+      setFact(`love-interest:${who}`),
+      { kind: 'relationship-pivotal-flag', characterId, flag: 'love-interest' },
+      rel(characterId, { attraction: 6, trust: 3 }),
+      ENERGY_EFFECT,
+    ],
+  };
+  return [base, { ...base, id: `dance-with-${who}-nervous`, next: `c2-dance-${who}-nervous`, conditions: [ENERGY_CONDITION, LOW_PRESENCE] }];
+};
+
+const nervousNode = (who: LoveInterest, speaker: string, text: string): DialogueNode => ({
+  id: `c2-dance-${who}-nervous`,
+  speaker,
+  text,
+  choices: [{ id: `${who}-dance-on`, label: 'Take a breath and go on with the dance.', next: `c2-dance-${who}` }],
 });
 
 const danceNode = (who: Dancer, speaker: string, text: string): DialogueNode => ({
@@ -869,10 +895,10 @@ export const CELESTIAL_PALACE_CHAPTER_TWO: ChapterTwoPlace = {
       speaker: 'House Manager',
       text: 'The ballroom is gold and low light and the bright chatter of a company at the end of a picture. The scene partner stands by the punch bowl in a silver dress, the leading man is trying not to look as though he is waiting for someone, the counter girl has come straight from her shift with a flower pinned to her apron, and the rival leans in the doorway with the air of someone who does not intend to dance. "There is time for exactly one dance before the band takes its break," the house manager murmurs at your shoulder. "Who is it to be?"',
       choices: [
-        danceChoice('corinne', 'Ask the scene partner to dance.', SCENE_PARTNER.id),
-        danceChoice('frankie', 'Ask the counter girl to dance.', DINER_CONFIDANT.id),
-        danceChoice('delphine', 'Ask the rival to dance.', RIVAL.id),
-        danceChoice('theo', 'Ask the leading man to dance.', LEADING_MAN.id),
+        ...danceChoices('corinne', 'Ask the scene partner to dance.', SCENE_PARTNER.id),
+        ...danceChoices('frankie', 'Ask the counter girl to dance.', DINER_CONFIDANT.id),
+        ...danceChoices('delphine', 'Ask the rival to dance.', RIVAL.id),
+        ...danceChoices('theo', 'Ask the leading man to dance.', LEADING_MAN.id),
         {
           id: 'dance-with-everyone',
           label: `Dance with no one in particular, and with everyone in turn.${ENERGY_COST_LABEL}`,
@@ -891,6 +917,10 @@ export const CELESTIAL_PALACE_CHAPTER_TWO: ChapterTwoPlace = {
         },
       ],
     },
+    nervousNode('corinne', 'Scene Partner', 'Your mouth has gone dry and your feet have forgotten everything they ever knew. You open your mouth to ask, and what comes out is half a sentence and a cough. She waits, with great kindness, for the rest. "Take your time," she murmurs. "I\'m not going anywhere."'),
+    nervousNode('frankie', 'Counter Girl', 'Your voice cracks on the first word, and the counter girl\'s eyebrows climb. "Breathe, honey," she whispers, squeezing your hand. "It\'s just a dance. I\'ve seen you handle a lunch rush."'),
+    nervousNode('delphine', 'Rival', 'You stand in front of her for a long, silent moment, and she lets you, one eyebrow slowly rising. "Well?" she says at last, but not unkindly. "I\'m not going to bite. Much."'),
+    nervousNode('theo', 'Leading Man', 'You get as far as holding out your hand before your nerve goes. The leading man looks at it, and then at you, and grins, because he knows exactly how this feels. "Me too," he says, very low. "Come on. We\'ll be nervous together."'),
     danceNode(
       'corinne',
       'Scene Partner',

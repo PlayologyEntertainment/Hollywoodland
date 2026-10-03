@@ -1018,5 +1018,22 @@
   "content.dialogue.celestial-palace-lobby.c2-dance-none.speaker": "Gerente do cinema",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.text": "Você passa a noite aonde a música levar: uma valsa com a parceira de cena, um lindy hop com a garçonete do balcão, um tango com a rival que vira competição, e uma volta desajeitada pelo salão com o galã, que pisa no seu pé e pede desculpas quatro vezes. No fim, todo mundo ri. “Uma escolha sábia”, diz o gerente do cinema, passando um copo de limonada. “A noite é longa, e o estúdio é mais longo.”",
   "content.dialogue.celestial-palace-lobby.c2-dance-none.choice.none-leave-the-ballroom": "Sair do salão, com a cabeça rodando.",
-  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Suba para o quarto."
+  "content.dialogue.boarding-house-intro.c2-root.choice.c2-head-upstairs": "Suba para o quarto.",
+  "content.dialogue.silver-thimble-intro.c2-fitting.choice.pick-it-yourself": "Dizer a ela que você cresceu remendando figurinos num estúdio, e escolher as peças certas por conta própria.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-corinne-nervous": "Convidar a parceira de cena para dançar. (-10 Energia)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.speaker": "Parceira de cena",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.text": "Sua boca está seca e seus pés esqueceram tudo o que sabiam. Você abre a boca para convidá-la, e o que sai é meia frase e uma tosse. Ela espera, com muita gentileza, pelo resto. “Sem pressa”, murmura. “Não vou a lugar nenhum.”",
+  "content.dialogue.celestial-palace-lobby.c2-dance-corinne-nervous.choice.corinne-dance-on": "Respirar fundo e seguir com a dança.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-frankie-nervous": "Convidar a garçonete do balcão para dançar. (-10 Energia)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.speaker": "Garçonete do balcão",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.text": "A sua voz falha na primeira palavra, e as sobrancelhas da garçonete do balcão sobem. “Respire, meu bem”, sussurra ela, apertando a sua mão. “É só uma dança. Já vi você encarar a hora do almoço.”",
+  "content.dialogue.celestial-palace-lobby.c2-dance-frankie-nervous.choice.frankie-dance-on": "Respirar fundo e seguir com a dança.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-delphine-nervous": "Convidar a rival para dançar. (-10 Energia)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.speaker": "Rival",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.text": "Você fica diante dela por um longo e silencioso momento, e ela deixa, uma sobrancelha subindo devagar. “E então?”, diz por fim, mas sem aspereza. “Não vou morder. Muito.”",
+  "content.dialogue.celestial-palace-lobby.c2-dance-delphine-nervous.choice.delphine-dance-on": "Respirar fundo e seguir com a dança.",
+  "content.dialogue.celestial-palace-lobby.c2-wrap-party.choice.dance-with-theo-nervous": "Convidar o galã para dançar. (-10 Energia)",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.speaker": "Galã",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.text": "Você chega a estender a mão antes que a coragem acabe. O galã olha para ela, depois para você, e sorri, porque sabe exatamente como é. “Eu também”, diz bem baixinho. “Vamos. Ficamos nervosos juntos.”",
+  "content.dialogue.celestial-palace-lobby.c2-dance-theo-nervous.choice.theo-dance-on": "Respirar fundo e seguir com a dança."
 }
