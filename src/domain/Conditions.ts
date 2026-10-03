@@ -1,5 +1,6 @@
 import { applyResourceDelta, type ResourceDelta, type ResourcesState } from './EconomySystem';
 import type { CareerState } from './CareerState';
+import type { AttributeKey } from './Origins';
 
 /** Fact/resource primitives shared by dialogue and quest content. Lives
  * below both `Dialogue.ts` and `Quests.ts` so quest prerequisites can use
@@ -18,7 +19,22 @@ export interface ResourceAtLeastCondition {
   readonly minimum: number;
 }
 
-export type SharedCondition = FactCondition | ResourceAtLeastCondition;
+/** The player's attribute (see Origins.ts) is at least `minimum`; with `equals: false`, it is below it. */
+export interface AttributeAtLeastCondition {
+  readonly kind: 'attribute-at-least';
+  readonly attribute: AttributeKey;
+  readonly minimum: number;
+  readonly equals?: boolean;
+}
+
+/** The player chose this origin (see Origins.ts); with `equals: false`, they did not. */
+export interface OriginCondition {
+  readonly kind: 'origin-is';
+  readonly originId: string;
+  readonly equals?: boolean;
+}
+
+export type SharedCondition = FactCondition | ResourceAtLeastCondition | AttributeAtLeastCondition | OriginCondition;
 
 export interface SetFactEffect {
   readonly kind: 'set-fact';
@@ -37,6 +53,10 @@ export function evaluateSharedCondition(state: CareerState, condition: SharedCon
   if (condition.kind === 'fact') {
     return (state.facts[condition.fact] ?? false) === (condition.equals ?? true);
   }
+  if (condition.kind === 'attribute-at-least') {
+    return (state.attributes[condition.attribute] >= condition.minimum) === (condition.equals ?? true);
+  }
+  if (condition.kind === 'origin-is') return (state.identity.originId === condition.originId) === (condition.equals ?? true);
   return state.resources[condition.resource] >= condition.minimum;
 }
 

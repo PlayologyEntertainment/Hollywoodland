@@ -368,6 +368,11 @@ h1 {
 /* When the goal it shows has just been accomplished the card turns green, with a tick, for a few seconds (ObjectiveTracker) before it
    moves on to the next goal. The tick is decoration, so it has empty alt text; the change is announced to screen readers separately. */
 .objective-card { transition: border-color .4s ease; }
+/* A chapter that is ready to start: the card offers a Start button instead of the controls hint. The overlay ignores the pointer, so
+   the button asks for it back. */
+.objective-card.objective-chapter-start small { display: none; }
+.objective-start { justify-self: start; margin-top: .45rem; padding: .35rem 1.3rem; pointer-events: auto; font-size: .95rem; }
+.objective-start[hidden] { display: none; }
 .objective-card.objective-complete {
   border-left-color: rgb(var(--complete-rgb));
   --strip-bg: linear-gradient(90deg, rgb(10 24 15 / 90%), rgb(10 24 15 / 42%), transparent);

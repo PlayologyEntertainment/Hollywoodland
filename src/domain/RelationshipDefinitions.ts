@@ -63,6 +63,20 @@ export const HOUSE_MANAGER: RelationshipCharacterDef = {
   supportsAttraction: false,
 };
 
+/** Chapter 2's new cast (Theo Marchetti and Hollis Pike in the proposed canon, pending owner approval). The leading man is the
+ * romance-capable lead of *The Corsair's Daughter* and, like every romance-capable character, attraction-flexible; the
+ * publicity chief keeps Monarch's favors and has no romance track. */
+export const LEADING_MAN: RelationshipCharacterDef = {
+  id: 'leading-man',
+  role: 'Leading man',
+  supportsAttraction: true,
+};
+export const PUBLICITY_CHIEF: RelationshipCharacterDef = {
+  id: 'publicity-chief',
+  role: 'Studio publicity chief',
+  supportsAttraction: false,
+};
+
 export const ALL_RELATIONSHIP_CHARACTERS: readonly RelationshipCharacterDef[] = [
   RIVAL,
   LANDLADY,
@@ -74,6 +88,8 @@ export const ALL_RELATIONSHIP_CHARACTERS: readonly RelationshipCharacterDef[] = 
   REPORTER,
   WARDROBE_MENTOR,
   HOUSE_MANAGER,
+  LEADING_MAN,
+  PUBLICITY_CHIEF,
 ];
 
 validateRelationshipRoster(ALL_RELATIONSHIP_CHARACTERS);

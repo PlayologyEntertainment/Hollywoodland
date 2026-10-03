@@ -44,8 +44,8 @@ function getChoice(graph: DialogueGraph, nodeId: string, choiceId: string): Dial
 }
 
 describe('the slice content expansion', () => {
-  it('has ten quests', () => {
-    expect(ALL_QUESTS).toHaveLength(10);
+  it('has ten Chapter 1 quests', () => {
+    expect(ALL_QUESTS.filter((quest) => (quest.chapter ?? 1) === 1)).toHaveLength(10);
     for (const id of NEW_QUESTS) expect(ALL_QUESTS.some((quest) => quest.id === id), id).toBe(true);
   });
 

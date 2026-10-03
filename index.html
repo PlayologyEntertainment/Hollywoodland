@@ -155,6 +155,40 @@
           </div>
         </section>
 
+        <!-- Chapter 2 title page: the same silent-film card as Chapter 1, shown once the Chapter 1 Conclusion has been read (see
+             Chapters.ts, nextChapterCard). -->
+        <section id="chapter-two-title" class="chapter-title" aria-labelledby="chapter-two-title-heading" aria-describedby="chapter-two-hint" tabindex="-1" hidden>
+          <div class="chapter-title-body">
+            <p class="chapter-number" data-reveal="0" data-i18n="chapterTitle.chapter2">Chapter 2</p>
+            <h2 id="chapter-two-title-heading" class="chapter-name" data-reveal="800" data-i18n="chapterTitleHeading.aSmallPart">A Small Part</h2>
+            <div class="chapter-divider" aria-hidden="true" data-reveal="1600"><span></span></div>
+            <p class="chapter-place" data-reveal="1600" data-i18n="chapterTitle.hollywoodSpring1935">Hollywood, California &middot; Spring 1935</p>
+            <div class="chapter-intro">
+              <p data-reveal="2600" data-i18n="chapterTwoTitle.theTestIsOver">The screen test is behind you, the Boulevard knows your face, and a studio that did not know your name last month wants to hear you say three lines.</p>
+              <p data-reveal="4000" data-i18n="chapterTwoTitle.aPartAFitting">There is a part to play, a costume to be fitted for, a leading man who is not as sure of himself as he looks, and a ballroom with its doors open.</p>
+              <p data-reveal="5400" data-i18n="chapterTwoTitle.everyoneIsKind">Everyone on the lot is going to be very kind to you this month. It is worth wondering why.</p>
+            </div>
+            <p id="chapter-two-hint" class="chapter-hint" data-reveal="6400" data-i18n="chapterHint.clickOrPressEnter">Click or Press Enter</p>
+          </div>
+        </section>
+
+        <!-- Chapter 2 Conclusion: the green-bordered card, shown once the last Chapter 2 quest is done. The first paragraph is
+             written by AppShell (it can use the player's name); the rest are ordinary catalog strings. -->
+        <section id="chapter-two-conclusion" class="chapter-title chapter-conclusion" aria-labelledby="chapter-two-conclusion-heading" aria-describedby="chapter-two-conclusion-hint" tabindex="-1" hidden>
+          <div class="chapter-title-body">
+            <p class="chapter-number" data-reveal="0" data-i18n="chapterTitle.chapter2">Chapter 2</p>
+            <h2 id="chapter-two-conclusion-heading" class="chapter-name" data-reveal="800" data-i18n="chapterTitleHeading.aSmallPart">A Small Part</h2>
+            <div class="chapter-divider" aria-hidden="true" data-reveal="1600"><span></span></div>
+            <p class="chapter-place" data-reveal="1600" data-i18n="chapterConclusion.conclusion">Conclusion</p>
+            <div class="chapter-intro">
+              <p id="chapter-two-conclusion-recap" data-reveal="2600">You came to the soundstage with three lines and left it with a credit, and the Boulevard has started to say your name before you walk in.</p>
+              <p data-reveal="4000" data-i18n="chapterTwoConclusion.aDanceAtThePalace">You danced at The Celestial Palace, stood your ground at the Monarch gate, and took a card from a very helpful man, or left it where it lay.</p>
+              <p data-reveal="5400" data-i18n="chapterTwoConclusion.anInvitation">Somewhere up in the hills, under the stars, a friend is saving two seats and someone he wants you to see.</p>
+            </div>
+            <p id="chapter-two-conclusion-hint" class="chapter-hint" data-reveal="6400" data-i18n="chapterHint.clickOrPressEnter">Click or Press Enter</p>
+          </div>
+        </section>
+
         <!-- The classic roadside "Welcome to ..." sign, shown on arriving in a region: at the start of a career, when a saved career is
              loaded, and after a bus trip (see WelcomeSign.ts). The words are filled in by AppShell from the region's catalog entries. -->
         <section id="welcome-sign" class="welcome-sign" aria-labelledby="welcome-city" aria-describedby="welcome-hint" tabindex="-1" hidden>
@@ -177,6 +211,7 @@
               <div id="objective-card" class="objective-card">
                 <span id="objective-title" class="eyebrow">First Audition</span>
                 <strong id="objective-goal">Book an audition at the casting office.</strong>
+                <button id="objective-start" class="primary-button deco-label objective-start" type="button" hidden data-i18n="objectiveStart.start">Start</button>
                 <small><kbd>A</kbd>/<kbd>D</kbd> <span data-i18n="objectiveCard.move">Move ·</span> <kbd>E</kbd> <span data-i18n="objectiveCard.interact">Interact</span></small>
               </div>
               <div class="hud-center">
@@ -254,6 +289,10 @@
               <details class="quest-chapter" open>
                 <summary data-i18n="statusPanel.chapter1Quests">Chapter 1 Quests</summary>
                 <ul id="status-quests-list"></ul>
+              </details>
+              <details id="status-chapter-2" class="quest-chapter" open hidden>
+                <summary data-i18n="statusPanel.chapter2Quests">Chapter 2 Quests</summary>
+                <ul id="status-quests-list-2"></ul>
               </details>
             </section>
             <section class="status-progression">

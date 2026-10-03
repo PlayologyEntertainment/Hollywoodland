@@ -1,13 +1,15 @@
 import type { CareerState } from '../domain/CareerState';
 import { t } from '../i18n';
 import type { InventoryItemDefinition } from '../domain/Inventory';
-import { getActiveStage, getQuestStatus, type QuestDef } from '../domain/Quests';
+import { getActiveStage, getQuestStatus, questChapter, type QuestDef } from '../domain/Quests';
 import type { RelationshipCharacter } from '../domain/Relationships';
 import { questStageDescription, questTitle } from '../i18n/content';
 
 /** One row of the Status panel's quest log. */
 export interface QuestLogEntry {
   readonly id: string;
+  /** The chapter the quest belongs to, which the Career panel groups the rows by. */
+  readonly chapter: number;
   readonly title: string;
   /** What the row says after the title: the current stage, "Available", or "Completed". */
   readonly label: string;
@@ -32,6 +34,7 @@ export function buildQuestLog(
     const stage = status === 'active' ? getActiveStage(state, quest) : undefined;
     entries.push({
       id: quest.id,
+      chapter: questChapter(quest),
       title: questTitle(quest),
       label: status === 'completed' ? t('quests.completed') : (stage !== undefined ? questStageDescription(quest, stage) : t('quests.available')),
       completed: status === 'completed',

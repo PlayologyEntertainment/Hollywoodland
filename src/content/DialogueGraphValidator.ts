@@ -37,6 +37,14 @@ export function validateDialogueGraph(
   if (!nodeIds.has(graph.rootNodeId)) {
     throw new Error(`Dialogue graph "${graph.id}" root node "${graph.rootNodeId}" does not exist.`);
   }
+  const entryIds = [graph.rootNodeId];
+  for (const variant of graph.entryVariants ?? []) {
+    if (!nodeIds.has(variant.rootNodeId)) {
+      throw new Error(`Dialogue graph "${graph.id}" entry variant root "${variant.rootNodeId}" does not exist.`);
+    }
+    entryIds.push(variant.rootNodeId);
+    validateEntryConditions(graph, variant.conditions, quests, roster, talents, items);
+  }
   for (const node of graph.nodes) {
     for (const choice of node.choices) {
       if (choice.next !== null && !nodeIds.has(choice.next)) {
@@ -52,8 +60,8 @@ export function validateDialogueGraph(
     }
   }
 
-  const reachable = new Set<string>([graph.rootNodeId]);
-  const queue = [graph.rootNodeId];
+  const reachable = new Set<string>(entryIds);
+  const queue = [...entryIds];
   while (queue.length > 0) {
     const currentId = queue.shift();
     const current = graph.nodes.find((node) => node.id === currentId);
@@ -196,4 +204,20 @@ function validateItemReferences(
       );
     }
   }
+}
+
+/** An entry variant's conditions are checked like a choice's: the same quest, relationship, talent and item references. */
+function validateEntryConditions(
+  graph: DialogueGraph,
+  conditions: NonNullable<DialogueChoice['conditions']>,
+  quests: readonly QuestDef[],
+  roster: readonly RelationshipCharacter[],
+  talents: readonly TalentDefinition[],
+  items: readonly InventoryItemDefinition[],
+): void {
+  const probe: DialogueChoice = { id: 'entry-variant', label: '', next: null, conditions };
+  validateQuestReferences(graph, 'entry-variant', probe, quests);
+  validateRelationshipReferences(graph, 'entry-variant', probe, roster);
+  validateTalentReferences(graph, 'entry-variant', probe, talents);
+  validateItemReferences(graph, 'entry-variant', probe, items);
 }

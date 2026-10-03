@@ -26,7 +26,7 @@ import {
 } from '../WalkCycle';
 import { getAssignmentById, resolveActiveAssignment, startAssignment } from '../../domain/Assignments';
 import { ALL_ASSIGNMENTS } from '../../domain/AssignmentDefinitions';
-import { CHAPTER_ONE_CONCLUDED_FACT } from '../../domain/Chapters';
+import { chapterCardFact, type ChapterCard } from '../../domain/Chapters';
 import { isRegionId, travelTo } from '../../domain/Travel';
 import { enterCastingOffice, advanceTime, purchaseHousingUpgrade } from '../../domain/CareerActions';
 import { createDefaultCareerState, DEFAULT_PLAYER_X, type CareerState } from '../../domain/CareerState';
@@ -281,6 +281,7 @@ export class BoulevardSpikeScene extends Phaser.Scene {
       this.domainEvents.on('assignment-start-requested', this.onAssignmentStartRequested),
       this.domainEvents.on('housing-upgrade-requested', this.onHousingUpgradeRequested),
       this.domainEvents.on('chapter-concluded', this.onChapterConcluded),
+      this.domainEvents.on('chapter-opened', this.onChapterOpened),
       this.domainEvents.on('travel-requested', this.onTravelRequested),
       this.domainEvents.on('level-up-celebration', this.onLevelUpCelebration),
       this.domainEvents.on('status-panel-visibility-changed', this.onStatusPanelVisibilityChanged),
@@ -867,11 +868,18 @@ export class BoulevardSpikeScene extends Phaser.Scene {
     this.emitState();
   };
 
-  private readonly onChapterConcluded = (payload: ChapterConcludedPayload): void => {
-    if (payload.chapter !== 1) return;
-    this.careerState = { ...this.careerState, facts: { ...this.careerState.facts, [CHAPTER_ONE_CONCLUDED_FACT]: true } };
+  private readonly onChapterConcluded = (payload: ChapterConcludedPayload): void => this.rememberChapterCard({ kind: 'conclusion', chapter: payload.chapter });
+
+  private readonly onChapterOpened = (payload: ChapterConcludedPayload): void => this.rememberChapterCard({ kind: 'opening', chapter: payload.chapter });
+
+  /** A chapter card has been read and left: remember it as a fact so it is shown once per career. A chapter with no card
+   * (and so no fact) is ignored. */
+  private rememberChapterCard(card: ChapterCard): void {
+    const fact = chapterCardFact(card);
+    if (fact === undefined) return;
+    this.careerState = { ...this.careerState, facts: { ...this.careerState.facts, [fact]: true } };
     this.emitState();
-  };
+  }
 
   private readonly onHousingUpgradeRequested = (): void => {
     this.careerState = purchaseHousingUpgrade(this.careerState);
